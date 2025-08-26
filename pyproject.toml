@@ -1,0 +1,25 @@
+[project]
+name = "microalpha"
+version = "0.1.0"
+description = "A event-driven backtesting engine for quantitative strategies."
+authors = [
+    { name = "Mateo Bodon", email = "mateo.bodon@yale.edu" },
+]
+requires-python = ">=3.9"
+dependencies = [
+    "pandas",
+    "numpy",
+    "pytest",
+    "ruff",
+    "black",
+]
+
+[tool.black]
+line-length = 88
+
+[tool.ruff]
+line-length = 88
+select = ["E", "F", "W", "I"]
+
+[tool.setuptools]
+packages = ["microalpha"]
