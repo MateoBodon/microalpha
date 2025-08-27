@@ -1,0 +1,13 @@
+Metadata-Version: 2.4
+Name: microalpha
+Version: 0.1.0
+Summary: A event-driven backtesting engine for quantitative strategies.
+Author-email: Mateo Bodon <mateo.bodon@yale.edu>
+Requires-Python: >=3.9
+License-File: LICENSE
+Requires-Dist: pandas
+Requires-Dist: numpy
+Requires-Dist: pytest
+Requires-Dist: ruff
+Requires-Dist: black
+Dynamic: license-file

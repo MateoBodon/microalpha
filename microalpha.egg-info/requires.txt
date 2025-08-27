@@ -1,0 +1,5 @@
+pandas
+numpy
+pytest
+ruff
+black
