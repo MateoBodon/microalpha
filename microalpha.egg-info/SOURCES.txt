@@ -2,11 +2,14 @@ LICENSE
 README.md
 pyproject.toml
 microalpha/__init__.py
+microalpha/broker.py
 microalpha/data.py
 microalpha/engine.py
 microalpha/events.py
+microalpha/portfolio.py
 microalpha.egg-info/PKG-INFO
 microalpha.egg-info/SOURCES.txt
 microalpha.egg-info/dependency_links.txt
 microalpha.egg-info/requires.txt
 microalpha.egg-info/top_level.txt
+tests/test_data.py
