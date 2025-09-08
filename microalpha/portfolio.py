@@ -1,4 +1,5 @@
 # microalpha/portfolio.py
+import pandas as pd
 from .events import OrderEvent, LookaheadError
 
 class Portfolio:
@@ -6,60 +7,47 @@ class Portfolio:
         self.data_handler = data_handler
         self.initial_cash = initial_cash
         self.cash = initial_cash
-        self.holdings = {} # { 'SYMBOL': quantity }
+        self.holdings = {}
         self.equity_curve = []
         self.current_time = None
+        self.total_turnover = 0.0
 
     def update_timeindex(self, event):
         """
         Updates the portfolio's state for a new timestamp.
-        This is crucial for tracking performance over time.
         """
         self.current_time = event.timestamp
-
-        # Calculate current market value of holdings
+        
         market_value = 0.0
         for symbol, quantity in self.holdings.items():
             price = self.data_handler.get_latest_price(symbol, self.current_time)
             if price is not None:
                 market_value += quantity * price
-
+        
         total_equity = self.cash + market_value
+        exposure = market_value / total_equity if total_equity != 0 else 0
+
         self.equity_curve.append({
             'timestamp': self.current_time,
-            'equity': total_equity
+            'equity': total_equity,
+            'exposure': exposure # Track exposure over time
         })
 
-
-    def on_signal(self, signal_event, events_queue):
-        """
-        Acts on a SignalEvent to generate an OrderEvent.
-        Simple implementation: fixed quantity of 100 shares.
-        """
-        symbol = signal_event.symbol
-        direction = signal_event.direction
-        quantity = 100 # Fixed size for simplicity
-
-        if direction == 'LONG':
-            order = OrderEvent(signal_event.timestamp, symbol, quantity, 'BUY')
-            events_queue.put(order)
-            print(f"    PORTFOLIO: Creating BUY order for {quantity} {symbol}.")
-        elif direction == 'EXIT':
-            if symbol in self.holdings and self.holdings[symbol] > 0:
-                order = OrderEvent(signal_event.timestamp, symbol, self.holdings[symbol], 'SELL')
-                events_queue.put(order)
-                print(f"    PORTFOLIO: Creating SELL order for {self.holdings[symbol]} {symbol}.")
-
     def on_fill(self, fill_event):
-        """Updates holdings from a FillEvent."""
+        """Updates holdings from a FillEvent and tracks turnover."""
         if self.current_time and fill_event.timestamp < self.current_time:
             raise LookaheadError("Fill event timestamp is in the past.")
-        
+
         symbol = fill_event.symbol
         quantity = fill_event.quantity
         direction = fill_event.direction
         fill_cost = fill_event.fill_cost
         commission = fill_event.commission
+
+        # --- UPDATE TURNOVER ---
+        # fill_cost is negative for sells, so abs() gives the trade value
+        self.total_turnover += abs(fill_cost)
+        # -----------------------
 
         self.cash -= (fill_cost + commission)
 
@@ -70,17 +58,17 @@ class Portfolio:
 
         print(f"      BROKER->PORTFOLIO: Fill processed. Cash: {self.cash:.2f}, Holdings: {self.holdings}")
 
+    # on_signal method remains the same
     def on_signal(self, signal_event, events_queue):
         """
         Acts on a SignalEvent to generate an OrderEvent.
-        Simple implementation: fixed quantity of 100 shares.
         """
         if self.current_time and signal_event.timestamp < self.current_time:
             raise LookaheadError("Signal event timestamp is in the past.")
 
         symbol = signal_event.symbol
         direction = signal_event.direction
-        quantity = 100 # Fixed size for simplicity
+        quantity = 100
 
         if direction == 'LONG':
             order = OrderEvent(signal_event.timestamp, symbol, quantity, 'BUY')

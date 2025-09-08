@@ -1,49 +1,50 @@
 # microalpha/broker.py
 from .events import FillEvent
+from .slippage import VolumeSlippageModel 
 
 class SimulatedBroker:
-    def __init__(self, data_handler):
+    def __init__(self, data_handler, slippage_model=None):
         """
-        The broker now needs access to the data_handler to get the
-        latest price for filling orders.
+        The broker can now accept a slippage model.
+        If no model is provided, it defaults to our VolumeSlippageModel.
         """
         self.data_handler = data_handler
+        self.slippage_model = slippage_model if slippage_model else VolumeSlippageModel()
 
     def execute_order(self, order_event, events_queue):
         """
-        Simulates filling an order.
-
-        The fill price is now correctly retrieved from the latest market data
-        for the given symbol. This removes the lookahead bias.
+        Simulates filling an order, now with slippage applied.
         """
         symbol = order_event.symbol
         timestamp = order_event.timestamp
+        quantity = order_event.quantity
+        direction = order_event.direction
 
-        # Get the current market price from the data handler
-        # In a more complex system, this would be the OPEN of the next bar
         current_price = self.data_handler.get_latest_price(symbol, timestamp)
-        
+
         if current_price is None:
-            print(f"      BROKER: Could not get price for {symbol} at {timestamp}. Order rejected.")
+            print(f"      BROKER: No price for {symbol} at {timestamp}. Order rejected.")
             return
 
-        commission = 1.0  # Fixed commission
+        # --- SLIPPAGE CALCULATION ---
+        slippage = self.slippage_model.calculate_slippage(quantity, current_price)
 
-        # Calculate fill cost
-        fill_cost = 0
-        if order_event.direction == 'BUY':
-            fill_cost = order_event.quantity * current_price
-        elif order_event.direction == 'SELL':
-            # For sells, the cost is negative (cash comes in)
-            fill_cost = - (order_event.quantity * current_price)
+        if direction == 'BUY':
+            # For buys, slippage increases the price
+            fill_price = current_price + slippage
+            fill_cost = quantity * fill_price
+        elif direction == 'SELL':
+            # For sells, slippage decreases the price
+            fill_price = current_price - slippage
+            # Cost is negative (cash comes in)
+            fill_cost = - (quantity * fill_price)
+        # ----------------------------
+
+        commission = 1.0
 
         fill = FillEvent(
-            timestamp,
-            symbol,
-            order_event.quantity,
-            order_event.direction,
-            fill_cost=fill_cost,
-            commission=commission
+            timestamp, symbol, quantity, direction,
+            fill_cost=fill_cost, commission=commission
         )
         events_queue.put(fill)
-        print(f"      BROKER: Order for {order_event.quantity} {symbol} filled at ${current_price:.2f}.")
+        print(f"      BROKER: Order for {quantity} {symbol} filled at ${fill_price:.2f} (slippage: ${slippage:.4f}/share).")
