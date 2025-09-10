@@ -1,9 +1,11 @@
 # run.py
+# run.py
 import pandas as pd
 from pathlib import Path
 from microalpha.engine import Engine
 from microalpha.data import CsvDataHandler
 from microalpha.strategies.meanrev import MeanReversionStrategy
+from microalpha.strategies.breakout import BreakoutStrategy
 from microalpha.portfolio import Portfolio
 from microalpha.broker import SimulatedBroker
 from microalpha.risk import create_sharpe_ratio, create_drawdowns
@@ -13,13 +15,15 @@ def main():
     symbol = "SPY"
     initial_cash = 100000.0
 
-    # Initialize components
+    # --- CHOOSE STRATEGY ---
+    # strategy = MeanReversionStrategy(symbol=symbol, lookback=3, z_threshold=0.5)
+    strategy = BreakoutStrategy(symbol=symbol, lookback=5)
+    # ----------------------------
+
     data_handler = CsvDataHandler(csv_dir=data_dir, symbol=symbol)
-    strategy = MeanReversionStrategy(symbol=symbol, lookback=3, z_threshold=0.5)
     portfolio = Portfolio(data_handler=data_handler, initial_cash=initial_cash)
     broker = SimulatedBroker(data_handler=data_handler)
 
-    # Initialize and run the engine
     engine = Engine(
         data_handler=data_handler,
         strategy=strategy,
