@@ -31,6 +31,9 @@ def main():
     # --- Performance Analysis ---
     print("\n--- Performance Metrics ---")
     equity_df = pd.DataFrame(portfolio.equity_curve).set_index('timestamp')
+    
+    equity_df.to_csv("equity_curve.csv") # Save the results for the notebook
+
     equity_df['returns'] = equity_df['equity'].pct_change().fillna(0.0)
 
     sharpe = create_sharpe_ratio(equity_df['returns'])
