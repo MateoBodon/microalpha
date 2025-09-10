@@ -52,3 +52,7 @@ class FillEvent(Event):
     direction: str
     fill_cost: float
     commission: float = 0.0
+
+class LookaheadError(Exception):
+    """Custom exception for lookahead bias violations."""
+    pass

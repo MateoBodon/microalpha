@@ -1,5 +1,5 @@
 # microalpha/portfolio.py
-from .events import OrderEvent
+from .events import OrderEvent, LookaheadError
 
 class Portfolio:
     def __init__(self, data_handler, initial_cash=100000.0):
@@ -52,6 +52,9 @@ class Portfolio:
 
     def on_fill(self, fill_event):
         """Updates holdings from a FillEvent."""
+        if self.current_time and fill_event.timestamp < self.current_time:
+            raise LookaheadError("Fill event timestamp is in the past.")
+        
         symbol = fill_event.symbol
         quantity = fill_event.quantity
         direction = fill_event.direction
@@ -72,6 +75,9 @@ class Portfolio:
         Acts on a SignalEvent to generate an OrderEvent.
         Simple implementation: fixed quantity of 100 shares.
         """
+        if self.current_time and signal_event.timestamp < self.current_time:
+            raise LookaheadError("Signal event timestamp is in the past.")
+
         symbol = signal_event.symbol
         direction = signal_event.direction
         quantity = 100 # Fixed size for simplicity
