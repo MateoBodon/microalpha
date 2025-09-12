@@ -12,6 +12,7 @@ def create_sharpe_ratio(returns, periods=252):
         return 0.0
     return np.sqrt(periods) * (returns.mean() / returns.std())
 
+
 def create_drawdowns(equity_curve):
     """
     Calculates the maximum drawdown and the drawdown series.
