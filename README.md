@@ -2,8 +2,7 @@
 
 `microalpha` is a lightweight, event-driven backtesting engine in Python, designed for the rigorous, leakage-safe validation of quantitative trading strategies.
 
-![Tearsheet Screenshot](tearsheet.png)  
-*(**Action required:** Take a screenshot of your `tearsheet.ipynb` output, save it as `tearsheet.png` in the root directory, and this image will appear here.)*
+![Tearsheet Screenshot](tearsheet.png)
 
 ---
 
