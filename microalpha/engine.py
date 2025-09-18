@@ -17,29 +17,28 @@ class Engine:
         """
         print("Starting backtest...")
 
-        # The outer loop is now the "heartbeat" driven by market data.
         for market_event in self.data_handler.stream_events():
-            # Put the new market data onto the queue
             self.events_queue.put(market_event)
 
-            # Process all events that result from this market data
-            # before moving to the next heartbeat.
             while not self.events_queue.empty():
                 try:
                     event = self.events_queue.get(block=False)
                 except queue.Empty:
-                    break # No more events for this time tick
+                    break
 
                 if isinstance(event, MarketEvent):
-                    self.portfolio.update_timeindex(event)
                     print(f"ENGINE: Processing MarketEvent at {event.timestamp}")
+                    self.portfolio.update_timeindex(event)
                     self.strategy.calculate_signals(event, self.events_queue)
+                    # Notify the broker of the market tick for TWAP execution
+                    self.broker.on_market_tick(event, self.events_queue)
 
                 elif isinstance(event, SignalEvent):
                     self.portfolio.on_signal(event, self.events_queue)
 
                 elif isinstance(event, OrderEvent):
-                    self.broker.execute_order(event, self.events_queue)
+                    # The broker now receives orders via on_order
+                    self.broker.on_order(event, self.events_queue) 
 
                 elif isinstance(event, FillEvent):
                     self.portfolio.on_fill(event)
