@@ -61,3 +61,18 @@ class CsvDataHandler(DataHandler):
             # If no exact timestamp match, you might want to forward-fill or return None
             # For simplicity, we'll just return None if no data is available.
             return None
+
+
+    def get_future_timestamps(self, start_timestamp: pd.Timestamp, n: int):
+        """
+        Gets the next `n` timestamps from the data starting after a given timestamp.
+        Used by the TWAP execution handler to schedule child orders.
+        """
+        if self.data is None:
+            return []
+        
+        # Get the index of all future dates
+        future_dates = self.data.index[self.data.index > start_timestamp]
+        
+        # Return the next n dates, or fewer if we are at the end of the data
+        return future_dates[:n].tolist()
