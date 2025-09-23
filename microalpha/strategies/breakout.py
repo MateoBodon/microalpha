@@ -1,6 +1,6 @@
 # microalpha/strategies/breakout.py
-import pandas as pd
 from ..events import SignalEvent
+
 
 class BreakoutStrategy:
     """

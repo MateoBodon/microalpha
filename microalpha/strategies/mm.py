@@ -1,6 +1,7 @@
 # microalpha/strategies/mm.py
 from ..events import SignalEvent
 
+
 class NaiveMarketMakingStrategy:
     """
     A simple market-making strategy that continuously places a buy (bid)
@@ -41,5 +42,5 @@ class NaiveMarketMakingStrategy:
         elif self.invested > -self.inventory_limit:
             signal = SignalEvent(event.timestamp, self.symbol, 'EXIT') # or 'SHORT'
             events_queue.put(signal)
-            
+
         print(f"  STRATEGY (MM): Mid: {mid_price:.2f}, Quoting Bid: {bid_price:.2f}, Ask: {ask_price:.2f}")

@@ -1,6 +1,8 @@
 # microalpha/engine.py
 import queue
-from .events import MarketEvent, SignalEvent, OrderEvent, FillEvent
+
+from .events import FillEvent, MarketEvent, OrderEvent, SignalEvent
+
 
 class Engine:
     def __init__(self, data_handler, strategy, portfolio, broker):
@@ -38,7 +40,7 @@ class Engine:
 
                 elif isinstance(event, OrderEvent):
                     # The broker now receives orders via on_order
-                    self.broker.on_order(event, self.events_queue) 
+                    self.broker.on_order(event, self.events_queue)
 
                 elif isinstance(event, FillEvent):
                     self.portfolio.on_fill(event)

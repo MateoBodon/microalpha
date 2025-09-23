@@ -1,6 +1,6 @@
 # microalpha/portfolio.py
-import pandas as pd
-from .events import OrderEvent, LookaheadError
+from .events import LookaheadError, OrderEvent
+
 
 class Portfolio:
     def __init__(self, data_handler, initial_cash=100000.0):
@@ -17,13 +17,13 @@ class Portfolio:
         Updates the portfolio's state for a new timestamp.
         """
         self.current_time = event.timestamp
-        
+
         market_value = 0.0
         for symbol, quantity in self.holdings.items():
             price = self.data_handler.get_latest_price(symbol, self.current_time)
             if price is not None:
                 market_value += quantity * price
-        
+
         total_equity = self.cash + market_value
         exposure = market_value / total_equity if total_equity != 0 else 0
 

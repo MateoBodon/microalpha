@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 
+
 # Base class for all events, maybe useful for type hinting later
 @dataclass
 class Event:

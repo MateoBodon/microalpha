@@ -1,6 +1,7 @@
 # microalpha/broker.py
 from .events import FillEvent, OrderEvent
-from .slippage import VolumeSlippageModel 
+from .slippage import VolumeSlippageModel
+
 
 class SimulatedBroker:
     def __init__(self, data_handler, slippage_model=None, execution_style='INSTANT', num_ticks=4):
@@ -41,7 +42,7 @@ class SimulatedBroker:
                 self._execute_trade(order, events_queue)
             elif order.timestamp > market_event.timestamp:
                 remaining_orders.append(order) # This order is for a future tick
-        
+
         self._open_orders = remaining_orders
 
     def _schedule_twap_orders(self, order_event):
@@ -58,16 +59,16 @@ class SimulatedBroker:
         )
 
         if not future_timestamps:
-            print(f"      BROKER: No future ticks to execute TWAP. Executing instantly on next tick.")
+            print("      BROKER: No future ticks to execute TWAP. Executing instantly on next tick.")
             # We need at least one future timestamp to execute. If none, we can't do anything.
             # A more advanced implementation might place a limit order. For now, we drop it.
             return
-        
-        
+
+
         # Adjust the number of ticks to the actual number of available data points
         effective_num_ticks = len(future_timestamps)
         child_quantity = total_quantity // effective_num_ticks
-        
+
         if child_quantity == 0:
              print(f"      BROKER: Order quantity ({total_quantity}) is too small to split over {effective_num_ticks} ticks. Executing in one chunk.")
              # Create a single child order for the full amount on the next tick
@@ -81,7 +82,7 @@ class SimulatedBroker:
             # Distribute the remainder across the first few orders
             if i < total_quantity % effective_num_ticks:
                 qty += 1
-            
+
             if qty > 0:
                 child_order = OrderEvent(
                     timestamp=future_timestamps[i],
