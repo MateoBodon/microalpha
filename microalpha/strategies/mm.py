@@ -7,37 +7,39 @@ class NaiveMarketMakingStrategy:
     and a sell (ask) order around the current market price.
     It aims to profit from the bid-ask spread.
     """
-    def __init__(self, symbol: str, spread: float = 0.5):
+    def __init__(self, symbol: str, spread: float = 0.5, inventory_limit: int = 100):
         self.symbol = symbol
-        # The desired spread in dollars (e.g., $0.50)
         self.spread = spread
-        # We'll use this to cancel and replace orders
-        self.last_order_id = None 
+        self.inventory_limit = inventory_limit
+        self.invested = 0 # Track our current inventory (can be positive or negative)
 
     def calculate_signals(self, event, events_queue):
         """
-        On every market update, generate new buy and sell signals.
+        On every market update, generate buy/sell signals based on our
+        desired spread and current inventory.
         """
         if event.symbol != self.symbol:
             return
 
-        # Calculate our desired bid and ask prices
-        bid_price = event.price - self.spread / 2.0
-        ask_price = event.price + self.spread / 2.0
+        mid_price = event.price
+        bid_price = mid_price - self.spread / 2.0
+        ask_price = mid_price + self.spread / 2.0
 
-        # Note: A true market-making system would use Limit Orders (LMT).
-        # Since our simple broker only handles Market Orders (MKT), we'll simulate
-        # this by sending LONG and SHORT signals. The key is that we are always
-        # in the market, ready to both buy and sell. In this simplified version,
-        # we'll just send a signal to go long, assuming we want to capture any
-        # upward movement from our bid.
-        
-        # For simplicity, we'll just fire a LONG signal.
-        buy_signal = SignalEvent(event.timestamp, self.symbol, 'LONG')
-        sell_signal = SignalEvent(event.timestamp, self.symbol, 'SHORT') # or 'EXIT'
-        
-        # In this naive version, we'll just alternate for demonstration
-        # We will just put a LONG signal on the queue to show the logic can be plugged in.
-        events_queue.put(buy_signal)
-        
-        print(f"  STRATEGY (MM): Quoting Bid: {bid_price:.2f}, Ask: {ask_price:.2f}")
+        # --- TRADING LOGIC ---
+        # If we have room to buy (not at our long inventory limit)
+        # we send a signal. A real MM would place a limit order at the bid.
+        # We simulate this by sending a LONG signal, hoping to get filled
+        # at a price below the mid-price.
+        if self.invested < self.inventory_limit:
+            # For simplicity, we'll just use a generic 'LONG' signal.
+            # A more advanced engine would support order types (LIMIT vs MARKET).
+            signal = SignalEvent(event.timestamp, self.symbol, 'LONG')
+            events_queue.put(signal)
+
+        # If we have room to sell (not at our short inventory limit)
+        # we send a signal to get out of our long position or go short.
+        elif self.invested > -self.inventory_limit:
+            signal = SignalEvent(event.timestamp, self.symbol, 'EXIT') # or 'SHORT'
+            events_queue.put(signal)
+            
+        print(f"  STRATEGY (MM): Mid: {mid_price:.2f}, Quoting Bid: {bid_price:.2f}, Ask: {ask_price:.2f}")
