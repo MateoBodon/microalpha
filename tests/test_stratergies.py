@@ -1,8 +1,11 @@
 # tests/test_strategies.py
 import queue
+
 import pandas as pd
+
 from microalpha.events import MarketEvent, SignalEvent
 from microalpha.strategies.breakout import BreakoutStrategy
+
 
 def test_breakout_strategy_generates_long_signal():
     """

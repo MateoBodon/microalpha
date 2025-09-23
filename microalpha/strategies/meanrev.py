@@ -1,6 +1,8 @@
 # microalpha/strategies/meanrev.py
 import pandas as pd
+
 from ..events import SignalEvent
+
 
 class MeanReversionStrategy:
     """

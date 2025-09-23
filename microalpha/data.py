@@ -1,7 +1,10 @@
 # microalpha/data.py
 from pathlib import Path
+
 import pandas as pd
+
 from .events import MarketEvent
+
 
 class DataHandler:
     """
@@ -53,7 +56,7 @@ class CsvDataHandler(DataHandler):
         """Returns the last known price for a symbol at or before a given timestamp."""
         if symbol != self.symbol or self.data is None:
             return None
-        
+
         try:
             # Get the price from the 'close' of the bar at the given timestamp
             return self.data.loc[timestamp]['close']
@@ -70,9 +73,9 @@ class CsvDataHandler(DataHandler):
         """
         if self.data is None:
             return []
-        
+
         # Get the index of all future dates
         future_dates = self.data.index[self.data.index > start_timestamp]
-        
+
         # Return the next n dates, or fewer if we are at the end of the data
         return future_dates[:n].tolist()

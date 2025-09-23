@@ -1,8 +1,11 @@
 # tests/test_data.py
-import pandas as pd
 from pathlib import Path
+
+import pandas as pd
+
 from microalpha.data import CsvDataHandler
 from microalpha.events import MarketEvent
+
 
 def test_csv_data_handler_streams_events(tmp_path: Path):
     """
