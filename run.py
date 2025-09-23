@@ -15,9 +15,11 @@ from microalpha.risk import create_sharpe_ratio, create_drawdowns
 # This allows us to dynamically load the strategy class from the config file.
 from microalpha.strategies.meanrev import MeanReversionStrategy
 from microalpha.strategies.breakout import BreakoutStrategy
+from microalpha.strategies.mm import NaiveMarketMakingStrategy
 STRATEGY_MAPPING = {
     "MeanReversionStrategy": MeanReversionStrategy,
     "BreakoutStrategy": BreakoutStrategy,
+    "NaiveMarketMakingStrategy": NaiveMarketMakingStrategy,
 }
 # ------------------------
 
