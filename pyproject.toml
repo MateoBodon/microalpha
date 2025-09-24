@@ -22,6 +22,7 @@ line-length = 88
 line-length = 88
 exclude = [
     "notebooks/**",
+    ".ipynb_checkpoints/**",
 ]
 
 [tool.ruff.lint]
