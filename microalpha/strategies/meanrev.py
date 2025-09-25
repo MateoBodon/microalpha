@@ -6,11 +6,12 @@ class MeanReversionStrategy:
     """
     A simple mean reversion strategy based on z-scores.
     """
-    def __init__(self, symbol: str, lookback: int = 5, z_threshold: float = 1.0):
+    def __init__(self, symbol: str, lookback: int = 5, z_threshold: float = 1.0, warmup_prices=None):
         self.symbol = symbol
         self.lookback = lookback
         self.z_threshold = z_threshold
-        self.prices = []
+        # If warmup prices are provided, start with them.
+        self.prices = [] if warmup_prices is None else list(warmup_prices)
         self.invested = False
 
     def calculate_signals(self, event, events_queue):

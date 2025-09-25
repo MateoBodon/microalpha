@@ -15,18 +15,31 @@ class CsvDataHandler(DataHandler):
         self.csv_dir = csv_dir
         self.symbol = symbol
         self.file_path = self.csv_dir / f"{self.symbol}.csv"
-        self._load_data()
+        # load the full dataset here
+        self.full_data = self._load_data()
+        # hold the subset of data for a specific backtest period
+        self.data = self.full_data
 
-    def _load_data(self):
-        """Loads the entire CSV into a dataframe. Ok for small datasets."""
+    def _load_data(self) -> pd.DataFrame | None:
+        """Loads the entire CSV into a dataframe, returns it."""
         try:
-            self.data = pd.read_csv(self.file_path, index_col=0, parse_dates=True)
+            return pd.read_csv(self.file_path, index_col=0, parse_dates=True)
         except FileNotFoundError:
-            self.data = None
             print(f"Error: Data file not found at {self.file_path}")
+            return None
+
+    def set_date_range(self, start_date, end_date):
+        """
+        Sets the active data to a subset of the full dataset.
+        This is the key method for walk-forward validation.
+        """
+        if self.full_data is None:
+            self.data = None
+        else:
+            self.data = self.full_data.loc[start_date:end_date]
 
     def stream_events(self):
-        """Yields MarketEvents from the pre-loaded dataframe."""
+        """Yields MarketEvents from the currently active dataframe."""
         if self.data is None:
             return
         for row in self.data.itertuples():
