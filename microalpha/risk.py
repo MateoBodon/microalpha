@@ -32,12 +32,8 @@ def bootstrap_sharpe_ratio(returns, num_simulations=5000, periods=252):
     Performs a bootstrap analysis on a returns stream to determine the
     statistical significance of its Sharpe ratio.
     """
-    if returns.std() == 0 or len(returns) < 3: # Not enough data
-        return {
-            'sharpe_dist': [0.0],
-            'p_value': 1.0,
-            'confidence_interval': (0.0, 0.0)
-        }
+    if returns.std() == 0 or len(returns) < 3:  # Not enough data
+        return {"sharpe_dist": [0.0], "p_value": 1.0, "confidence_interval": (0.0, 0.0)}
 
     sharpe_dist = []
 
@@ -57,11 +53,11 @@ def bootstrap_sharpe_ratio(returns, num_simulations=5000, periods=252):
     # Calculate the 95% confidence interval
     confidence_interval = (
         np.percentile(sharpe_dist, 2.5),
-        np.percentile(sharpe_dist, 97.5)
+        np.percentile(sharpe_dist, 97.5),
     )
 
     return {
-        'sharpe_dist': sharpe_dist,
-        'p_value': p_value,
-        'confidence_interval': confidence_interval
+        "sharpe_dist": sharpe_dist,
+        "p_value": p_value,
+        "confidence_interval": confidence_interval,
     }

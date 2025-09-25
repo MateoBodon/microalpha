@@ -8,7 +8,14 @@ class MeanReversionStrategy:
     """
     A simple mean reversion strategy based on z-scores.
     """
-    def __init__(self, symbol: str, lookback: int = 5, z_threshold: float = 1.0, warmup_prices=None):
+
+    def __init__(
+        self,
+        symbol: str,
+        lookback: int = 5,
+        z_threshold: float = 1.0,
+        warmup_prices=None,
+    ):
         self.symbol = symbol
         self.lookback = lookback
         self.z_threshold = z_threshold
@@ -26,7 +33,7 @@ class MeanReversionStrategy:
         self.prices.append(event.price)
 
         if len(self.prices) < self.lookback:
-            return # Not enough data yet
+            return  # Not enough data yet
 
         # Keep the price list to the lookback size
         self.prices.pop(0)
@@ -35,20 +42,20 @@ class MeanReversionStrategy:
         mean = price_series.mean()
         std = price_series.std()
 
-        if std == 0: # Avoid division by zero
+        if std == 0:  # Avoid division by zero
             return
 
         z_score = (price_series.iloc[-1] - mean) / std
 
         # Go long
         if z_score < -self.z_threshold and not self.invested:
-            signal = SignalEvent(event.timestamp, self.symbol, 'LONG')
+            signal = SignalEvent(event.timestamp, self.symbol, "LONG")
             events_queue.put(signal)
             self.invested = True
             print(f"  STRATEGY: Firing LONG signal. z-score={z_score:.2f}")
         # Go short (or flat)
         elif z_score > self.z_threshold and self.invested:
-            signal = SignalEvent(event.timestamp, self.symbol, 'EXIT')
+            signal = SignalEvent(event.timestamp, self.symbol, "EXIT")
             events_queue.put(signal)
             self.invested = False
             print(f"  STRATEGY: Firing EXIT signal. z-score={z_score:.2f}")

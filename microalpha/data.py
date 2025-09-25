@@ -10,8 +10,10 @@ class DataHandler:
     """
     Base class for data handlers.
     """
+
     def stream_events(self):
         raise NotImplementedError("stream_events() must be implemented")
+
 
 class CsvDataHandler(DataHandler):
     def __init__(self, csv_dir: Path, symbol: str):
@@ -47,9 +49,7 @@ class CsvDataHandler(DataHandler):
             return
         for row in self.data.itertuples():
             yield MarketEvent(
-                timestamp=row.Index,
-                symbol=self.symbol,
-                price=float(row.close)
+                timestamp=row.Index, symbol=self.symbol, price=float(row.close)
             )
 
     def get_latest_price(self, symbol: str, timestamp: pd.Timestamp):
@@ -59,12 +59,11 @@ class CsvDataHandler(DataHandler):
 
         try:
             # Get the price from the 'close' of the bar at the given timestamp
-            return self.data.loc[timestamp]['close']
+            return self.data.loc[timestamp]["close"]
         except KeyError:
             # If no exact timestamp match, you might want to forward-fill or return None
             # For simplicity, we'll just return None if no data is available.
             return None
-
 
     def get_future_timestamps(self, start_timestamp: pd.Timestamp, n: int):
         """

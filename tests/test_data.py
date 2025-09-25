@@ -17,7 +17,7 @@ def test_csv_data_handler_streams_events(tmp_path: Path):
     symbol = "TEST_SYMBOL"
     test_csv_path = test_csv_dir / f"{symbol}.csv"
 
-    dates = pd.to_datetime(['2025-09-23', '2025-09-24'])
+    dates = pd.to_datetime(["2025-09-23", "2025-09-24"])
     df = pd.DataFrame(index=dates, data={"close": [100.0, 101.5]})
     df.to_csv(test_csv_path)
 
@@ -32,6 +32,6 @@ def test_csv_data_handler_streams_events(tmp_path: Path):
     assert isinstance(events_list[0], MarketEvent)
     assert events_list[0].symbol == symbol
     assert events_list[0].price == 100.0
-    assert events_list[0].timestamp == pd.Timestamp('2025-09-23')
+    assert events_list[0].timestamp == pd.Timestamp("2025-09-23")
 
     assert events_list[1].price == 101.5

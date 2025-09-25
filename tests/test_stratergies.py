@@ -18,9 +18,9 @@ def test_breakout_strategy_generates_long_signal():
     strategy = BreakoutStrategy(symbol=symbol, lookback=5)
 
     # Create a series of market events where the last one is a breakout
-    prices = [100, 101, 102, 101, 100, 103] # Breakout at 103
+    prices = [100, 101, 102, 101, 100, 103]  # Breakout at 103
     for i, price in enumerate(prices):
-        timestamp = pd.Timestamp(f'2025-01-0{i+1}')
+        timestamp = pd.Timestamp(f"2025-01-0{i+1}")
         market_event = MarketEvent(timestamp, symbol, price)
 
         # 2. Act
@@ -33,5 +33,5 @@ def test_breakout_strategy_generates_long_signal():
 
     signal = events_q.get()
     assert isinstance(signal, SignalEvent)
-    assert signal.direction == 'LONG'
+    assert signal.direction == "LONG"
     assert signal.symbol == symbol

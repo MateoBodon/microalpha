@@ -11,6 +11,7 @@ def test_portfolio_raises_lookahead_error_on_stale_signal():
     Tests that the portfolio raises an error if it receives a SignalEvent
     with a timestamp that is earlier than its current known time.
     """
+
     # 1. Arrange
     # A mock data handler is needed for the Portfolio's constructor
     class MockDataHandler:
@@ -20,13 +21,11 @@ def test_portfolio_raises_lookahead_error_on_stale_signal():
     portfolio = Portfolio(data_handler=MockDataHandler(), initial_cash=100000.0)
 
     # Set the portfolio's "current time" to a specific point
-    portfolio.current_time = pd.Timestamp('2025-09-25 16:00:00')
+    portfolio.current_time = pd.Timestamp("2025-09-25 16:00:00")
 
     # Create a signal event with a timestamp from the PAST
     stale_signal = SignalEvent(
-        timestamp=pd.Timestamp('2025-09-24 16:00:00'),
-        symbol='SPY',
-        direction='LONG'
+        timestamp=pd.Timestamp("2025-09-24 16:00:00"), symbol="SPY", direction="LONG"
     )
 
     # 2. Act & 3. Assert

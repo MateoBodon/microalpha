@@ -18,10 +18,12 @@ def optimize_strategy_parameters(
     """
     Finds the best strategy parameters by backtesting on the training data.
     """
-    print(f"  Optimizing parameters on training data: {train_start.date()} to {train_end.date()}...")
+    print(
+        f"  Optimizing parameters on training data: {train_start.date()} to {train_end.date()}..."
+    )
 
     best_params = None
-    best_sharpe = -float('inf')
+    best_sharpe = -float("inf")
 
     # --- GRID SEARCH ---
     # `product` creates all combinations of the parameter values
@@ -41,10 +43,10 @@ def optimize_strategy_parameters(
         # ------------------------------------------
 
         if portfolio.equity_curve:
-            equity_df = pd.DataFrame(portfolio.equity_curve).set_index('timestamp')
-            equity_df['returns'] = equity_df['equity'].pct_change().fillna(0.0)
+            equity_df = pd.DataFrame(portfolio.equity_curve).set_index("timestamp")
+            equity_df["returns"] = equity_df["equity"].pct_change().fillna(0.0)
 
-            sharpe = create_sharpe_ratio(equity_df['returns'])
+            sharpe = create_sharpe_ratio(equity_df["returns"])
 
             if sharpe > best_sharpe:
                 best_sharpe = sharpe
@@ -55,8 +57,14 @@ def optimize_strategy_parameters(
 
 
 def run_walk_forward_validation(
-    data_dir, symbol, strategy_class, param_grid,
-    start_date, end_date, training_days, testing_days
+    data_dir,
+    symbol,
+    strategy_class,
+    param_grid,
+    start_date,
+    end_date,
+    training_days,
+    testing_days,
 ):
     """
     Orchestrates the walk-forward validation process with parameter optimization.
@@ -68,13 +76,17 @@ def run_walk_forward_validation(
     all_equity_curves = []
     current_date = pd.Timestamp(start_date)
 
-    while current_date + pd.Timedelta(days=training_days + testing_days) <= pd.Timestamp(end_date):
+    while current_date + pd.Timedelta(
+        days=training_days + testing_days
+    ) <= pd.Timestamp(end_date):
         train_start = current_date
         train_end = train_start + pd.Timedelta(days=training_days)
         test_start = train_end + pd.Timedelta(days=1)
         test_end = test_start + pd.Timedelta(days=testing_days)
 
-        print(f"\nProcessing Fold: Train {train_start.date()} to {train_end.date()}, Test {test_start.date()} to {test_end.date()}")
+        print(
+            f"\nProcessing Fold: Train {train_start.date()} to {train_end.date()}, Test {test_start.date()} to {test_end.date()}"
+        )
 
         # --- 1. OPTIMIZE on training data ---
         optimal_params = optimize_strategy_parameters(
@@ -88,7 +100,7 @@ def run_walk_forward_validation(
         # ------------------------------------
 
         # --- STRATEGY WARMUP ---
-        lookback_days = optimal_params.get('lookback', 20)
+        lookback_days = optimal_params.get("lookback", 20)
         warmup_start = train_end - pd.Timedelta(days=lookback_days)
 
         data_handler.set_date_range(warmup_start, train_end)
@@ -116,16 +128,14 @@ def run_walk_forward_validation(
 
     return all_equity_curves
 
+
 if __name__ == "__main__":
     # --- CONFIGURATION ---
     WF_DATA_DIR = Path("data")
     WF_SYMBOL = "SPY"
     WF_STRATEGY_CLASS = MeanReversionStrategy
     # Define a grid of parameters to search over
-    WF_PARAM_GRID = {
-        'lookback': [3, 5],
-        'z_threshold': [0.5, 1.0]
-    }
+    WF_PARAM_GRID = {"lookback": [3, 5], "z_threshold": [0.5, 1.0]}
     WF_START_DATE = "2025-01-01"
     WF_END_DATE = "2025-01-10"
     WF_TRAINING_DAYS = 4
@@ -133,20 +143,28 @@ if __name__ == "__main__":
     # -------------------
 
     final_equity_curve = run_walk_forward_validation(
-        WF_DATA_DIR, WF_SYMBOL, WF_STRATEGY_CLASS, WF_PARAM_GRID,
-        WF_START_DATE, WF_END_DATE, WF_TRAINING_DAYS, WF_TESTING_DAYS
+        WF_DATA_DIR,
+        WF_SYMBOL,
+        WF_STRATEGY_CLASS,
+        WF_PARAM_GRID,
+        WF_START_DATE,
+        WF_END_DATE,
+        WF_TRAINING_DAYS,
+        WF_TESTING_DAYS,
     )
 
     if not final_equity_curve:
         print("\nNo trades were made during the walk-forward validation.")
     else:
         print("\n--- Final Walk-Forward Performance ---")
-        equity_df = pd.DataFrame(final_equity_curve).set_index('timestamp').drop_duplicates()
+        equity_df = (
+            pd.DataFrame(final_equity_curve).set_index("timestamp").drop_duplicates()
+        )
         equity_df.to_csv("walk_forward_equity.csv")
 
-        equity_df['returns'] = equity_df['equity'].pct_change().fillna(0.0)
-        sharpe = create_sharpe_ratio(equity_df['returns'])
-        _, max_dd = create_drawdowns(equity_df['equity'])
+        equity_df["returns"] = equity_df["equity"].pct_change().fillna(0.0)
+        sharpe = create_sharpe_ratio(equity_df["returns"])
+        _, max_dd = create_drawdowns(equity_df["equity"])
 
         print(f"Sharpe Ratio: {sharpe:.2f}")
         print(f"Maximum Drawdown: {max_dd:.2%}")

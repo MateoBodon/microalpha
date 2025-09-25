@@ -27,11 +27,13 @@ class Portfolio:
         total_equity = self.cash + market_value
         exposure = market_value / total_equity if total_equity != 0 else 0
 
-        self.equity_curve.append({
-            'timestamp': self.current_time,
-            'equity': total_equity,
-            'exposure': exposure # Track exposure over time
-        })
+        self.equity_curve.append(
+            {
+                "timestamp": self.current_time,
+                "equity": total_equity,
+                "exposure": exposure,  # Track exposure over time
+            }
+        )
 
     def on_fill(self, fill_event):
         """Updates holdings from a FillEvent and tracks turnover."""
@@ -49,14 +51,16 @@ class Portfolio:
         self.total_turnover += abs(fill_cost)
         # -----------------------
 
-        self.cash -= (fill_cost + commission)
+        self.cash -= fill_cost + commission
 
-        if direction == 'BUY':
+        if direction == "BUY":
             self.holdings[symbol] = self.holdings.get(symbol, 0) + quantity
-        elif direction == 'SELL':
+        elif direction == "SELL":
             self.holdings[symbol] = self.holdings.get(symbol, 0) - quantity
 
-        print(f"      BROKER->PORTFOLIO: Fill processed. Cash: {self.cash:.2f}, Holdings: {self.holdings}")
+        print(
+            f"      BROKER->PORTFOLIO: Fill processed. Cash: {self.cash:.2f}, Holdings: {self.holdings}"
+        )
 
     def on_signal(self, signal_event, events_queue):
         """
@@ -70,14 +74,18 @@ class Portfolio:
         # INCREASED order size to make TWAP meaningful
         quantity = 400
 
-        if direction == 'LONG':
-            order = OrderEvent(signal_event.timestamp, symbol, quantity, 'BUY')
+        if direction == "LONG":
+            order = OrderEvent(signal_event.timestamp, symbol, quantity, "BUY")
             events_queue.put(order)
             print(f"    PORTFOLIO: Creating BUY meta-order for {quantity} {symbol}.")
-        elif direction == 'EXIT':
+        elif direction == "EXIT":
             if symbol in self.holdings and self.holdings[symbol] > 0:
                 # Ensure we don't sell more than we have
                 sell_quantity = self.holdings[symbol]
-                order = OrderEvent(signal_event.timestamp, symbol, sell_quantity, 'SELL')
+                order = OrderEvent(
+                    signal_event.timestamp, symbol, sell_quantity, "SELL"
+                )
                 events_queue.put(order)
-                print(f"    PORTFOLIO: Creating SELL meta-order for {sell_quantity} {symbol}.")
+                print(
+                    f"    PORTFOLIO: Creating SELL meta-order for {sell_quantity} {symbol}."
+                )
