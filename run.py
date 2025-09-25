@@ -25,20 +25,24 @@ STRATEGY_MAPPING = {
 }
 # ------------------------
 
+
 def main():
     # --- COMMAND-LINE ARGUMENT PARSING ---
-    parser = argparse.ArgumentParser(description="Run a backtest for the microalpha engine.")
+    parser = argparse.ArgumentParser(
+        description="Run a backtest for the microalpha engine."
+    )
     parser.add_argument(
-        '-c', '--config',
+        "-c",
+        "--config",
         type=str,
         required=True,
-        help='Path to the configuration YAML file.'
+        help="Path to the configuration YAML file.",
     )
     args = parser.parse_args()
 
     # --- LOAD CONFIGURATION ---
     try:
-        with open(args.config, 'r') as f:
+        with open(args.config, "r") as f:
             config = yaml.safe_load(f)
     except FileNotFoundError:
         print(f"Error: Config file not found at {args.config}")
@@ -47,54 +51,51 @@ def main():
     print(f"Loaded configuration from {args.config}...")
 
     # --- ENSURE DETERMINISM ---
-    seed = config.get('random_seed')
+    seed = config.get("random_seed")
     if seed is not None:
         np.random.seed(seed)
         print(f"Set random seed to {seed} for reproducibility.")
     # --------------------------
 
     # --- SETUP COMPONENTS FROM CONFIG ---
-    backtest_cfg = config['backtest_settings']
-    strategy_cfg = config['strategy']
-    broker_cfg = config['broker_settings']
+    backtest_cfg = config["backtest_settings"]
+    strategy_cfg = config["strategy"]
+    broker_cfg = config["broker_settings"]
 
-    data_dir = Path(backtest_cfg['data_dir'])
-    symbol = backtest_cfg['symbol']
-    initial_cash = backtest_cfg['initial_cash']
+    data_dir = Path(backtest_cfg["data_dir"])
+    symbol = backtest_cfg["symbol"]
+    initial_cash = backtest_cfg["initial_cash"]
 
     # Dynamically select and instantiate the strategy
-    strategy_name = strategy_cfg['name']
+    strategy_name = strategy_cfg["name"]
     strategy_class = STRATEGY_MAPPING.get(strategy_name)
     if not strategy_class:
         print(f"Error: Strategy '{strategy_name}' not found in STRATEGY_MAPPING.")
         return
-    strategy = strategy_class(symbol=symbol, **strategy_cfg['params'])
+    strategy = strategy_class(symbol=symbol, **strategy_cfg["params"])
 
     data_handler = CsvDataHandler(csv_dir=data_dir, symbol=symbol)
     portfolio = Portfolio(data_handler=data_handler, initial_cash=initial_cash)
     broker = SimulatedBroker(
         data_handler=data_handler,
-        execution_style=broker_cfg.get('execution_style', 'INSTANT'),
-        num_ticks=broker_cfg.get('num_ticks', 4)
+        execution_style=broker_cfg.get("execution_style", "INSTANT"),
+        num_ticks=broker_cfg.get("num_ticks", 4),
     )
 
     # --- RUN THE ENGINE ---
     engine = Engine(
-        data_handler=data_handler,
-        strategy=strategy,
-        portfolio=portfolio,
-        broker=broker
+        data_handler=data_handler, strategy=strategy, portfolio=portfolio, broker=broker
     )
     engine.run()
 
     # --- PERFORMANCE ANALYSIS ---
     print("\n--- Performance Metrics ---")
-    equity_df = pd.DataFrame(portfolio.equity_curve).set_index('timestamp')
+    equity_df = pd.DataFrame(portfolio.equity_curve).set_index("timestamp")
     equity_df.to_csv("equity_curve.csv")
 
-    equity_df['returns'] = equity_df['equity'].pct_change().fillna(0.0)
-    sharpe = create_sharpe_ratio(equity_df['returns'])
-    _, max_dd = create_drawdowns(equity_df['equity'])
+    equity_df["returns"] = equity_df["equity"].pct_change().fillna(0.0)
+    sharpe = create_sharpe_ratio(equity_df["returns"])
+    _, max_dd = create_drawdowns(equity_df["equity"])
 
     print(f"Sharpe Ratio: {sharpe:.2f}")
     print(f"Maximum Drawdown: {max_dd:.2%}")
