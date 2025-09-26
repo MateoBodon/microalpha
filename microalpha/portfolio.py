@@ -58,7 +58,6 @@ class Portfolio:
 
         print(f"      BROKER->PORTFOLIO: Fill processed. Cash: {self.cash:.2f}, Holdings: {self.holdings}")
 
-    # on_signal method remains the same
     def on_signal(self, signal_event, events_queue):
         """
         Acts on a SignalEvent to generate an OrderEvent.
@@ -68,14 +67,17 @@ class Portfolio:
 
         symbol = signal_event.symbol
         direction = signal_event.direction
-        quantity = 100
+        # INCREASED order size to make TWAP meaningful
+        quantity = 400
 
         if direction == 'LONG':
             order = OrderEvent(signal_event.timestamp, symbol, quantity, 'BUY')
             events_queue.put(order)
-            print(f"    PORTFOLIO: Creating BUY order for {quantity} {symbol}.")
+            print(f"    PORTFOLIO: Creating BUY meta-order for {quantity} {symbol}.")
         elif direction == 'EXIT':
             if symbol in self.holdings and self.holdings[symbol] > 0:
-                order = OrderEvent(signal_event.timestamp, symbol, self.holdings[symbol], 'SELL')
+                # Ensure we don't sell more than we have
+                sell_quantity = self.holdings[symbol]
+                order = OrderEvent(signal_event.timestamp, symbol, sell_quantity, 'SELL')
                 events_queue.put(order)
-                print(f"    PORTFOLIO: Creating SELL order for {self.holdings[symbol]} {symbol}.")
+                print(f"    PORTFOLIO: Creating SELL meta-order for {sell_quantity} {symbol}.")

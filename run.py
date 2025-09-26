@@ -15,14 +15,17 @@ def main():
     symbol = "SPY"
     initial_cash = 100000.0
 
-    # --- CHOOSE STRATEGY ---
-    # strategy = MeanReversionStrategy(symbol=symbol, lookback=3, z_threshold=0.5)
     strategy = BreakoutStrategy(symbol=symbol, lookback=5)
-    # ----------------------------
-
+    
     data_handler = CsvDataHandler(csv_dir=data_dir, symbol=symbol)
     portfolio = Portfolio(data_handler=data_handler, initial_cash=initial_cash)
-    broker = SimulatedBroker(data_handler=data_handler)
+    
+    broker = SimulatedBroker(
+        data_handler=data_handler,
+        execution_style='TWAP',
+        num_ticks=4 # Split each order into 4 chunks
+    )
+    # ---------------------------------
 
     engine = Engine(
         data_handler=data_handler,
