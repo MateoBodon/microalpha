@@ -1,8 +1,10 @@
 # tests/test_no_lookahead.py
-import pytest
 import pandas as pd
+import pytest
+
+from microalpha.events import LookaheadError, SignalEvent
 from microalpha.portfolio import Portfolio
-from microalpha.events import SignalEvent, LookaheadError
+
 
 def test_portfolio_raises_lookahead_error_on_stale_signal():
     """

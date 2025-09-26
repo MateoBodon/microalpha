@@ -1,6 +1,6 @@
 # microalpha/risk.py
 import numpy as np
-import pandas as pd
+
 
 def create_sharpe_ratio(returns, periods=252):
     """
@@ -38,28 +38,28 @@ def bootstrap_sharpe_ratio(returns, num_simulations=5000, periods=252):
             'p_value': 1.0,
             'confidence_interval': (0.0, 0.0)
         }
-        
+
     sharpe_dist = []
-    
+
     for _ in range(num_simulations):
         # Create a bootstrap sample by sampling with replacement
         bootstrapped_returns = returns.sample(n=len(returns), replace=True)
-        
+
         # Calculate the Sharpe for this random sample
         sim_sharpe = create_sharpe_ratio(bootstrapped_returns, periods)
         sharpe_dist.append(sim_sharpe)
-    
+
     # --- STATISTICAL SIGNIFICANCE ---
     # The p-value is the probability of observing a Sharpe <= 0
     # by random chance, given our returns distribution.
     p_value = sum(1 for s in sharpe_dist if s <= 0.0) / num_simulations
-    
+
     # Calculate the 95% confidence interval
     confidence_interval = (
         np.percentile(sharpe_dist, 2.5),
         np.percentile(sharpe_dist, 97.5)
     )
-    
+
     return {
         'sharpe_dist': sharpe_dist,
         'p_value': p_value,

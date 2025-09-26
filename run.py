@@ -1,21 +1,23 @@
 # run.py
 import argparse
-import yaml
-import numpy as np
-import pandas as pd
 from pathlib import Path
 
-from microalpha.engine import Engine
-from microalpha.data import CsvDataHandler
-from microalpha.portfolio import Portfolio
+import numpy as np
+import pandas as pd
+import yaml
+
 from microalpha.broker import SimulatedBroker
-from microalpha.risk import create_sharpe_ratio, create_drawdowns
+from microalpha.data import CsvDataHandler
+from microalpha.engine import Engine
+from microalpha.portfolio import Portfolio
+from microalpha.risk import create_drawdowns, create_sharpe_ratio
+from microalpha.strategies.breakout import BreakoutStrategy
 
 # --- STRATEGY MAPPING ---
 # This allows us to dynamically load the strategy class from the config file.
 from microalpha.strategies.meanrev import MeanReversionStrategy
-from microalpha.strategies.breakout import BreakoutStrategy
 from microalpha.strategies.mm import NaiveMarketMakingStrategy
+
 STRATEGY_MAPPING = {
     "MeanReversionStrategy": MeanReversionStrategy,
     "BreakoutStrategy": BreakoutStrategy,
@@ -41,9 +43,9 @@ def main():
     except FileNotFoundError:
         print(f"Error: Config file not found at {args.config}")
         return
-    
+
     print(f"Loaded configuration from {args.config}...")
-    
+
     # --- ENSURE DETERMINISM ---
     seed = config.get('random_seed')
     if seed is not None:
@@ -67,7 +69,7 @@ def main():
         print(f"Error: Strategy '{strategy_name}' not found in STRATEGY_MAPPING.")
         return
     strategy = strategy_class(symbol=symbol, **strategy_cfg['params'])
-    
+
     data_handler = CsvDataHandler(csv_dir=data_dir, symbol=symbol)
     portfolio = Portfolio(data_handler=data_handler, initial_cash=initial_cash)
     broker = SimulatedBroker(
