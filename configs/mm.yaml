@@ -1,0 +1,18 @@
+# Configuration for a Naive Market Making strategy run
+
+backtest_settings:
+    symbol: "SPY"
+    initial_cash: 100000.0
+    data_dir: "data"
+
+strategy:
+    name: "NaiveMarketMakingStrategy"
+    params:
+        spread: 1.0 # A $1.00 bid-ask spread
+        inventory_limit: 100
+
+broker_settings:
+    execution_style: "INSTANT"
+
+# Seed for reproducibility
+random_seed: 42
