@@ -1,0 +1,18 @@
+# Configuration for a Mean Reversion strategy run
+
+backtest_settings:
+    symbol: "SPY"
+    initial_cash: 100000.0
+    data_dir: "data"
+
+strategy:
+    name: "MeanReversionStrategy"
+    params:
+        lookback: 3
+        z_threshold: 0.5
+
+broker_settings:
+    execution_style: "INSTANT"
+
+# Seed for reproducibility
+random_seed: 42
