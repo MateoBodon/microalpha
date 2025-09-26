@@ -1,5 +1,6 @@
 # microalpha/data.py
 from pathlib import Path
+from typing import Optional
 
 import pandas as pd
 
@@ -25,7 +26,7 @@ class CsvDataHandler(DataHandler):
         # hold the subset of data for a specific backtest period
         self.data = self.full_data
 
-    def _load_data(self) -> pd.DataFrame | None:
+    def _load_data(self) -> Optional[pd.DataFrame]:
         """Loads the entire CSV into a dataframe, returns it."""
         try:
             return pd.read_csv(self.file_path, index_col=0, parse_dates=True)
