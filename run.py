@@ -31,16 +31,16 @@ def main():
     # --- Performance Analysis ---
     print("\n--- Performance Metrics ---")
     equity_df = pd.DataFrame(portfolio.equity_curve).set_index('timestamp')
-    
     equity_df.to_csv("equity_curve.csv") # Save the results for the notebook
 
     equity_df['returns'] = equity_df['equity'].pct_change().fillna(0.0)
-
     sharpe = create_sharpe_ratio(equity_df['returns'])
     _, max_dd = create_drawdowns(equity_df['equity'])
 
     print(f"Sharpe Ratio: {sharpe:.2f}")
     print(f"Maximum Drawdown: {max_dd:.2%}")
+    print(f"Total Turnover: ${portfolio.total_turnover:,.2f}")
+    print(f"Average Exposure: {equity_df['exposure'].mean():.2%}")
     print("-------------------------")
 
 
