@@ -16,11 +16,11 @@ import yaml
 from .broker import SimulatedBroker
 from .data import CsvDataHandler
 from .engine import Engine
+from .execution import Executor, KyleLambda, SquareRootImpact, TWAP
 from .manifest import build as build_manifest, write as write_manifest
+from .metrics import compute_metrics
 from .portfolio import Portfolio
-from .risk import create_drawdowns, create_sharpe_ratio
 from .runner import persist_config, prepare_artifacts_dir, resolve_path
-from .slippage import VolumeSlippageModel
 from .strategies.breakout import BreakoutStrategy
 from .strategies.meanrev import MeanReversionStrategy
 from .strategies.mm import NaiveMarketMakingStrategy
@@ -32,10 +32,17 @@ STRATEGY_MAPPING = {
     "NaiveMarketMakingStrategy": NaiveMarketMakingStrategy,
 }
 
+EXECUTION_MAPPING = {
+    "instant": Executor,
+    "linear": Executor,
+    "twap": TWAP,
+    "sqrt": SquareRootImpact,
+    "squareroot": SquareRootImpact,
+    "kyle": KyleLambda,
+}
+
 
 def run_walk_forward(config_path: str) -> Dict[str, Any]:
-    """Execute walk-forward validation described by ``config_path``."""
-
     cfg_path = Path(config_path).expanduser().resolve()
     with cfg_path.open("r", encoding="utf-8") as handle:
         config = yaml.safe_load(handle)
@@ -65,11 +72,10 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
     if not param_grid:
         raise ValueError("Parameter grid is required for walk-forward validation")
 
-    window = wf_cfg
-    training_days = int(window["training_days"])
-    testing_days = int(window["testing_days"])
-    start_date = pd.Timestamp(window["start"])
-    end_date = pd.Timestamp(window["end"])
+    training_days = int(wf_cfg["training_days"])
+    testing_days = int(wf_cfg["testing_days"])
+    start_date = pd.Timestamp(wf_cfg["start"])
+    end_date = pd.Timestamp(wf_cfg["end"])
 
     data_handler = CsvDataHandler(csv_dir=data_dir, symbol=symbol)
     if data_handler.data is None:
@@ -80,6 +86,8 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
     total_turnover = 0.0
 
     current_date = start_date
+    seed = config.get("random_seed", 42)
+
     while current_date + pd.Timedelta(days=training_days + testing_days) <= end_date:
         train_start = current_date
         train_end = train_start + pd.Timedelta(days=training_days)
@@ -95,7 +103,8 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
             symbol,
             initial_cash,
             broker_cfg,
-            config.get("random_seed", 42),
+            portfolio_cfg,
+            seed,
         )
 
         if not best_params:
@@ -120,25 +129,14 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
         strategy = strategy_class(
             symbol=symbol, warmup_prices=warmup_prices, **best_params
         )
-        portfolio = Portfolio(data_handler=data_handler, initial_cash=initial_cash)
-        broker = SimulatedBroker(
-            data_handler=data_handler,
-            commission=float(broker_cfg.get("commission", 1.0)),
-            slippage_model=VolumeSlippageModel(broker_cfg.get("price_impact", 0.0)),
-            mode=broker_cfg.get("mode", "twap"),
-        )
-        engine = Engine(
-            data_handler,
-            strategy,
-            portfolio,
-            broker,
-            seed=config.get("random_seed", 42),
-        )
+        portfolio = _build_portfolio(data_handler, initial_cash, portfolio_cfg)
+        executor = _build_executor(data_handler, broker_cfg)
+        broker = SimulatedBroker(executor)
+        engine = Engine(data_handler, strategy, portfolio, broker, seed=seed)
         engine.run()
 
         if portfolio.equity_curve:
             equity_records.extend(portfolio.equity_curve)
-
         total_turnover += float(portfolio.total_turnover)
 
         folds.append(
@@ -183,6 +181,7 @@ def _optimise_parameters(
     symbol: str,
     initial_cash: float,
     broker_cfg: Dict[str, Any],
+    portfolio_cfg: Dict[str, Any],
     seed: int,
 ) -> Tuple[Dict[str, Any], float]:
     best_params: Dict[str, Any] | None = None
@@ -196,13 +195,9 @@ def _optimise_parameters(
 
         data_handler.set_date_range(train_start, train_end)
         strategy = strategy_class(symbol=symbol, **params)
-        portfolio = Portfolio(data_handler=data_handler, initial_cash=initial_cash)
-        broker = SimulatedBroker(
-            data_handler=data_handler,
-            commission=float(broker_cfg.get("commission", 1.0)),
-            slippage_model=VolumeSlippageModel(broker_cfg.get("price_impact", 0.0)),
-            mode=broker_cfg.get("mode", "twap"),
-        )
+        portfolio = _build_portfolio(data_handler, initial_cash, portfolio_cfg)
+        executor = _build_executor(data_handler, broker_cfg)
+        broker = SimulatedBroker(executor)
 
         engine = Engine(data_handler, strategy, portfolio, broker, seed=seed)
         engine.run()
@@ -210,9 +205,8 @@ def _optimise_parameters(
         if not portfolio.equity_curve:
             continue
 
-        equity_df = pd.DataFrame(portfolio.equity_curve).set_index("timestamp")
-        equity_df["returns"] = equity_df["equity"].pct_change().fillna(0.0)
-        sharpe = create_sharpe_ratio(equity_df["returns"])
+        metrics = compute_metrics(portfolio.equity_curve, portfolio.total_turnover)
+        sharpe = metrics.get("sharpe_ratio", float("-inf"))
 
         if sharpe > best_sharpe:
             best_sharpe = sharpe
@@ -222,6 +216,31 @@ def _optimise_parameters(
         return {}, best_sharpe
 
     return best_params, best_sharpe
+
+
+def _build_portfolio(data_handler, initial_cash: float, portfolio_cfg: Dict[str, Any]) -> Portfolio:
+    return Portfolio(
+        data_handler=data_handler,
+        initial_cash=initial_cash,
+        max_exposure=portfolio_cfg.get("max_exposure"),
+        max_drawdown_stop=portfolio_cfg.get("max_drawdown_stop"),
+        turnover_cap=portfolio_cfg.get("turnover_cap"),
+        kelly_fraction=portfolio_cfg.get("kelly_fraction"),
+    )
+
+
+def _build_executor(data_handler, broker_cfg: Dict[str, Any]):
+    exec_type = broker_cfg.get("mode", "twap").lower()
+    executor_cls = EXECUTION_MAPPING.get(exec_type, Executor)
+    kwargs = {
+        "price_impact": broker_cfg.get("price_impact", 0.0),
+        "commission": broker_cfg.get("commission", 0.0),
+    }
+    if executor_cls is KyleLambda:
+        kwargs["lam"] = broker_cfg.get("lam", broker_cfg.get("price_impact", 0.0))
+    if executor_cls is TWAP and broker_cfg.get("slices"):
+        kwargs["slices"] = broker_cfg.get("slices")
+    return executor_cls(data_handler=data_handler, **kwargs)
 
 
 def _collect_warmup_prices(
@@ -240,45 +259,18 @@ def _summarise_walkforward(
     artifacts_dir: Path,
     total_turnover: float,
 ) -> Dict[str, Any]:
-    if not equity_records:
-        metrics = {
-            "equity_curve_path": None,
-            "sharpe_ratio": 0.0,
-            "max_drawdown": 0.0,
-            "total_turnover": float(total_turnover),
-            "avg_exposure": 0.0,
-            "final_equity": 0.0,
-        }
-        metrics_path = artifacts_dir / "metrics.json"
-        with metrics_path.open("w", encoding="utf-8") as handle:
-            json.dump(metrics, handle, indent=2)
-        metrics["metrics_path"] = str(metrics_path)
-        return metrics
+    metrics = compute_metrics(equity_records, total_turnover)
+    df = metrics.pop("equity_df")
 
-    equity_df = pd.DataFrame(equity_records).drop_duplicates("timestamp")
-    equity_df = equity_df.set_index("timestamp").sort_index()
-
-    equity_path = artifacts_dir / "walk_forward_equity.csv"
-    equity_df.to_csv(equity_path)
-
-    equity_df["returns"] = equity_df["equity"].pct_change().fillna(0.0)
-    sharpe = float(create_sharpe_ratio(equity_df["returns"]))
-    _, max_dd = create_drawdowns(equity_df["equity"])
-
-    avg_exposure = float(equity_df["exposure"].mean())
-
-    metrics = {
-        "equity_curve_path": str(equity_path),
-        "sharpe_ratio": round(sharpe, 4),
-        "max_drawdown": float(max_dd),
-        "total_turnover": float(total_turnover),
-        "avg_exposure": avg_exposure,
-        "final_equity": float(equity_df["equity"].iloc[-1]),
-    }
+    if not df.empty:
+        equity_path = artifacts_dir / "walk_forward_equity.csv"
+        df.to_csv(equity_path)
+        metrics["equity_curve_path"] = str(equity_path)
+    else:
+        metrics["equity_curve_path"] = None
 
     metrics_path = artifacts_dir / "metrics.json"
     with metrics_path.open("w", encoding="utf-8") as handle:
         json.dump(metrics, handle, indent=2)
-
     metrics["metrics_path"] = str(metrics_path)
     return metrics

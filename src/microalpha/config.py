@@ -12,6 +12,8 @@ class ExecModelCfg(BaseModel):
     type: str = "twap"
     aln: float = 0.1
     price_impact: float = 0.0
+    lam: float | None = None
+    slices: int | None = None
 
 
 class StrategyCfg(BaseModel):
@@ -27,6 +29,10 @@ class BacktestCfg(BaseModel):
     exec: ExecModelCfg = Field(default_factory=ExecModelCfg)
     strategy: StrategyCfg
     seed: int = 42
+    max_exposure: float | None = None
+    max_drawdown_stop: float | None = None
+    turnover_cap: float | None = None
+    kelly_fraction: float | None = None
 
     @property
     def resolved_data_path(self) -> Path:
@@ -38,4 +44,3 @@ def parse_config(raw: Any) -> BacktestCfg:
         return BacktestCfg.model_validate(raw)
     except ValidationError as exc:
         raise ValueError(str(exc)) from exc
-

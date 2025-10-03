@@ -2,6 +2,7 @@ from microalpha.broker import SimulatedBroker
 from microalpha.engine import Engine
 from microalpha.events import MarketEvent, SignalEvent
 from microalpha.portfolio import Portfolio
+from microalpha.execution import Executor
 
 
 class StubData:
@@ -51,7 +52,8 @@ def test_orders_fill_no_earlier_than_next_tick():
     data = StubData(events)
     strategy = SingleTradeStrategy()
     portfolio = LoggingPortfolio(data, 100000.0)
-    broker = SimulatedBroker(data)
+    executor = Executor(data)
+    broker = SimulatedBroker(executor)
 
     engine = Engine(data, strategy, portfolio, broker)
     engine.run()

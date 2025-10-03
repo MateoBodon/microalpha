@@ -4,11 +4,16 @@ data_path: "../data"
 symbol: "SPY"
 cash: 100000.0
 seed: 42
+max_exposure: 0.6
+max_drawdown_stop: 0.25
+turnover_cap: 500000.0
+kelly_fraction: 0.05
 
 exec:
   type: "twap"
   aln: 0.5
   price_impact: 0.00005
+  slices: 4
 
 strategy:
   name: "MeanReversionStrategy"

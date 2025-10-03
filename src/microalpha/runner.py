@@ -10,7 +10,6 @@ from typing import Any, Dict
 import json
 import shutil
 
-import pandas as pd
 import yaml
 
 from .broker import SimulatedBroker
@@ -18,9 +17,9 @@ from .config import parse_config
 from .data import CsvDataHandler
 from .engine import Engine
 from .manifest import build as build_manifest, write as write_manifest
+from .metrics import compute_metrics
 from .portfolio import Portfolio
-from .risk import create_drawdowns, create_sharpe_ratio
-from .slippage import VolumeSlippageModel
+from .execution import Executor, KyleLambda, SquareRootImpact, TWAP
 from .strategies.breakout import BreakoutStrategy
 from .strategies.meanrev import MeanReversionStrategy
 from .strategies.mm import NaiveMarketMakingStrategy
@@ -30,6 +29,15 @@ STRATEGY_MAPPING = {
     "MeanReversionStrategy": MeanReversionStrategy,
     "BreakoutStrategy": BreakoutStrategy,
     "NaiveMarketMakingStrategy": NaiveMarketMakingStrategy,
+}
+
+EXECUTION_MAPPING = {
+    "instant": Executor,
+    "linear": Executor,
+    "twap": TWAP,
+    "sqrt": SquareRootImpact,
+    "squareroot": SquareRootImpact,
+    "kyle": KyleLambda,
 }
 
 
@@ -65,28 +73,43 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
     if data_handler.data is None:
         raise FileNotFoundError(f"Unable to load data for symbol '{symbol}' from {data_dir}")
 
-    portfolio = Portfolio(data_handler=data_handler, initial_cash=initial_cash)
-    slippage_model = VolumeSlippageModel(price_impact=cfg.exec.price_impact)
-    broker = SimulatedBroker(
+    portfolio = Portfolio(
         data_handler=data_handler,
-        commission=cfg.exec.aln,
-        slippage_model=slippage_model,
-        mode=cfg.exec.type,
+        initial_cash=initial_cash,
+        max_exposure=cfg.max_exposure,
+        max_drawdown_stop=cfg.max_drawdown_stop,
+        turnover_cap=cfg.turnover_cap,
+        kelly_fraction=cfg.kelly_fraction,
     )
+    exec_type = cfg.exec.type.lower() if cfg.exec.type else "instant"
+    executor_cls = EXECUTION_MAPPING.get(exec_type, Executor)
+    exec_kwargs: Dict[str, Any] = {
+        "price_impact": cfg.exec.price_impact,
+        "commission": cfg.exec.aln,
+    }
+    if executor_cls is KyleLambda:
+        exec_kwargs["lam"] = cfg.exec.lam if cfg.exec.lam is not None else cfg.exec.price_impact
+    if executor_cls is TWAP and cfg.exec.slices:
+        exec_kwargs["slices"] = cfg.exec.slices
+    executor = executor_cls(data_handler=data_handler, **exec_kwargs)
+    broker = SimulatedBroker(executor)
 
     strategy = strategy_class(symbol=symbol, **strategy_params)
     engine = Engine(data_handler, strategy, portfolio, broker, seed=cfg.seed)
     engine.run()
 
-    metrics = _collect_metrics(portfolio, artifacts_dir)
+    metrics = compute_metrics(portfolio.equity_curve, portfolio.total_turnover)
+    metrics_paths = _persist_metrics(metrics, artifacts_dir)
 
     result: Dict[str, Any] = asdict(manifest)
-    result.update({
-        "artifacts_dir": str(artifacts_dir),
-        "strategy": strategy_name,
-        "seed": cfg.seed,
-        "metrics": metrics,
-    })
+    result.update(
+        {
+            "artifacts_dir": str(artifacts_dir),
+            "strategy": strategy_name,
+            "seed": cfg.seed,
+            "metrics": metrics_paths,
+        }
+    )
     return result
 
 
@@ -113,35 +136,12 @@ def persist_config(cfg_path: Path, artifacts_dir: Path) -> None:
     shutil.copy2(cfg_path, destination)
 
 
-def _collect_metrics(portfolio: Portfolio, artifacts_dir: Path) -> Dict[str, Any]:
-    if not portfolio.equity_curve:
-        return {
-            "equity_curve_path": None,
-            "sharpe_ratio": 0.0,
-            "max_drawdown": 0.0,
-            "total_turnover": float(portfolio.total_turnover),
-            "avg_exposure": 0.0,
-        }
-
-    equity_df = pd.DataFrame(portfolio.equity_curve).drop_duplicates("timestamp")
-    equity_df = equity_df.set_index("timestamp").sort_index()
-
+def _persist_metrics(metrics: Dict[str, Any], artifacts_dir: Path) -> Dict[str, Any]:
+    df = metrics.pop("equity_df")
     equity_path = artifacts_dir / "equity_curve.csv"
-    equity_df.to_csv(equity_path)
+    df.to_csv(equity_path)
 
-    equity_df["returns"] = equity_df["equity"].pct_change().fillna(0.0)
-    sharpe = float(create_sharpe_ratio(equity_df["returns"]))
-    _, max_dd = create_drawdowns(equity_df["equity"])
-
-    metrics = {
-        "equity_curve_path": str(equity_path),
-        "sharpe_ratio": round(sharpe, 4),
-        "max_drawdown": float(max_dd),
-        "total_turnover": float(portfolio.total_turnover),
-        "avg_exposure": float(equity_df["exposure"].mean()),
-        "final_equity": float(equity_df["equity"].iloc[-1]),
-    }
-
+    metrics["equity_curve_path"] = str(equity_path)
     metrics_path = artifacts_dir / "metrics.json"
     with metrics_path.open("w", encoding="utf-8") as handle:
         json.dump(metrics, handle, indent=2)

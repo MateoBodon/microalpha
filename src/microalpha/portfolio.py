@@ -14,7 +14,16 @@ class PortfolioPosition:
 
 
 class Portfolio:
-    def __init__(self, data_handler, initial_cash: float = 100000.0, default_order_qty: int = 400):
+    def __init__(
+        self,
+        data_handler,
+        initial_cash: float = 100000.0,
+        default_order_qty: int = 400,
+        max_exposure: float | None = None,
+        max_drawdown_stop: float | None = None,
+        turnover_cap: float | None = None,
+        kelly_fraction: float | None = None,
+    ):
         self.data_handler = data_handler
         self.initial_cash = initial_cash
         self.cash = initial_cash
@@ -23,6 +32,14 @@ class Portfolio:
         self.current_time: int | None = None
         self.total_turnover = 0.0
         self.default_order_qty = default_order_qty
+        self.max_exposure = max_exposure
+        self.max_drawdown_stop = max_drawdown_stop
+        self.turnover_cap = turnover_cap
+        self.kelly_fraction = kelly_fraction
+        self.high_water_mark = initial_cash
+        self.drawdown_halted = False
+        self.market_value = 0.0
+        self.last_equity = initial_cash
 
     def on_market(self, event: MarketEvent) -> None:
         self.current_time = event.timestamp
@@ -35,6 +52,17 @@ class Portfolio:
 
         total_equity = self.cash + market_value
         exposure = market_value / total_equity if total_equity else 0.0
+        self.market_value = market_value
+        self.last_equity = total_equity
+        self.high_water_mark = max(self.high_water_mark, total_equity)
+
+        if (
+            self.max_drawdown_stop is not None
+            and total_equity < self.high_water_mark
+            and (self.high_water_mark - total_equity) / self.high_water_mark >= self.max_drawdown_stop
+        ):
+            self.drawdown_halted = True
+
         self.equity_curve.append(
             {
                 "timestamp": event.timestamp,
@@ -47,10 +75,6 @@ class Portfolio:
         if self.current_time is not None and signal.timestamp < self.current_time:
             raise LookaheadError("Signal event timestamp is in the past.")
 
-        qty = self._signal_quantity(signal)
-        if qty == 0:
-            return []
-
         if signal.side == "EXIT":
             position = self.positions.get(signal.symbol)
             if not position or position.qty == 0:
@@ -58,7 +82,30 @@ class Portfolio:
             side = "SELL" if position.qty > 0 else "BUY"
             return [OrderEvent(signal.timestamp, signal.symbol, abs(position.qty), side)]
 
+        if self.drawdown_halted:
+            return []
+
+        qty = self._signal_quantity(signal)
+        if qty == 0:
+            return []
+
+        price = self.data_handler.get_latest_price(signal.symbol, signal.timestamp)
+        if price is None:
+            return []
+
+        if self.turnover_cap is not None:
+            projected_turnover = self.total_turnover + price * qty
+            if projected_turnover > self.turnover_cap:
+                return []
+
         side = "BUY" if signal.side == "LONG" else "SELL"
+        anticipated_market_value = self.market_value + (qty if side == "BUY" else -qty) * price
+        projected_equity = self.last_equity if self.last_equity else self.initial_cash
+        projected_exposure = abs(anticipated_market_value) / projected_equity if projected_equity else 0.0
+
+        if self.max_exposure is not None and projected_exposure > self.max_exposure:
+            return []
+
         return [OrderEvent(signal.timestamp, signal.symbol, qty, side)]
 
     def on_fill(self, fill: FillEvent) -> None:
@@ -76,5 +123,9 @@ class Portfolio:
     def _signal_quantity(self, signal: SignalEvent) -> int:
         if signal.meta and "qty" in signal.meta:
             return int(signal.meta["qty"])
+        if self.kelly_fraction and self.last_equity and self.current_time is not None:
+            price = self.data_handler.get_latest_price(signal.symbol, self.current_time)
+            if price:
+                alloc = self.last_equity * self.kelly_fraction
+                return max(int(alloc / price), 0)
         return self.default_order_qty
-

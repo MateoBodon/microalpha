@@ -361,11 +361,16 @@ data_path: "../data"
 symbol: "SPY"
 cash: 100000.0
 seed: 42
+max_exposure: 0.6
+max_drawdown_stop: 0.25
+turnover_cap: 500000.0
+kelly_fraction: 0.05
 
 exec:
   type: "twap"
   aln: 0.5
   price_impact: 0.00005
+  slices: 4
 
 strategy:
   name: "MeanReversionStrategy"
@@ -411,16 +416,21 @@ data_handler.set_date_range("2025-01-01", "2025-01-31")
 ## Performance Analysis
 
 ### Built-in Metrics
-- **Sharpe Ratio**: Risk-adjusted returns (annualized)
+- **Sharpe Ratio** (annualised) and **Sortino Ratio** for downside risk
 - **Maximum Drawdown**: Largest peak-to-trough decline
-- **Total Turnover**: Cumulative trading volume
-- **Average Exposure**: Portfolio utilization over time
+- **Total Turnover** and **Traded Days** to gauge activity
+- **Average Exposure** and **Final Equity**
 
 ### Tearsheet Components
 1. **Equity Curve**: Portfolio value over time
 2. **Drawdown Series**: Risk visualization
 3. **Exposure Tracking**: Position sizing over time
 4. **Bootstrap Analysis**: Statistical significance testing
+
+Render a quick report from any run:
+```bash
+python reports/tearsheet.py artifacts/<run-id>/equity_curve.csv --output tearsheet.png
+```
 
 ### Example Output
 ```

@@ -20,6 +20,8 @@ dist/
 build/
 artifacts/
 reports/
+!reports/
+!reports/*.py
 *.csv
 !examples/*.csv
 *.png
