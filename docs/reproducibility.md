@@ -1,30 +1,49 @@
 # Reproducibility
 
-Microalpha emits a manifest for every run so you can replay results.
+Microalpha emits a manifest for every run so you can replay results and audit configuration drift.
 
 ## Manifest fields
 
+Each backtest stores `artifacts/<run_id>/manifest.json` with:
+
+- `run_id` – UTC timestamp + short Git SHA used to scope outputs.
+- `microalpha_version` – package version recorded at runtime.
 - `git_sha` – repository commit used for the run.
+- `config_path` – absolute path to the YAML config used in the run.
+- `config_sha256` – hash of the raw YAML bytes for integrity checking.
 - `python` – interpreter version string.
 - `platform` – OS information.
-- `seed` – RNG seed applied globally (NumPy and `random`).
-- `config_path` – absolute path to the YAML config used in the run.
-- `artifacts_dir` – where equity curves, metrics, and trade logs were written.
+- `seed` – RNG seed applied to the shared `numpy.random.Generator`.
+- `artifacts_dir` – directory containing metrics, equity curves, and trade logs.
 
-The manifest is produced in `src/microalpha/manifest.py` and stored alongside metrics in the artifacts directory.
+The manifest is defined in [`src/microalpha/manifest.py`](https://github.com/MateoBodon/microalpha/blob/main/src/microalpha/manifest.py) and written by [`src/microalpha/runner.py`](https://github.com/MateoBodon/microalpha/blob/main/src/microalpha/runner.py).
+
+Example snippet:
+
+```json
+{
+  "run_id": "2024-03-27T14-22-19Z-4f3c1d1",
+  "microalpha_version": "0.1.1",
+  "git_sha": "4f3c1d1",
+  "config_path": "/workspace/microalpha/configs/meanrev.yaml",
+  "config_sha256": "2f4b32...",
+  "seed": 7,
+  "artifacts_dir": "artifacts/2024-03-27T14-22-19Z-4f3c1d1"
+}
+```
 
 ## Trade logs
 
-When executions occur, the portfolio writes `trades.csv` with timestamps, quantities, prices, and latency information. This allows downstream reconciliation and execution-quality analysis.
+Executions append JSON Lines to `artifacts/<run_id>/trades.jsonl` via [`JsonlWriter`](https://github.com/MateoBodon/microalpha/blob/main/src/microalpha/logging.py). Each line captures `timestamp`, `order_id`, `symbol`, `side`, `qty`, `price`, `commission`, `slippage`, `inventory`, and `cash`, enabling downstream reconciliation and deterministic comparisons ([`tests/test_trades_jsonl.py`](https://github.com/MateoBodon/microalpha/blob/main/tests/test_trades_jsonl.py)).
 
 ## CLI determinism
 
-The CLI sets seeds before instantiating the engine and ensures all stochastic components draw from the seeded RNG (see `Engine.__init__`).
+`microalpha run` and `microalpha wfv` construct a single seeded `numpy.random.Generator` and pass it to the engine, broker, and portfolio to remove duplicate seeding. [`tests/test_determinism.py`](https://github.com/MateoBodon/microalpha/blob/main/tests/test_determinism.py) verifies repeated runs produce identical manifests, metrics, and trade logs.
 
 To reproduce a run:
 
 ```bash
-python -m microalpha.cli run -c configs/meanrev.yaml
+microalpha run -c configs/meanrev.yaml
 ```
 
 Then inspect the artifacts folder recorded in the manifest to fetch equity curves, metrics, and trades.

@@ -6,7 +6,9 @@
 ![Coverage](https://img.shields.io/badge/coverage-%3E85%25-brightgreen.svg)
 [![PyPI version](https://badge.fury.io/py/microalpha.svg)](https://badge.fury.io/py/microalpha)
 
-**TL;DR:** An opinionated, research-hygienic backtester that enforces strict time-ordering, offers out-of-sample walk-forward evaluation with per-fold parameter selection, and includes realistic market frictions including Almgren-Chriss execution modeling, slippage, and commission costs.
+**TL;DR:** An opinionated, research-hygienic backtester that enforces strict time-ordering, offers out-of-sample walk-forward evaluation with per-fold parameter selection, and includes realistic market frictions including TWAP + linear/√-impact/Kyle-λ execution modeling, slippage, and commission costs.
+
+📚 **Documentation:** https://mateobodon.github.io/microalpha (build locally with `mkdocs serve`).
 
 ---
 
@@ -48,7 +50,7 @@
 - **Professional tearsheet generation** with equity curves and risk analysis
 
 ### ⚡ **Execution Modeling**
-- **Almgren-Chriss TWAP execution** splitting large orders across multiple time periods
+- **TWAP + linear/√-impact/Kyle-λ execution** splitting large orders across multiple time periods
 - **Volume-based slippage modeling** with configurable price impact
 - **Commission costs** and realistic transaction costs
 - **Instant vs. TWAP execution modes**
@@ -120,6 +122,10 @@ if self.current_time and signal_event.timestamp < self.current_time:
 - No future data is accessible during signal generation
 - Portfolio state updates occur only after market events
 
+### Time-ordering & t+1
+- [`tests/test_time_ordering.py`](tests/test_time_ordering.py) enforces event sequencing and ensures strategy logic only consumes data up to the current timestamp.
+- [`tests/test_tplus1_execution.py`](tests/test_tplus1_execution.py) verifies that executions settle on the next tick, preserving t+1 accounting for fills and portfolio updates.
+
 ### Walk-Forward Validation
 - Training and testing periods are strictly separated
 - Parameters are optimized only on historical data
@@ -185,9 +191,9 @@ elif self.invested > -self.inventory_limit:
 
 ## Execution & Costs
 
-### Almgren-Chriss TWAP Execution
+### TWAP + linear/√-impact/Kyle-λ Execution
 
-The broker implements sophisticated execution modeling based on the Almgren-Chriss framework:
+The broker implements stylized execution models that capture key microstructure effects without claiming a full Almgren–Chriss schedule:
 
 ```python
 def _schedule_twap_orders(self, order_event):
@@ -253,7 +259,13 @@ def run_walk_forward_validation(data_dir, symbol, strategy_class, param_grid,
     )
     
     # Out-of-sample testing
-    engine = Engine(data_handler, strategy, portfolio, broker)
+    engine = Engine(
+        data_handler,
+        strategy,
+        portfolio,
+        broker,
+        rng=np.random.default_rng(42),
+    )
     engine.run()
 ```
 
@@ -500,13 +512,12 @@ Numbers will vary with hardware; use the benchmark harness to gather comparable 
 
 ### Current Constraints
 - **Single Asset**: Strategies operate on one symbol at a time
-- **Market Orders Only**: No limit order support
+- **Simplified L2 Order Book**: FIFO queue with latency/partial fill modeling for a single asset; execution models are stylized and the full Almgren–Chriss schedule is not implemented.
 - **Daily Frequency**: Optimized for daily data (intraday possible)
 - **Static Parameters**: No dynamic parameter adjustment during backtest
 
 ### Known Issues
 - TWAP execution may not complete if insufficient future data
-- Slippage model is simplified (no order book simulation)
 - No position sizing based on volatility or risk metrics
 
 ---

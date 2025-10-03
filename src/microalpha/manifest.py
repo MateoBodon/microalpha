@@ -12,19 +12,28 @@ import random
 import subprocess
 import sys
 
+import importlib.metadata as importlib_metadata
 import numpy as np
 
 
 @dataclass
 class Manifest:
+    run_id: str
     git_sha: str
     python: str
     platform: str
+    microalpha_version: str
     seed: int
     config_path: str
+    config_sha256: str
 
 
-def build(seed: Optional[int], config_path: str) -> Manifest:
+def build(
+    seed: Optional[int],
+    config_path: str,
+    run_id: str,
+    config_sha256: str,
+) -> Manifest:
     """Construct a manifest and synchronise global RNG state."""
 
     if seed is None:
@@ -44,7 +53,21 @@ def build(seed: Optional[int], config_path: str) -> Manifest:
     except Exception:
         sha = "unknown"
 
-    return Manifest(sha, sys.version, platform.platform(), seed, os.path.abspath(config_path))
+    try:
+        version = importlib_metadata.version("microalpha")
+    except importlib_metadata.PackageNotFoundError:
+        version = "unknown"
+
+    return Manifest(
+        run_id,
+        sha,
+        sys.version,
+        platform.platform(),
+        version,
+        seed,
+        os.path.abspath(config_path),
+        config_sha256,
+    )
 
 
 def write(manifest: Manifest, outdir: str) -> None:

@@ -1,8 +1,10 @@
-import json
 from pathlib import Path
 
 import pandas as pd
+import yaml
 
+from microalpha.config import BacktestCfg, ExecModelCfg, StrategyCfg
+from microalpha.config_wfv import WFVCfg, WalkForwardWindow
 from microalpha.walkforward import run_walk_forward
 
 
@@ -13,26 +15,30 @@ def build_config(tmp_path: Path) -> Path:
     df = pd.DataFrame({"date": dates, "close": range(100, 112)})
     df.to_csv(data_dir / "SPY.csv", index=False)
 
-    config = {
-        "data": {"directory": str(data_dir), "symbol": "SPY"},
-        "walkforward": {
-            "start": "2025-01-01",
-            "end": "2025-01-12",
-            "training_days": 4,
-            "testing_days": 2,
-        },
-        "strategy": {
-            "name": "MeanReversionStrategy",
-            "param_grid": {"lookback": [2, 3], "z": [0.5, 1.0]},
-        },
-        "broker_settings": {"mode": "instant"},
-        "portfolio": {"initial_cash": 100000},
-        "random_seed": 7,
-        "artifacts_dir": str(tmp_path / "artifacts"),
-    }
+    config = WFVCfg(
+        template=BacktestCfg(
+            data_path=str(data_dir),
+            symbol="SPY",
+            cash=100000.0,
+            seed=7,
+            exec=ExecModelCfg(type="instant"),
+            strategy=StrategyCfg(
+                name="MeanReversionStrategy",
+                params={"lookback": 2, "z": 0.5},
+            ),
+        ),
+        walkforward=WalkForwardWindow(
+            start="2025-01-01",
+            end="2025-01-12",
+            training_days=4,
+            testing_days=2,
+        ),
+        grid={"lookback": [2, 3], "z": [0.5, 1.0]},
+        artifacts_dir=str(tmp_path / "artifacts"),
+    )
 
     cfg_path = tmp_path / "wf_config.yaml"
-    cfg_path.write_text(json.dumps(config))
+    cfg_path.write_text(yaml.safe_dump(config.model_dump(mode="json")))
     return cfg_path
 
 

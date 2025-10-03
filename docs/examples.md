@@ -1,25 +1,35 @@
 # Examples
 
-## Mean Reversion CLI
+Kick off experiments quickly using the bundled configuration files in `configs/`.
+
+## Mean reversion backtest
 
 ```bash
-python -m microalpha.cli run -c configs/meanrev.yaml
+microalpha run -c configs/meanrev.yaml
 ```
 
-Produces equity/metrics/trade logs under `artifacts/<timestamp>` and prints a JSON manifest.
+Produces equity, metrics, and trade logs under `artifacts/<run_id>/` while exercising the TWAP execution model.
+
+## Breakout momentum
+
+```bash
+microalpha run -c configs/breakout.yaml
+```
+
+Runs the breakout strategy with configurable lookbacks and writes results to its own artifact directory.
+
+## Limit order book market making
+
+```bash
+microalpha run -c configs/mm.yaml
+```
+
+Bootstraps the level-2 order book simulator for a naive market-making strategy to showcase FIFO, partial fills, and latency.
 
 ## Walk-forward validation
 
 ```bash
-python -m microalpha.cli wfv -c configs/wfv_meanrev.yaml
+microalpha wfv -c configs/wfv_meanrev.yaml
 ```
 
-Generates fold metrics, SPA-checked Sharpe ratios, and aggregate equity curves.
-
-## Market-making visualization
-
-```bash
-python scripts/plot_mm_spread.py
-```
-
-Runs both LOB and TWAP execution variants, then writes `artifacts/mm_demo/mm_spread.png` showing realized spread against inventory.
+Executes the unified walk-forward configuration model, emitting per-fold manifests and out-of-sample metrics for each parameter combination.

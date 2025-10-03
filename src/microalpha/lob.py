@@ -18,9 +18,12 @@ class LatencyModel:
     fill_fixed: float = 0.01
     fill_jitter: float = 0.002
     seed: Optional[int] = None
+    rng: np.random.Generator | None = field(default=None, repr=False)
 
     def __post_init__(self) -> None:
-        self._rng = np.random.default_rng(self.seed)
+        if self.rng is None:
+            self.rng = np.random.default_rng(self.seed)
+        self._rng = self.rng
 
     def sample(self) -> tuple[float, float]:
         ack = self.ack_fixed + self._rng.uniform(0, self.ack_jitter)

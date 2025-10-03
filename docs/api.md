@@ -1,39 +1,58 @@
 # API Reference
 
-## `microalpha.runner`
+This page summarises the primary extension points for building strategies and tooling on top of Microalpha.
+
+## Runner (`microalpha.runner`)
 
 - `run_from_config(path: str) -> dict`
-  - Parses a YAML configuration, executes a backtest, and returns a manifest-style result containing metrics, fold summaries (for WFCV), and paths to artifacts.
+  - Loads a YAML config, resolves paths, executes the backtest, and returns a manifest-style dictionary containing artifact paths.
+- `prepare_artifacts_dir(cfg_path: Path, config: dict) -> tuple[str, Path]`
+  - Allocates an isolated `artifacts/<run_id>` directory for each run.
 
-## `microalpha.engine.Engine`
+## Engine (`microalpha.engine.Engine`)
 
-- `__init__(data, strategy, portfolio, broker, seed=42)`
-- `run()` – processes market events in chronological order.
+```python
+Engine(data, strategy, portfolio, broker, rng: numpy.random.Generator | None = None)
+```
 
-## `microalpha.portfolio.Portfolio`
+- Streams `MarketEvent`s from the data handler, enforces monotonic timestamps, and routes signals/orders/fills between components.
+- Accepts a `numpy.random.Generator` to guarantee deterministic RNG usage across the stack.
 
-- Tracks cash, holdings, and equity curve while enforcing exposure, drawdown, and turnover constraints.
-- Collects trade records with latency metadata.
+## Data (`microalpha.data.CsvDataHandler`)
 
-## `microalpha.execution`
+```python
+CsvDataHandler(csv_dir: Path, symbol: str, mode: str = "exact")
+```
 
-- `Executor` – base class for execution models.
-- `TWAP`, `SquareRootImpact`, `KyleLambda`, `LOBExecution` – built-in execution strategies.
+- Loads OHLCV CSV data and produces chronological `MarketEvent`s via `stream()`.
+- `get_latest_price(ts)` supports `"exact"` and `"ffill"` modes for timestamp alignment.
+- `get_future_timestamps(start_ts, n)` schedules TWAP child orders without lookahead.
 
-## `microalpha.lob`
+## Portfolio (`microalpha.portfolio.Portfolio`)
 
-- `LimitOrderBook` – FIFO level-2 book with latency model.
-- `LatencyModel` – configurable acknowledgements/fill stochastic delay.
+```python
+Portfolio(data_handler, initial_cash, *, max_exposure=None, max_drawdown_stop=None,
+          turnover_cap=None, kelly_fraction=None, trade_logger=None)
+```
 
-## `microalpha.manifest`
+- Tracks cash, inventory, and equity while enforcing exposure/drawdown/turnover limits.
+- Emits fills to the `JsonlWriter` (`trade_logger`) so executions are captured in `trades.jsonl`.
+- Provides `on_market`, `on_signal`, and `on_fill` hooks consumed by the engine.
 
-- `build(seed, config_path)` – create manifest dataclass.
-- `write(manifest, outdir)` – persist manifest JSON.
+## Broker & Execution (`microalpha.broker`, `microalpha.execution`)
 
-## Strategies
+- `SimulatedBroker(executor)` – wraps an `Executor` and enforces t+1 semantics before returning fills.
+- `Executor` – base class implementing simple price-impact + commission fills against the `DataHandler`.
+- `TWAP` – splits orders evenly across future timestamps supplied by the data handler.
+- `SquareRootImpact` / `KyleLambda` – stylised impact models for execution cost studies.
+- `LOBExecution` – routes orders to the in-memory level-2 book (`microalpha.lob.LimitOrderBook`) with latency simulation.
 
-- `microalpha.strategies.meanrev.MeanReversionStrategy`
-- `microalpha.strategies.breakout.BreakoutStrategy`
-- `microalpha.strategies.mm.NaiveMarketMakingStrategy`
+## Logging (`microalpha.logging.JsonlWriter`)
 
-Refer to the source modules for full docstrings and type annotations.
+```python
+JsonlWriter(path: str)
+```
+
+- Creates parent directories, writes JSON-serialised objects per line, and flushes eagerly so artifacts remain tail-able.
+
+Refer to the module docstrings and tests for deeper examples of composing these components.

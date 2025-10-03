@@ -29,3 +29,7 @@ print(f"Line coverage: {rate:.2f}%")
 if rate < threshold:
     raise SystemExit(f"Coverage below threshold ({rate:.2f}% < {threshold}%)")
 PY
+      - name: Build docs
+        run: |
+          pip install mkdocs mkdocs-material
+          mkdocs build --strict

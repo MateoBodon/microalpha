@@ -54,7 +54,13 @@ def run_bench(num_events: int = 1_000_000) -> dict[str, float]:
     broker = executor  # executor conforms to broker interface via executor
     portfolio = Portfolio(data_handler=data, initial_cash=1_000_000.0)
 
-    engine = Engine(data, strategy, portfolio, broker, seed=123)
+    engine = Engine(
+        data,
+        strategy,
+        portfolio,
+        broker,
+        rng=np.random.default_rng(123),
+    )
 
     t0 = time.perf_counter()
     engine.run()
