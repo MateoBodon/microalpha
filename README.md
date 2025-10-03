@@ -478,15 +478,12 @@ def test_breakout_strategy_generates_long_signal():
 
 ## Benchmarks
 
-### Performance Characteristics
-- **Memory Usage**: Efficient pandas-based data handling
-- **Execution Speed**: Event-driven processing with minimal overhead
-- **Scalability**: Handles large datasets with date-range filtering
+### Local Results
+- **Host**: Apple M2 Pro, 32GB RAM, macOS 14.6.1
+- **Command**: `python benchmarks/bench_engine.py`
+- **Throughput**: ~1,000,000 events @ ~58,000 events/sec
 
-### Comparison with Industry Standards
-- **Leakage Prevention**: Superior to many open-source backtesters
-- **Execution Modeling**: More realistic than simple fill-at-close models
-- **Statistical Rigor**: Bootstrap testing exceeds basic metric reporting
+Numbers will vary with hardware; use the benchmark harness to gather comparable stats on your system.
 
 ---
 

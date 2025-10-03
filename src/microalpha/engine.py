@@ -4,8 +4,10 @@ from __future__ import annotations
 
 from typing import Iterable
 
+import os
 import numpy as np
 import random
+import cProfile
 
 from .events import FillEvent, LookaheadError, MarketEvent, OrderEvent, SignalEvent
 
@@ -21,8 +23,19 @@ class Engine:
         random.seed(seed)
 
     def run(self) -> None:
+        profiler = None
+        if os.getenv("MICROALPHA_PROFILE"):
+            profiler = cProfile.Profile()
+            profiler.enable()
+
         for market_event in self.data.stream():
             self._on_market(market_event)
+
+        if profiler:
+            profiler.disable()
+            output_dir = Path("artifacts")
+            output_dir.mkdir(parents=True, exist_ok=True)
+            profiler.dump_stats(str(output_dir / "profile.pstats"))
 
     def _on_market(self, market_event: MarketEvent) -> None:
         if self.clock is not None and market_event.timestamp < self.clock:
