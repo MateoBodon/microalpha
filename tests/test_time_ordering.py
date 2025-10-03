@@ -2,6 +2,11 @@ from hypothesis import given, strategies as st
 import pytest
 
 from microalpha.engine import Engine
+import numpy as np
+import pytest
+from hypothesis import given, strategies as st
+
+from microalpha.engine import Engine
 from microalpha.events import LookaheadError, MarketEvent
 
 
@@ -38,7 +43,13 @@ class NullBroker:
 @given(st.lists(st.integers(min_value=0, max_value=10), min_size=10, unique=True))
 def test_market_events_must_be_sorted(ts):
     events = [MarketEvent(t, "SPY", 100.0, 1.0) for t in sorted(ts, reverse=True)]
-    engine = Engine(ListData(events), NullStrategy(), NullPortfolio(), NullBroker())
+    engine = Engine(
+        ListData(events),
+        NullStrategy(),
+        NullPortfolio(),
+        NullBroker(),
+        rng=np.random.default_rng(5),
+    )
 
     with pytest.raises(LookaheadError):
         engine.run()

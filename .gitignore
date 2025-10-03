@@ -36,3 +36,16 @@ reports/
 
 # macOS
 .DS_Store
+# build & artifacts
+microalpha.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+artifacts/
+reports/
+*.csv
+*.png
+
+# allow curated example data
+!examples/*.csv

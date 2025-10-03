@@ -19,7 +19,7 @@ class DataHandler:
 
 
 class CsvDataHandler(DataHandler):
-    def __init__(self, csv_dir: Path, symbol: str):
+    def __init__(self, csv_dir: Path, symbol: str, mode: str = "exact"):
         self.csv_dir = csv_dir
         self.symbol = symbol
         self.file_path = self.csv_dir / f"{self.symbol}.csv"
@@ -27,6 +27,7 @@ class CsvDataHandler(DataHandler):
         self.full_data = self._load_data()
         # hold the subset of data for a specific backtest period
         self.data = self.full_data
+        self.mode = mode
 
     def _load_data(self) -> Optional[pd.DataFrame]:
         """Loads the entire CSV into a dataframe, returns it."""
@@ -57,18 +58,22 @@ class CsvDataHandler(DataHandler):
             yield MarketEvent(ts_int, self.symbol, float(row.close), volume)
 
     def get_latest_price(self, symbol: str, timestamp: int):
-        """Returns the last known price for a symbol at or before a given timestamp."""
+        """Return the price for ``symbol`` according to the configured lookup mode."""
         if symbol != self.symbol or self.data is None:
             return None
 
-        try:
-            # Get the price from the 'close' of the bar at the given timestamp
-            ts = self._to_datetime(timestamp)
-            return float(self.data.loc[ts]["close"])
-        except KeyError:
-            # If no exact timestamp match, you might want to forward-fill or return None
-            # For simplicity, we'll just return None if no data is available.
+        ts = self._to_datetime(timestamp)
+
+        if self.mode == "exact":
+            try:
+                return float(self.data.loc[ts, "close"])
+            except KeyError:
+                return None
+
+        idx = self.data.index.searchsorted(ts, side="right") - 1
+        if idx < 0:
             return None
+        return float(self.data.iloc[idx]["close"])
 
     def get_future_timestamps(self, start_timestamp: int, n: int) -> List[int]:
         """

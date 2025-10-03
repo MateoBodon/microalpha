@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Dict, Iterable, List
 
 from .events import FillEvent, LookaheadError, MarketEvent, OrderEvent, SignalEvent
+from .logging import JsonlWriter
 
 
 @dataclass
@@ -23,6 +24,7 @@ class Portfolio:
         max_drawdown_stop: float | None = None,
         turnover_cap: float | None = None,
         kelly_fraction: float | None = None,
+        trade_logger: JsonlWriter | None = None,
     ):
         self.data_handler = data_handler
         self.initial_cash = initial_cash
@@ -41,6 +43,8 @@ class Portfolio:
         self.market_value = 0.0
         self.last_equity = initial_cash
         self.trades: List[Dict[str, float]] = []
+        self.trade_logger = trade_logger
+        self.trade_log_path = trade_logger.path if trade_logger else None
 
     def on_market(self, event: MarketEvent) -> None:
         self.current_time = event.timestamp
@@ -121,17 +125,39 @@ class Portfolio:
         self.cash -= fill.commission
         self.total_turnover += abs(trade_value)
 
-        self.trades.append(
-            {
-                "timestamp": fill.timestamp,
-                "symbol": fill.symbol,
-                "qty": float(fill.qty),
-                "price": float(fill.price),
-                "cash": float(self.cash),
-                "latency_ack": float(getattr(fill, "latency_ack", 0.0)),
-                "latency_fill": float(getattr(fill, "latency_fill", 0.0)),
-            }
-        )
+        side = "BUY" if fill.qty > 0 else "SELL"
+        inventory = position.qty
+        trade_record = {
+            "timestamp": fill.timestamp,
+            "symbol": fill.symbol,
+            "side": side,
+            "qty": float(fill.qty),
+            "price": float(fill.price),
+            "commission": float(fill.commission),
+            "slippage": float(fill.slippage),
+            "cash": float(self.cash),
+            "inventory": float(inventory),
+            "latency_ack": float(getattr(fill, "latency_ack", 0.0)),
+            "latency_fill": float(getattr(fill, "latency_fill", 0.0)),
+        }
+        self.trades.append(trade_record)
+
+        if self.trade_logger:
+            self.trade_logger.write(
+                {
+                    "timestamp": fill.timestamp,
+                    "order_id": getattr(fill, "order_id", None),
+                    "symbol": fill.symbol,
+                    "side": side,
+                    "qty": float(fill.qty),
+                    "price": float(fill.price),
+                    "commission": float(fill.commission),
+                    "slippage": float(fill.slippage),
+                    "inventory": float(inventory),
+                    "cash": float(self.cash),
+                }
+            )
+            self.trade_log_path = self.trade_logger.path
 
     def _signal_quantity(self, signal: SignalEvent) -> int:
         if signal.meta and "qty" in signal.meta:
