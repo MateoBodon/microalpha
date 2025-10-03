@@ -21,14 +21,7 @@ jobs:
       - name: Test & coverage gate
         run: |
           pytest -q --cov=microalpha --cov-report=xml
-          python - <<'PY'
-from xml.etree import ElementTree as ET
-threshold = 85.0
-rate = float(ET.parse('coverage.xml').getroot().attrib['line-rate']) * 100
-print(f"Line coverage: {rate:.2f}%")
-if rate < threshold:
-    raise SystemExit(f"Coverage below threshold ({rate:.2f}% < {threshold}%)")
-PY
+          python -c "import sys, xml.etree.ElementTree as ET; threshold = 85.0; rate = float(ET.parse('coverage.xml').getroot().attrib['line-rate']) * 100; print(f\"Line coverage: {rate:.2f}%\"); sys.exit(0 if rate >= threshold else f\"Coverage below threshold ({rate:.2f}% < {threshold}%)\")"
       - name: Build docs
         run: |
           pip install mkdocs mkdocs-material
