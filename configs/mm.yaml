@@ -1,18 +1,23 @@
-# Configuration for a Naive Market Making strategy run
+# Market making configuration using the limit order book broker
 
-backtest_settings:
-    symbol: "SPY"
-    initial_cash: 100000.0
-    data_dir: "data"
+data_path: "../data"
+symbol: "SPY"
+cash: 100000.0
+seed: 123
+
+exec:
+  type: "lob"
+  book_levels: 4
+  level_size: 500
+  tick_size: 0.5
+  mid_price: 400.0
+  latency_ack: 0.0005
+  latency_ack_jitter: 0.0002
+  latency_fill: 0.01
+  latency_fill_jitter: 0.003
 
 strategy:
-    name: "NaiveMarketMakingStrategy"
-    params:
-        spread: 1.0 # A $1.00 bid-ask spread
-        inventory_limit: 100
-
-broker_settings:
-    execution_style: "INSTANT"
-
-# Seed for reproducibility
-random_seed: 42
+  name: "NaiveMarketMakingStrategy"
+  params:
+    spread: 1.0
+    inventory_limit: 200

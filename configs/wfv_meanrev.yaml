@@ -12,6 +12,9 @@ walkforward:
 
 strategy:
   name: "MeanReversionStrategy"
+  params:
+    lookback: 3
+    z_threshold: 0.5
   param_grid:
     lookback: [3, 5]
     z_threshold: [0.5, 1.0]
@@ -20,8 +23,9 @@ portfolio:
   initial_cash: 100000.0
 
 broker_settings:
-  execution_style: "INSTANT"
-  num_ticks: 4
+  mode: "twap"
+  commission: 0.5
+  slices: 2
 
 random_seed: 7
 artifacts_dir: "artifacts"

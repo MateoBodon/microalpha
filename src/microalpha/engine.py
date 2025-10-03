@@ -5,9 +5,11 @@ from __future__ import annotations
 from typing import Iterable
 
 import os
-import numpy as np
-import random
 import cProfile
+import random
+from pathlib import Path
+
+import numpy as np
 
 from .events import FillEvent, LookaheadError, MarketEvent, OrderEvent, SignalEvent
 

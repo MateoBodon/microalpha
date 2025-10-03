@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from .events import FillEvent, OrderEvent
+from .lob import LimitOrderBook, LatencyModel
 
 
 @dataclass
@@ -106,3 +107,43 @@ class KyleLambda(Executor):
 
     def _slippage(self, qty: int) -> float:
         return self.lam * qty
+
+
+class LOBExecution(Executor):
+    """Execution wrapper backed by the internal limit order book."""
+
+    def __init__(
+        self,
+        data_handler,
+        price_impact: float = 0.0,
+        commission: float = 0.0,
+        book: LimitOrderBook | None = None,
+    ):
+        super().__init__(data_handler, price_impact, commission)
+        self.book = book or LimitOrderBook(LatencyModel())
+
+    def execute(self, order: OrderEvent, current_ts: int) -> Optional[FillEvent]:
+        fills = self.book.submit(order)
+        if not fills:
+            return None
+        if len(fills) == 1:
+            return fills[0]
+
+        total_qty = sum(f.qty for f in fills)
+        if total_qty == 0:
+            return None
+        gross_notional = sum(abs(f.qty) * f.price for f in fills)
+        avg_price = gross_notional / sum(abs(f.qty) for f in fills)
+        latency_ack = max(f.latency_ack for f in fills)
+        latency_fill = max(f.latency_fill for f in fills)
+
+        return FillEvent(
+            timestamp=fills[-1].timestamp,
+            symbol=fills[0].symbol,
+            qty=total_qty,
+            price=avg_price,
+            commission=sum(f.commission for f in fills),
+            slippage=0.0,
+            latency_ack=latency_ack,
+            latency_fill=latency_fill,
+        )

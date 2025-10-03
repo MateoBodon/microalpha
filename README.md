@@ -51,6 +51,7 @@
 - **Volume-based slippage modeling** with configurable price impact
 - **Commission costs** and realistic transaction costs
 - **Instant vs. TWAP execution modes**
+- **Level-2 limit order book** with FIFO queues, configurable depth, and latency modelling
 
 ### 🎯 **Strategy Framework**
 - **Mean reversion strategy** with z-score based entry/exit signals
@@ -349,6 +350,12 @@ ruff check microalpha/
 
 ```bash
 pip install -e ".[dev]" && bash scripts/demo.sh
+```
+
+Market-making visualisation (LOB vs. TWAP):
+
+```bash
+pip install -e ".[dev]" && python scripts/plot_mm_spread.py
 ```
 
 ---

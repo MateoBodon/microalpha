@@ -12,6 +12,8 @@ import shutil
 
 import yaml
 
+import pandas as pd
+
 from .broker import SimulatedBroker
 from .config import parse_config
 from .data import CsvDataHandler
@@ -19,7 +21,7 @@ from .engine import Engine
 from .manifest import build as build_manifest, write as write_manifest
 from .metrics import compute_metrics
 from .portfolio import Portfolio
-from .execution import Executor, KyleLambda, SquareRootImpact, TWAP
+from .execution import Executor, KyleLambda, SquareRootImpact, TWAP, LOBExecution
 from .strategies.breakout import BreakoutStrategy
 from .strategies.meanrev import MeanReversionStrategy
 from .strategies.mm import NaiveMarketMakingStrategy
@@ -38,6 +40,7 @@ EXECUTION_MAPPING = {
     "sqrt": SquareRootImpact,
     "squareroot": SquareRootImpact,
     "kyle": KyleLambda,
+    "lob": LOBExecution,
 }
 
 
@@ -65,9 +68,11 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
     if strategy_class is None:
         raise ValueError(f"Unknown strategy '{strategy_name}'")
 
-    strategy_params: Dict[str, Any] = {"lookback": cfg.strategy.lookback}
+    strategy_params: Dict[str, Any] = dict(cfg.strategy.params)
+    if cfg.strategy.lookback is not None:
+        strategy_params.setdefault("lookback", cfg.strategy.lookback)
     if cfg.strategy.z is not None:
-        strategy_params["z_threshold"] = cfg.strategy.z
+        strategy_params.setdefault("z_threshold", cfg.strategy.z)
 
     data_handler = CsvDataHandler(csv_dir=data_dir, symbol=symbol)
     if data_handler.data is None:
@@ -91,6 +96,30 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
         exec_kwargs["lam"] = cfg.exec.lam if cfg.exec.lam is not None else cfg.exec.price_impact
     if executor_cls is TWAP and cfg.exec.slices:
         exec_kwargs["slices"] = cfg.exec.slices
+    if executor_cls is LOBExecution:
+        from .lob import LimitOrderBook, LatencyModel
+
+        latency = LatencyModel(
+            ack_fixed=cfg.exec.latency_ack or 0.001,
+            ack_jitter=cfg.exec.latency_ack_jitter or 0.0005,
+            fill_fixed=cfg.exec.latency_fill or 0.01,
+            fill_jitter=cfg.exec.latency_fill_jitter or 0.002,
+            seed=cfg.seed,
+        )
+        book = LimitOrderBook(latency_model=latency)
+        levels = cfg.exec.book_levels or 3
+        level_size = cfg.exec.level_size or 200
+        tick = cfg.exec.tick_size or 0.1
+        if cfg.exec.mid_price is not None:
+            mid_price = cfg.exec.mid_price
+        else:
+            try:
+                mid_price = float(data_handler.full_data.iloc[0]["close"])
+            except Exception:
+                mid_price = 100.0
+        book.seed_book(mid_price=mid_price, tick=tick, levels=levels, size=level_size)
+        exec_kwargs["book"] = book
+
     executor = executor_cls(data_handler=data_handler, **exec_kwargs)
     broker = SimulatedBroker(executor)
 
@@ -100,6 +129,7 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
 
     metrics = compute_metrics(portfolio.equity_curve, portfolio.total_turnover)
     metrics_paths = _persist_metrics(metrics, artifacts_dir)
+    trades_path = _persist_trades(portfolio, artifacts_dir)
 
     result: Dict[str, Any] = asdict(manifest)
     result.update(
@@ -108,6 +138,7 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
             "strategy": strategy_name,
             "seed": cfg.seed,
             "metrics": metrics_paths,
+            "trades_path": trades_path,
         }
     )
     return result
@@ -148,6 +179,16 @@ def _persist_metrics(metrics: Dict[str, Any], artifacts_dir: Path) -> Dict[str, 
 
     metrics["metrics_path"] = str(metrics_path)
     return metrics
+
+
+def _persist_trades(portfolio: Portfolio, artifacts_dir: Path) -> str | None:
+    if not getattr(portfolio, "trades", None):
+        return None
+
+    trades_df = pd.DataFrame(portfolio.trades)
+    trades_path = artifacts_dir / "trades.csv"
+    trades_df.to_csv(trades_path, index=False)
+    return str(trades_path)
 
 
 def resolve_path(value: str, cfg_path: Path) -> Path:

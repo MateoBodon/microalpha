@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Dict
 
 from pydantic import BaseModel, Field, ValidationError
 
@@ -14,12 +14,22 @@ class ExecModelCfg(BaseModel):
     price_impact: float = 0.0
     lam: float | None = None
     slices: int | None = None
+    book_levels: int | None = None
+    level_size: int | None = None
+    mid_price: float | None = None
+    tick_size: float | None = None
+    latency_ack: float | None = None
+    latency_ack_jitter: float | None = None
+    latency_fill: float | None = None
+    latency_fill_jitter: float | None = None
 
 
 class StrategyCfg(BaseModel):
     name: str
-    lookback: int
+    lookback: int | None = None
     z: float | None = None
+    params: Dict[str, Any] = Field(default_factory=dict)
+    param_grid: Dict[str, Any] | None = None
 
 
 class BacktestCfg(BaseModel):

@@ -17,5 +17,6 @@ exec:
 
 strategy:
   name: "MeanReversionStrategy"
-  lookback: 3
-  z: 0.5
+  params:
+    lookback: 3
+    z_threshold: 0.5

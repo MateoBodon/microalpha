@@ -40,6 +40,7 @@ class Portfolio:
         self.drawdown_halted = False
         self.market_value = 0.0
         self.last_equity = initial_cash
+        self.trades: List[Dict[str, float]] = []
 
     def on_market(self, event: MarketEvent) -> None:
         self.current_time = event.timestamp
@@ -119,6 +120,18 @@ class Portfolio:
         self.cash -= trade_value
         self.cash -= fill.commission
         self.total_turnover += abs(trade_value)
+
+        self.trades.append(
+            {
+                "timestamp": fill.timestamp,
+                "symbol": fill.symbol,
+                "qty": float(fill.qty),
+                "price": float(fill.price),
+                "cash": float(self.cash),
+                "latency_ack": float(getattr(fill, "latency_ack", 0.0)),
+                "latency_fill": float(getattr(fill, "latency_fill", 0.0)),
+            }
+        )
 
     def _signal_quantity(self, signal: SignalEvent) -> int:
         if signal.meta and "qty" in signal.meta:

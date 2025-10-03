@@ -16,7 +16,7 @@ import yaml
 from .broker import SimulatedBroker
 from .data import CsvDataHandler
 from .engine import Engine
-from .execution import Executor, KyleLambda, SquareRootImpact, TWAP
+from .execution import Executor, KyleLambda, SquareRootImpact, TWAP, LOBExecution
 from .manifest import build as build_manifest, write as write_manifest
 from .metrics import compute_metrics
 from .portfolio import Portfolio
@@ -39,6 +39,7 @@ EXECUTION_MAPPING = {
     "sqrt": SquareRootImpact,
     "squareroot": SquareRootImpact,
     "kyle": KyleLambda,
+    "lob": LOBExecution,
 }
 
 
@@ -68,6 +69,7 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
     if strategy_class is None:
         raise ValueError(f"Unknown strategy '{strategy_name}'")
 
+    base_params = strategy_cfg.get("params", {})
     param_grid = strategy_cfg.get("param_grid", {})
     if not param_grid:
         raise ValueError("Parameter grid is required for walk-forward validation")
@@ -100,6 +102,7 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
             train_end,
             strategy_class,
             param_grid,
+            base_params,
             symbol,
             initial_cash,
             broker_cfg,
@@ -128,8 +131,10 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
         )
 
         data_handler.set_date_range(test_start, test_end)
+        combined = dict(base_params)
+        combined.update(best_params)
         strategy = strategy_class(
-            symbol=symbol, **_strategy_kwargs(best_params, warmup_prices)
+            symbol=symbol, **_strategy_kwargs(combined, warmup_prices)
         )
         portfolio = _build_portfolio(data_handler, initial_cash, portfolio_cfg)
         executor = _build_executor(data_handler, broker_cfg)
@@ -183,6 +188,7 @@ def _optimise_parameters(
     train_end: pd.Timestamp,
     strategy_class,
     param_grid: Dict[str, Iterable[Any]],
+    base_params: Dict[str, Any],
     symbol: str,
     initial_cash: float,
     broker_cfg: Dict[str, Any],
@@ -199,7 +205,9 @@ def _optimise_parameters(
         params = dict(zip(keys, combination))
 
         data_handler.set_date_range(train_start, train_end)
-        strategy = strategy_class(symbol=symbol, **_strategy_kwargs(params))
+        combined = dict(base_params)
+        combined.update(params)
+        strategy = strategy_class(symbol=symbol, **_strategy_kwargs(combined))
         portfolio = _build_portfolio(data_handler, initial_cash, portfolio_cfg)
         executor = _build_executor(data_handler, broker_cfg)
         broker = SimulatedBroker(executor)
@@ -225,7 +233,9 @@ def _optimise_parameters(
     best_entry = max(results, key=lambda item: item["metrics"].get("sharpe_ratio", float("-inf")))
     spa_pvalue = bootstrap_reality_check(results, seed=seed)
 
-    return dict(best_entry["params"]), best_entry["metrics"], spa_pvalue
+    params = dict(base_params)
+    params.update(best_entry["params"])
+    return params, best_entry["metrics"], spa_pvalue
 
 
 def _build_portfolio(data_handler, initial_cash: float, portfolio_cfg: Dict[str, Any]) -> Portfolio:
@@ -250,6 +260,26 @@ def _build_executor(data_handler, broker_cfg: Dict[str, Any]):
         kwargs["lam"] = broker_cfg.get("lam", broker_cfg.get("price_impact", 0.0))
     if executor_cls is TWAP and broker_cfg.get("slices"):
         kwargs["slices"] = broker_cfg.get("slices")
+    if executor_cls is LOBExecution:
+        from .lob import LimitOrderBook, LatencyModel
+
+        latency = LatencyModel(
+            ack_fixed=broker_cfg.get("latency_ack", 0.001),
+            ack_jitter=broker_cfg.get("latency_ack_jitter", 0.0005),
+            fill_fixed=broker_cfg.get("latency_fill", 0.01),
+            fill_jitter=broker_cfg.get("latency_fill_jitter", 0.002),
+            seed=broker_cfg.get("seed"),
+        )
+        book = LimitOrderBook(latency_model=latency)
+        levels = broker_cfg.get("book_levels", 3)
+        level_size = broker_cfg.get("level_size", 200)
+        tick = broker_cfg.get("tick_size", 0.1)
+        try:
+            mid_price = float(data_handler.full_data.iloc[0]["close"])
+        except Exception:
+            mid_price = broker_cfg.get("mid_price", 100.0)
+        book.seed_book(mid_price=mid_price, tick=tick, levels=levels, size=level_size)
+        kwargs["book"] = book
     return executor_cls(data_handler=data_handler, **kwargs)
 
 

@@ -28,6 +28,9 @@ class OrderEvent:
     symbol: str
     qty: int
     side: Literal["BUY", "SELL"]
+    order_type: Literal["MARKET", "LIMIT", "CANCEL"] = "MARKET"
+    price: float | None = None
+    order_id: str | None = None
 
 
 @dataclass(frozen=True)
@@ -38,10 +41,11 @@ class FillEvent:
     price: float
     commission: float
     slippage: float
+    latency_ack: float = 0.0
+    latency_fill: float = 0.0
 
 
 class LookaheadError(Exception):
     """Raised when an operation would violate temporal ordering."""
 
     pass
-
