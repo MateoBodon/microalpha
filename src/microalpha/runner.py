@@ -7,9 +7,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict
 
+import hashlib
 import json
 import shutil
 
+import numpy as np
 import yaml
 
 import pandas as pd
@@ -19,6 +21,7 @@ from .config import parse_config
 from .data import CsvDataHandler
 from .engine import Engine
 from .manifest import build as build_manifest, write as write_manifest
+from .logging import JsonlWriter
 from .metrics import compute_metrics
 from .portfolio import Portfolio
 from .execution import Executor, KyleLambda, SquareRootImpact, TWAP, LOBExecution
@@ -52,9 +55,12 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
         config = yaml.safe_load(handle)
 
     cfg = parse_config(config)
-    manifest = build_manifest(cfg.seed, str(cfg_path))
+    cfg_bytes = yaml.safe_dump(config).encode("utf-8")
+    config_hash = hashlib.sha256(cfg_bytes).hexdigest()
 
-    artifacts_dir = prepare_artifacts_dir(cfg_path, config)
+    run_id, artifacts_dir = prepare_artifacts_dir(cfg_path, config)
+    manifest = build_manifest(cfg.seed, str(cfg_path), run_id, config_hash)
+    root_rng = np.random.default_rng(manifest.seed)
     write_manifest(manifest, str(artifacts_dir))
     persist_config(cfg_path, artifacts_dir)
 
@@ -78,6 +84,8 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
     if data_handler.data is None:
         raise FileNotFoundError(f"Unable to load data for symbol '{symbol}' from {data_dir}")
 
+    trade_logger = JsonlWriter(str(artifacts_dir / "trades.jsonl"))
+
     portfolio = Portfolio(
         data_handler=data_handler,
         initial_cash=initial_cash,
@@ -85,6 +93,7 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
         max_drawdown_stop=cfg.max_drawdown_stop,
         turnover_cap=cfg.turnover_cap,
         kelly_fraction=cfg.kelly_fraction,
+        trade_logger=trade_logger,
     )
     exec_type = cfg.exec.type.lower() if cfg.exec.type else "instant"
     executor_cls = EXECUTION_MAPPING.get(exec_type, Executor)
@@ -99,12 +108,13 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
     if executor_cls is LOBExecution:
         from .lob import LimitOrderBook, LatencyModel
 
+        latency_rng = np.random.default_rng(root_rng.integers(2**32))
         latency = LatencyModel(
             ack_fixed=cfg.exec.latency_ack or 0.001,
             ack_jitter=cfg.exec.latency_ack_jitter or 0.0005,
             fill_fixed=cfg.exec.latency_fill or 0.01,
             fill_jitter=cfg.exec.latency_fill_jitter or 0.002,
-            seed=cfg.seed,
+            rng=latency_rng,
         )
         book = LimitOrderBook(latency_model=latency)
         levels = cfg.exec.book_levels or 3
@@ -124,8 +134,11 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
     broker = SimulatedBroker(executor)
 
     strategy = strategy_class(symbol=symbol, **strategy_params)
-    engine = Engine(data_handler, strategy, portfolio, broker, seed=cfg.seed)
+    engine_rng = np.random.default_rng(root_rng.integers(2**32))
+    engine = Engine(data_handler, strategy, portfolio, broker, rng=engine_rng)
     engine.run()
+
+    trade_logger.close()
 
     metrics = compute_metrics(portfolio.equity_curve, portfolio.total_turnover)
     metrics_paths = _persist_metrics(metrics, artifacts_dir)
@@ -134,6 +147,7 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
     result: Dict[str, Any] = asdict(manifest)
     result.update(
         {
+            "run_id": run_id,
             "artifacts_dir": str(artifacts_dir),
             "strategy": strategy_name,
             "seed": cfg.seed,
@@ -144,7 +158,7 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
     return result
 
 
-def prepare_artifacts_dir(cfg_path: Path, config: Dict[str, Any]) -> Path:
+def prepare_artifacts_dir(cfg_path: Path, config: Dict[str, Any]) -> tuple[str, Path]:
     root = Path(config.get("artifacts_dir", "artifacts"))
     if not root.is_absolute():
         root = (Path.cwd() / root).resolve()
@@ -159,7 +173,7 @@ def prepare_artifacts_dir(cfg_path: Path, config: Dict[str, Any]) -> Path:
         suffix += 1
 
     candidate.mkdir()
-    return candidate
+    return run_id, candidate
 
 
 def persist_config(cfg_path: Path, artifacts_dir: Path) -> None:
@@ -182,6 +196,9 @@ def _persist_metrics(metrics: Dict[str, Any], artifacts_dir: Path) -> Dict[str, 
 
 
 def _persist_trades(portfolio: Portfolio, artifacts_dir: Path) -> str | None:
+    if getattr(portfolio, "trade_log_path", None):
+        return str(portfolio.trade_log_path)
+
     if not getattr(portfolio, "trades", None):
         return None
 

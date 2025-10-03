@@ -6,7 +6,6 @@ from typing import Iterable
 
 import os
 import cProfile
-import random
 from pathlib import Path
 
 import numpy as np
@@ -15,14 +14,13 @@ from .events import FillEvent, LookaheadError, MarketEvent, OrderEvent, SignalEv
 
 
 class Engine:
-    def __init__(self, data, strategy, portfolio, broker, seed: int = 42):
+    def __init__(self, data, strategy, portfolio, broker, rng: np.random.Generator | None = None):
         self.clock: int | None = None
         self.data = data
         self.strategy = strategy
         self.portfolio = portfolio
         self.broker = broker
-        np.random.seed(seed)
-        random.seed(seed)
+        self.rng = rng or np.random.default_rng()
 
     def run(self) -> None:
         profiler = None

@@ -1,5 +1,9 @@
 from microalpha.engine import Engine
 from microalpha.events import MarketEvent
+import numpy as np
+
+from microalpha.engine import Engine
+from microalpha.events import MarketEvent
 from microalpha.execution import Executor
 from microalpha.portfolio import Portfolio
 
@@ -39,5 +43,5 @@ def test_engine_benchmark_smoke():
     broker = executor
     portfolio = Portfolio(data_handler=data)
 
-    engine = Engine(data, strategy, portfolio, broker)
+    engine = Engine(data, strategy, portfolio, broker, rng=np.random.default_rng(7))
     engine.run()
