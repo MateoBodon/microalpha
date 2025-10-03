@@ -1,0 +1,18 @@
+site_name: Microalpha
+site_url: https://mateobodon.github.io/microalpha
+theme:
+  name: material
+  features:
+    - navigation.instant
+    - navigation.sections
+nav:
+  - Home: index.md
+  - Leakage Safety: leakage-safety.md
+  - Reproducibility: reproducibility.md
+  - API Reference: api.md
+  - Examples: examples.md
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/MateoBodon/microalpha
+docs_dir: docs

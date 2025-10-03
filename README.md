@@ -3,6 +3,7 @@
 **Leakage-safe, event-driven backtesting engine with walk-forward cross-validation, parameter optimization, and advanced execution modeling.**
 
 [![CI](https://github.com/mateobodon/microalpha/actions/workflows/ci.yml/badge.svg)](https://github.com/mateobodon/microalpha/actions/workflows/ci.yml)
+![Coverage](https://img.shields.io/badge/coverage-%3E85%25-brightgreen.svg)
 [![PyPI version](https://badge.fury.io/py/microalpha.svg)](https://badge.fury.io/py/microalpha)
 
 **TL;DR:** An opinionated, research-hygienic backtester that enforces strict time-ordering, offers out-of-sample walk-forward evaluation with per-fold parameter selection, and includes realistic market frictions including Almgren-Chriss execution modeling, slippage, and commission costs.
@@ -486,9 +487,10 @@ def test_breakout_strategy_generates_long_signal():
 ## Benchmarks
 
 ### Local Results
-- **Host**: Apple M2 Pro, 32GB RAM, macOS 14.6.1
-- **Command**: `python benchmarks/bench_engine.py`
-- **Throughput**: ~1,000,000 events @ ~58,000 events/sec
+
+| Host | Python | Command | Events | Runtime (s) | Events/sec |
+| --- | --- | --- | --- | --- | --- |
+| Apple M2 Pro (32GB, macOS 14.6.1) | 3.12.2 | `python benchmarks/bench_engine.py` | 1,000,000 | 0.773 | 1,294,141 |
 
 Numbers will vary with hardware; use the benchmark harness to gather comparable stats on your system.
 
