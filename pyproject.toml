@@ -6,13 +6,19 @@ authors = [
     { name = "Mateo Bodon", email = "mateo.bodon@yale.edu" },
 ]
 requires-python = ">=3.9"
-dependencies = [
-    "pandas",
-    "numpy",
+dependencies = ["numpy", "pandas", "pyyaml"]
+
+[project.optional-dependencies]
+dev = [
     "pytest",
+    "hypothesis",
+    "mypy",
     "ruff",
     "black",
-    "pyyaml",
+    "pytest-cov",
+    "matplotlib",
+    "pyarrow",
+    "pydantic",
 ]
 
 [tool.black]
@@ -32,5 +38,8 @@ ignore = [
     "E501",
 ]
 
-[tool.setuptools]
-packages = ["microalpha"]
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.scripts]
+microalpha = "microalpha.cli:main"

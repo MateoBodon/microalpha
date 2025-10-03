@@ -347,22 +347,8 @@ ruff check microalpha/
 
 ## Quickstart
 
-### 1. Basic Backtest
 ```bash
-# Run a mean reversion strategy
-python run.py -c configs/meanrev.yaml
-```
-
-### 2. Walk-Forward Validation
-```bash
-# Run walk-forward cross-validation
-python walk_forward.py
-```
-
-### 3. Generate Tearsheet
-```bash
-# Open and run the Jupyter notebook
-jupyter notebook notebooks/tearsheet.ipynb
+pip install -e ".[dev]" && bash scripts/demo.sh
 ```
 
 ---
@@ -555,4 +541,3 @@ Contributions are welcome! Please see our contributing guidelines and code of co
 **Built with ❤️ for the quantitative finance community**
 
 *For questions, issues, or contributions, please visit our [GitHub repository](https://github.com/mateobodon/microalpha).*
-

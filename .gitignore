@@ -21,6 +21,7 @@ build/
 artifacts/
 reports/
 *.csv
+!examples/*.csv
 *.png
 
 # IDE / Editor specific

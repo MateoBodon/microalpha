@@ -1,0 +1,27 @@
+# Walk-forward validation configuration for the mean reversion strategy
+
+data:
+  directory: "data"
+  symbol: "SPY"
+
+walkforward:
+  start: "2025-01-02"
+  end: "2025-01-10"
+  training_days: 4
+  testing_days: 2
+
+strategy:
+  name: "MeanReversionStrategy"
+  param_grid:
+    lookback: [3, 5]
+    z_threshold: [0.5, 1.0]
+
+portfolio:
+  initial_cash: 100000.0
+
+broker_settings:
+  execution_style: "INSTANT"
+  num_ticks: 4
+
+random_seed: 7
+artifacts_dir: "artifacts"
