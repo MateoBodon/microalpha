@@ -1,91 +1,80 @@
-# microalpha/portfolio.py
-from .events import LookaheadError, OrderEvent
+"""Portfolio management reacting to fills and signals."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Dict, Iterable, List
+
+from .events import FillEvent, LookaheadError, MarketEvent, OrderEvent, SignalEvent
+
+
+@dataclass
+class PortfolioPosition:
+    qty: int = 0
 
 
 class Portfolio:
-    def __init__(self, data_handler, initial_cash=100000.0):
+    def __init__(self, data_handler, initial_cash: float = 100000.0, default_order_qty: int = 400):
         self.data_handler = data_handler
         self.initial_cash = initial_cash
         self.cash = initial_cash
-        self.holdings = {}
-        self.equity_curve = []
-        self.current_time = None
+        self.positions: Dict[str, PortfolioPosition] = {}
+        self.equity_curve: List[Dict[str, float]] = []
+        self.current_time: int | None = None
         self.total_turnover = 0.0
+        self.default_order_qty = default_order_qty
 
-    def update_timeindex(self, event):
-        """
-        Updates the portfolio's state for a new timestamp.
-        """
+    def on_market(self, event: MarketEvent) -> None:
         self.current_time = event.timestamp
-
         market_value = 0.0
-        for symbol, quantity in self.holdings.items():
-            price = self.data_handler.get_latest_price(symbol, self.current_time)
-            if price is not None:
-                market_value += quantity * price
+        for symbol, position in self.positions.items():
+            price = self.data_handler.get_latest_price(symbol, event.timestamp)
+            if price is None:
+                continue
+            market_value += position.qty * price
 
         total_equity = self.cash + market_value
-        exposure = market_value / total_equity if total_equity != 0 else 0
-
+        exposure = market_value / total_equity if total_equity else 0.0
         self.equity_curve.append(
             {
-                "timestamp": self.current_time,
+                "timestamp": event.timestamp,
                 "equity": total_equity,
-                "exposure": exposure,  # Track exposure over time
+                "exposure": exposure,
             }
         )
 
-    def on_fill(self, fill_event):
-        """Updates holdings from a FillEvent and tracks turnover."""
-        if self.current_time and fill_event.timestamp < self.current_time:
-            raise LookaheadError("Fill event timestamp is in the past.")
-
-        symbol = fill_event.symbol
-        quantity = fill_event.quantity
-        direction = fill_event.direction
-        fill_cost = fill_event.fill_cost
-        commission = fill_event.commission
-
-        # --- UPDATE TURNOVER ---
-        # fill_cost is negative for sells, so abs() gives the trade value
-        self.total_turnover += abs(fill_cost)
-        # -----------------------
-
-        self.cash -= fill_cost + commission
-
-        if direction == "BUY":
-            self.holdings[symbol] = self.holdings.get(symbol, 0) + quantity
-        elif direction == "SELL":
-            self.holdings[symbol] = self.holdings.get(symbol, 0) - quantity
-
-        print(
-            f"      BROKER->PORTFOLIO: Fill processed. Cash: {self.cash:.2f}, Holdings: {self.holdings}"
-        )
-
-    def on_signal(self, signal_event, events_queue):
-        """
-        Acts on a SignalEvent to generate an OrderEvent.
-        """
-        if self.current_time and signal_event.timestamp < self.current_time:
+    def on_signal(self, signal: SignalEvent) -> Iterable[OrderEvent]:
+        if self.current_time is not None and signal.timestamp < self.current_time:
             raise LookaheadError("Signal event timestamp is in the past.")
 
-        symbol = signal_event.symbol
-        direction = signal_event.direction
-        # INCREASED order size to make TWAP meaningful
-        quantity = 400
+        qty = self._signal_quantity(signal)
+        if qty == 0:
+            return []
 
-        if direction == "LONG":
-            order = OrderEvent(signal_event.timestamp, symbol, quantity, "BUY")
-            events_queue.put(order)
-            print(f"    PORTFOLIO: Creating BUY meta-order for {quantity} {symbol}.")
-        elif direction == "EXIT":
-            if symbol in self.holdings and self.holdings[symbol] > 0:
-                # Ensure we don't sell more than we have
-                sell_quantity = self.holdings[symbol]
-                order = OrderEvent(
-                    signal_event.timestamp, symbol, sell_quantity, "SELL"
-                )
-                events_queue.put(order)
-                print(
-                    f"    PORTFOLIO: Creating SELL meta-order for {sell_quantity} {symbol}."
-                )
+        if signal.side == "EXIT":
+            position = self.positions.get(signal.symbol)
+            if not position or position.qty == 0:
+                return []
+            side = "SELL" if position.qty > 0 else "BUY"
+            return [OrderEvent(signal.timestamp, signal.symbol, abs(position.qty), side)]
+
+        side = "BUY" if signal.side == "LONG" else "SELL"
+        return [OrderEvent(signal.timestamp, signal.symbol, qty, side)]
+
+    def on_fill(self, fill: FillEvent) -> None:
+        if self.current_time is not None and fill.timestamp < self.current_time:
+            raise LookaheadError("Fill event timestamp is in the past.")
+
+        position = self.positions.setdefault(fill.symbol, PortfolioPosition())
+        position.qty += fill.qty
+
+        trade_value = fill.price * fill.qty
+        self.cash -= trade_value
+        self.cash -= fill.commission
+        self.total_turnover += abs(trade_value)
+
+    def _signal_quantity(self, signal: SignalEvent) -> int:
+        if signal.meta and "qty" in signal.meta:
+            return int(signal.meta["qty"])
+        return self.default_order_qty
+

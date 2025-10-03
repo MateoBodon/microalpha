@@ -357,22 +357,20 @@ pip install -e ".[dev]" && bash scripts/demo.sh
 
 ### Strategy Configuration (YAML)
 ```yaml
-backtest_settings:
-    symbol: "SPY"
-    initial_cash: 100000.0
-    data_dir: "data"
+data_path: "../data"
+symbol: "SPY"
+cash: 100000.0
+seed: 42
+
+exec:
+  type: "twap"
+  aln: 0.5
+  price_impact: 0.00005
 
 strategy:
-    name: "MeanReversionStrategy"
-    params:
-        lookback: 3
-        z_threshold: 0.5
-
-broker_settings:
-    execution_style: "TWAP"  # or "INSTANT"
-    num_ticks: 4
-
-random_seed: 42
+  name: "MeanReversionStrategy"
+  lookback: 3
+  z: 0.5
 ```
 
 ### Supported Strategies
@@ -453,11 +451,11 @@ Bootstrap p-value (Prob. of Sharpe <= 0): 0.001
 def test_portfolio_raises_lookahead_error_on_stale_signal():
     """Validates lookahead bias prevention."""
     with pytest.raises(LookaheadError):
-        portfolio.on_signal(stale_signal, events_queue=None)
+        list(portfolio.on_signal(stale_signal))
 
 def test_breakout_strategy_generates_long_signal():
     """Tests strategy signal generation."""
-    assert signal.direction == 'LONG'
+    assert signal.side == 'LONG'
     assert signal.symbol == symbol
 ```
 

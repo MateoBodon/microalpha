@@ -20,6 +20,7 @@ from .manifest import build as build_manifest, write as write_manifest
 from .portfolio import Portfolio
 from .risk import create_drawdowns, create_sharpe_ratio
 from .runner import persist_config, prepare_artifacts_dir, resolve_path
+from .slippage import VolumeSlippageModel
 from .strategies.breakout import BreakoutStrategy
 from .strategies.meanrev import MeanReversionStrategy
 from .strategies.mm import NaiveMarketMakingStrategy
@@ -94,6 +95,7 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
             symbol,
             initial_cash,
             broker_cfg,
+            config.get("random_seed", 42),
         )
 
         if not best_params:
@@ -121,10 +123,17 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
         portfolio = Portfolio(data_handler=data_handler, initial_cash=initial_cash)
         broker = SimulatedBroker(
             data_handler=data_handler,
-            execution_style=broker_cfg.get("execution_style", "INSTANT"),
-            num_ticks=broker_cfg.get("num_ticks", 4),
+            commission=float(broker_cfg.get("commission", 1.0)),
+            slippage_model=VolumeSlippageModel(broker_cfg.get("price_impact", 0.0)),
+            mode=broker_cfg.get("mode", "twap"),
         )
-        engine = Engine(data_handler, strategy, portfolio, broker)
+        engine = Engine(
+            data_handler,
+            strategy,
+            portfolio,
+            broker,
+            seed=config.get("random_seed", 42),
+        )
         engine.run()
 
         if portfolio.equity_curve:
@@ -174,6 +183,7 @@ def _optimise_parameters(
     symbol: str,
     initial_cash: float,
     broker_cfg: Dict[str, Any],
+    seed: int,
 ) -> Tuple[Dict[str, Any], float]:
     best_params: Dict[str, Any] | None = None
     best_sharpe = float("-inf")
@@ -189,11 +199,12 @@ def _optimise_parameters(
         portfolio = Portfolio(data_handler=data_handler, initial_cash=initial_cash)
         broker = SimulatedBroker(
             data_handler=data_handler,
-            execution_style=broker_cfg.get("execution_style", "INSTANT"),
-            num_ticks=broker_cfg.get("num_ticks", 4),
+            commission=float(broker_cfg.get("commission", 1.0)),
+            slippage_model=VolumeSlippageModel(broker_cfg.get("price_impact", 0.0)),
+            mode=broker_cfg.get("mode", "twap"),
         )
 
-        engine = Engine(data_handler, strategy, portfolio, broker)
+        engine = Engine(data_handler, strategy, portfolio, broker, seed=seed)
         engine.run()
 
         if not portfolio.equity_curve:
@@ -221,7 +232,7 @@ def _collect_warmup_prices(
 
     warmup_start = train_end - pd.Timedelta(days=lookback)
     data_handler.set_date_range(warmup_start, train_end)
-    return [event.price for event in data_handler.stream_events()]
+    return [event.price for event in data_handler.stream()]
 
 
 def _summarise_walkforward(

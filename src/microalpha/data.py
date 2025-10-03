@@ -1,6 +1,8 @@
 # microalpha/data.py
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Optional
+from typing import Iterator, List, Optional
 
 import pandas as pd
 
@@ -12,8 +14,8 @@ class DataHandler:
     Base class for data handlers.
     """
 
-    def stream_events(self):
-        raise NotImplementedError("stream_events() must be implemented")
+    def stream(self) -> Iterator[MarketEvent]:
+        raise NotImplementedError("stream() must be implemented")
 
 
 class CsvDataHandler(DataHandler):
@@ -44,29 +46,31 @@ class CsvDataHandler(DataHandler):
         else:
             self.data = self.full_data.loc[start_date:end_date]
 
-    def stream_events(self):
-        """Yields MarketEvents from the currently active dataframe."""
+    def stream(self) -> Iterator[MarketEvent]:
+        """Yield ``MarketEvent`` instances ordered by timestamp."""
         if self.data is None:
             return
-        for row in self.data.itertuples():
-            yield MarketEvent(
-                timestamp=row.Index, symbol=self.symbol, price=float(row.close)
-            )
 
-    def get_latest_price(self, symbol: str, timestamp: pd.Timestamp):
+        for row in self.data.sort_index().itertuples():
+            ts_int = self._to_int_timestamp(row.Index)
+            volume = float(getattr(row, "volume", 0.0))
+            yield MarketEvent(ts_int, self.symbol, float(row.close), volume)
+
+    def get_latest_price(self, symbol: str, timestamp: int):
         """Returns the last known price for a symbol at or before a given timestamp."""
         if symbol != self.symbol or self.data is None:
             return None
 
         try:
             # Get the price from the 'close' of the bar at the given timestamp
-            return self.data.loc[timestamp]["close"]
+            ts = self._to_datetime(timestamp)
+            return float(self.data.loc[ts]["close"])
         except KeyError:
             # If no exact timestamp match, you might want to forward-fill or return None
             # For simplicity, we'll just return None if no data is available.
             return None
 
-    def get_future_timestamps(self, start_timestamp: pd.Timestamp, n: int):
+    def get_future_timestamps(self, start_timestamp: int, n: int) -> List[int]:
         """
         Gets the next `n` timestamps from the data starting after a given timestamp.
         Used by the TWAP execution handler to schedule child orders.
@@ -75,7 +79,22 @@ class CsvDataHandler(DataHandler):
             return []
 
         # Get the index of all future dates
-        future_dates = self.data.index[self.data.index > start_timestamp]
+        ts = self._to_datetime(start_timestamp)
+        future_dates = self.data.index[self.data.index > ts]
 
         # Return the next n dates, or fewer if we are at the end of the data
-        return future_dates[:n].tolist()
+        return [self._to_int_timestamp(idx) for idx in future_dates[:n]]
+
+    @staticmethod
+    def _to_int_timestamp(value) -> int:
+        if isinstance(value, (int, float)):
+            return int(value)
+        if isinstance(value, pd.Timestamp):
+            return int(value.value)
+        return int(pd.Timestamp(value).value)
+
+    @staticmethod
+    def _to_datetime(value) -> pd.Timestamp:
+        if isinstance(value, pd.Timestamp):
+            return value
+        return pd.to_datetime(value)

@@ -14,11 +14,13 @@ import pandas as pd
 import yaml
 
 from .broker import SimulatedBroker
+from .config import parse_config
 from .data import CsvDataHandler
 from .engine import Engine
 from .manifest import build as build_manifest, write as write_manifest
 from .portfolio import Portfolio
 from .risk import create_drawdowns, create_sharpe_ratio
+from .slippage import VolumeSlippageModel
 from .strategies.breakout import BreakoutStrategy
 from .strategies.meanrev import MeanReversionStrategy
 from .strategies.mm import NaiveMarketMakingStrategy
@@ -38,45 +40,42 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
     with cfg_path.open("r", encoding="utf-8") as handle:
         config = yaml.safe_load(handle)
 
-    manifest = build_manifest(config.get("random_seed"), str(cfg_path))
+    cfg = parse_config(config)
+    manifest = build_manifest(cfg.seed, str(cfg_path))
 
     artifacts_dir = prepare_artifacts_dir(cfg_path, config)
     write_manifest(manifest, str(artifacts_dir))
     persist_config(cfg_path, artifacts_dir)
 
-    backtest_cfg = config["backtest_settings"]
-    strategy_cfg = config["strategy"]
-    broker_cfg = config.get("broker_settings", {})
+    data_dir = resolve_path(cfg.data_path, cfg_path)
 
-    data_dir = resolve_path(backtest_cfg["data_dir"], cfg_path)
+    symbol = cfg.symbol
+    initial_cash = cfg.cash
 
-    symbol = backtest_cfg["symbol"]
-    initial_cash = backtest_cfg.get("initial_cash", 100000.0)
-
-    strategy_name = strategy_cfg["name"]
-    strategy_params = strategy_cfg.get("params", {})
+    strategy_name = cfg.strategy.name
     strategy_class = STRATEGY_MAPPING.get(strategy_name)
     if strategy_class is None:
         raise ValueError(f"Unknown strategy '{strategy_name}'")
+
+    strategy_params: Dict[str, Any] = {"lookback": cfg.strategy.lookback}
+    if cfg.strategy.z is not None:
+        strategy_params["z_threshold"] = cfg.strategy.z
 
     data_handler = CsvDataHandler(csv_dir=data_dir, symbol=symbol)
     if data_handler.data is None:
         raise FileNotFoundError(f"Unable to load data for symbol '{symbol}' from {data_dir}")
 
     portfolio = Portfolio(data_handler=data_handler, initial_cash=initial_cash)
+    slippage_model = VolumeSlippageModel(price_impact=cfg.exec.price_impact)
     broker = SimulatedBroker(
         data_handler=data_handler,
-        execution_style=broker_cfg.get("execution_style", "INSTANT"),
-        num_ticks=broker_cfg.get("num_ticks", 4),
+        commission=cfg.exec.aln,
+        slippage_model=slippage_model,
+        mode=cfg.exec.type,
     )
 
     strategy = strategy_class(symbol=symbol, **strategy_params)
-    engine = Engine(
-        data_handler=data_handler,
-        strategy=strategy,
-        portfolio=portfolio,
-        broker=broker,
-    )
+    engine = Engine(data_handler, strategy, portfolio, broker, seed=cfg.seed)
     engine.run()
 
     metrics = _collect_metrics(portfolio, artifacts_dir)
@@ -85,6 +84,7 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
     result.update({
         "artifacts_dir": str(artifacts_dir),
         "strategy": strategy_name,
+        "seed": cfg.seed,
         "metrics": metrics,
     })
     return result
