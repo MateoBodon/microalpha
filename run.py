@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import argparse
+import importlib.metadata as md
 import json
 import time
-import importlib.metadata as md
 
 from microalpha.runner import run_from_config
 

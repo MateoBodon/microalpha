@@ -2,13 +2,17 @@
 
 from __future__ import annotations
 
-from typing import Dict, List
+from typing import Any, Dict, Mapping, Sequence
 
 import numpy as np
 import pandas as pd
 
 
-def compute_metrics(equity_records: List[Dict[str, float]], turnover: float, periods: int = 252) -> Dict[str, float]:
+def compute_metrics(
+    equity_records: Sequence[Mapping[str, float | int]],
+    turnover: float,
+    periods: int = 252,
+) -> Dict[str, Any]:
     if not equity_records:
         df = pd.DataFrame(columns=["timestamp", "equity", "exposure", "returns"])
         return {
@@ -57,4 +61,3 @@ def compute_metrics(equity_records: List[Dict[str, float]], turnover: float, per
         "avg_exposure": avg_exposure,
         "final_equity": float(equity_series.iloc[-1]),
     }
-

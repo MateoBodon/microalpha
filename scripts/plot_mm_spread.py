@@ -12,15 +12,25 @@ import yaml
 
 from microalpha.runner import run_from_config
 
-
 config_path = Path("configs/mm.yaml").resolve()
 
 
-def run_variant(cfg: dict, exec_type: str, workdir: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
+def run_variant(
+    cfg: dict, exec_type: str, workdir: Path
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     variant = copy.deepcopy(cfg)
     variant["exec"]["type"] = exec_type
     if exec_type != "lob":
-        for key in ["book_levels", "level_size", "tick_size", "mid_price", "latency_ack", "latency_ack_jitter", "latency_fill", "latency_fill_jitter"]:
+        for key in [
+            "book_levels",
+            "level_size",
+            "tick_size",
+            "mid_price",
+            "latency_ack",
+            "latency_ack_jitter",
+            "latency_fill",
+            "latency_fill_jitter",
+        ]:
             variant["exec"].pop(key, None)
     data_path = Path(variant["data_path"])
     if not data_path.is_absolute():
@@ -31,12 +41,22 @@ def run_variant(cfg: dict, exec_type: str, workdir: Path) -> tuple[pd.DataFrame,
     cfg_path.write_text(yaml.safe_dump(variant, sort_keys=False))
 
     result = run_from_config(str(cfg_path))
-    trades = pd.read_csv(result["trades_path"]) if result.get("trades_path") else pd.DataFrame()
-    equity = pd.read_csv(result["metrics"]["equity_curve_path"]) if result.get("metrics") else pd.DataFrame()
+    trades = (
+        pd.read_csv(result["trades_path"])
+        if result.get("trades_path")
+        else pd.DataFrame()
+    )
+    equity = (
+        pd.read_csv(result["metrics"]["equity_curve_path"])
+        if result.get("metrics")
+        else pd.DataFrame()
+    )
     return trades, equity
 
 
-def compute_realized_spread(trades: pd.DataFrame, mid_price: float = 100.0) -> pd.DataFrame:
+def compute_realized_spread(
+    trades: pd.DataFrame, mid_price: float = 100.0
+) -> pd.DataFrame:
     if trades.empty:
         return trades
     trades = trades.copy()
@@ -53,7 +73,9 @@ def main() -> None:
     scenarios = {}
     for exec_type in ("lob", "twap"):
         trades, _ = run_variant(base_cfg, exec_type, workdir)
-        scenarios[exec_type.upper()] = compute_realized_spread(trades, mid_price=base_cfg.get("exec", {}).get("mid_price", 100.0))
+        scenarios[exec_type.upper()] = compute_realized_spread(
+            trades, mid_price=base_cfg.get("exec", {}).get("mid_price", 100.0)
+        )
 
     fig, ax = plt.subplots(figsize=(8, 5))
     for label, df in scenarios.items():

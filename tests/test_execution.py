@@ -1,7 +1,7 @@
 import math
 
 from microalpha.events import OrderEvent
-from microalpha.execution import Executor, KyleLambda, SquareRootImpact, TWAP
+from microalpha.execution import TWAP, Executor, KyleLambda, SquareRootImpact
 
 
 class StubDataHandler:

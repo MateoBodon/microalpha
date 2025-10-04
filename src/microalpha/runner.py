@@ -2,33 +2,31 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
+import shutil
 from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict
 
-import hashlib
-import json
-import shutil
-
 import numpy as np
-import yaml
-
 import pandas as pd
+import yaml
 
 from .broker import SimulatedBroker
 from .config import parse_config
 from .data import CsvDataHandler
 from .engine import Engine
-from .manifest import build as build_manifest, write as write_manifest
+from .execution import TWAP, Executor, KyleLambda, LOBExecution, SquareRootImpact
 from .logging import JsonlWriter
+from .manifest import build as build_manifest
+from .manifest import write as write_manifest
 from .metrics import compute_metrics
 from .portfolio import Portfolio
-from .execution import Executor, KyleLambda, SquareRootImpact, TWAP, LOBExecution
 from .strategies.breakout import BreakoutStrategy
 from .strategies.meanrev import MeanReversionStrategy
 from .strategies.mm import NaiveMarketMakingStrategy
-
 
 STRATEGY_MAPPING = {
     "MeanReversionStrategy": MeanReversionStrategy,
@@ -82,7 +80,9 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
 
     data_handler = CsvDataHandler(csv_dir=data_dir, symbol=symbol)
     if data_handler.data is None:
-        raise FileNotFoundError(f"Unable to load data for symbol '{symbol}' from {data_dir}")
+        raise FileNotFoundError(
+            f"Unable to load data for symbol '{symbol}' from {data_dir}"
+        )
 
     trade_logger = JsonlWriter(str(artifacts_dir / "trades.jsonl"))
 
@@ -102,11 +102,13 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
         "commission": cfg.exec.aln,
     }
     if executor_cls is KyleLambda:
-        exec_kwargs["lam"] = cfg.exec.lam if cfg.exec.lam is not None else cfg.exec.price_impact
+        exec_kwargs["lam"] = (
+            cfg.exec.lam if cfg.exec.lam is not None else cfg.exec.price_impact
+        )
     if executor_cls is TWAP and cfg.exec.slices:
         exec_kwargs["slices"] = cfg.exec.slices
     if executor_cls is LOBExecution:
-        from .lob import LimitOrderBook, LatencyModel
+        from .lob import LatencyModel, LimitOrderBook
 
         latency_rng = np.random.default_rng(root_rng.integers(2**32))
         latency = LatencyModel(
@@ -120,12 +122,12 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
         levels = cfg.exec.book_levels or 3
         level_size = cfg.exec.level_size or 200
         tick = cfg.exec.tick_size or 0.1
-        if cfg.exec.mid_price is not None:
-            mid_price = cfg.exec.mid_price
-        else:
-            try:
-                mid_price = float(data_handler.full_data.iloc[0]["close"])
-            except Exception:
+        mid_price = cfg.exec.mid_price
+        if mid_price is None:
+            full_data = getattr(data_handler, "full_data", None)
+            if isinstance(full_data, pd.DataFrame) and not full_data.empty:
+                mid_price = float(full_data.iloc[0]["close"])
+            else:
                 mid_price = 100.0
         book.seed_book(mid_price=mid_price, tick=tick, levels=levels, size=level_size)
         exec_kwargs["book"] = book

@@ -26,7 +26,9 @@ def test_max_exposure_blocks_orders_exceeding_limit():
     signal = SignalEvent(timestamp=1, symbol="SPY", side="LONG", meta={"qty": 800})
     assert list(portfolio.on_signal(signal)) == []
 
-    allowed_signal = SignalEvent(timestamp=1, symbol="SPY", side="LONG", meta={"qty": 400})
+    allowed_signal = SignalEvent(
+        timestamp=1, symbol="SPY", side="LONG", meta={"qty": 400}
+    )
     orders = list(portfolio.on_signal(allowed_signal))
     assert orders and orders[0].qty == 400
 
@@ -54,4 +56,3 @@ def test_kelly_fraction_sizes_orders():
     orders = list(portfolio.on_signal(signal))
     assert orders
     assert orders[0].qty == 100
-
