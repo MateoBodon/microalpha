@@ -3,15 +3,21 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
+from typing import Any, Optional, Protocol, Sequence
 
 from .events import FillEvent, OrderEvent
 from .lob import LatencyModel, LimitOrderBook
 
 
+class DataHandlerProtocol(Protocol):
+    def get_future_timestamps(self, start_timestamp: int, n: int) -> Sequence[int]: ...
+
+    def get_latest_price(self, symbol: str, timestamp: int) -> float | None: ...
+
+
 @dataclass
 class Executor:
-    data_handler: any
+    data_handler: DataHandlerProtocol
     price_impact: float = 0.0
     commission: float = 0.0
 
@@ -109,7 +115,7 @@ class SquareRootImpact(Executor):
 
 
 class KyleLambda(Executor):
-    def __init__(self, data_handler, lam: float = 0.0, **kw):
+    def __init__(self, data_handler, lam: float = 0.0, **kw: Any):
         super().__init__(data_handler, **kw)
         self.lam = lam
 

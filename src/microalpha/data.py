@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Iterator, List, Optional
+from typing import Iterator, List, Optional, cast
 
 import pandas as pd
 
@@ -55,7 +55,8 @@ class CsvDataHandler(DataHandler):
         for row in self.data.sort_index().itertuples():
             ts_int = self._to_int_timestamp(row.Index)
             volume = float(getattr(row, "volume", 0.0))
-            yield MarketEvent(ts_int, self.symbol, float(row.close), volume)
+            price = cast(float, row.close)
+            yield MarketEvent(ts_int, self.symbol, price, volume)
 
     def get_latest_price(self, symbol: str, timestamp: int):
         """Return the price for ``symbol`` according to the configured lookup mode."""
@@ -66,14 +67,16 @@ class CsvDataHandler(DataHandler):
 
         if self.mode == "exact":
             try:
-                return float(self.data.loc[ts, "close"])
+                close_value = cast(float, self.data.loc[ts, "close"])
+                return close_value
             except KeyError:
                 return None
 
         idx = self.data.index.searchsorted(ts, side="right") - 1
         if idx < 0:
             return None
-        return float(self.data.iloc[idx]["close"])
+        close_value = cast(float, self.data.iloc[idx]["close"])
+        return close_value
 
     def get_future_timestamps(self, start_timestamp: int, n: int) -> List[int]:
         """

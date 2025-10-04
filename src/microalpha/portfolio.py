@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, Iterable, List
+from typing import Dict, Iterable, List, Literal, cast
 
 from .events import FillEvent, LookaheadError, MarketEvent, OrderEvent, SignalEvent
 from .logging import JsonlWriter
@@ -30,7 +30,7 @@ class Portfolio:
         self.initial_cash = initial_cash
         self.cash = initial_cash
         self.positions: Dict[str, PortfolioPosition] = {}
-        self.equity_curve: List[Dict[str, float]] = []
+        self.equity_curve: List[Dict[str, float | int]] = []
         self.current_time: int | None = None
         self.total_turnover = 0.0
         self.default_order_qty = default_order_qty
@@ -42,7 +42,7 @@ class Portfolio:
         self.drawdown_halted = False
         self.market_value = 0.0
         self.last_equity = initial_cash
-        self.trades: List[Dict[str, float]] = []
+        self.trades: List[Dict[str, float | int | str | None]] = []
         self.trade_logger = trade_logger
         self.trade_log_path = trade_logger.path if trade_logger else None
 
@@ -85,7 +85,7 @@ class Portfolio:
             position = self.positions.get(signal.symbol)
             if not position or position.qty == 0:
                 return []
-            side = "SELL" if position.qty > 0 else "BUY"
+            side = cast(Literal["BUY", "SELL"], "SELL" if position.qty > 0 else "BUY")
             return [
                 OrderEvent(signal.timestamp, signal.symbol, abs(position.qty), side)
             ]
@@ -106,7 +106,7 @@ class Portfolio:
             if projected_turnover > self.turnover_cap:
                 return []
 
-        side = "BUY" if signal.side == "LONG" else "SELL"
+        side = cast(Literal["BUY", "SELL"], "BUY" if signal.side == "LONG" else "SELL")
         anticipated_market_value = (
             self.market_value + (qty if side == "BUY" else -qty) * price
         )
@@ -134,9 +134,9 @@ class Portfolio:
         self.cash -= fill.commission
         self.total_turnover += abs(trade_value)
 
-        side = "BUY" if fill.qty > 0 else "SELL"
+        side = cast(Literal["BUY", "SELL"], "BUY" if fill.qty > 0 else "SELL")
         inventory = position.qty
-        trade_record = {
+        trade_record: Dict[str, float | int | str | None] = {
             "timestamp": fill.timestamp,
             "symbol": fill.symbol,
             "side": side,

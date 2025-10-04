@@ -122,12 +122,12 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
         levels = cfg.exec.book_levels or 3
         level_size = cfg.exec.level_size or 200
         tick = cfg.exec.tick_size or 0.1
-        if cfg.exec.mid_price is not None:
-            mid_price = cfg.exec.mid_price
-        else:
-            try:
-                mid_price = float(data_handler.full_data.iloc[0]["close"])
-            except Exception:
+        mid_price = cfg.exec.mid_price
+        if mid_price is None:
+            full_data = getattr(data_handler, "full_data", None)
+            if isinstance(full_data, pd.DataFrame) and not full_data.empty:
+                mid_price = float(full_data.iloc[0]["close"])
+            else:
                 mid_price = 100.0
         book.seed_book(mid_price=mid_price, tick=tick, levels=levels, size=level_size)
         exec_kwargs["book"] = book

@@ -19,6 +19,8 @@ dev = [
     "matplotlib",
     "pyarrow",
     "pydantic",
+    "pandas-stubs",
+    "types-PyYAML",
 ]
 
 [tool.black]
