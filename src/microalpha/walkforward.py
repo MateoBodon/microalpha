@@ -391,18 +391,20 @@ def _summarise_walkforward(
     metrics = compute_metrics(equity_records, total_turnover)
     df = metrics.pop("equity_df")
 
+    equity_path: str | None = None
     if not df.empty:
-        equity_path = artifacts_dir / "walk_forward_equity.csv"
-        df.to_csv(equity_path)
-        metrics["equity_curve_path"] = str(equity_path)
-    else:
-        metrics["equity_curve_path"] = None
+        path = artifacts_dir / "walk_forward_equity.csv"
+        df.to_csv(path)
+        equity_path = str(path)
 
     metrics_path = artifacts_dir / "metrics.json"
     with metrics_path.open("w", encoding="utf-8") as handle:
         json.dump(metrics, handle, indent=2)
-    metrics["metrics_path"] = str(metrics_path)
-    return metrics
+
+    manifest_metrics = metrics.copy()
+    manifest_metrics["equity_curve_path"] = equity_path
+    manifest_metrics["metrics_path"] = str(metrics_path)
+    return manifest_metrics
 
 
 def _metrics_summary(metrics: Dict[str, Any]) -> Dict[str, Any]:

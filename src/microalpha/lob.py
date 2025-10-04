@@ -77,8 +77,9 @@ class BookSide:
             order = level[0] if level else None
         return order
 
-    def consume(self, price: float, qty: int) -> List[LimitOrder]:
+    def consume(self, price: float, qty: int) -> tuple[List[LimitOrder], List[str]]:
         fills: List[LimitOrder] = []
+        completed: List[str] = []
         while qty > 0 and price in self.levels and self.levels[price]:
             head = self.levels[price][0]
             traded = min(qty, head.qty)
@@ -86,9 +87,10 @@ class BookSide:
             qty -= traded
             fills.append(LimitOrder(head.order_id, head.side, price, traded, head.timestamp))
             if head.qty == 0:
+                completed.append(head.order_id)
                 self.levels[price].popleft()
         self._remove_price(price)
-        return fills
+        return fills, completed
 
     def matchable(self, price: Optional[float], incoming_side: str) -> bool:
         best = self.best_price()
@@ -161,7 +163,7 @@ class LimitOrderBook:
                 if side == "SELL" and best_price < price_limit:
                     break
 
-            matched_orders = aggressive_book.consume(best_price, remaining_qty)
+            matched_orders, completed_ids = aggressive_book.consume(best_price, remaining_qty)
             if not matched_orders:
                 break
             traded = sum(order.qty for order in matched_orders)
@@ -179,6 +181,8 @@ class LimitOrderBook:
                     latency_fill=fill_latency,
                 )
             )
+            for completed_id in completed_ids:
+                self._lookup.pop(completed_id, None)
 
         if remaining_qty > 0 and order_event.order_type == "LIMIT":
             order = LimitOrder(order_id, side, price_limit if price_limit is not None else 0.0, remaining_qty, order_event.timestamp)

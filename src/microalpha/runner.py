@@ -186,13 +186,14 @@ def _persist_metrics(metrics: Dict[str, Any], artifacts_dir: Path) -> Dict[str, 
     equity_path = artifacts_dir / "equity_curve.csv"
     df.to_csv(equity_path)
 
-    metrics["equity_curve_path"] = str(equity_path)
     metrics_path = artifacts_dir / "metrics.json"
     with metrics_path.open("w", encoding="utf-8") as handle:
         json.dump(metrics, handle, indent=2)
 
-    metrics["metrics_path"] = str(metrics_path)
-    return metrics
+    manifest_metrics = metrics.copy()
+    manifest_metrics["equity_curve_path"] = str(equity_path)
+    manifest_metrics["metrics_path"] = str(metrics_path)
+    return manifest_metrics
 
 
 def _persist_trades(portfolio: Portfolio, artifacts_dir: Path) -> str | None:
