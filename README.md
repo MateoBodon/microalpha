@@ -386,6 +386,16 @@ black microalpha/
 ruff check microalpha/
 ```
 
+CI enforces >=85% line coverage:
+
+```bash
+pytest -q --cov=microalpha --cov-fail-under=85
+```
+
+#### Tool versions
+
+- CI workflow: [ci.yml](https://github.com/MateoBodon/microalpha/actions/workflows/ci.yml?query=branch%3Amain) - run logs list the exact toolchain versions used in CI.
+
 ---
 
 ## Quickstart
@@ -534,6 +544,14 @@ def test_breakout_strategy_generates_long_signal():
 | Apple M2 Pro (32GB, macOS 14.6.1) | 3.12.2 | `python benchmarks/bench_engine.py` | 1,000,000 | 0.773 | 1,294,141 |
 
 Numbers will vary with hardware; use the benchmark harness to gather comparable stats on your system.
+
+To capture a cProfile trace for a run:
+
+```bash
+MICROALPHA_PROFILE=1 microalpha run -c configs/meanrev.yaml
+```
+
+The profiler output is written to `artifacts/<run_id>/profile.pstats`.
 
 ---
 
