@@ -74,7 +74,9 @@ class BookSide:
         order = level[0]
         if order.qty == 0:
             level.popleft()
-            order = level[0] if level else None
+            if not level:
+                return None
+            order = level[0]
         return order
 
     def consume(self, price: float, qty: int) -> tuple[List[LimitOrder], List[str]]:
