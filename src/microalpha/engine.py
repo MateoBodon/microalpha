@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-from typing import Iterable
-
-import os
 import cProfile
+import os
 from pathlib import Path
+from typing import Iterable
 
 import numpy as np
 

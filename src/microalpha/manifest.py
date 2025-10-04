@@ -2,17 +2,16 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, asdict
-from typing import Optional
-
+import importlib.metadata as importlib_metadata
 import json
 import os
 import platform
 import random
 import subprocess
 import sys
+from dataclasses import asdict, dataclass
+from typing import Optional
 
-import importlib.metadata as importlib_metadata
 import numpy as np
 
 

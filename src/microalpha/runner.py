@@ -2,33 +2,31 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
+import shutil
 from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict
 
-import hashlib
-import json
-import shutil
-
 import numpy as np
-import yaml
-
 import pandas as pd
+import yaml
 
 from .broker import SimulatedBroker
 from .config import parse_config
 from .data import CsvDataHandler
 from .engine import Engine
-from .manifest import build as build_manifest, write as write_manifest
+from .execution import TWAP, Executor, KyleLambda, LOBExecution, SquareRootImpact
 from .logging import JsonlWriter
+from .manifest import build as build_manifest
+from .manifest import write as write_manifest
 from .metrics import compute_metrics
 from .portfolio import Portfolio
-from .execution import Executor, KyleLambda, SquareRootImpact, TWAP, LOBExecution
 from .strategies.breakout import BreakoutStrategy
 from .strategies.meanrev import MeanReversionStrategy
 from .strategies.mm import NaiveMarketMakingStrategy
-
 
 STRATEGY_MAPPING = {
     "MeanReversionStrategy": MeanReversionStrategy,
@@ -106,7 +104,7 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
     if executor_cls is TWAP and cfg.exec.slices:
         exec_kwargs["slices"] = cfg.exec.slices
     if executor_cls is LOBExecution:
-        from .lob import LimitOrderBook, LatencyModel
+        from .lob import LatencyModel, LimitOrderBook
 
         latency_rng = np.random.default_rng(root_rng.integers(2**32))
         latency = LatencyModel(
