@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from .events import FillEvent, OrderEvent
-from .lob import LimitOrderBook, LatencyModel
+from .lob import LatencyModel, LimitOrderBook
 
 
 @dataclass

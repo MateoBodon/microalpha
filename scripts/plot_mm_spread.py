@@ -12,7 +12,6 @@ import yaml
 
 from microalpha.runner import run_from_config
 
-
 config_path = Path("configs/mm.yaml").resolve()
 
 

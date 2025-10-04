@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 import argparse
+import importlib.metadata as md
 import json
 import platform
 import sys
 import time
-import importlib.metadata as md
 
 from .runner import run_from_config
 from .walkforward import run_walk_forward

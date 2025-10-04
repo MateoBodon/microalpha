@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 from dataclasses import asdict
 from itertools import product
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Tuple
-
-import hashlib
-import json
 
 import numpy as np
 import pandas as pd
@@ -19,16 +18,16 @@ from .config import BacktestCfg, ExecModelCfg
 from .config_wfv import WFVCfg
 from .data import CsvDataHandler
 from .engine import Engine
-from .execution import Executor, KyleLambda, SquareRootImpact, TWAP, LOBExecution
+from .execution import TWAP, Executor, KyleLambda, LOBExecution, SquareRootImpact
 from .logging import JsonlWriter
-from .manifest import build as build_manifest, write as write_manifest
+from .manifest import build as build_manifest
+from .manifest import write as write_manifest
 from .metrics import compute_metrics
 from .portfolio import Portfolio
 from .runner import persist_config, prepare_artifacts_dir, resolve_path
 from .strategies.breakout import BreakoutStrategy
 from .strategies.meanrev import MeanReversionStrategy
 from .strategies.mm import NaiveMarketMakingStrategy
-
 
 STRATEGY_MAPPING = {
     "MeanReversionStrategy": MeanReversionStrategy,
@@ -344,7 +343,7 @@ def _build_executor(data_handler, exec_cfg: ExecModelCfg, rng: np.random.Generat
     if executor_cls is TWAP and exec_cfg.slices:
         kwargs["slices"] = exec_cfg.slices
     if executor_cls is LOBExecution:
-        from .lob import LimitOrderBook, LatencyModel
+        from .lob import LatencyModel, LimitOrderBook
 
         latency = LatencyModel(
             ack_fixed=exec_cfg.latency_ack or 0.001,

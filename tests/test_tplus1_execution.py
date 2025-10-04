@@ -1,5 +1,3 @@
-from microalpha.broker import SimulatedBroker
-from microalpha.engine import Engine
 import numpy as np
 
 from microalpha.broker import SimulatedBroker

@@ -1,5 +1,3 @@
-from microalpha.engine import Engine
-from microalpha.events import MarketEvent
 import numpy as np
 
 from microalpha.engine import Engine
