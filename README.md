@@ -2,7 +2,7 @@
 
 **Leakage-safe, event-driven backtesting engine with walk-forward cross-validation, parameter optimization, and advanced execution modeling.**
 
-[![CI](https://github.com/mateobodon/microalpha/actions/workflows/ci.yml/badge.svg)](https://github.com/mateobodon/microalpha/actions/workflows/ci.yml)
+[![CI](https://github.com/mateobodon/microalpha/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/mateobodon/microalpha/actions/workflows/ci.yml?query=branch%3Amain)
 ![Coverage](https://img.shields.io/badge/coverage-%3E85%25-brightgreen.svg)
 [![PyPI version](https://badge.fury.io/py/microalpha.svg)](https://badge.fury.io/py/microalpha)
 
