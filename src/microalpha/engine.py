@@ -13,7 +13,9 @@ from .events import FillEvent, LookaheadError, MarketEvent, OrderEvent, SignalEv
 
 
 class Engine:
-    def __init__(self, data, strategy, portfolio, broker, rng: np.random.Generator | None = None):
+    def __init__(
+        self, data, strategy, portfolio, broker, rng: np.random.Generator | None = None
+    ):
         self.clock: int | None = None
         self.data = data
         self.strategy = strategy
@@ -50,7 +52,9 @@ class Engine:
 
             orders: Iterable[OrderEvent] = self.portfolio.on_signal(signal)
             for order in orders:
-                fill: FillEvent | None = self.broker.execute(order, market_event.timestamp)
+                fill: FillEvent | None = self.broker.execute(
+                    order, market_event.timestamp
+                )
                 if fill is None:
                     continue
                 if fill.timestamp < market_event.timestamp:

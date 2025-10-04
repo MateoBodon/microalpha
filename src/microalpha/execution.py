@@ -29,7 +29,9 @@ class Executor:
     def _commission(self, qty: int) -> float:
         return self.commission * abs(qty)
 
-    def _build_fill(self, order: OrderEvent, timestamp: int, qty: int) -> Optional[FillEvent]:
+    def _build_fill(
+        self, order: OrderEvent, timestamp: int, qty: int
+    ) -> Optional[FillEvent]:
         price = self.data_handler.get_latest_price(order.symbol, timestamp)
         if price is None or qty == 0:
             return None
@@ -49,7 +51,13 @@ class Executor:
 
 
 class TWAP(Executor):
-    def __init__(self, data_handler, price_impact: float = 0.0, commission: float = 0.0, slices: int = 4):
+    def __init__(
+        self,
+        data_handler,
+        price_impact: float = 0.0,
+        commission: float = 0.0,
+        slices: int = 4,
+    ):
         super().__init__(data_handler, price_impact, commission)
         self.slices = max(1, slices)
 
