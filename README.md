@@ -4,7 +4,6 @@
 
 [![CI](https://github.com/mateobodon/microalpha/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/mateobodon/microalpha/actions/workflows/ci.yml?query=branch%3Amain)
 ![Coverage](https://img.shields.io/badge/coverage-%3E85%25-brightgreen.svg)
-[![PyPI version](https://badge.fury.io/py/microalpha.svg)](https://badge.fury.io/py/microalpha)
 
 **TL;DR:** An opinionated, research-hygienic backtester that enforces strict time-ordering, offers out-of-sample walk-forward evaluation with per-fold parameter selection, and includes realistic market frictions including TWAP + linear/√-impact/Kyle-λ execution modeling, slippage, and commission costs.
 
