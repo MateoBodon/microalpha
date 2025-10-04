@@ -4,7 +4,7 @@ import pandas as pd
 import yaml
 
 from microalpha.config import BacktestCfg, ExecModelCfg, StrategyCfg
-from microalpha.config_wfv import WFVCfg, WalkForwardWindow
+from microalpha.config_wfv import WalkForwardWindow, WFVCfg
 from microalpha.walkforward import run_walk_forward
 
 

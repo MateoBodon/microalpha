@@ -11,14 +11,16 @@ dependencies = ["numpy", "pandas", "pyyaml"]
 [project.optional-dependencies]
 dev = [
     "pytest",
+    "pytest-cov",
     "hypothesis",
     "mypy",
-    "ruff",
-    "black",
-    "pytest-cov",
+    "ruff>=0.4.0",      # ensure 'ruff check' exists
+    "black>=23.7",
     "matplotlib",
     "pyarrow",
     "pydantic",
+    "pandas-stubs",
+    "types-PyYAML",
 ]
 
 [tool.black]

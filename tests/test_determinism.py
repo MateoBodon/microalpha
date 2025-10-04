@@ -44,8 +44,12 @@ def test_repeated_runs_are_deterministic(tmp_path):
     art_one = Path(result_one["artifacts_dir"])
     art_two = Path(result_two["artifacts_dir"])
 
-    assert _read_bytes(art_one / "equity_curve.csv") == _read_bytes(art_two / "equity_curve.csv")
-    assert _read_bytes(art_one / "metrics.json") == _read_bytes(art_two / "metrics.json")
+    assert _read_bytes(art_one / "equity_curve.csv") == _read_bytes(
+        art_two / "equity_curve.csv"
+    )
+    assert _read_bytes(art_one / "metrics.json") == _read_bytes(
+        art_two / "metrics.json"
+    )
 
     trades_one = _read_bytes(art_one / "trades.jsonl")
     trades_two = _read_bytes(art_two / "trades.jsonl")

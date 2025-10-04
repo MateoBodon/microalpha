@@ -17,7 +17,9 @@ def test_turnover_cap_blocks_second_trade():
     first_orders = portfolio.on_signal(SignalEvent(0, "SPY", "LONG"))
     assert len(first_orders) == 1
 
-    fill = FillEvent(0, "SPY", qty=first_orders[0].qty, price=100.0, commission=0.0, slippage=0.0)
+    fill = FillEvent(
+        0, "SPY", qty=first_orders[0].qty, price=100.0, commission=0.0, slippage=0.0
+    )
     portfolio.on_fill(fill)
 
     second_orders = portfolio.on_signal(SignalEvent(1, "SPY", "LONG"))

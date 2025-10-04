@@ -3,15 +3,21 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
+from typing import Any, Optional, Protocol, Sequence
 
 from .events import FillEvent, OrderEvent
-from .lob import LimitOrderBook, LatencyModel
+from .lob import LatencyModel, LimitOrderBook
+
+
+class DataHandlerProtocol(Protocol):
+    def get_future_timestamps(self, start_timestamp: int, n: int) -> Sequence[int]: ...
+
+    def get_latest_price(self, symbol: str, timestamp: int) -> float | None: ...
 
 
 @dataclass
 class Executor:
-    data_handler: any
+    data_handler: DataHandlerProtocol
     price_impact: float = 0.0
     commission: float = 0.0
 
@@ -29,7 +35,9 @@ class Executor:
     def _commission(self, qty: int) -> float:
         return self.commission * abs(qty)
 
-    def _build_fill(self, order: OrderEvent, timestamp: int, qty: int) -> Optional[FillEvent]:
+    def _build_fill(
+        self, order: OrderEvent, timestamp: int, qty: int
+    ) -> Optional[FillEvent]:
         price = self.data_handler.get_latest_price(order.symbol, timestamp)
         if price is None or qty == 0:
             return None
@@ -49,7 +57,13 @@ class Executor:
 
 
 class TWAP(Executor):
-    def __init__(self, data_handler, price_impact: float = 0.0, commission: float = 0.0, slices: int = 4):
+    def __init__(
+        self,
+        data_handler,
+        price_impact: float = 0.0,
+        commission: float = 0.0,
+        slices: int = 4,
+    ):
         super().__init__(data_handler, price_impact, commission)
         self.slices = max(1, slices)
 
@@ -101,7 +115,7 @@ class SquareRootImpact(Executor):
 
 
 class KyleLambda(Executor):
-    def __init__(self, data_handler, lam: float = 0.0, **kw):
+    def __init__(self, data_handler, lam: float = 0.0, **kw: Any):
         super().__init__(data_handler, **kw)
         self.lam = lam
 

@@ -2,17 +2,16 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, asdict
-from typing import Optional
-
+import importlib.metadata as importlib_metadata
 import json
 import os
 import platform
 import random
 import subprocess
 import sys
+from dataclasses import asdict, dataclass
+from typing import Optional
 
-import importlib.metadata as importlib_metadata
 import numpy as np
 
 
@@ -77,4 +76,3 @@ def write(manifest: Manifest, outdir: str) -> None:
     manifest_path = os.path.join(outdir, "manifest.json")
     with open(manifest_path, "w", encoding="utf-8") as handle:
         json.dump(asdict(manifest), handle, indent=2)
-
