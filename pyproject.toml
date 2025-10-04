@@ -6,7 +6,12 @@ authors = [
     { name = "Mateo Bodon", email = "mateo.bodon@yale.edu" },
 ]
 requires-python = ">=3.9"
-dependencies = ["numpy", "pandas", "pyyaml"]
+dependencies = [
+    "numpy",
+    "pandas",
+    "pyyaml",
+    "pydantic>=2",
+]
 
 [project.optional-dependencies]
 dev = [
