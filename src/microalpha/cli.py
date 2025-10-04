@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import platform
+import sys
 import time
 import importlib.metadata as md
 
@@ -21,7 +23,14 @@ def main() -> None:
     wfv_parser = subparsers.add_parser("wfv")
     wfv_parser.add_argument("-c", "--config", required=True)
 
+    subparsers.add_parser("info")
+
     args = parser.parse_args()
+
+    if args.cmd == "info":
+        print(json.dumps(_build_info(), indent=2))
+        return
+
     t0 = time.time()
 
     if args.cmd == "run":
@@ -30,12 +39,26 @@ def main() -> None:
         manifest = run_walk_forward(args.config)
 
     manifest["runtime_sec"] = round(time.time() - t0, 3)
-    try:
-        manifest["version"] = md.version("microalpha")
-    except md.PackageNotFoundError:
-        manifest["version"] = "unknown"
+    manifest["version"] = _resolve_version()
 
     print(json.dumps(manifest, indent=2))
+
+
+def _build_info() -> dict[str, str]:
+    info = {
+        "python": platform.python_version(),
+        "platform": platform.platform(),
+        "microalpha": _resolve_version(),
+        "executable": sys.executable,
+    }
+    return info
+
+
+def _resolve_version() -> str:
+    try:
+        return md.version("microalpha")
+    except md.PackageNotFoundError:
+        return "unknown"
 
 
 if __name__ == "__main__":
