@@ -333,6 +333,7 @@ if seed is not None:
 - Python 3.9+
 - pandas
 - numpy
+- pydantic >=2
 - pytest (for testing)
 - pyyaml (for configuration)
 
