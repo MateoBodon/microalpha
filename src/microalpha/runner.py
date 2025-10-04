@@ -80,7 +80,9 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
 
     data_handler = CsvDataHandler(csv_dir=data_dir, symbol=symbol)
     if data_handler.data is None:
-        raise FileNotFoundError(f"Unable to load data for symbol '{symbol}' from {data_dir}")
+        raise FileNotFoundError(
+            f"Unable to load data for symbol '{symbol}' from {data_dir}"
+        )
 
     trade_logger = JsonlWriter(str(artifacts_dir / "trades.jsonl"))
 
@@ -100,7 +102,9 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
         "commission": cfg.exec.aln,
     }
     if executor_cls is KyleLambda:
-        exec_kwargs["lam"] = cfg.exec.lam if cfg.exec.lam is not None else cfg.exec.price_impact
+        exec_kwargs["lam"] = (
+            cfg.exec.lam if cfg.exec.lam is not None else cfg.exec.price_impact
+        )
     if executor_cls is TWAP and cfg.exec.slices:
         exec_kwargs["slices"] = cfg.exec.slices
     if executor_cls is LOBExecution:

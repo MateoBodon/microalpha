@@ -108,9 +108,7 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
     cfg_path = Path(config_path).expanduser().resolve()
     raw_config = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
     cfg = load_wfv_cfg(str(cfg_path))
-    config_hash = hashlib.sha256(
-        yaml.safe_dump(raw_config).encode("utf-8")
-    ).hexdigest()
+    config_hash = hashlib.sha256(yaml.safe_dump(raw_config).encode("utf-8")).hexdigest()
 
     artifacts_config: Dict[str, Any] = {}
     if cfg.artifacts_dir:
@@ -136,7 +134,9 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
 
     data_handler = CsvDataHandler(csv_dir=data_dir, symbol=symbol)
     if data_handler.data is None:
-        raise FileNotFoundError(f"Unable to load data for symbol '{symbol}' from {data_dir}")
+        raise FileNotFoundError(
+            f"Unable to load data for symbol '{symbol}' from {data_dir}"
+        )
 
     equity_records: List[Dict[str, Any]] = []
     folds: List[Dict[str, Any]] = []
@@ -150,7 +150,9 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
         raise ValueError(f"Unknown strategy '{strategy_name}'")
 
     try:
-        while current_date + pd.Timedelta(days=training_days + testing_days) <= end_date:
+        while (
+            current_date + pd.Timedelta(days=training_days + testing_days) <= end_date
+        ):
             train_start = current_date
             train_end = train_start + pd.Timedelta(days=training_days)
             test_start = train_end + pd.Timedelta(days=1)
@@ -302,14 +304,18 @@ def _optimise_parameters(
             {
                 "params": dict(params),
                 "metrics": metrics,
-                "returns": metrics.get("equity_df", pd.DataFrame())["returns"].to_numpy(),
+                "returns": metrics.get("equity_df", pd.DataFrame())[
+                    "returns"
+                ].to_numpy(),
             }
         )
 
     if not results:
         return {}, None, None
 
-    best_entry = max(results, key=lambda item: item["metrics"].get("sharpe_ratio", float("-inf")))
+    best_entry = max(
+        results, key=lambda item: item["metrics"].get("sharpe_ratio", float("-inf"))
+    )
     spa_pvalue = bootstrap_reality_check(results, seed=cfg.seed)
 
     params = dict(base_params)
@@ -339,7 +345,9 @@ def _build_executor(data_handler, exec_cfg: ExecModelCfg, rng: np.random.Generat
         "commission": exec_cfg.aln,
     }
     if executor_cls is KyleLambda:
-        kwargs["lam"] = exec_cfg.lam if exec_cfg.lam is not None else exec_cfg.price_impact
+        kwargs["lam"] = (
+            exec_cfg.lam if exec_cfg.lam is not None else exec_cfg.price_impact
+        )
     if executor_cls is TWAP and exec_cfg.slices:
         kwargs["slices"] = exec_cfg.slices
     if executor_cls is LOBExecution:

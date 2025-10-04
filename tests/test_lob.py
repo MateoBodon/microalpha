@@ -9,13 +9,19 @@ def test_fifo_matching_and_price_levels():
     book.seed_book(mid_price=100.0, tick=1.0, levels=2, size=50)
 
     # Add additional liquidity at best bid
-    order1 = OrderEvent(timestamp=1, symbol="SYN", qty=100, side="BUY", order_type="LIMIT", price=99.0)
-    order2 = OrderEvent(timestamp=2, symbol="SYN", qty=100, side="BUY", order_type="LIMIT", price=99.0)
+    order1 = OrderEvent(
+        timestamp=1, symbol="SYN", qty=100, side="BUY", order_type="LIMIT", price=99.0
+    )
+    order2 = OrderEvent(
+        timestamp=2, symbol="SYN", qty=100, side="BUY", order_type="LIMIT", price=99.0
+    )
     book.submit(order1)
     book.submit(order2)
 
     # Market sell should match order1 before order2
-    market_sell = OrderEvent(timestamp=3, symbol="SYN", qty=80, side="SELL", order_type="MARKET")
+    market_sell = OrderEvent(
+        timestamp=3, symbol="SYN", qty=80, side="SELL", order_type="MARKET"
+    )
     fills = book.submit(market_sell)
     assert fills, "Expected fills"
     assert math.isclose(fills[0].price, 99.0)

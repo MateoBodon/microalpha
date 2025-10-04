@@ -64,7 +64,8 @@ class Portfolio:
         if (
             self.max_drawdown_stop is not None
             and total_equity < self.high_water_mark
-            and (self.high_water_mark - total_equity) / self.high_water_mark >= self.max_drawdown_stop
+            and (self.high_water_mark - total_equity) / self.high_water_mark
+            >= self.max_drawdown_stop
         ):
             self.drawdown_halted = True
 
@@ -85,7 +86,9 @@ class Portfolio:
             if not position or position.qty == 0:
                 return []
             side = "SELL" if position.qty > 0 else "BUY"
-            return [OrderEvent(signal.timestamp, signal.symbol, abs(position.qty), side)]
+            return [
+                OrderEvent(signal.timestamp, signal.symbol, abs(position.qty), side)
+            ]
 
         if self.drawdown_halted:
             return []
@@ -104,9 +107,15 @@ class Portfolio:
                 return []
 
         side = "BUY" if signal.side == "LONG" else "SELL"
-        anticipated_market_value = self.market_value + (qty if side == "BUY" else -qty) * price
+        anticipated_market_value = (
+            self.market_value + (qty if side == "BUY" else -qty) * price
+        )
         projected_equity = self.last_equity if self.last_equity else self.initial_cash
-        projected_exposure = abs(anticipated_market_value) / projected_equity if projected_equity else 0.0
+        projected_exposure = (
+            abs(anticipated_market_value) / projected_equity
+            if projected_equity
+            else 0.0
+        )
 
         if self.max_exposure is not None and projected_exposure > self.max_exposure:
             return []

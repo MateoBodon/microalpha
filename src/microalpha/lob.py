@@ -85,7 +85,9 @@ class BookSide:
             traded = min(qty, head.qty)
             head.qty -= traded
             qty -= traded
-            fills.append(LimitOrder(head.order_id, head.side, price, traded, head.timestamp))
+            fills.append(
+                LimitOrder(head.order_id, head.side, price, traded, head.timestamp)
+            )
             if head.qty == 0:
                 completed.append(head.order_id)
                 self.levels[price].popleft()
@@ -163,7 +165,9 @@ class LimitOrderBook:
                 if side == "SELL" and best_price < price_limit:
                     break
 
-            matched_orders, completed_ids = aggressive_book.consume(best_price, remaining_qty)
+            matched_orders, completed_ids = aggressive_book.consume(
+                best_price, remaining_qty
+            )
             if not matched_orders:
                 break
             traded = sum(order.qty for order in matched_orders)
@@ -185,7 +189,13 @@ class LimitOrderBook:
                 self._lookup.pop(completed_id, None)
 
         if remaining_qty > 0 and order_event.order_type == "LIMIT":
-            order = LimitOrder(order_id, side, price_limit if price_limit is not None else 0.0, remaining_qty, order_event.timestamp)
+            order = LimitOrder(
+                order_id,
+                side,
+                price_limit if price_limit is not None else 0.0,
+                remaining_qty,
+                order_event.timestamp,
+            )
             passive_book.add(order)
             self._lookup[order_id] = (passive_book, order.price)
 
@@ -198,6 +208,7 @@ class LimitOrderBook:
         if price not in book.levels:
             return
         level = book.levels[price]
-        book.levels[price] = deque([order for order in level if order.order_id != order_id])
+        book.levels[price] = deque(
+            [order for order in level if order.order_id != order_id]
+        )
         book._remove_price(price)
-

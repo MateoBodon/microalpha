@@ -76,4 +76,3 @@ def write(manifest: Manifest, outdir: str) -> None:
     manifest_path = os.path.join(outdir, "manifest.json")
     with open(manifest_path, "w", encoding="utf-8") as handle:
         json.dump(asdict(manifest), handle, indent=2)
-

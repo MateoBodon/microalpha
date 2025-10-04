@@ -32,7 +32,11 @@ def test_bootstrap_sharpe_ratio_handles_short_series():
     returns = pd.Series([0.0, 0.0])
     result = risk.bootstrap_sharpe_ratio(returns)
 
-    assert result == {"sharpe_dist": [0.0], "p_value": 1.0, "confidence_interval": (0.0, 0.0)}
+    assert result == {
+        "sharpe_dist": [0.0],
+        "p_value": 1.0,
+        "confidence_interval": (0.0, 0.0),
+    }
 
 
 def test_volume_slippage_model_grows_quadratically():
