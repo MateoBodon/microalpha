@@ -325,6 +325,35 @@ if seed is not None:
 - Deterministic execution paths with no hidden randomness
 - Version-controlled configurations for experiment tracking
 
+### Artifacts
+
+Every run writes a reproducible record to `artifacts/<run_id>/`:
+
+```
+artifacts/2025-10-05T19-12-40Z-2f9c1d/
+manifest.json
+metrics.json
+equity_curve.csv
+trades.jsonl
+```
+
+`manifest.json` includes: `run_id`, `git_sha`, `microalpha_version`, `python`, `platform`, `seed`, `config_sha256`, `numpy_version`, and `pandas_version`.
+`metrics.json` contains *only run-invariant stats* (Sharpe, Sortino, max drawdown, turnover, exposure).
+
+```json
+{
+  "run_id": "2025-10-05T19-12-40Z-2f9c1d",
+  "git_sha": "2f9c1db",
+  "microalpha_version": "0.1.1",
+  "python": "3.11.6",
+  "platform": "Ubuntu 22.04",
+  "seed": 42,
+  "config_sha256": "c1e8...",
+  "numpy_version": "1.26.4",
+  "pandas_version": "2.2.2"
+}
+```
+
 ---
 
 ## Installation

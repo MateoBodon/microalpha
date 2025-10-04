@@ -9,12 +9,12 @@ Each backtest stores `artifacts/<run_id>/manifest.json` with:
 - `run_id` – UTC timestamp + short Git SHA used to scope outputs.
 - `microalpha_version` – package version recorded at runtime.
 - `git_sha` – repository commit used for the run.
-- `config_path` – absolute path to the YAML config used in the run.
 - `config_sha256` – hash of the raw YAML bytes for integrity checking.
 - `python` – interpreter version string.
 - `platform` – OS information.
+- `numpy_version` – NumPy version active during the run.
+- `pandas_version` – pandas version active during the run.
 - `seed` – RNG seed applied to the shared `numpy.random.Generator`.
-- `artifacts_dir` – directory containing metrics, equity curves, and trade logs.
 
 The manifest is defined in [`src/microalpha/manifest.py`](https://github.com/MateoBodon/microalpha/blob/main/src/microalpha/manifest.py) and written by [`src/microalpha/runner.py`](https://github.com/MateoBodon/microalpha/blob/main/src/microalpha/runner.py).
 
@@ -25,10 +25,12 @@ Example snippet:
   "run_id": "2024-03-27T14-22-19Z-4f3c1d1",
   "microalpha_version": "0.1.1",
   "git_sha": "4f3c1d1",
-  "config_path": "/workspace/microalpha/configs/meanrev.yaml",
   "config_sha256": "2f4b32...",
   "seed": 7,
-  "artifacts_dir": "artifacts/2024-03-27T14-22-19Z-4f3c1d1"
+  "python": "3.11.6",
+  "platform": "Ubuntu 22.04",
+  "numpy_version": "1.26.4",
+  "pandas_version": "2.2.2"
 }
 ```
 
