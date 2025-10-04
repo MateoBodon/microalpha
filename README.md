@@ -2,9 +2,8 @@
 
 **Leakage-safe, event-driven backtesting engine with walk-forward cross-validation, parameter optimization, and advanced execution modeling.**
 
-[![CI](https://github.com/mateobodon/microalpha/actions/workflows/ci.yml/badge.svg)](https://github.com/mateobodon/microalpha/actions/workflows/ci.yml)
+[![CI](https://github.com/MateoBodon/microalpha/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/MateoBodon/microalpha/actions/workflows/ci.yml?query=branch%3Amain)
 ![Coverage](https://img.shields.io/badge/coverage-%3E85%25-brightgreen.svg)
-[![PyPI version](https://badge.fury.io/py/microalpha.svg)](https://badge.fury.io/py/microalpha)
 
 **TL;DR:** An opinionated, research-hygienic backtester that enforces strict time-ordering, offers out-of-sample walk-forward evaluation with per-fold parameter selection, and includes realistic market frictions including TWAP + linear/√-impact/Kyle-λ execution modeling, slippage, and commission costs.
 
@@ -22,6 +21,7 @@
 - [Walk-Forward Cross-Validation](#walk-forward-cross-validation)
 - [Statistical Significance Testing](#statistical-significance-testing)
 - [Determinism & Reproducibility](#determinism--reproducibility)
+  - [Artifacts](#artifacts)
 - [Installation](#installation)
 - [Quickstart](#quickstart)
 - [Configuration Reference](#configuration-reference)
@@ -326,6 +326,35 @@ if seed is not None:
 - Deterministic execution paths with no hidden randomness
 - Version-controlled configurations for experiment tracking
 
+### Artifacts
+
+Every run writes a reproducible record to `artifacts/<run_id>/`:
+
+```
+artifacts/2025-10-05T19-12-40Z-2f9c1d/
+├── manifest.json
+├── metrics.json
+├── equity_curve.csv
+└── trades.jsonl
+```
+
+`manifest.json` includes: `run_id`, `git_sha`, `microalpha_version`, `python`, `platform`, `seed`, and `config_sha256` (sha of the YAML), plus `numpy_version` and `pandas_version` for numeric libraries.  
+`metrics.json` contains *only run-invariant stats* (Sharpe, Sortino, max-DD, turnover, exposure).
+
+```json
+{
+  "run_id": "2025-10-05T19-12-40Z-2f9c1d",
+  "git_sha": "2f9c1db",
+  "microalpha_version": "0.1.1",
+  "python": "3.11.6",
+  "platform": "Ubuntu 22.04",
+  "numpy_version": "1.26.4",
+  "pandas_version": "2.2.2",
+  "seed": 42,
+  "config_sha256": "c1e8…"
+}
+```
+
 ---
 
 ## Installation
@@ -336,6 +365,7 @@ if seed is not None:
 - numpy
 - pytest (for testing)
 - pyyaml (for configuration)
+- Pydantic ≥2
 
 ### Install from Source
 ```bash
@@ -356,6 +386,14 @@ pytest tests/
 black microalpha/
 ruff check microalpha/
 ```
+
+#### Tool versions
+
+The canonical toolchain (Python version, lint/test invocations) lives in [ci.yml](https://github.com/MateoBodon/microalpha/actions/workflows/ci.yml?query=branch%3Amain).
+
+#### Coverage
+
+CI enforces ≥85% line coverage: `pytest -q --cov=microalpha --cov-fail-under=85`.
 
 ---
 
@@ -505,6 +543,14 @@ def test_breakout_strategy_generates_long_signal():
 | Apple M2 Pro (32GB, macOS 14.6.1) | 3.12.2 | `python benchmarks/bench_engine.py` | 1,000,000 | 0.773 | 1,294,141 |
 
 Numbers will vary with hardware; use the benchmark harness to gather comparable stats on your system.
+
+Enable lightweight profiling on any CLI run via:
+
+```bash
+MICROALPHA_PROFILE=1 microalpha run -c configs/meanrev.yaml
+```
+
+The profile is exported to `artifacts/<run_id>/profile.pstats` for inspection with `snakeviz`, `gprof2dot`, or similar tools.
 
 ---
 

@@ -20,8 +20,12 @@ from .data import CsvDataHandler
 from .engine import Engine
 from .execution import TWAP, Executor, KyleLambda, LOBExecution, SquareRootImpact
 from .logging import JsonlWriter
-from .manifest import build as build_manifest
-from .manifest import write as write_manifest
+from .manifest import (
+    build as build_manifest,
+    generate_run_id,
+    resolve_git_sha,
+    write as write_manifest,
+)
 from .metrics import compute_metrics
 from .portfolio import Portfolio
 from .runner import persist_config, prepare_artifacts_dir, resolve_path
@@ -125,8 +129,12 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
     artifacts_config: Dict[str, Any] = {}
     if cfg.artifacts_dir:
         artifacts_config["artifacts_dir"] = cfg.artifacts_dir
-    run_id, artifacts_dir = prepare_artifacts_dir(cfg_path, artifacts_config)
-    manifest = build_manifest(cfg.template.seed, str(cfg_path), run_id, config_hash)
+    git_sha = resolve_git_sha()
+    base_run_id = generate_run_id(git_sha)
+    run_id, artifacts_dir = prepare_artifacts_dir(cfg_path, artifacts_config, base_run_id)
+    manifest = build_manifest(
+        cfg.template.seed, config_hash, git_sha=git_sha, run_id=run_id
+    )
     write_manifest(manifest, str(artifacts_dir))
     persist_config(cfg_path, artifacts_dir)
 
@@ -157,7 +165,7 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
     total_turnover = 0.0
 
     current_date = start_date
-    master_rng = np.random.default_rng(cfg.template.seed)
+    master_rng = np.random.default_rng(manifest.seed)
     strategy_name = cfg.template.strategy.name
     strategy_class = STRATEGY_MAPPING.get(strategy_name)
     if strategy_class is None:
@@ -414,7 +422,7 @@ def _summarise_walkforward(
 
     equity_path: str | None = None
     if not df.empty:
-        path = artifacts_dir / "walk_forward_equity.csv"
+        path = artifacts_dir / "equity_curve.csv"
         df.to_csv(path)
         equity_path = str(path)
 

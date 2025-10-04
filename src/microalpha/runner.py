@@ -20,8 +20,12 @@ from .data import CsvDataHandler
 from .engine import Engine
 from .execution import TWAP, Executor, KyleLambda, LOBExecution, SquareRootImpact
 from .logging import JsonlWriter
-from .manifest import build as build_manifest
-from .manifest import write as write_manifest
+from .manifest import (
+    build as build_manifest,
+    generate_run_id,
+    resolve_git_sha,
+    write as write_manifest,
+)
 from .metrics import compute_metrics
 from .portfolio import Portfolio
 from .strategies.breakout import BreakoutStrategy
@@ -56,8 +60,10 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
     cfg_bytes = yaml.safe_dump(config).encode("utf-8")
     config_hash = hashlib.sha256(cfg_bytes).hexdigest()
 
-    run_id, artifacts_dir = prepare_artifacts_dir(cfg_path, config)
-    manifest = build_manifest(cfg.seed, str(cfg_path), run_id, config_hash)
+    git_sha = resolve_git_sha()
+    base_run_id = generate_run_id(git_sha)
+    run_id, artifacts_dir = prepare_artifacts_dir(cfg_path, config, base_run_id)
+    manifest = build_manifest(cfg.seed, config_hash, git_sha=git_sha, run_id=run_id)
     root_rng = np.random.default_rng(manifest.seed)
     write_manifest(manifest, str(artifacts_dir))
     persist_config(cfg_path, artifacts_dir)
@@ -149,10 +155,10 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
     result: Dict[str, Any] = asdict(manifest)
     result.update(
         {
-            "run_id": run_id,
+            "run_id": manifest.run_id,
             "artifacts_dir": str(artifacts_dir),
             "strategy": strategy_name,
-            "seed": cfg.seed,
+            "seed": manifest.seed,
             "metrics": metrics_paths,
             "trades_path": trades_path,
         }
@@ -160,22 +166,28 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
     return result
 
 
-def prepare_artifacts_dir(cfg_path: Path, config: Dict[str, Any]) -> tuple[str, Path]:
+def prepare_artifacts_dir(
+    cfg_path: Path, config: Dict[str, Any], run_id: str | None = None
+) -> tuple[str, Path]:
     root = Path(config.get("artifacts_dir", "artifacts"))
     if not root.is_absolute():
         root = (Path.cwd() / root).resolve()
 
     root.mkdir(parents=True, exist_ok=True)
 
-    run_id = datetime.utcnow().strftime("%Y%m%d-%H%M%S")
+    if run_id is None:
+        run_id = datetime.utcnow().strftime("%Y%m%d-%H%M%SZ")
+
     candidate = root / run_id
     suffix = 1
+    final_run_id = run_id
     while candidate.exists():
-        candidate = root / f"{run_id}-{suffix:02d}"
+        final_run_id = f"{run_id}-{suffix:02d}"
+        candidate = root / final_run_id
         suffix += 1
 
     candidate.mkdir()
-    return run_id, candidate
+    return final_run_id, candidate
 
 
 def persist_config(cfg_path: Path, artifacts_dir: Path) -> None:

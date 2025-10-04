@@ -6,7 +6,7 @@ This page summarises the primary extension points for building strategies and to
 
 - `run_from_config(path: str) -> dict`
   - Loads a YAML config, resolves paths, executes the backtest, and returns a manifest-style dictionary containing artifact paths.
-- `prepare_artifacts_dir(cfg_path: Path, config: dict) -> tuple[str, Path]`
+- `prepare_artifacts_dir(cfg_path: Path, config: dict, run_id: str | None = None) -> tuple[str, Path]`
   - Allocates an isolated `artifacts/<run_id>` directory for each run.
 
 ## Engine (`microalpha.engine.Engine`)
