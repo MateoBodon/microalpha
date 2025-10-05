@@ -21,8 +21,12 @@ from .execution import TWAP, Executor, KyleLambda, LOBExecution, SquareRootImpac
 from .logging import JsonlWriter
 from .manifest import (
     build as build_manifest,
+)
+from .manifest import (
     generate_run_id,
     resolve_git_sha,
+)
+from .manifest import (
     write as write_manifest,
 )
 from .metrics import compute_metrics
@@ -64,8 +68,9 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
     run_id, artifacts_dir = prepare_artifacts_dir(cfg_path, config, base_run_id)
     manifest = build_manifest(
         cfg.seed,
-        run_id=run_id,
-        config_sha256=config_hash,
+        str(cfg_path),
+        run_id,
+        config_hash,
         git_sha=full_sha,
     )
     root_rng = np.random.default_rng(manifest.seed)
@@ -199,7 +204,7 @@ def _persist_metrics(metrics: Dict[str, Any], artifacts_dir: Path) -> Dict[str, 
     metrics_copy = dict(metrics)
     df = metrics_copy.pop("equity_df")
     equity_path = artifacts_dir / "equity_curve.csv"
-    df.to_csv(equity_path)
+    df.to_csv(equity_path, index=False)
 
     metrics_path = artifacts_dir / "metrics.json"
     stable_metrics = _stable_metrics(metrics_copy)
@@ -214,11 +219,7 @@ def _persist_metrics(metrics: Dict[str, Any], artifacts_dir: Path) -> Dict[str, 
 
 def _stable_metrics(metrics: Dict[str, Any]) -> Dict[str, Any]:
     disallowed = {"run_id", "timestamp", "artifacts_dir", "config_path"}
-    return {
-        key: value
-        for key, value in metrics.items()
-        if key not in disallowed
-    }
+    return {key: value for key, value in metrics.items() if key not in disallowed}
 
 
 def _persist_trades(portfolio: Portfolio, artifacts_dir: Path) -> str | None:
