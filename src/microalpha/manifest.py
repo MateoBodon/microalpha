@@ -2,14 +2,15 @@
 
 from __future__ import annotations
 
-import importlib.metadata as importlib_metadata
 import json
 import os
 import platform
 import random
 import subprocess
+import sys
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
+from importlib import metadata as importlib_metadata
 from typing import Optional, Tuple
 
 import numpy as np
@@ -26,6 +27,7 @@ class Manifest:
     numpy_version: str
     pandas_version: str
     seed: int
+    config_path: str
     config_sha256: str
 
 
@@ -74,33 +76,31 @@ def _resolve_distribution_version() -> str:
 
 def build(
     seed: Optional[int],
+    config_path: str,
     run_id: str,
     config_sha256: str,
     git_sha: Optional[str] = None,
 ) -> Manifest:
     """Construct a manifest and synchronise global RNG state."""
 
-    if seed is None:
-        seed = random.randint(0, 2**32 - 1)
+    # Normalise seeds and set global RNGs
+    norm_seed = int(seed or 0)
+    random.seed(norm_seed)
+    np.random.seed(norm_seed)
 
-    random.seed(seed)
-    np.random.seed(seed)
-
-    full_sha = git_sha
-    if not full_sha:
-        full_sha, _ = resolve_git_sha()
-
+    full_sha = git_sha or resolve_git_sha()[0]
     version = _resolve_distribution_version()
 
     return Manifest(
         run_id=run_id,
         git_sha=full_sha,
         microalpha_version=version,
-        python=platform.python_version(),
+        python=sys.version,
         platform=platform.platform(),
         numpy_version=np.__version__,
         pandas_version=pd.__version__,
-        seed=seed,
+        seed=norm_seed,
+        config_path=os.path.abspath(config_path),
         config_sha256=config_sha256,
     )
 
