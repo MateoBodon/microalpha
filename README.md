@@ -2,9 +2,8 @@
 
 **Leakage-safe, event-driven backtesting engine with walk-forward cross-validation, parameter optimization, and advanced execution modeling.**
 
-[![CI](https://github.com/mateobodon/microalpha/actions/workflows/ci.yml/badge.svg)](https://github.com/mateobodon/microalpha/actions/workflows/ci.yml)
+[![CI](https://github.com/mateobodon/microalpha/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/mateobodon/microalpha/actions/workflows/ci.yml?query=branch%3Amain)
 ![Coverage](https://img.shields.io/badge/coverage-%3E85%25-brightgreen.svg)
-[![PyPI version](https://badge.fury.io/py/microalpha.svg)](https://badge.fury.io/py/microalpha)
 
 **TL;DR:** An opinionated, research-hygienic backtester that enforces strict time-ordering, offers out-of-sample walk-forward evaluation with per-fold parameter selection, and includes realistic market frictions including TWAP + linear/√-impact/Kyle-λ execution modeling, slippage, and commission costs.
 
@@ -326,6 +325,35 @@ if seed is not None:
 - Deterministic execution paths with no hidden randomness
 - Version-controlled configurations for experiment tracking
 
+### Artifacts
+
+Every run writes a reproducible record to `artifacts/<run_id>/`:
+
+```
+artifacts/2025-10-05T19-12-40Z-2f9c1d/
+manifest.json
+metrics.json
+equity_curve.csv
+trades.jsonl
+```
+
+`manifest.json` includes: `run_id`, `git_sha`, `microalpha_version`, `python`, `platform`, `seed`, `config_sha256`, `numpy_version`, and `pandas_version`.
+`metrics.json` contains *only run-invariant stats* (Sharpe, Sortino, max drawdown, turnover, exposure).
+
+```json
+{
+  "run_id": "2025-10-05T19-12-40Z-2f9c1d",
+  "git_sha": "2f9c1db",
+  "microalpha_version": "0.1.1",
+  "python": "3.11.6",
+  "platform": "Ubuntu 22.04",
+  "seed": 42,
+  "config_sha256": "c1e8...",
+  "numpy_version": "1.26.4",
+  "pandas_version": "2.2.2"
+}
+```
+
 ---
 
 ## Installation
@@ -334,6 +362,7 @@ if seed is not None:
 - Python 3.9+
 - pandas
 - numpy
+- pydantic >=2
 - pytest (for testing)
 - pyyaml (for configuration)
 
@@ -356,6 +385,16 @@ pytest tests/
 black microalpha/
 ruff check microalpha/
 ```
+
+CI enforces >=85% line coverage:
+
+```bash
+pytest -q --cov=microalpha --cov-fail-under=85
+```
+
+#### Tool versions
+
+- CI workflow: [ci.yml](https://github.com/MateoBodon/microalpha/actions/workflows/ci.yml?query=branch%3Amain) - run logs list the exact toolchain versions used in CI.
 
 ---
 
@@ -505,6 +544,14 @@ def test_breakout_strategy_generates_long_signal():
 | Apple M2 Pro (32GB, macOS 14.6.1) | 3.12.2 | `python benchmarks/bench_engine.py` | 1,000,000 | 0.773 | 1,294,141 |
 
 Numbers will vary with hardware; use the benchmark harness to gather comparable stats on your system.
+
+To capture a cProfile trace for a run:
+
+```bash
+MICROALPHA_PROFILE=1 microalpha run -c configs/meanrev.yaml
+```
+
+The profiler output is written to `artifacts/<run_id>/profile.pstats`.
 
 ---
 

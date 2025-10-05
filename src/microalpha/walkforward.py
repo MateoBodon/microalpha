@@ -20,8 +20,16 @@ from .data import CsvDataHandler
 from .engine import Engine
 from .execution import TWAP, Executor, KyleLambda, LOBExecution, SquareRootImpact
 from .logging import JsonlWriter
-from .manifest import build as build_manifest
-from .manifest import write as write_manifest
+from .manifest import (
+    build as build_manifest,
+)
+from .manifest import (
+    generate_run_id,
+    resolve_git_sha,
+)
+from .manifest import (
+    write as write_manifest,
+)
 from .metrics import compute_metrics
 from .portfolio import Portfolio
 from .runner import persist_config, prepare_artifacts_dir, resolve_path
@@ -122,11 +130,16 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
     cfg = load_wfv_cfg(str(cfg_path))
     config_hash = hashlib.sha256(yaml.safe_dump(raw_config).encode("utf-8")).hexdigest()
 
-    artifacts_config: Dict[str, Any] = {}
-    if cfg.artifacts_dir:
-        artifacts_config["artifacts_dir"] = cfg.artifacts_dir
-    run_id, artifacts_dir = prepare_artifacts_dir(cfg_path, artifacts_config)
-    manifest = build_manifest(cfg.template.seed, str(cfg_path), run_id, config_hash)
+    full_sha, short_sha = resolve_git_sha()
+    base_run_id = generate_run_id(short_sha)
+    run_id, artifacts_dir = prepare_artifacts_dir(cfg_path, raw_config, base_run_id)
+    manifest = build_manifest(
+        cfg.template.seed,
+        str(cfg_path),
+        run_id,
+        config_hash,
+        git_sha=full_sha,
+    )
     write_manifest(manifest, str(artifacts_dir))
     persist_config(cfg_path, artifacts_dir)
 
@@ -410,22 +423,29 @@ def _summarise_walkforward(
     total_turnover: float,
 ) -> Dict[str, Any]:
     metrics = compute_metrics(equity_records, total_turnover)
-    df = cast(pd.DataFrame, metrics.pop("equity_df"))
+    metrics_copy = dict(metrics)
+    df = cast(pd.DataFrame, metrics_copy.pop("equity_df"))
 
     equity_path: str | None = None
     if not df.empty:
-        path = artifacts_dir / "walk_forward_equity.csv"
-        df.to_csv(path)
+        path = artifacts_dir / "equity_curve.csv"
+        df.to_csv(path, index=False)
         equity_path = str(path)
 
     metrics_path = artifacts_dir / "metrics.json"
+    stable_metrics = _stable_metrics(metrics_copy)
     with metrics_path.open("w", encoding="utf-8") as handle:
-        json.dump(metrics, handle, indent=2)
+        json.dump(stable_metrics, handle, indent=2)
 
-    manifest_metrics = metrics.copy()
+    manifest_metrics = stable_metrics.copy()
     manifest_metrics["equity_curve_path"] = equity_path
     manifest_metrics["metrics_path"] = str(metrics_path)
     return manifest_metrics
+
+
+def _stable_metrics(metrics: Dict[str, Any]) -> Dict[str, Any]:
+    disallowed = {"run_id", "timestamp", "artifacts_dir", "config_path"}
+    return {key: value for key, value in metrics.items() if key not in disallowed}
 
 
 def _metrics_summary(metrics: Dict[str, Any]) -> Dict[str, Any]:
