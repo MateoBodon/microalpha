@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from microalpha.data import CsvDataHandler
+from microalpha.data import CsvDataHandler, MultiCsvDataHandler
 from microalpha.events import MarketEvent
 
 
@@ -33,6 +33,28 @@ def test_csv_data_handler_streams_events(tmp_path: Path):
     assert events_list[0].symbol == symbol
     assert events_list[0].price == 100.0
     assert events_list[0].timestamp == pd.Timestamp("2025-09-23").value
+
+
+def test_multi_csv_data_handler_streams_batches(tmp_path: Path):
+    # Arrange: create two symbols with overlapping dates
+    data_dir = tmp_path
+    dates = pd.to_datetime(["2025-01-01", "2025-01-02", "2025-01-03"])
+    df_a = pd.DataFrame(index=dates, data={"close": [10.0, 11.0, 12.0]})
+    df_b = pd.DataFrame(index=dates[[0, 2]], data={"close": [20.0, 22.0]})
+    df_a.to_csv(data_dir / "AAA.csv")
+    df_b.to_csv(data_dir / "BBB.csv")
+
+    handler = MultiCsvDataHandler(csv_dir=data_dir, symbols=["AAA", "BBB"])
+    batches = list(handler.stream_batches())
+
+    # Expect batches at 3 timestamps
+    assert len(batches) == 3
+    # First batch has both AAA and BBB
+    assert {e.symbol for e in batches[0]} == {"AAA", "BBB"}
+    # Second batch only AAA (BBB missing 2025-01-02)
+    assert {e.symbol for e in batches[1]} == {"AAA"}
+    # Third batch both again
+    assert {e.symbol for e in batches[2]} == {"AAA", "BBB"}
     assert events_list[0].volume == 10
 
     assert events_list[1].price == 101.5
