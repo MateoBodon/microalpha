@@ -44,7 +44,9 @@ class StrategyCfg(BaseModel):
 
 class BacktestCfg(BaseModel):
     data_path: str
-    symbol: str
+    symbol: str | None = None
+    symbols: list[str] | None = None
+    universe_path: str | None = None
     cash: float = 1_000_000
     exec: ExecModelCfg = Field(default_factory=ExecModelCfg)
     strategy: StrategyCfg

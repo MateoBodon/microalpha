@@ -7,6 +7,7 @@ from .strategies.meanrev import MeanReversionStrategy
 from .strategies.breakout import BreakoutStrategy
 from .strategies.mm import NaiveMarketMakingStrategy
 from .strategies.mom import CrossSectionalMomentum
+from .strategies.reversal import CrossSectionalReversal
 
 __all__ = [
     "Engine",
@@ -23,5 +24,6 @@ __all__ = [
     "BreakoutStrategy",
     "NaiveMarketMakingStrategy",
     "CrossSectionalMomentum",
+    "CrossSectionalReversal",
 ]
 
