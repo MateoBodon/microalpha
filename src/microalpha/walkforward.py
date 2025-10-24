@@ -410,6 +410,7 @@ def _build_executor(data_handler, exec_cfg: ExecModelCfg, rng: np.random.Generat
         "commission": (
             exec_cfg.commission if exec_cfg.commission is not None else exec_cfg.aln
         ),
+        "commission_bps": exec_cfg.commission_bps,
     }
     if executor_cls is KyleLambda:
         kwargs["lam"] = (
