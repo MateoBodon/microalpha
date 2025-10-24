@@ -295,6 +295,9 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
                 "train_metrics": _metrics_summary(train_metrics),
                 "test_metrics": _metrics_summary(test_metrics),
                 "spa_pvalue": None if spa_pvalue is None else float(spa_pvalue),
+                "selected_symbols": sorted(list(getattr(strategy, "current_holds", [])))
+                if hasattr(strategy, "current_holds")
+                else None,
             }
 
             folds.append(fold_entry)
