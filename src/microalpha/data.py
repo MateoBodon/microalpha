@@ -141,20 +141,30 @@ class MultiCsvDataHandler(DataHandler):
         for sym in self.symbols:
             self.data_by_symbol[sym] = self._load_symbol(sym)
 
-        # Build the global union index (sorted)
+        # Build the global union index (sorted) as a DatetimeIndex
         indices = [df.index for df in self.data_by_symbol.values() if df is not None]
-        self.union_index = (
-            pd.Index(sorted(set().union(*[set(idx) for idx in indices])))
-            if indices
-            else pd.Index([])
-        )
+        if indices:
+            union_idx = pd.DatetimeIndex([])
+            for idx in indices:
+                union_idx = union_idx.union(pd.DatetimeIndex(idx))
+            self.union_index = union_idx.sort_values()
+        else:
+            self.union_index = pd.DatetimeIndex([])
         # Active view (date range filter). Defaults to full
         self._active_index = self.union_index
 
     def _load_symbol(self, symbol: str) -> Optional[pd.DataFrame]:
         path = self.csv_dir / f"{symbol}.csv"
         try:
-            return pd.read_csv(path, index_col=0, parse_dates=True)
+            df = pd.read_csv(path, index_col=0, parse_dates=[0])
+            # Normalize index to tz-naive datetimes
+            idx = pd.to_datetime(df.index, errors="coerce")
+            try:
+                idx = idx.tz_localize(None)
+            except Exception:
+                pass
+            df.index = idx
+            return df
         except FileNotFoundError:
             print(f"Error: Data file not found for {symbol} at {path}")
             return None
