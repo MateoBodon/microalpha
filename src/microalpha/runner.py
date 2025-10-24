@@ -35,12 +35,14 @@ from .strategies.breakout import BreakoutStrategy
 from .strategies.meanrev import MeanReversionStrategy
 from .strategies.mm import NaiveMarketMakingStrategy
 from .strategies.mom import CrossSectionalMomentum
+from .strategies.reversal import CrossSectionalReversal
 
 STRATEGY_MAPPING = {
     "MeanReversionStrategy": MeanReversionStrategy,
     "BreakoutStrategy": BreakoutStrategy,
     "NaiveMarketMakingStrategy": NaiveMarketMakingStrategy,
     "CrossSectionalMomentum": CrossSectionalMomentum,
+    "CrossSectionalReversal": CrossSectionalReversal,
 }
 
 EXECUTION_MAPPING = {
@@ -95,7 +97,18 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
     if cfg.strategy.z is not None:
         strategy_params.setdefault("z_threshold", cfg.strategy.z)
 
-    data_handler = CsvDataHandler(csv_dir=data_dir, symbol=symbol)
+    # Select data handler based on single or multi-asset configuration
+    data_handler = None
+    if cfg.symbols or cfg.universe_path:
+        from .data import MultiCsvDataHandler
+
+        syms = cfg.symbols if cfg.symbols else None
+        uni_path = Path(cfg.universe_path).resolve() if cfg.universe_path else None
+        data_handler = MultiCsvDataHandler(
+            csv_dir=data_dir, symbols=syms, universe_path=uni_path
+        )
+    else:
+        data_handler = CsvDataHandler(csv_dir=data_dir, symbol=symbol)
     if data_handler.data is None:
         raise FileNotFoundError(
             f"Unable to load data for symbol '{symbol}' from {data_dir}"
@@ -154,7 +167,14 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
     executor = executor_cls(data_handler=data_handler, **exec_kwargs)
     broker = SimulatedBroker(executor)
 
-    strategy = strategy_class(symbol=symbol, **strategy_params)
+    # Instantiate strategy; support batch strategies with symbol_universe
+    if strategy_class is CrossSectionalMomentum:
+        symbol_universe = (
+            cfg.symbols if cfg.symbols else list(getattr(data_handler, "symbols", []))
+        )
+        strategy = strategy_class(symbol_universe=symbol_universe, **strategy_params)
+    else:
+        strategy = strategy_class(symbol=symbol, **strategy_params)
     engine_rng = np.random.default_rng(root_rng.integers(2**32))
     engine = Engine(data_handler, strategy, portfolio, broker, rng=engine_rng)
     engine.run()
