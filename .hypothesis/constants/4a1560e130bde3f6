@@ -1,0 +1,4 @@
+# file: /Users/mateobodon/Documents/Programming/Projects/microalpha/src/microalpha/risk.py
+# hypothesis_version: 6.140.2
+
+[0.0, 1.0, 2.5, 97.5, 252, 5000, 'confidence_interval', 'p_value', 'sharpe_dist']

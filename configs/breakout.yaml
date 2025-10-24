@@ -1,18 +1,16 @@
-# Configuration for a Breakout strategy run
+# Configuration for a Breakout strategy run (BacktestCfg schema)
 
-backtest_settings:
-    symbol: "SPY"
-    initial_cash: 100000.0
-    data_dir: "data"
+data_path: "../data"
+symbol: "SPY"
+cash: 100000.0
+seed: 42
+
+exec:
+  type: "twap"
+  commission: 0.5
+  slices: 4
 
 strategy:
-    name: "BreakoutStrategy"
-    params:
-        lookback: 5
-
-broker_settings:
-    execution_style: "TWAP"
-    num_ticks: 4
-
-# Seed for reproducibility
-random_seed: 42
+  name: "BreakoutStrategy"
+  params:
+    lookback: 5
