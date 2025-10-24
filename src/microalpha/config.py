@@ -14,6 +14,7 @@ class ExecModelCfg(BaseModel):
     # are supplied, `commission` takes precedence.
     aln: float = 0.1
     commission: float | None = None
+    commission_bps: float | None = None
     price_impact: float = 0.0
     lam: float | None = None
     slices: int | None = None

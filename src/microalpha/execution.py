@@ -20,6 +20,7 @@ class Executor:
     data_handler: DataHandlerProtocol
     price_impact: float = 0.0
     commission: float = 0.0
+    commission_bps: float | None = None
 
     def execute(self, order: OrderEvent, current_ts: int) -> Optional[FillEvent]:
         fill_ts = self._fill_timestamp(order, current_ts)
@@ -46,6 +47,9 @@ class Executor:
         slippage = self._slippage(qty)
         fill_price = price + slippage * sign
         commission = self._commission(qty)
+        if self.commission_bps is not None:
+            # Commission as basis points of notional
+            commission = (abs(qty) * fill_price) * (self.commission_bps / 10_000.0)
         return FillEvent(
             timestamp=timestamp,
             symbol=order.symbol,
@@ -131,9 +135,10 @@ class LOBExecution(Executor):
         data_handler,
         price_impact: float = 0.0,
         commission: float = 0.0,
+        commission_bps: float | None = None,
         book: LimitOrderBook | None = None,
     ):
-        super().__init__(data_handler, price_impact, commission)
+        super().__init__(data_handler, price_impact, commission, commission_bps)
         self.book = book or LimitOrderBook(LatencyModel())
 
     def execute(self, order: OrderEvent, current_ts: int) -> Optional[FillEvent]:
@@ -151,12 +156,21 @@ class LOBExecution(Executor):
         latency_ack = max(f.latency_ack for f in fills)
         latency_fill = max(f.latency_fill for f in fills)
 
+        # Add any additional commission on top of book-level fills
+        extra_commission = 0.0
+        if self.commission_bps is not None:
+            extra_commission = (
+                abs(total_qty) * avg_price * (self.commission_bps / 10_000.0)
+            )
+        elif self.commission:
+            extra_commission = self.commission * abs(total_qty)
+
         return FillEvent(
             timestamp=fills[-1].timestamp,
             symbol=fills[0].symbol,
             qty=total_qty,
             price=avg_price,
-            commission=sum(f.commission for f in fills),
+            commission=sum(f.commission for f in fills) + extra_commission,
             slippage=0.0,
             latency_ack=latency_ack,
             latency_fill=latency_fill,

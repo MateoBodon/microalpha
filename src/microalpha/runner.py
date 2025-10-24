@@ -132,6 +132,7 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
         "commission": (
             cfg.exec.commission if cfg.exec.commission is not None else cfg.exec.aln
         ),
+        "commission_bps": cfg.exec.commission_bps,
     }
     if executor_cls is KyleLambda:
         exec_kwargs["lam"] = (
