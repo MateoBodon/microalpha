@@ -15,6 +15,12 @@ Artifacts produced:
 - Rolling 252d Sharpe
 - Summary table (Sharpe, Sortino, Calmar, alpha/beta, IR, turnover/day)
 
+Figures:
+
+![Cross-Sectional Momentum Equity](figures/xsec_mom_equity.png)
+
+![WFV Fold Report](figures/xsec_mom_wfv.png)
+
 Cross-Sectional Momentum (WRDS CRSP – Flagship)
 
 - Universe: S&P 500 constituents (rolling membership), 2005–2025
