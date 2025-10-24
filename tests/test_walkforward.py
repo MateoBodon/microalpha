@@ -42,6 +42,40 @@ def build_config(tmp_path: Path) -> Path:
     return cfg_path
 
 
+def test_walkforward_multi_asset_smoke(tmp_path: Path):
+    # Prepare small multi-asset universe with simple increasing series
+    data_dir = tmp_path / "multi"
+    data_dir.mkdir()
+    dates = pd.date_range("2020-01-01", periods=20, freq="D")
+    for sym, drift in {"AAA": 0.01, "BBB": 0.02, "CCC": -0.01}.items():
+        prices = [100 * (1 + drift) ** i for i in range(len(dates))]
+        df = pd.DataFrame({"date": dates, "close": prices})
+        df.to_csv(data_dir / f"{sym}.csv", index=False)
+
+    cfg = WFVCfg(
+        template=BacktestCfg(
+            data_path=str(data_dir),
+            symbols=["AAA", "BBB", "CCC"],
+            cash=100000.0,
+            seed=11,
+            exec=ExecModelCfg(type="instant"),
+            strategy=StrategyCfg(name="CrossSectionalMomentum", params={"lookback_months": 1, "skip_months": 0, "top_frac": 0.5}),
+        ),
+        walkforward=WalkForwardWindow(
+            start="2020-01-01",
+            end="2020-01-20",
+            training_days=10,
+            testing_days=5,
+        ),
+        grid={"top_frac": [0.5]},
+        artifacts_dir=str(tmp_path / "artifacts"),
+    )
+    cfg_path = tmp_path / "wfv_multi.yaml"
+    cfg_path.write_text(yaml.safe_dump(cfg.model_dump(mode="json")))
+    result = run_walk_forward(str(cfg_path))
+    assert result.get("folds"), "Expected folds in multi-asset WFV"
+
+
 def test_fold_boundaries_and_metrics(tmp_path):
     cfg_path = build_config(tmp_path)
     result = run_walk_forward(str(cfg_path))

@@ -1,0 +1,21 @@
+# Cross-sectional momentum (public-data example)
+
+data_path: "../data"
+symbols: ["SPY", "AAPL", "MSFT", "GOOG", "AMZN", "META", "NVDA", "TSLA", "JPM", "V"]
+cash: 1000000.0
+seed: 7
+
+exec:
+  type: "twap"
+  commission_bps: 1.0
+  slices: 2
+
+strategy:
+  name: "CrossSectionalMomentum"
+  params:
+    lookback_months: 12
+    skip_months: 1
+    top_frac: 0.3
+    vol_target: 0.10
+
+
