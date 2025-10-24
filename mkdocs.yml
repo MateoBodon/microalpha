@@ -12,6 +12,7 @@ nav:
   - API Reference: api.md
   - Examples: examples.md
   - Results: results.md
+  - Calibration: calibration.md
 extra:
   social:
     - icon: fontawesome/brands/github
