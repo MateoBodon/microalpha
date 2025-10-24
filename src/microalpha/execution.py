@@ -66,9 +66,10 @@ class TWAP(Executor):
         data_handler,
         price_impact: float = 0.0,
         commission: float = 0.0,
+        commission_bps: float | None = None,
         slices: int = 4,
     ):
-        super().__init__(data_handler, price_impact, commission)
+        super().__init__(data_handler, price_impact, commission, commission_bps)
         self.slices = max(1, slices)
 
     def execute(self, order: OrderEvent, current_ts: int) -> Optional[FillEvent]:
