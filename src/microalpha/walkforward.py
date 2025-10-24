@@ -36,11 +36,15 @@ from .runner import persist_config, prepare_artifacts_dir, resolve_path
 from .strategies.breakout import BreakoutStrategy
 from .strategies.meanrev import MeanReversionStrategy
 from .strategies.mm import NaiveMarketMakingStrategy
+from .strategies.mom import CrossSectionalMomentum
+from .strategies.reversal import CrossSectionalReversal
 
 STRATEGY_MAPPING = {
     "MeanReversionStrategy": MeanReversionStrategy,
     "BreakoutStrategy": BreakoutStrategy,
     "NaiveMarketMakingStrategy": NaiveMarketMakingStrategy,
+    "CrossSectionalMomentum": CrossSectionalMomentum,
+    "CrossSectionalReversal": CrossSectionalReversal,
 }
 
 EXECUTION_MAPPING = {
@@ -162,7 +166,23 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
     start_date = pd.Timestamp(cfg.walkforward.start)
     end_date = pd.Timestamp(cfg.walkforward.end)
 
-    data_handler = CsvDataHandler(csv_dir=data_dir, symbol=symbol)
+    # Build data handler (single or multi-asset)
+    if cfg.template.symbols or cfg.template.universe_path:
+        from .data import MultiCsvDataHandler
+
+        syms = cfg.template.symbols if cfg.template.symbols else None
+        uni_path = (
+            Path(cfg.template.universe_path).resolve()
+            if cfg.template.universe_path
+            else None
+        )
+        data_handler = MultiCsvDataHandler(
+            csv_dir=data_dir, symbols=syms, universe_path=uni_path
+        )
+        symbol_universe = list(getattr(data_handler, "symbols", []))
+    else:
+        data_handler = CsvDataHandler(csv_dir=data_dir, symbol=symbol)
+        symbol_universe = [symbol]
     if data_handler.data is None:
         raise FileNotFoundError(
             f"Unable to load data for symbol '{symbol}' from {data_dir}"
@@ -218,14 +238,28 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
                 current_date += pd.Timedelta(days=testing_days)
                 continue
 
-            warmup_prices = _collect_warmup_prices(
-                data_handler, train_end, best_params.get("lookback", 0)
-            )
+            # Warmup collection (single vs multi)
+            warmup_prices = None
+            if strategy_class in (CrossSectionalMomentum, CrossSectionalReversal):
+                look = int(best_params.get("lookback_months", 0)) * 21
+                warmup_prices = _collect_warmup_prices_multi(
+                    data_handler, train_end, look, symbol_universe
+                )
+            else:
+                warmup_prices = _collect_warmup_prices(
+                    data_handler, train_end, best_params.get("lookback", 0)
+                )
 
             data_handler.set_date_range(test_start, test_end)
-            strategy = strategy_class(
-                symbol=symbol, **_strategy_kwargs(best_params, warmup_prices)
-            )
+            if strategy_class in (CrossSectionalMomentum, CrossSectionalReversal):
+                strategy = strategy_class(
+                    symbol_universe=symbol_universe,
+                    **_strategy_kwargs(best_params, warmup_prices),
+                )
+            else:
+                strategy = strategy_class(
+                    symbol=symbol, **_strategy_kwargs(best_params, warmup_prices)
+                )
             portfolio = _build_portfolio(
                 data_handler, cfg.template, trade_logger=trade_logger
             )
@@ -422,6 +456,26 @@ def _collect_warmup_prices(
     warmup_start = train_end - pd.Timedelta(days=lookback)
     data_handler.set_date_range(warmup_start, train_end)
     return [event.price for event in data_handler.stream()]
+
+
+def _collect_warmup_prices_multi(
+    data_handler, train_end: pd.Timestamp, lookback: int, symbols: Sequence[str]
+) -> Dict[str, List[float]]:
+    if lookback <= 0:
+        return {s: [] for s in symbols}
+
+    warmup_start = train_end - pd.Timedelta(days=lookback)
+    data_handler.set_date_range(warmup_start, train_end)
+    warm: Dict[str, List[float]] = {s: [] for s in symbols}
+    stream_batches = getattr(data_handler, "stream_batches", None)
+    if callable(stream_batches):
+        for batch in stream_batches():
+            for e in batch:
+                warm[e.symbol].append(e.price)
+    else:
+        for e in data_handler.stream():
+            warm[e.symbol].append(e.price)
+    return warm
 
 
 def _summarise_walkforward(
