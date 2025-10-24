@@ -49,11 +49,14 @@ class Portfolio:
     def on_market(self, event: MarketEvent) -> None:
         self.current_time = event.timestamp
         market_value = 0.0
+        per_symbol_mv: Dict[str, float] = {}
         for symbol, position in self.positions.items():
             price = self.data_handler.get_latest_price(symbol, event.timestamp)
             if price is None:
                 continue
-            market_value += position.qty * price
+            mv = position.qty * price
+            per_symbol_mv[symbol] = mv
+            market_value += mv
 
         total_equity = self.cash + market_value
         exposure = market_value / total_equity if total_equity else 0.0
@@ -69,11 +72,24 @@ class Portfolio:
         ):
             self.drawdown_halted = True
 
+        # Cross-sectional stats
+        abs_values = [abs(v) for v in per_symbol_mv.values() if v != 0]
+        sum_abs = sum(abs_values)
+        gross_exposure = sum_abs / total_equity if total_equity and sum_abs else 0.0
+        num_positions = int(sum(1 for v in per_symbol_mv.values() if v != 0))
+        concentration = 0.0
+        if sum_abs > 0:
+            weights = [v / sum_abs for v in abs_values]
+            concentration = float(sum(w * w for w in weights))
+
         self.equity_curve.append(
             {
                 "timestamp": event.timestamp,
                 "equity": total_equity,
                 "exposure": exposure,
+                "gross_exposure": gross_exposure,
+                "num_positions": num_positions,
+                "concentration": concentration,
             }
         )
 
