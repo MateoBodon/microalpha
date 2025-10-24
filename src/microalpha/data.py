@@ -148,6 +148,8 @@ class MultiCsvDataHandler(DataHandler):
             if indices
             else pd.Index([])
         )
+        # Active view (date range filter). Defaults to full
+        self._active_index = self.union_index
 
     def _load_symbol(self, symbol: str) -> Optional[pd.DataFrame]:
         path = self.csv_dir / f"{symbol}.csv"
@@ -159,7 +161,7 @@ class MultiCsvDataHandler(DataHandler):
 
     def stream(self) -> Iterator[MarketEvent]:
         """Yield MarketEvents across all symbols ordered by timestamp."""
-        for ts in self.union_index:
+        for ts in self._active_index:
             for sym in self.symbols:
                 df = self.data_by_symbol.get(sym)
                 if df is None:
@@ -172,7 +174,7 @@ class MultiCsvDataHandler(DataHandler):
 
     def stream_batches(self) -> Iterator[List[MarketEvent]]:
         """Yield lists of MarketEvents grouped by timestamp for cross-sectional use."""
-        for ts in self.union_index:
+        for ts in self._active_index:
             batch: List[MarketEvent] = []
             for sym in self.symbols:
                 df = self.data_by_symbol.get(sym)
@@ -208,12 +210,22 @@ class MultiCsvDataHandler(DataHandler):
 
     def get_future_timestamps(self, start_timestamp: int, n: int) -> List[int]:
         """Return next n timestamps from the global union index strictly after start."""
-        if self.union_index.empty:
+        if self._active_index.empty:
             return []
 
         ts = self._to_datetime(start_timestamp)
-        future = self.union_index[self.union_index > ts]
+        future = self._active_index[self._active_index > ts]
         return [self._to_int_timestamp(idx) for idx in future[:n]]
+
+    # Date filtering for WFV
+    def set_date_range(self, start_date, end_date):
+        if self.union_index.empty:
+            self._active_index = self.union_index
+            return
+        start = self._to_datetime(start_date)
+        end = self._to_datetime(end_date)
+        mask = (self.union_index >= start) & (self.union_index <= end)
+        self._active_index = self.union_index[mask]
 
     @staticmethod
     def _to_int_timestamp(value) -> int:
