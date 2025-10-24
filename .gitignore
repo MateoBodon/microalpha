@@ -25,6 +25,8 @@ reports/
 *.csv
 !examples/*.csv
 *.png
+!docs/**/*.png
+!docs/figures/*.png
 
 # IDE / Editor specific
 .vscode/
@@ -46,6 +48,8 @@ artifacts/
 reports/
 *.csv
 *.png
+!docs/**/*.png
+!docs/figures/*.png
 
 # allow curated example data
 !examples/*.csv

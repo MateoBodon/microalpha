@@ -183,10 +183,19 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
     else:
         data_handler = CsvDataHandler(csv_dir=data_dir, symbol=symbol)
         symbol_universe = [symbol]
-    if data_handler.data is None:
-        raise FileNotFoundError(
-            f"Unable to load data for symbol '{symbol}' from {data_dir}"
-        )
+    if hasattr(data_handler, "data"):
+        if getattr(data_handler, "data") is None:
+            raise FileNotFoundError(
+                f"Unable to load data for symbol '{symbol}' from {data_dir}"
+            )
+    else:
+        union_index = getattr(data_handler, "_active_index", None)
+        if union_index is None:
+            union_index = getattr(data_handler, "union_index", None)
+        if union_index is None or len(union_index) == 0:
+            raise FileNotFoundError(
+                f"Unable to load multi-asset data from {data_dir} (empty universe)"
+            )
 
     equity_records: List[Dict[str, Any]] = []
     folds: List[Dict[str, Any]] = []
@@ -349,7 +358,16 @@ def _optimise_parameters(
         data_handler.set_date_range(train_start, train_end)
         combined = dict(base_params)
         combined.update(params)
-        strategy = strategy_class(symbol=cfg.symbol, **_strategy_kwargs(combined))
+        # Instantiate strategy (single-asset vs cross-sectional)
+        if strategy_class in (CrossSectionalMomentum, CrossSectionalReversal):
+            universe = list(getattr(data_handler, "symbols", [])) or (
+                [cfg.symbol] if cfg.symbol else []
+            )
+            strategy = strategy_class(
+                symbol_universe=universe, **_strategy_kwargs(combined)
+            )
+        else:
+            strategy = strategy_class(symbol=cfg.symbol, **_strategy_kwargs(combined))
         portfolio = _build_portfolio(data_handler, cfg)
         exec_rng = _spawn_rng(sim_rng)
         executor = _build_executor(data_handler, cfg.exec, exec_rng)
