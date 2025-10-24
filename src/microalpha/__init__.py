@@ -6,6 +6,7 @@ from .broker import SimulatedBroker
 from .strategies.meanrev import MeanReversionStrategy
 from .strategies.breakout import BreakoutStrategy
 from .strategies.mm import NaiveMarketMakingStrategy
+from .strategies.mom import CrossSectionalMomentum
 
 __all__ = [
     "Engine",
@@ -21,5 +22,6 @@ __all__ = [
     "MeanReversionStrategy",
     "BreakoutStrategy",
     "NaiveMarketMakingStrategy",
+    "CrossSectionalMomentum",
 ]
 
