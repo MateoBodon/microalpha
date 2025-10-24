@@ -11,6 +11,14 @@
 
 ---
 
+## Results (Public Subset)
+
+![Cross-Sectional Momentum Equity](docs/figures/xsec_mom_equity.png)
+
+![WFV Fold Report](docs/figures/xsec_mom_wfv.png)
+
+---
+
 ## Table of Contents
 
 - [Features](#features)
@@ -427,7 +435,7 @@ kelly_fraction: 0.05
 
 exec:
   type: "twap"
-  aln: 0.5
+  commission_bps: 1.0
   price_impact: 0.00005
   slices: 4
 
@@ -441,6 +449,7 @@ strategy:
 - `MeanReversionStrategy`: Z-score based mean reversion
 - `BreakoutStrategy`: Momentum breakout detection
 - `NaiveMarketMakingStrategy`: Bid-ask spread capture
+- `CrossSectionalMomentum` / `CrossSectionalReversal`: multi-asset batch strategies
 
 ### Execution Styles
 - `INSTANT`: Immediate order execution
