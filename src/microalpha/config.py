@@ -5,12 +5,15 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Dict
 
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, Field, ValidationError, model_validator
 
 
 class ExecModelCfg(BaseModel):
     type: str = "twap"
+    # commission per-share (back-compat). Prefer using `commission` in configs; if both
+    # are supplied, `commission` takes precedence.
     aln: float = 0.1
+    commission: float | None = None
     price_impact: float = 0.0
     lam: float | None = None
     slices: int | None = None
@@ -22,6 +25,13 @@ class ExecModelCfg(BaseModel):
     latency_ack_jitter: float | None = None
     latency_fill: float | None = None
     latency_fill_jitter: float | None = None
+
+    @model_validator(mode="after")
+    def _backcompat_commission(self) -> "ExecModelCfg":
+        # If new-style `commission` is provided, keep `aln` as-is but callers should
+        # prefer `commission` value. If only legacy `aln` exists, nothing to do.
+        # This keeps backward compatibility with existing configs/tests.
+        return self
 
 
 class StrategyCfg(BaseModel):

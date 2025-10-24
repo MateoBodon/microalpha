@@ -78,8 +78,11 @@ def load_wfv_cfg(path: str) -> WFVCfg:
         exec_payload = dict(raw.get("broker_settings") or raw.get("exec") or {})
         if "mode" in exec_payload:
             exec_payload["type"] = exec_payload.pop("mode")
+        # Back-compat: map legacy/variant keys to modern schema
         if "commission" in exec_payload:
-            exec_payload["aln"] = exec_payload.pop("commission")
+            # Keep both: prefer `commission`, also set legacy `aln` for parser defaults
+            value = exec_payload["commission"]
+            exec_payload["aln"] = value
 
         portfolio_cfg = raw.get("portfolio") or {}
         data_path = data_cfg.get("directory") or data_cfg.get("path")
@@ -244,7 +247,9 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
             total_turnover += float(portfolio.total_turnover)
 
             test_metrics = compute_metrics(
-                portfolio.equity_curve, portfolio.total_turnover
+                portfolio.equity_curve,
+                portfolio.total_turnover,
+                trades=getattr(portfolio, "trades", None),
             )
 
             fold_entry = {
@@ -368,7 +373,9 @@ def _build_executor(data_handler, exec_cfg: ExecModelCfg, rng: np.random.Generat
     executor_cls = EXECUTION_MAPPING.get(exec_type, Executor)
     kwargs: Dict[str, Any] = {
         "price_impact": exec_cfg.price_impact,
-        "commission": exec_cfg.aln,
+        "commission": (
+            exec_cfg.commission if exec_cfg.commission is not None else exec_cfg.aln
+        ),
     }
     if executor_cls is KyleLambda:
         kwargs["lam"] = (

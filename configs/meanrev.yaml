@@ -11,7 +11,7 @@ kelly_fraction: 0.05
 
 exec:
   type: "twap"
-  aln: 0.5
+  commission: 0.5
   price_impact: 0.00005
   slices: 4
 

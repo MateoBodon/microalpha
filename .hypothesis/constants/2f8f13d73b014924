@@ -1,0 +1,4 @@
+# file: /Users/mateobodon/Documents/Programming/Projects/microalpha/src/microalpha/manifest.py
+# hypothesis_version: 6.140.3
+
+['%Y-%m-%dT%H-%M-%SZ', 'HEAD', 'git', 'manifest.json', 'microalpha', 'nogit', 'rev-parse', 'unknown', 'utf-8', 'w']

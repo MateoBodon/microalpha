@@ -1,0 +1,4 @@
+# file: /Users/mateobodon/Documents/Programming/Projects/microalpha/src/microalpha/metrics.py
+# hypothesis_version: 6.140.2
+
+[0.0, 252, 'avg_exposure', 'equity', 'equity_df', 'exposure', 'final_equity', 'max_drawdown', 'returns', 'sharpe_ratio', 'sortino_ratio', 'timestamp', 'total_turnover', 'traded_days']

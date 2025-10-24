@@ -114,7 +114,9 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
     executor_cls = EXECUTION_MAPPING.get(exec_type, Executor)
     exec_kwargs: Dict[str, Any] = {
         "price_impact": cfg.exec.price_impact,
-        "commission": cfg.exec.aln,
+        "commission": (
+            cfg.exec.commission if cfg.exec.commission is not None else cfg.exec.aln
+        ),
     }
     if executor_cls is KyleLambda:
         exec_kwargs["lam"] = (
@@ -157,7 +159,11 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
 
     trade_logger.close()
 
-    metrics = compute_metrics(portfolio.equity_curve, portfolio.total_turnover)
+    metrics = compute_metrics(
+        portfolio.equity_curve,
+        portfolio.total_turnover,
+        trades=getattr(portfolio, "trades", None),
+    )
     metrics_paths = _persist_metrics(metrics, artifacts_dir)
     trades_path = _persist_trades(portfolio, artifacts_dir)
 
