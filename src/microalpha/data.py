@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Iterator, List, Optional, cast
+from typing import Dict, Iterator, List, Optional, Sequence, cast
 
 import pandas as pd
 
@@ -92,6 +92,128 @@ class CsvDataHandler(DataHandler):
 
         # Return the next n dates, or fewer if we are at the end of the data
         return [self._to_int_timestamp(idx) for idx in future_dates[:n]]
+
+    @staticmethod
+    def _to_int_timestamp(value) -> int:
+        if isinstance(value, (int, float)):
+            return int(value)
+        if isinstance(value, pd.Timestamp):
+            return int(value.value)
+        return int(pd.Timestamp(value).value)
+
+    @staticmethod
+    def _to_datetime(value) -> pd.Timestamp:
+        if isinstance(value, pd.Timestamp):
+            return value
+        return pd.to_datetime(value)
+
+
+class MultiCsvDataHandler(DataHandler):
+    """
+    Multi-asset data handler that loads multiple symbol CSVs and produces a merged
+    chronological stream of MarketEvents. Provides optional batched iteration via
+    ``stream_batches`` for cross-sectional strategies.
+
+    CSV format matches ``CsvDataHandler``: first column is a datetime index, must
+    contain a ``close`` column and optional ``volume``.
+    """
+
+    def __init__(
+        self,
+        csv_dir: Path,
+        symbols: Sequence[str] | None = None,
+        *,
+        universe_path: Path | None = None,
+        mode: str = "exact",
+    ):
+        self.csv_dir = csv_dir
+        if symbols is None and universe_path is None:
+            raise ValueError("Provide either symbols or universe_path")
+        if symbols is None and universe_path is not None:
+            raw = Path(universe_path).read_text(encoding="utf-8")
+            symbols = [line.strip() for line in raw.splitlines() if line.strip()]
+        if not symbols:
+            raise ValueError("No symbols provided for MultiCsvDataHandler")
+
+        self.symbols: List[str] = list(symbols or [])
+        self.mode = mode
+        self.data_by_symbol: Dict[str, Optional[pd.DataFrame]] = {}
+        for sym in self.symbols:
+            self.data_by_symbol[sym] = self._load_symbol(sym)
+
+        # Build the global union index (sorted)
+        indices = [df.index for df in self.data_by_symbol.values() if df is not None]
+        self.union_index = (
+            pd.Index(sorted(set().union(*[set(idx) for idx in indices])))
+            if indices
+            else pd.Index([])
+        )
+
+    def _load_symbol(self, symbol: str) -> Optional[pd.DataFrame]:
+        path = self.csv_dir / f"{symbol}.csv"
+        try:
+            return pd.read_csv(path, index_col=0, parse_dates=True)
+        except FileNotFoundError:
+            print(f"Error: Data file not found for {symbol} at {path}")
+            return None
+
+    def stream(self) -> Iterator[MarketEvent]:
+        """Yield MarketEvents across all symbols ordered by timestamp."""
+        for ts in self.union_index:
+            for sym in self.symbols:
+                df = self.data_by_symbol.get(sym)
+                if df is None:
+                    continue
+                if ts in df.index:
+                    row = df.loc[ts]
+                    price = cast(float, row["close"])
+                    volume = float(row["volume"]) if "volume" in df.columns else 0.0
+                    yield MarketEvent(self._to_int_timestamp(ts), sym, price, volume)
+
+    def stream_batches(self) -> Iterator[List[MarketEvent]]:
+        """Yield lists of MarketEvents grouped by timestamp for cross-sectional use."""
+        for ts in self.union_index:
+            batch: List[MarketEvent] = []
+            for sym in self.symbols:
+                df = self.data_by_symbol.get(sym)
+                if df is None:
+                    continue
+                if ts in df.index:
+                    row = df.loc[ts]
+                    price = cast(float, row["close"])
+                    volume = float(row["volume"]) if "volume" in df.columns else 0.0
+                    batch.append(MarketEvent(self._to_int_timestamp(ts), sym, price, volume))
+            if batch:
+                yield batch
+
+    def get_latest_price(self, symbol: str, timestamp: int) -> float | None:
+        df = self.data_by_symbol.get(symbol)
+        if df is None or df.empty:
+            return None
+
+        ts = self._to_datetime(timestamp)
+
+        if self.mode == "exact":
+            try:
+                close_value = cast(float, df.loc[ts, "close"])
+                return close_value
+            except KeyError:
+                return None
+
+        idx = df.index.searchsorted(ts, side="right") - 1
+        if idx < 0:
+            return None
+        close_value = cast(float, df.iloc[idx]["close"])
+        return close_value
+
+    def get_future_timestamps(self, start_timestamp: int, n: int) -> List[int]:
+        """Return next n timestamps from the global union index strictly after start."""
+        if self.union_index.empty:
+            return []
+
+        ts = self._to_datetime(start_timestamp)
+        future = self.union_index[self.union_index > ts]
+        return [self._to_int_timestamp(idx) for idx in future[:n]]
 
     @staticmethod
     def _to_int_timestamp(value) -> int:
