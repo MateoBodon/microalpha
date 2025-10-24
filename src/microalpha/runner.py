@@ -34,11 +34,13 @@ from .portfolio import Portfolio
 from .strategies.breakout import BreakoutStrategy
 from .strategies.meanrev import MeanReversionStrategy
 from .strategies.mm import NaiveMarketMakingStrategy
+from .strategies.mom import CrossSectionalMomentum
 
 STRATEGY_MAPPING = {
     "MeanReversionStrategy": MeanReversionStrategy,
     "BreakoutStrategy": BreakoutStrategy,
     "NaiveMarketMakingStrategy": NaiveMarketMakingStrategy,
+    "CrossSectionalMomentum": CrossSectionalMomentum,
 }
 
 EXECUTION_MAPPING = {
