@@ -109,10 +109,20 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
         )
     else:
         data_handler = CsvDataHandler(csv_dir=data_dir, symbol=symbol)
-    if data_handler.data is None:
-        raise FileNotFoundError(
-            f"Unable to load data for symbol '{symbol}' from {data_dir}"
-        )
+    # Validate data availability for single- or multi-asset handlers
+    if hasattr(data_handler, "data"):
+        if getattr(data_handler, "data") is None:
+            raise FileNotFoundError(
+                f"Unable to load data for symbol '{symbol}' from {data_dir}"
+            )
+    else:
+        union_index = getattr(data_handler, "_active_index", None)
+        if union_index is None:
+            union_index = getattr(data_handler, "union_index", None)
+        if union_index is None or len(union_index) == 0:
+            raise FileNotFoundError(
+                f"Unable to load multi-asset data from {data_dir} (empty universe)"
+            )
 
     trade_logger = JsonlWriter(str(artifacts_dir / "trades.jsonl"))
 
