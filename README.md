@@ -197,7 +197,7 @@ The broker implements stylized execution models that capture key microstructure 
 ```python
 def _schedule_twap_orders(self, order_event):
     """Splits meta-orders into child orders for TWAP execution."""
-    total_quantity = order_event.quantity
+    total_quantity = order_event.qty
     future_timestamps = self.data_handler.get_future_timestamps(
         start_timestamp=order_event.timestamp,
         n=self.num_ticks
@@ -209,25 +209,26 @@ def _schedule_twap_orders(self, order_event):
         child_order = OrderEvent(
             timestamp=future_timestamps[i],
             symbol=order_event.symbol,
-            quantity=qty,
-            direction=order_event.direction
+            qty=qty,
+            side=order_event.side
         )
 ```
 
-### Volume-Based Slippage Model
+### Slippage & Impact Models
 
-Realistic market impact modeling:
+Microalpha provides several stylised models:
 
-```python
-def calculate_slippage(self, quantity: int, price: float) -> float:
-    """Slippage grows with the square of order size."""
-    return self.price_impact * (quantity ** 2)
-```
+- Linear impact (default in `Executor`): `slippage = price_impact * |qty|`
+- Square-root impact (`SquareRootImpact`): `slippage = k * sqrt(|qty|)`
+- Kyle-λ (`KyleLambda`): `slippage = λ * qty`
+- Quadratic example (`VolumeSlippageModel` in `slippage.py`): not wired by default, useful for experiments
+
+Configure via YAML under `exec:` with `type: instant|twap|sqrt|kyle|lob` and `price_impact`/`commission` as needed.
 
 ### Cost Components
-- **Slippage**: Quadratic relationship with order size
-- **Commission**: Fixed $1.00 per trade
-- **Market Impact**: Simulated through price movement
+- Slippage: as per configured model above
+- Commission: per-share (or unit) commission `commission * |qty|`
+- Market impact: implied by price slippage and execution scheduling
 
 ---
 
@@ -427,7 +428,7 @@ kelly_fraction: 0.05
 
 exec:
   type: "twap"
-  aln: 0.5
+  commission: 0.5
   price_impact: 0.00005
   slices: 4
 
