@@ -1,0 +1,2 @@
+[console_scripts]
+microalpha = microalpha.cli:main
