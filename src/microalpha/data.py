@@ -164,6 +164,11 @@ class MultiCsvDataHandler(DataHandler):
             except Exception:
                 pass
             df.index = idx
+            # Ensure numeric
+            if "close" in df.columns:
+                df["close"] = pd.to_numeric(df["close"], errors="coerce")
+            if "volume" in df.columns:
+                df["volume"] = pd.to_numeric(df["volume"], errors="coerce")
             return df
         except FileNotFoundError:
             print(f"Error: Data file not found for {symbol} at {path}")
@@ -178,9 +183,12 @@ class MultiCsvDataHandler(DataHandler):
                     continue
                 if ts in df.index:
                     row = df.loc[ts]
-                    price = cast(float, row["close"])
-                    volume = float(row["volume"]) if "volume" in df.columns else 0.0
-                    yield MarketEvent(self._to_int_timestamp(ts), sym, price, volume)
+                    price = pd.to_numeric(row.get("close", None), errors="coerce")
+                    if pd.isna(price):
+                        continue
+                    volume = pd.to_numeric(row.get("volume", 0.0), errors="coerce")
+                    volume = 0.0 if pd.isna(volume) else float(volume)
+                    yield MarketEvent(self._to_int_timestamp(ts), sym, float(price), volume)
 
     def stream_batches(self) -> Iterator[List[MarketEvent]]:
         """Yield lists of MarketEvents grouped by timestamp for cross-sectional use."""
@@ -192,9 +200,12 @@ class MultiCsvDataHandler(DataHandler):
                     continue
                 if ts in df.index:
                     row = df.loc[ts]
-                    price = cast(float, row["close"])
-                    volume = float(row["volume"]) if "volume" in df.columns else 0.0
-                    batch.append(MarketEvent(self._to_int_timestamp(ts), sym, price, volume))
+                    price = pd.to_numeric(row.get("close", None), errors="coerce")
+                    if pd.isna(price):
+                        continue
+                    volume = pd.to_numeric(row.get("volume", 0.0), errors="coerce")
+                    volume = 0.0 if pd.isna(volume) else float(volume)
+                    batch.append(MarketEvent(self._to_int_timestamp(ts), sym, float(price), volume))
             if batch:
                 yield batch
 

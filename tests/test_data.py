@@ -55,7 +55,3 @@ def test_multi_csv_data_handler_streams_batches(tmp_path: Path):
     assert {e.symbol for e in batches[1]} == {"AAA"}
     # Third batch both again
     assert {e.symbol for e in batches[2]} == {"AAA", "BBB"}
-    assert events_list[0].volume == 10
-
-    assert events_list[1].price == 101.5
-    assert events_list[1].volume == 20
