@@ -232,7 +232,9 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
 
             data_handler.set_date_range(test_start, test_end)
             if strategy_name == "CrossSectionalMomentum":
-                strategy = strategy_class(**_strategy_kwargs(best_params, warmup_prices))
+                kwargs = _strategy_kwargs(best_params, warmup_prices)
+                kwargs.pop("warmup_prices", None)
+                strategy = strategy_class(**kwargs)
             else:
                 strategy = strategy_class(
                     symbol=symbol, **_strategy_kwargs(best_params, warmup_prices)
@@ -321,7 +323,10 @@ def _optimise_parameters(
         data_handler.set_date_range(train_start, train_end)
         combined = dict(base_params)
         combined.update(params)
-        strategy = strategy_class(symbol=cfg.symbol, **_strategy_kwargs(combined))
+        if strategy_class is CrossSectionalMomentum:
+            strategy = strategy_class(**_strategy_kwargs(combined))
+        else:
+            strategy = strategy_class(symbol=cfg.symbol, **_strategy_kwargs(combined))
         portfolio = _build_portfolio(data_handler, cfg)
         exec_rng = _spawn_rng(sim_rng)
         executor = _build_executor(data_handler, cfg.exec, exec_rng)
