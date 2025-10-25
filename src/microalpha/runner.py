@@ -54,7 +54,7 @@ EXECUTION_MAPPING = {
 }
 
 
-def run_from_config(config_path: str) -> Dict[str, Any]:
+def run_from_config(config_path: str, override_artifacts_dir: str | None = None) -> Dict[str, Any]:
     """Execute a backtest described by ``config_path``."""
 
     cfg_path = Path(config_path).expanduser().resolve()
@@ -67,6 +67,11 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
 
     full_sha, short_sha = resolve_git_sha()
     base_run_id = generate_run_id(short_sha)
+    # Allow CLI override of artifacts root directory without mutating on-disk config
+    if override_artifacts_dir is not None:
+        config = dict(config)
+        config["artifacts_dir"] = override_artifacts_dir
+
     run_id, artifacts_dir = prepare_artifacts_dir(cfg_path, config, base_run_id)
     manifest = build_manifest(
         cfg.seed,
@@ -170,6 +175,10 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
     else:
         strategy = strategy_class(symbol=symbol, **strategy_params)
     engine_rng = np.random.default_rng(root_rng.integers(2**32))
+    # Hint engine where to place profiling outputs for this run
+    import os as _os
+    _os.environ["MICROALPHA_ARTIFACTS_DIR"] = str(artifacts_dir)
+
     engine = Engine(data_handler, strategy, portfolio, broker, rng=engine_rng)
     engine.run()
 

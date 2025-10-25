@@ -126,7 +126,7 @@ def load_wfv_cfg(path: str) -> WFVCfg:
     raise ValueError("Invalid walk-forward configuration schema.")
 
 
-def run_walk_forward(config_path: str) -> Dict[str, Any]:
+def run_walk_forward(config_path: str, override_artifacts_dir: str | None = None) -> Dict[str, Any]:
     cfg_path = Path(config_path).expanduser().resolve()
     raw_config = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
     cfg = load_wfv_cfg(str(cfg_path))
@@ -134,7 +134,12 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
 
     full_sha, short_sha = resolve_git_sha()
     base_run_id = generate_run_id(short_sha)
-    run_id, artifacts_dir = prepare_artifacts_dir(cfg_path, raw_config, base_run_id)
+    # Allow CLI override of artifacts root directory without mutating on-disk config
+    effective_cfg = dict(raw_config)
+    if override_artifacts_dir is not None:
+        effective_cfg["artifacts_dir"] = override_artifacts_dir
+
+    run_id, artifacts_dir = prepare_artifacts_dir(cfg_path, effective_cfg, base_run_id)
     manifest = build_manifest(
         cfg.template.seed,
         str(cfg_path),
@@ -246,12 +251,16 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
             exec_rng = _spawn_rng(test_rng)
             executor = _build_executor(data_handler, cfg.template.exec, exec_rng)
             broker = SimulatedBroker(executor)
-            engine = Engine(
-                data_handler,
-                strategy,
-                portfolio,
-                broker,
-                rng=_spawn_rng(test_rng),
+    # Hint engine where to place profiling outputs for this run
+    import os as _os
+    _os.environ["MICROALPHA_ARTIFACTS_DIR"] = str(artifacts_dir)
+
+    engine = Engine(
+        data_handler,
+        strategy,
+        portfolio,
+        broker,
+        rng=_spawn_rng(test_rng),
             )
             engine.run()
 
