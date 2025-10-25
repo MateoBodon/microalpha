@@ -41,12 +41,18 @@ def main() -> None:
         if getattr(args, "profile", False):
             import os as _os
             _os.environ["MICROALPHA_PROFILE"] = "1"
-        manifest = run_from_config(args.config, override_artifacts_dir=args.outdir)
+        if args.outdir:
+            manifest = run_from_config(args.config, override_artifacts_dir=args.outdir)
+        else:
+            manifest = run_from_config(args.config)
     else:
         if getattr(args, "profile", False):
             import os as _os
             _os.environ["MICROALPHA_PROFILE"] = "1"
-        manifest = run_walk_forward(args.config, override_artifacts_dir=args.outdir)
+        if args.outdir:
+            manifest = run_walk_forward(args.config, override_artifacts_dir=args.outdir)
+        else:
+            manifest = run_walk_forward(args.config)
 
     manifest["runtime_sec"] = round(time.time() - t0, 3)
     manifest["version"] = _resolve_version()
