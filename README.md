@@ -405,6 +405,12 @@ pytest -q --cov=microalpha --cov-fail-under=85
 pip install -e ".[dev]" && bash scripts/demo.sh
 ```
 
+Enable profiling and override output directory:
+
+```bash
+microalpha run -c configs/meanrev.yaml --profile --out artifacts_local
+```
+
 Market-making visualisation (LOB vs. TWAP):
 
 ```bash
