@@ -251,16 +251,16 @@ def run_walk_forward(config_path: str, override_artifacts_dir: str | None = None
             exec_rng = _spawn_rng(test_rng)
             executor = _build_executor(data_handler, cfg.template.exec, exec_rng)
             broker = SimulatedBroker(executor)
-    # Hint engine where to place profiling outputs for this run
-    import os as _os
-    _os.environ["MICROALPHA_ARTIFACTS_DIR"] = str(artifacts_dir)
+            # Hint engine where to place profiling outputs for this run
+            import os as _os
+            _os.environ["MICROALPHA_ARTIFACTS_DIR"] = str(artifacts_dir)
 
-    engine = Engine(
-        data_handler,
-        strategy,
-        portfolio,
-        broker,
-        rng=_spawn_rng(test_rng),
+            engine = Engine(
+                data_handler,
+                strategy,
+                portfolio,
+                broker,
+                rng=_spawn_rng(test_rng),
             )
             engine.run()
 
