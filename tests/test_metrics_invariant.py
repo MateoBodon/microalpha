@@ -22,7 +22,7 @@ def _make_config(tmp_path: Path) -> Path:
         "symbol": "SPY",
         "cash": 50000.0,
         "seed": 99,
-        "exec": {"type": "instant"},
+        "exec": {"type": "instant", "commission": 0.0},
         "strategy": {
             "name": "MeanReversionStrategy",
             "params": {"lookback": 2, "z_threshold": 0.5},
@@ -49,5 +49,6 @@ def test_metrics_are_invariant_and_path_free(tmp_path: Path) -> None:
     forbidden = {"run_id", "timestamp", "artifacts_dir", "config_path"}
     assert forbidden.isdisjoint(payload)
     assert payload, "metrics payload should not be empty"
-    for value in payload.values():
-        assert isinstance(value, (int, float)), "expected purely numeric metrics"
+    for key, value in payload.items():
+        # equity_df is not serialized; remaining metrics should be numeric or None
+        assert isinstance(value, (int, float)), f"metric {key} should be numeric"

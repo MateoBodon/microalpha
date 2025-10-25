@@ -1,0 +1,4 @@
+# file: /Users/mateobodon/Documents/Programming/Projects/microalpha/src/microalpha/runner.py
+# hypothesis_version: 6.140.2
+
+[0.0005, 0.001, 0.002, 0.01, 0.1, 100.0, 200, 'BreakoutStrategy', 'artifacts', 'artifacts_dir', 'book', 'close', 'commission', 'config_path', 'equity_curve.csv', 'equity_curve_path', 'equity_df', 'full_data', 'instant', 'kyle', 'lam', 'linear', 'lob', 'lob_tplus1', 'lookback', 'metrics', 'metrics.json', 'metrics_path', 'price_impact', 'r', 'run_id', 'sectors', 'seed', 'slices', 'sqrt', 'squareroot', 'strategy', 'symbols', 'timestamp', 'trade_log_path', 'trades', 'trades.csv', 'trades.jsonl', 'trades_path', 'twap', 'utf-8', 'w', 'z_threshold']

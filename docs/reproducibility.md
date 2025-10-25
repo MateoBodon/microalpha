@@ -49,3 +49,7 @@ microalpha run -c configs/meanrev.yaml
 ```
 
 Then inspect the artifacts folder recorded in the manifest to fetch equity curves, metrics, and trades.
+
+## Data sourcing (WRDS/CRSP)
+
+For resume-grade, bias-aware experiments, use WRDS/CRSP daily data adjusted for corporate actions, and include delisted securities to avoid survivorship bias. We recommend a monthly universe selection (e.g., top 1000 by market cap) saved to CSVs (one file per symbol) under `data_sp500/` or `data_wrds/` with columns including at least `close` and a datetime index. Keep raw credentials and data out of the repo; only derived CSVs or aggregated artifacts should be saved.

@@ -132,16 +132,33 @@ class LOBExecution(Executor):
         price_impact: float = 0.0,
         commission: float = 0.0,
         book: LimitOrderBook | None = None,
+        lob_tplus1: bool = True,
     ):
         super().__init__(data_handler, price_impact, commission)
         self.book = book or LimitOrderBook(LatencyModel())
+        self.lob_tplus1 = lob_tplus1
 
     def execute(self, order: OrderEvent, current_ts: int) -> Optional[FillEvent]:
         fills = self.book.submit(order)
         if not fills:
             return None
         if len(fills) == 1:
-            return fills[0]
+            fill = fills[0]
+            # Enforce t+1 semantics by moving fill timestamp to next tick if requested
+            if self.lob_tplus1:
+                next_ts = self.data_handler.get_future_timestamps(order.timestamp, 1)
+                if next_ts:
+                    fill = FillEvent(
+                        timestamp=next_ts[0],
+                        symbol=fill.symbol,
+                        qty=fill.qty,
+                        price=fill.price,
+                        commission=fill.commission,
+                        slippage=fill.slippage,
+                        latency_ack=fill.latency_ack,
+                        latency_fill=fill.latency_fill,
+                    )
+            return fill
 
         total_qty = sum(f.qty for f in fills)
         if total_qty == 0:
@@ -151,8 +168,13 @@ class LOBExecution(Executor):
         latency_ack = max(f.latency_ack for f in fills)
         latency_fill = max(f.latency_fill for f in fills)
 
+        ts = fills[-1].timestamp
+        if self.lob_tplus1:
+            future = self.data_handler.get_future_timestamps(order.timestamp, 1)
+            if future:
+                ts = future[0]
         return FillEvent(
-            timestamp=fills[-1].timestamp,
+            timestamp=ts,
             symbol=fills[0].symbol,
             qty=total_qty,
             price=avg_price,

@@ -1,0 +1,25 @@
+# LOB demo config with same-tick fills (t+0), latency recorded
+
+data_path: "data"
+symbol: "SPY"
+cash: 100000.0
+seed: 321
+
+exec:
+  type: "lob"
+  book_levels: 3
+  level_size: 300
+  tick_size: 0.5
+  mid_price: 100.0
+  latency_ack: 0.0005
+  latency_ack_jitter: 0.0002
+  latency_fill: 0.01
+  latency_fill_jitter: 0.002
+  lob_tplus1: false
+
+strategy:
+  name: "NaiveMarketMakingStrategy"
+  params:
+    spread: 1.0
+    inventory_limit: 50
+

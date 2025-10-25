@@ -29,7 +29,7 @@ def test_legacy_and_new_configs_align(tmp_path: Path):
             symbol="SPY",
             cash=100000.0,
             seed=7,
-            exec=ExecModelCfg(type="twap", aln=0.5, slices=2),
+                exec=ExecModelCfg(type="twap", commission=0.5, slices=2),
             strategy=StrategyCfg(
                 name="MeanReversionStrategy",
                 params={"lookback": 3, "z_threshold": 0.5},

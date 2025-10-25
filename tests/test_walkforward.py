@@ -21,7 +21,7 @@ def build_config(tmp_path: Path) -> Path:
             symbol="SPY",
             cash=100000.0,
             seed=7,
-            exec=ExecModelCfg(type="instant"),
+            exec=ExecModelCfg(type="instant", commission=0.0),
             strategy=StrategyCfg(
                 name="MeanReversionStrategy",
                 params={"lookback": 2, "z": 0.5},
@@ -59,4 +59,4 @@ def test_fold_boundaries_and_metrics(tmp_path):
             assert 0.0 <= fold["spa_pvalue"] <= 1.0
 
     # ensure manifest style fields present
-    assert Path(result["folds_path"]).exists()
+        assert Path(result["folds_path"]).exists()

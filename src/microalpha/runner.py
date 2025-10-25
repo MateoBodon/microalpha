@@ -15,7 +15,7 @@ import yaml
 
 from .broker import SimulatedBroker
 from .config import parse_config
-from .data import CsvDataHandler
+from .data import CsvDataHandler, MultiCsvDataHandler
 from .engine import Engine
 from .execution import TWAP, Executor, KyleLambda, LOBExecution, SquareRootImpact
 from .logging import JsonlWriter
@@ -34,11 +34,13 @@ from .portfolio import Portfolio
 from .strategies.breakout import BreakoutStrategy
 from .strategies.meanrev import MeanReversionStrategy
 from .strategies.mm import NaiveMarketMakingStrategy
+from .strategies.cs_momentum import CrossSectionalMomentum
 
 STRATEGY_MAPPING = {
     "MeanReversionStrategy": MeanReversionStrategy,
     "BreakoutStrategy": BreakoutStrategy,
     "NaiveMarketMakingStrategy": NaiveMarketMakingStrategy,
+    "CrossSectionalMomentum": CrossSectionalMomentum,
 }
 
 EXECUTION_MAPPING = {
@@ -93,7 +95,13 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
     if cfg.strategy.z is not None:
         strategy_params.setdefault("z_threshold", cfg.strategy.z)
 
-    data_handler = CsvDataHandler(csv_dir=data_dir, symbol=symbol)
+    # Multi-asset support (if config strategy expects symbols list)
+    if strategy_name == "CrossSectionalMomentum":
+        symbols = strategy_params.get("symbols") or config.get("symbols") or [symbol]
+        strategy_params["symbols"] = symbols
+        data_handler = MultiCsvDataHandler(csv_dir=data_dir, symbols=symbols)
+    else:
+        data_handler = CsvDataHandler(csv_dir=data_dir, symbol=symbol)
     if data_handler.data is None:
         raise FileNotFoundError(
             f"Unable to load data for symbol '{symbol}' from {data_dir}"
@@ -109,12 +117,17 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
         turnover_cap=cfg.turnover_cap,
         kelly_fraction=cfg.kelly_fraction,
         trade_logger=trade_logger,
+        vol_target_annualized=cfg.vol_target_annualized,
+        vol_lookback=cfg.vol_lookback,
+        max_portfolio_heat=cfg.max_portfolio_heat,
+        sectors=getattr(cfg, "sectors", None),
+        max_positions_per_sector=cfg.max_positions_per_sector,
     )
     exec_type = cfg.exec.type.lower() if cfg.exec.type else "instant"
     executor_cls = EXECUTION_MAPPING.get(exec_type, Executor)
     exec_kwargs: Dict[str, Any] = {
         "price_impact": cfg.exec.price_impact,
-        "commission": cfg.exec.aln,
+        "commission": cfg.exec.commission,
     }
     if executor_cls is KyleLambda:
         exec_kwargs["lam"] = (
@@ -146,18 +159,27 @@ def run_from_config(config_path: str) -> Dict[str, Any]:
                 mid_price = 100.0
         book.seed_book(mid_price=mid_price, tick=tick, levels=levels, size=level_size)
         exec_kwargs["book"] = book
+        if cfg.exec.lob_tplus1 is not None:
+            exec_kwargs["lob_tplus1"] = bool(cfg.exec.lob_tplus1)
 
     executor = executor_cls(data_handler=data_handler, **exec_kwargs)
     broker = SimulatedBroker(executor)
 
-    strategy = strategy_class(symbol=symbol, **strategy_params)
+    if strategy_name == "CrossSectionalMomentum":
+        strategy = strategy_class(**strategy_params)
+    else:
+        strategy = strategy_class(symbol=symbol, **strategy_params)
     engine_rng = np.random.default_rng(root_rng.integers(2**32))
     engine = Engine(data_handler, strategy, portfolio, broker, rng=engine_rng)
     engine.run()
 
     trade_logger.close()
 
-    metrics = compute_metrics(portfolio.equity_curve, portfolio.total_turnover)
+    metrics = compute_metrics(
+        portfolio.equity_curve,
+        portfolio.total_turnover,
+        trades=getattr(portfolio, "trades", None),
+    )
     metrics_paths = _persist_metrics(metrics, artifacts_dir)
     trades_path = _persist_trades(portfolio, artifacts_dir)
 

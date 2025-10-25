@@ -33,3 +33,16 @@ microalpha wfv -c configs/wfv_meanrev.yaml
 ```
 
 Executes the unified walk-forward configuration model, emitting per-fold manifests and out-of-sample metrics for each parameter combination.
+
+## Cross-sectional momentum (multi-asset)
+
+```bash
+microalpha wfv -c configs/wfv_cs_mom.yaml
+```
+
+- Demonstrates monthly rebalanced 12-1 momentum across symbols using the `MultiCsvDataHandler`.
+- Produces `folds.json`, `metrics.json`, `equity_curve.csv`, and you can render an interactive report with:
+
+```bash
+python reports/html_report.py artifacts/<run-id>/equity_curve.csv --trades artifacts/<run-id>/trades.jsonl --output artifacts/<run-id>/report.html
+```

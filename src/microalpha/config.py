@@ -5,12 +5,16 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Dict
 
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, Field, ValidationError, model_validator
+import warnings
 
 
 class ExecModelCfg(BaseModel):
     type: str = "twap"
-    aln: float = 0.1
+    # Commission (per-share or per-unit) – replacing legacy 'aln'
+    commission: float = 0.1
+    # Keep legacy alias for backward-compatibility (deprecated)
+    aln: float | None = None
     price_impact: float = 0.0
     lam: float | None = None
     slices: int | None = None
@@ -22,6 +26,28 @@ class ExecModelCfg(BaseModel):
     latency_ack_jitter: float | None = None
     latency_fill: float | None = None
     latency_fill_jitter: float | None = None
+    # LOB semantics: enforce t+1 fills by default (can be disabled)
+    lob_tplus1: bool | None = True
+
+    @model_validator(mode="before")
+    @classmethod
+    def _normalise_legacy_fields(cls, values):  # type: ignore[override]
+        if not isinstance(values, dict):
+            return values
+        # Map legacy 'aln' to 'commission' if provided
+        if "commission" not in values and "aln" in values:
+            try:
+                values["commission"] = float(values.get("aln"))
+            except Exception:
+                pass
+            warnings.warn(
+                "ExecModelCfg.aln is deprecated; use 'commission' instead.",
+                DeprecationWarning,
+            )
+        # Support legacy execution naming variants
+        if values.get("type") in {"squareroot", "sqrt"}:
+            values["type"] = "sqrt"
+        return values
 
 
 class StrategyCfg(BaseModel):
@@ -43,6 +69,12 @@ class BacktestCfg(BaseModel):
     max_drawdown_stop: float | None = None
     turnover_cap: float | None = None
     kelly_fraction: float | None = None
+    # Optional risk sizing and constraints
+    vol_target_annualized: float | None = None
+    vol_lookback: int | None = None
+    max_portfolio_heat: float | None = None
+    max_positions_per_sector: int | None = None
+    sectors: Dict[str, str] | None = None
 
     @property
     def resolved_data_path(self) -> Path:

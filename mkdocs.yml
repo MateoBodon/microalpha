@@ -7,6 +7,7 @@ theme:
     - navigation.sections
 nav:
   - Home: index.md
+  - Benchmarks: benchmarks.md
   - Leakage Safety: leakage-safety.md
   - Reproducibility: reproducibility.md
   - API Reference: api.md
