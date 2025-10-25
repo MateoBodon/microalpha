@@ -4,8 +4,9 @@ This page summarises the primary extension points for building strategies and to
 
 ## Runner (`microalpha.runner`)
 
-- `run_from_config(path: str) -> dict`
+- `run_from_config(path: str, override_artifacts_dir: str | None = None) -> dict`
   - Loads a YAML config, resolves paths, executes the backtest, and returns a manifest-style dictionary containing artifact paths.
+  - `override_artifacts_dir` overrides the root output directory without modifying the on-disk YAML.
 - `prepare_artifacts_dir(cfg_path: Path, config: dict) -> tuple[str, Path]`
   - Allocates an isolated `artifacts/<run_id>` directory for each run.
 
@@ -16,7 +17,10 @@ Engine(data, strategy, portfolio, broker, rng: numpy.random.Generator | None = N
 ```
 
 - Streams `MarketEvent`s from the data handler, enforces monotonic timestamps, and routes signals/orders/fills between components.
-- Accepts a `numpy.random.Generator` to guarantee deterministic RNG usage across the stack.
+- Accepts a `numpy.random.Generator` for reproducibility; randomness is typically consumed by downstream components (e.g., latency models) rather than the engine itself.
+
+Profiling:
+- Set `MICROALPHA_PROFILE=1` or pass `--profile` via the CLI to record a `profile.pstats` under the active run’s artifact directory.
 
 ## Data (`microalpha.data.CsvDataHandler`)
 
@@ -56,3 +60,10 @@ JsonlWriter(path: str)
 - Creates parent directories, writes JSON-serialised objects per line, and flushes eagerly so artifacts remain tail-able.
 
 Refer to the module docstrings and tests for deeper examples of composing these components.
+
+## CLI (`microalpha.cli`)
+
+- `microalpha run -c <cfg> [--out DIR] [--profile]`
+- `microalpha wfv -c <cfg> [--out DIR] [--profile]`
+
+`--out` overrides the artifacts root directory; `--profile` enables cProfile.
