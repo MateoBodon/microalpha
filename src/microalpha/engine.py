@@ -34,7 +34,9 @@ class Engine:
 
         if profiler:
             profiler.disable()
-            output_dir = Path("artifacts")
+            # Prefer explicit artifacts dir from environment, fallback to top-level 'artifacts/'
+            outdir_env = os.getenv("MICROALPHA_ARTIFACTS_DIR", "artifacts")
+            output_dir = Path(outdir_env)
             output_dir.mkdir(parents=True, exist_ok=True)
             profiler.dump_stats(str(output_dir / "profile.pstats"))
 
