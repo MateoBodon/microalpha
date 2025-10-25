@@ -18,19 +18,32 @@ class CrossSectionalMomentum:
     lookback_months: int = 12
     skip_months: int = 1
     top_frac: float = 0.3
+    bottom_frac: float | None = None
+    long_short: bool = True
 
     # State
     price_history: Dict[str, List[float]]
     invested: Dict[str, bool]
     last_month: int | None
 
-    def __init__(self, symbols: Sequence[str], lookback_months: int = 12, skip_months: int = 1, top_frac: float = 0.3):
+    def __init__(
+        self,
+        symbols: Sequence[str],
+        lookback_months: int = 12,
+        skip_months: int = 1,
+        top_frac: float = 0.3,
+        bottom_frac: float | None = None,
+        long_short: bool = True,
+    ):
         self.symbols = list(symbols)
         self.lookback_months = lookback_months
         self.skip_months = skip_months
         self.top_frac = top_frac
+        self.bottom_frac = bottom_frac if bottom_frac is not None else top_frac
+        self.long_short = bool(long_short)
         self.price_history = {s: [] for s in self.symbols}
-        self.invested = {s: False for s in self.symbols}
+        # position state: 1 long, -1 short, 0 flat
+        self.invested = {s: 0 for s in self.symbols}
         self.last_month = None
 
     def _rebalance_needed(self, ts_ns: int) -> bool:
@@ -72,21 +85,37 @@ class CrossSectionalMomentum:
         for sym, prices in self.price_history.items():
             scores[sym] = self._momentum_score(prices)
 
-        # Rank and select top fraction
+        # Rank and select top/bottom fractions
         valid = {k: v for k, v in scores.items() if pd.notna(v)}
         if not valid:
             return []
-        k = max(1, int(len(valid) * self.top_frac))
-        top = set(sorted(valid, key=valid.get, reverse=True)[:k])
+        k_top = max(1, int(len(valid) * self.top_frac))
+        top = set(sorted(valid, key=valid.get, reverse=True)[:k_top])
+        bottom: set[str] = set()
+        if self.long_short and self.bottom_frac and self.bottom_frac > 0:
+            k_bot = max(1, int(len(valid) * self.bottom_frac))
+            bottom = set(sorted(valid, key=valid.get)[:k_bot])
 
-        # Emit signals: LONG for selected, EXIT for previously invested but not selected
+        # Emit signals: LONG for top, SHORT for bottom, EXIT when leaving sets
         for sym in self.symbols:
-            if sym in top and not self.invested.get(sym, False):
-                self.invested[sym] = True
-                signals.append(SignalEvent(event.timestamp, sym, "LONG", meta={"qty": 1}))
-            elif sym not in top and self.invested.get(sym, False):
-                self.invested[sym] = False
-                signals.append(SignalEvent(event.timestamp, sym, "EXIT"))
+            st = self.invested.get(sym, 0)
+            if sym in top:
+                if st <= 0:
+                    # exit short if any
+                    if st < 0:
+                        signals.append(SignalEvent(event.timestamp, sym, "EXIT"))
+                    self.invested[sym] = 1
+                    signals.append(SignalEvent(event.timestamp, sym, "LONG", meta={"qty": 1}))
+            elif sym in bottom and self.long_short:
+                if st >= 0:
+                    if st > 0:
+                        signals.append(SignalEvent(event.timestamp, sym, "EXIT"))
+                    self.invested[sym] = -1
+                    signals.append(SignalEvent(event.timestamp, sym, "SHORT", meta={"qty": 1}))
+            else:
+                if st != 0:
+                    self.invested[sym] = 0
+                    signals.append(SignalEvent(event.timestamp, sym, "EXIT"))
 
         return signals
 

@@ -1,0 +1,35 @@
+# WFV for CS momentum on subset of data_sp500
+
+template:
+  data_path: "data_sp500"
+  symbol: "AAPL"
+  cash: 1000000.0
+  seed: 7
+  exec:
+    type: "twap"
+    commission: 0.0005
+    slices: 2
+  strategy:
+    name: "CrossSectionalMomentum"
+    params:
+      symbols: ["AAPL", "MSFT", "AMZN", "GOOG", "META", "NVDA", "JPM", "GE", "KO", "PEP"]
+      lookback_months: 12
+      skip_months: 1
+      top_frac: 0.3
+      bottom_frac: 0.3
+      long_short: true
+
+walkforward:
+  start: "2015-01-05"
+  end: "2017-12-29"
+  training_days: 252
+  testing_days: 63
+
+grid:
+  lookback_months: [6, 9, 12]
+  top_frac: [0.2, 0.3, 0.4]
+  bottom_frac: [0.2, 0.3, 0.4]
+
+artifacts_dir: "artifacts"
+
+
