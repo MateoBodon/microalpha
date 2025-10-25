@@ -571,8 +571,8 @@ The profiler output is written to `artifacts/<run_id>/profile.pstats`.
 ## Limitations
 
 ### Current Constraints
-- **Single Asset**: Strategies operate on one symbol at a time
-- **Simplified L2 Order Book**: FIFO queue with latency/partial fill modeling for a single asset; execution models are stylized and the full Almgren–Chriss schedule is not implemented.
+- **Multi-asset support**: Available for cross-sectional momentum and data handlers; portfolio capital allocation/sizing across names is simple and can be extended.
+- **Simplified L2 Order Book**: FIFO queue with latency/partial fill modeling; execution models are stylized and the full Almgren–Chriss schedule is not implemented.
 - **Daily Frequency**: Optimized for daily data (intraday possible)
 - **Static Parameters**: No dynamic parameter adjustment during backtest
 
