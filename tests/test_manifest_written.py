@@ -25,7 +25,7 @@ def _make_run_config(tmp_path: Path) -> Path:
         "symbol": "SPY",
         "cash": 100000.0,
         "seed": 13,
-        "exec": {"type": "instant"},
+        "exec": {"type": "instant", "commission": 0.0},
         "strategy": {
             "name": "MeanReversionStrategy",
             "params": {"lookback": 2, "z_threshold": 0.5},
@@ -50,7 +50,7 @@ def _make_wfv_config(tmp_path: Path) -> Path:
             symbol="SPY",
             cash=100000.0,
             seed=7,
-            exec=ExecModelCfg(type="instant"),
+            exec=ExecModelCfg(type="instant", commission=0.0),
             strategy=StrategyCfg(
                 name="MeanReversionStrategy",
                 params={"lookback": 2, "z": 0.5},

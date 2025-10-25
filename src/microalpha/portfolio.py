@@ -25,6 +25,11 @@ class Portfolio:
         turnover_cap: float | None = None,
         kelly_fraction: float | None = None,
         trade_logger: JsonlWriter | None = None,
+        vol_target_annualized: float | None = None,
+        vol_lookback: int | None = None,
+        max_portfolio_heat: float | None = None,
+        sectors: Dict[str, str] | None = None,
+        max_positions_per_sector: int | None = None,
     ):
         self.data_handler = data_handler
         self.initial_cash = initial_cash
@@ -45,6 +50,11 @@ class Portfolio:
         self.trades: List[Dict[str, float | int | str | None]] = []
         self.trade_logger = trade_logger
         self.trade_log_path = trade_logger.path if trade_logger else None
+        self.vol_target_annualized = vol_target_annualized
+        self.vol_lookback = vol_lookback or 20
+        self.max_portfolio_heat = max_portfolio_heat
+        self.sector_of: Dict[str, str] = sectors or {}
+        self.max_positions_per_sector = max_positions_per_sector
 
     def on_market(self, event: MarketEvent) -> None:
         self.current_time = event.timestamp
@@ -93,7 +103,7 @@ class Portfolio:
         if self.drawdown_halted:
             return []
 
-        qty = self._signal_quantity(signal)
+        qty = self._sized_quantity(signal)
         if qty == 0:
             return []
 
@@ -177,3 +187,47 @@ class Portfolio:
                 alloc = self.last_equity * self.kelly_fraction
                 return max(int(alloc / price), 0)
         return self.default_order_qty
+
+    def _sized_quantity(self, signal: SignalEvent) -> int:
+        base = self._signal_quantity(signal)
+        if base == 0 or not self.last_equity:
+            return base
+        price = self.data_handler.get_latest_price(signal.symbol, self.current_time) if self.current_time else None
+        if self.vol_target_annualized and price:
+            # Approximate daily vol from equity history
+            import pandas as _pd
+
+            eq = _pd.DataFrame(self.equity_curve)
+            if not eq.empty:
+                eq = eq.tail(self.vol_lookback)
+                ret = eq["equity"].pct_change().dropna()
+                if not ret.empty:
+                    ann_vol = float(ret.std(ddof=0) * (252 ** 0.5))
+                    target_vol = max(self.vol_target_annualized, 1e-9)
+                    scale = target_vol / max(ann_vol, 1e-9)
+                    base = max(int(base * scale), 0)
+
+        # Portfolio heat cap: sum |position| * price / equity <= max_portfolio_heat
+        if self.max_portfolio_heat and price:
+            projected_pos_value = abs(base) * price
+            current_heat_value = 0.0
+            for sym, pos in self.positions.items():
+                p = self.data_handler.get_latest_price(sym, self.current_time) if self.current_time else None
+                if p:
+                    current_heat_value += abs(pos.qty) * p
+            projected_heat = (current_heat_value + projected_pos_value) / max(self.last_equity, 1e-9)
+            if projected_heat > self.max_portfolio_heat:
+                return 0
+
+        # Sector cap: limit number of open positions per sector
+        if self.max_positions_per_sector and self.sector_of:
+            sector = self.sector_of.get(signal.symbol)
+            if sector:
+                open_in_sector = 0
+                for sym, pos in self.positions.items():
+                    if pos.qty != 0 and self.sector_of.get(sym) == sector:
+                        open_in_sector += 1
+                if open_in_sector >= self.max_positions_per_sector and base > 0:
+                    return 0
+
+        return base

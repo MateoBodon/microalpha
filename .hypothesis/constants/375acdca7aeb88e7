@@ -1,0 +1,4 @@
+# file: /Users/mateobodon/Documents/Programming/Projects/microalpha/src/microalpha/portfolio.py
+# hypothesis_version: 6.140.2
+
+[0.0, 100000.0, 400, 'BUY', 'EXIT', 'LONG', 'SELL', 'cash', 'commission', 'equity', 'exposure', 'inventory', 'latency_ack', 'latency_fill', 'order_id', 'price', 'qty', 'side', 'slippage', 'symbol', 'timestamp']

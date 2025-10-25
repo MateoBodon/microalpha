@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, Mapping, Sequence
+from typing import Any, Dict, Mapping, Sequence, Optional, List
 
 import numpy as np
 import pandas as pd
@@ -12,6 +12,8 @@ def compute_metrics(
     equity_records: Sequence[Mapping[str, float | int]],
     turnover: float,
     periods: int = 252,
+    trades: Optional[List[Mapping[str, Any]]] = None,
+    benchmark_equity: Optional[Sequence[Mapping[str, float | int]]] = None,
 ) -> Dict[str, Any]:
     if not equity_records:
         df = pd.DataFrame(columns=["timestamp", "equity", "exposure", "returns"])
@@ -51,13 +53,67 @@ def compute_metrics(
     traded_days = int(returns.ne(0).sum())
     avg_exposure = float(df["exposure"].mean()) if "exposure" in df else 0.0
 
+    # Annualized volatility and CAGR
+    ann_vol = float(returns.std(ddof=0) * (periods ** 0.5)) if len(returns) > 1 else 0.0
+    if len(equity_series) > 1:
+        total_return = float(equity_series.iloc[-1] / equity_series.iloc[0] - 1.0)
+        years = max(float(len(df)) / periods, 1e-9)
+        cagr = float((1.0 + total_return) ** (1.0 / years) - 1.0)
+    else:
+        cagr = 0.0
+
+    # Max drawdown duration in periods
+    dd_boolean = (equity_series / running_max) < 1.0
+    max_dd_duration = int(dd_boolean.astype(int).groupby((dd_boolean != dd_boolean.shift()).cumsum()).transform("sum").max() or 0)
+
+    # Trade stats (if provided)
+    num_trades = 0
+    avg_trade_notional = 0.0
+    win_rate = 0.0
+    if trades:
+        import pandas as _pd
+
+        tdf = _pd.DataFrame(trades)
+        num_trades = int(len(tdf))
+        if num_trades:
+            avg_trade_notional = float((tdf["qty"].abs() * tdf["price"].abs()).mean())
+        # Approximate per-trade PnL using mid-delta of equity if available
+        # This is a placeholder; detailed PnL attribution could be added later
+        win_rate = 0.0
+
+    # Benchmark-relative metrics if provided
+    alpha = beta = information_ratio = 0.0
+    if benchmark_equity:
+        bdf = pd.DataFrame(benchmark_equity).drop_duplicates("timestamp").sort_values("timestamp")
+        bdf["returns"] = bdf["equity"].pct_change().fillna(0.0)
+        br = bdf["returns"].reindex(df.index, fill_value=0.0)
+        if br.std(ddof=0) > 0:
+            cov = float(np.cov(returns, br, ddof=0)[0, 1])
+            beta = cov / float(br.var(ddof=0)) if float(br.var(ddof=0)) != 0 else 0.0
+            alpha = float(returns.mean() * periods - beta * br.mean() * periods)
+            diff = returns - br
+            std_diff = float(diff.std(ddof=0))
+            information_ratio = float((diff.mean() * periods) / std_diff) if std_diff > 0 else 0.0
+
     return {
         "equity_df": df,
         "sharpe_ratio": float(sharpe),
         "sortino_ratio": float(sortino),
         "max_drawdown": float(max_drawdown),
-        "total_turnover": float(turnover),
-        "traded_days": traded_days,
+        "max_drawdown_duration": max_dd_duration,
+        "cagr": cagr,
+        "calmar_ratio": float(cagr / max_drawdown) if max_drawdown > 0 else 0.0,
+        "alpha": float(alpha),
+        "beta": float(beta),
+        "information_ratio": float(information_ratio),
+        "ann_vol": float(ann_vol),
         "avg_exposure": avg_exposure,
+        "exposure_std": float(df["exposure"].std(ddof=0)) if "exposure" in df else 0.0,
+        "total_turnover": float(turnover),
+        "turnover_per_day": float(turnover / max(len(df), 1)),
+        "traded_days": traded_days,
+        "num_trades": num_trades,
+        "avg_trade_notional": float(avg_trade_notional),
+        "win_rate": float(win_rate),
         "final_equity": float(equity_series.iloc[-1]),
     }

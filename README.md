@@ -491,6 +491,12 @@ Render a quick report from any run:
 python reports/tearsheet.py artifacts/<run-id>/equity_curve.csv --output tearsheet.png
 ```
 
+Interactive HTML report:
+
+```bash
+python reports/html_report.py artifacts/<run-id>/equity_curve.csv --trades artifacts/<run-id>/trades.jsonl --output artifacts/<run-id>/report.html
+```
+
 ### Example Output
 ```
 --- Performance Metrics ---

@@ -19,7 +19,7 @@ def _make_config(tmp_path: Path) -> Path:
         "symbol": "SPY",
         "cash": 100000.0,
         "seed": 13,
-        "exec": {"type": "twap", "slices": 2},
+        "exec": {"type": "twap", "slices": 2, "commission": 0.0},
         "strategy": {
             "name": "MeanReversionStrategy",
             "params": {"lookback": 2, "z_threshold": 0.5},

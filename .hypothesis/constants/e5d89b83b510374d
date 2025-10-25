@@ -1,0 +1,4 @@
+# file: /Users/mateobodon/Documents/Programming/Projects/microalpha/src/microalpha/cli.py
+# hypothesis_version: 6.140.2
+
+['--config', '-c', '__main__', 'cmd', 'executable', 'info', 'microalpha', 'platform', 'python', 'run', 'runtime_sec', 'unknown', 'version', 'wfv']

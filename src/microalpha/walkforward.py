@@ -16,7 +16,7 @@ import yaml
 from .broker import SimulatedBroker
 from .config import BacktestCfg, ExecModelCfg
 from .config_wfv import WFVCfg
-from .data import CsvDataHandler
+from .data import CsvDataHandler, MultiCsvDataHandler
 from .engine import Engine
 from .execution import TWAP, Executor, KyleLambda, LOBExecution, SquareRootImpact
 from .logging import JsonlWriter
@@ -36,11 +36,13 @@ from .runner import persist_config, prepare_artifacts_dir, resolve_path
 from .strategies.breakout import BreakoutStrategy
 from .strategies.meanrev import MeanReversionStrategy
 from .strategies.mm import NaiveMarketMakingStrategy
+from .strategies.cs_momentum import CrossSectionalMomentum
 
 STRATEGY_MAPPING = {
     "MeanReversionStrategy": MeanReversionStrategy,
     "BreakoutStrategy": BreakoutStrategy,
     "NaiveMarketMakingStrategy": NaiveMarketMakingStrategy,
+    "CrossSectionalMomentum": CrossSectionalMomentum,
 }
 
 EXECUTION_MAPPING = {
@@ -159,7 +161,17 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
     start_date = pd.Timestamp(cfg.walkforward.start)
     end_date = pd.Timestamp(cfg.walkforward.end)
 
-    data_handler = CsvDataHandler(csv_dir=data_dir, symbol=symbol)
+    strategy_name = cfg.template.strategy.name
+    if strategy_name == "CrossSectionalMomentum":
+        symbols = list(cfg.template.strategy.params.get("symbols") or [])
+        if not symbols:
+            # fallback: allow symbol string list under template
+            symbols = list(getattr(cfg.template, "symbols", []) or [])
+        if not symbols:
+            symbols = [symbol]
+        data_handler = MultiCsvDataHandler(csv_dir=data_dir, symbols=symbols)
+    else:
+        data_handler = CsvDataHandler(csv_dir=data_dir, symbol=symbol)
     if data_handler.data is None:
         raise FileNotFoundError(
             f"Unable to load data for symbol '{symbol}' from {data_dir}"
@@ -171,7 +183,6 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
 
     current_date = start_date
     master_rng = np.random.default_rng(cfg.template.seed)
-    strategy_name = cfg.template.strategy.name
     strategy_class = STRATEGY_MAPPING.get(strategy_name)
     if strategy_class is None:
         raise ValueError(f"Unknown strategy '{strategy_name}'")
@@ -220,9 +231,12 @@ def run_walk_forward(config_path: str) -> Dict[str, Any]:
             )
 
             data_handler.set_date_range(test_start, test_end)
-            strategy = strategy_class(
-                symbol=symbol, **_strategy_kwargs(best_params, warmup_prices)
-            )
+            if strategy_name == "CrossSectionalMomentum":
+                strategy = strategy_class(**_strategy_kwargs(best_params, warmup_prices))
+            else:
+                strategy = strategy_class(
+                    symbol=symbol, **_strategy_kwargs(best_params, warmup_prices)
+                )
             portfolio = _build_portfolio(
                 data_handler, cfg.template, trade_logger=trade_logger
             )
@@ -360,6 +374,11 @@ def _build_portfolio(
         turnover_cap=cfg.turnover_cap,
         kelly_fraction=cfg.kelly_fraction,
         trade_logger=trade_logger,
+        vol_target_annualized=cfg.vol_target_annualized,
+        vol_lookback=cfg.vol_lookback,
+        max_portfolio_heat=cfg.max_portfolio_heat,
+        sectors=getattr(cfg, "sectors", None),
+        max_positions_per_sector=cfg.max_positions_per_sector,
     )
 
 
@@ -368,7 +387,7 @@ def _build_executor(data_handler, exec_cfg: ExecModelCfg, rng: np.random.Generat
     executor_cls = EXECUTION_MAPPING.get(exec_type, Executor)
     kwargs: Dict[str, Any] = {
         "price_impact": exec_cfg.price_impact,
-        "commission": exec_cfg.aln,
+        "commission": exec_cfg.commission,
     }
     if executor_cls is KyleLambda:
         kwargs["lam"] = (
@@ -399,6 +418,8 @@ def _build_executor(data_handler, exec_cfg: ExecModelCfg, rng: np.random.Generat
                 mid_price = 100.0
         book.seed_book(mid_price=mid_price, tick=tick, levels=levels, size=level_size)
         kwargs["book"] = book
+        if exec_cfg.lob_tplus1 is not None:
+            kwargs["lob_tplus1"] = bool(exec_cfg.lob_tplus1)
     return executor_cls(data_handler=data_handler, **kwargs)
 
 

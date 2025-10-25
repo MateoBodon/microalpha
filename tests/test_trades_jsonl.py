@@ -20,7 +20,7 @@ def _config_path(tmp_path: Path) -> Path:
         "symbol": "SPY",
         "cash": 50000.0,
         "seed": 21,
-        "exec": {"type": "twap", "slices": 2},
+        "exec": {"type": "twap", "slices": 2, "commission": 0.0},
         "strategy": {
             "name": "MeanReversionStrategy",
             "params": {"lookback": 2, "z_threshold": 0.5},

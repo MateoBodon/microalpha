@@ -1,0 +1,4 @@
+# file: /Users/mateobodon/Documents/Programming/Projects/microalpha/src/microalpha/lob.py
+# hypothesis_version: 6.140.2
+
+[0.0, 0.0005, 0.001, 0.002, 0.01, 'BUY', 'CANCEL', 'LIMIT', 'SELL']

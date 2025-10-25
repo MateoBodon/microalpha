@@ -17,6 +17,16 @@ Microalpha enforces a strict "no-peek" discipline at every layer of the simulati
 
 The `LimitOrderBook` keeps per-level FIFO queues to ensure first-in-first-out fill priority. [`tests/test_lob_fifo.py`](https://github.com/MateoBodon/microalpha/blob/main/tests/test_lob_fifo.py) and [`tests/test_lob_cancel_latency.py`](https://github.com/MateoBodon/microalpha/blob/main/tests/test_lob_cancel_latency.py) cover partial fills, cancel acknowledgements, and latency offsets, guaranteeing orders are matched in arrival order without leaking future liquidity.
 
+### LOB t+1 semantics
+
+By default, LOB execution enforces t+1 semantics by shifting the reported `FillEvent.timestamp` to the next available market timestamp while retaining measured latency fields. This preserves the global no-peek invariant. You can disable this behavior per config with:
+
+```yaml
+exec:
+  type: lob
+  lob_tplus1: false
+```
+
 ## Walk-forward orchestration
 
 During walk-forward validation, the optimizer only uses in-sample data to select parameters. Each fold records train/test windows in the JSON fold summary, providing an audit trail that the optimizer never touches out-of-sample data ([`tests/test_walkforward.py`](https://github.com/MateoBodon/microalpha/blob/main/tests/test_walkforward.py)).
