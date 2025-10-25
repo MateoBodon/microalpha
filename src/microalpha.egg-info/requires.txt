@@ -1,0 +1,17 @@
+numpy
+pandas
+pyyaml
+pydantic>=2
+
+[dev]
+pytest
+pytest-cov
+hypothesis
+mypy
+ruff>=0.4.0
+black>=23.7
+matplotlib
+pyarrow
+pydantic
+pandas-stubs
+types-PyYAML

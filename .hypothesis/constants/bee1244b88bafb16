@@ -1,4 +1,0 @@
-# file: /Users/mateobodon/Documents/Programming/Projects/microalpha/src/microalpha/metrics.py
-# hypothesis_version: 6.140.2
-
-[0.0, 1e-09, 0.5, 1.0, 252, 'alpha', 'ann_vol', 'avg_exposure', 'avg_trade_notional', 'beta', 'cagr', 'calmar_ratio', 'equity', 'equity_df', 'exposure', 'exposure_std', 'final_equity', 'information_ratio', 'max_drawdown', 'num_trades', 'price', 'qty', 'returns', 'sharpe_ratio', 'sortino_ratio', 'sum', 'timestamp', 'total_turnover', 'traded_days', 'turnover_per_day', 'win_rate']
