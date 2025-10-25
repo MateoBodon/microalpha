@@ -23,13 +23,13 @@ def test_legacy_and_new_configs_align(tmp_path: Path):
     legacy_path = Path("configs/wfv_meanrev.yaml").resolve()
     legacy_cfg = load_wfv_cfg(str(legacy_path))
 
-        new_cfg = WFVCfg(
+    new_cfg = WFVCfg(
         template=BacktestCfg(
             data_path="data",
             symbol="SPY",
             cash=100000.0,
             seed=7,
-                exec=ExecModelCfg(type="twap", commission=0.5, slices=2),
+            exec=ExecModelCfg(type="twap", commission=0.5, slices=2),
             strategy=StrategyCfg(
                 name="MeanReversionStrategy",
                 params={"lookback": 3, "z_threshold": 0.5},

@@ -47,9 +47,13 @@ class CrossSectionalMomentum:
             p_lb = p.iloc[-(skip + lb + 1)]
             mom[s] = float(p_t / p_lb - 1.0) if p_lb != 0 else 0.0
 
-        # Rank and select top fraction
-        n = max(1, int(len(self.symbol_universe) * self.top_frac))
-        top = set(sorted(mom, key=mom.get, reverse=True)[:n])
+        # Rank and select top fraction (only among symbols present in this batch)
+        present = {e.symbol for e in events}
+        eligible = {s: mom[s] for s in self.symbol_universe if s in present}
+        if not eligible:
+            return []
+        n = max(1, int(len(eligible) * self.top_frac))
+        top = set(sorted(eligible, key=eligible.get, reverse=True)[:n])
 
         # Vol targeting via simple per-asset rolling vol (21-day) to reach vol_target
         annual = np.sqrt(252.0)
