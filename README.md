@@ -341,11 +341,13 @@ def bootstrap_sharpe_ratio(returns, num_simulations=5000, periods=252):
 
 ### Seed-Based Reproducibility
 ```python
-# In run.py
-seed = config.get('random_seed')
-if seed is not None:
-    np.random.seed(seed)
-    print(f"Set random seed to {seed} for reproducibility.")
+# src/microalpha/manifest.py
+def build(seed: Optional[int], config_path: str, run_id: str, config_sha256: str, git_sha: Optional[str] = None) -> Manifest:
+    norm_seed = int(seed or 0)
+    random.seed(norm_seed)
+    np.random.seed(norm_seed)
+    ...
+    return Manifest(...)
 ```
 
 ### Configuration-Driven Execution
@@ -410,8 +412,8 @@ pip install -e ".[dev]"
 pytest tests/
 
 # Format code
-black microalpha/
-ruff check microalpha/
+ruff format src tests reports/generate_summary.py
+ruff check src tests reports
 ```
 
 CI enforces >=85% line coverage:
@@ -430,6 +432,10 @@ pytest -q --cov=microalpha --cov-fail-under=85
 
 ```bash
 pip install -e ".[dev]" && bash scripts/demo.sh
+
+# Re-generate the headline summary
+python reports/generate_summary.py
+cat reports/summaries/quant_summary.md
 ```
 
 Enable profiling and override output directory:
@@ -464,11 +470,20 @@ exec:
   commission: 0.5
   price_impact: 0.00005
   slices: 4
+  slippage:
+    type: "volume"
+    impact: 0.0001
 
 strategy:
   name: "MeanReversionStrategy"
   lookback: 3
   z: 0.5
+
+capital_policy:
+  type: "volatility_scaled"
+  lookback: 5
+  target_dollar_vol: 15000
+  min_qty: 5
 ```
 
 ### Supported Strategies
@@ -479,6 +494,13 @@ strategy:
 ### Execution Styles
 - `INSTANT`: Immediate order execution
 - `TWAP`: Time-weighted average price execution over multiple periods
+- `VWAP`: Volume-weighted execution using forward volume estimates
+- `IS`: Implementation shortfall with urgency parameter
+- `LOB`: Limit-order-book backed execution with latency simulation
+
+### Risk Sizing
+- `capital_policy` (optional): currently supports `volatility_scaled`, which rescales order quantities to target a dollar volatility budget per trade.
+- Portfolio-level controls include exposure limits, drawdown halts, turnover caps, Kelly sizing, sector heats, and total portfolio heat.
 
 ---
 
@@ -503,6 +525,15 @@ date,close,volume
 data_handler = CsvDataHandler(csv_dir=Path("data"), symbol="SPY")
 data_handler.set_date_range("2025-01-01", "2025-01-31")
 ```
+
+#### Bundled Sample Data
+
+| Directory | Description | Notes |
+| --- | --- | --- |
+| `data/` | Lightweight demo equities (e.g., `SPY.csv`) | Handy for smoke tests and quick strategy iteration. |
+| `data_sp500/` | Full S&P 500-style panel with `close` + `volume` columns | Used by `configs/wfv_cs_mom_small.yaml`; powered by WRDS/CRSP-style exports and ready for walk-forward experiments. |
+
+All CSVs expect ISO date strings in the first column and numeric `close` prices. Provide `volume` when using VWAP/Implementation Shortfall execution or volume-aware slippage.
 
 ---
 
@@ -540,20 +571,18 @@ cat reports/summaries/quant_summary.md
 
 The summary script replays highlighted configs, writes fresh artifacts under `reports/summaries/_artifacts/`, and renders a Markdown dashboard of Sharpe, CAGR, drawdown, and fold-level walk-forward stats.
 
-### Example Output
-```
---- Performance Metrics ---
-Sharpe Ratio: 5.23
-Maximum Drawdown: 0.00%
-Total Turnover: $1,234,567.89
-Average Exposure: 85.4%
--------------------------
+### Sample Results (reproducible)
 
---- Statistical Significance ---
-Bootstrap p-value (Prob. of Sharpe <= 0): 0.001
-95% Confidence Interval for Sharpe: (2.15, 8.31)
-------------------------------
-```
+| Config | Type | Sharpe | CAGR | Max DD | Turnover |
+| --- | --- | --- | --- | --- | --- |
+| `configs/breakout.yaml` | Single run | **1.38** | 71.7% | 4.4% | $804,710 |
+| `configs/wfv_cs_mom_small.yaml` | Walk-forward (13 folds) | 0.00 | -0.0% | 0.2% | $44,351 |
+
+Fold diagnostics (from `reports/summaries/_artifacts/.../folds.json`):
+- Average test Sharpe: **-0.29**
+- Best test Sharpe: **3.70**
+
+These figures regenerate deterministically via the summary script and serve as resume-ready talking points.
 
 ---
 
@@ -577,10 +606,16 @@ def test_breakout_strategy_generates_long_signal():
     assert signal.symbol == symbol
 ```
 
-### CI/CD Pipeline
-- **Automated Testing**: pytest execution on every commit
-- **Code Quality**: ruff linting and black formatting
-- **Type Checking**: Static analysis for code quality
+### Verification Checklist
+```bash
+ruff format src tests reports/generate_summary.py
+ruff check src tests reports
+mypy src
+pytest -q --cov=microalpha --cov-fail-under=85
+python reports/generate_summary.py
+```
+
+CI runs the same sequence on every push (see badge at top).
 
 ---
 
@@ -607,10 +642,10 @@ The profiler output is written to `artifacts/<run_id>/profile.pstats`.
 ## Limitations
 
 ### Current Constraints
-- **Multi-asset support**: Available for cross-sectional momentum and data handlers; portfolio capital allocation/sizing across names is simple and can be extended.
-- **Simplified L2 Order Book**: FIFO queue with latency/partial fill modeling; execution models are stylized and the full Almgren–Chriss schedule is not implemented.
-- **Daily Frequency**: Optimized for daily data (intraday possible)
-- **Static Parameters**: No dynamic parameter adjustment during backtest
+- **Multi-asset support**: Cross-sectional momentum + shared portfolio sizing are covered; more complex cross-asset risk models (e.g., covariance-aware allocators) remain work-in-progress.
+- **Execution realism**: LOB/TWAP/VWAP models are stylised calibrations; they do not ingest live depth or venue-specific microstructure.
+- **Data hygiene**: CSV loaders expect already-adjusted OHLCV files (corporate actions / survivorship handled upstream).
+- **Parameter search**: Walk-forward optimizer performs brute-force grid sweeps—suitable for small grids but not yet hyper-efficient.
 
 ### Known Issues
 - TWAP execution may not complete if insufficient future data
@@ -620,23 +655,23 @@ The profiler output is written to `artifacts/<run_id>/profile.pstats`.
 
 ## Roadmap
 
-### Near Term (v0.2)
-- [ ] Multi-asset portfolio support
-- [ ] Limit order implementation
-- [ ] Advanced position sizing (Kelly criterion, volatility targeting)
-- [ ] Real-time data feed integration
+### Near Term
+- [ ] Covariance-aware cross-asset portfolio optimiser
+- [ ] Intraday data adapters (minute-level CSV/Parquet streaming)
+- [ ] CLI hooks for custom capital policies and slippage plugins
+- [ ] Automated config sweeps with pareto-ranked reporting
 
-### Medium Term (v0.3)
-- [ ] Machine learning strategy framework
-- [ ] Advanced execution algorithms (VWAP, Implementation Shortfall)
-- [ ] Risk management module (VaR, stress testing)
-- [ ] Web-based dashboard
+### Medium Term
+- [ ] Machine-learning strategy templates (alpha combination, feature pipelines)
+- [ ] Factor attribution / risk decomposition reports
+- [ ] Scenario analysis module (stress, regime shifts)
+- [ ] Optional Postgres/Arrow backends for large-scale data
 
-### Long Term (v1.0)
-- [ ] Live trading integration
-- [ ] Cloud deployment options
-- [ ] Strategy marketplace
-- [ ] Institutional-grade reporting
+### Long Term
+- [ ] Live-trading adaptor layer (broker API integration)
+- [ ] Hosted notebook + dashboard experience
+- [ ] Workflow orchestration for nightly walk-forward jobs
+- [ ] Marketplace for sharing strategies + artifacts
 
 ---
 
