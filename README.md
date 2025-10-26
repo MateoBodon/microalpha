@@ -535,6 +535,9 @@ data_handler.set_date_range("2025-01-01", "2025-01-31")
 
 All CSVs expect ISO date strings in the first column and numeric `close` prices. Provide `volume` when using VWAP/Implementation Shortfall execution or volume-aware slippage.
 
+- For a full audit, check [docs/data_sp500.md](docs/data_sp500.md) and the generated `reports/data_inventory_sp500.json`.
+- The flagship strategy blueprint lives in [docs/flagship_strategy.md](docs/flagship_strategy.md).
+
 ---
 
 ## Performance Analysis
