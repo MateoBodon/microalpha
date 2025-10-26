@@ -1,0 +1,8549 @@
+{
+  "total_symbols": 936,
+  "summary": [
+    {
+      "symbol": "A",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AA",
+      "start": "2016-11-01",
+      "end": "2024-12-31",
+      "rows": 2054,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AAL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 484,
+      "missing_volume": 484,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AAP",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AAPL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ABBV",
+      "start": "2013-01-02",
+      "end": "2024-12-31",
+      "rows": 3020,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ABI",
+      "start": "2005-01-03",
+      "end": "2008-11-21",
+      "rows": 981,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ABK",
+      "start": "2005-01-03",
+      "end": "2010-11-08",
+      "rows": 1474,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ABMD",
+      "start": "2005-01-03",
+      "end": "2022-12-21",
+      "rows": 4525,
+      "missing_close": 1,
+      "missing_volume": 1,
+      "nonpos_volume": 1
+    },
+    {
+      "symbol": "ABNB",
+      "start": "2020-12-10",
+      "end": "2024-12-31",
+      "rows": 1020,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ABS",
+      "start": "2005-01-03",
+      "end": "2006-06-01",
+      "rows": 356,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ABT",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ACAS",
+      "start": "2005-01-03",
+      "end": "2017-01-03",
+      "rows": 3022,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ACGL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ACN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ACS",
+      "start": "2005-01-03",
+      "end": "2010-02-05",
+      "rows": 1283,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ACV",
+      "start": "2005-01-03",
+      "end": "2011-05-10",
+      "rows": 1600,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ADBE",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ADCT",
+      "start": "2005-01-03",
+      "end": "2010-12-09",
+      "rows": 1496,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ADI",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ADM",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ADNT",
+      "start": "2016-10-31",
+      "end": "2024-12-31",
+      "rows": 2055,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ADP",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ADSK",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ADT",
+      "start": "2012-10-01",
+      "end": "2016-04-29",
+      "rows": 900,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AEE",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AEP",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AES",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AET",
+      "start": "2005-01-03",
+      "end": "2018-11-28",
+      "rows": 3502,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AFL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AGN",
+      "start": "2005-01-03",
+      "end": "2020-05-08",
+      "rows": 3864,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AIG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AIRC",
+      "start": "2020-12-15",
+      "end": "2024-06-27",
+      "rows": 888,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AIV",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AIZ",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AJG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AKAM",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AKS",
+      "start": "2005-01-03",
+      "end": "2020-03-12",
+      "rows": 3824,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ALB",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ALGN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ALK",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ALL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ALLE",
+      "start": "2013-12-02",
+      "end": "2024-12-31",
+      "rows": 2789,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ALTR",
+      "start": "2005-01-03",
+      "end": "2015-12-24",
+      "rows": 2765,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ALXN",
+      "start": "2005-01-03",
+      "end": "2021-07-20",
+      "rows": 4165,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AMAT",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AMCC",
+      "start": "2005-01-03",
+      "end": "2017-01-26",
+      "rows": 3038,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AMCR",
+      "start": "2019-06-11",
+      "end": "2024-12-31",
+      "rows": 1400,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AMD",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AME",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AMG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AMGN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AMP",
+      "start": "2005-10-03",
+      "end": "2024-12-31",
+      "rows": 4844,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AMT",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AMTM",
+      "start": "2024-09-30",
+      "end": "2024-12-31",
+      "rows": 65,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AMZN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ANDV",
+      "start": "2005-01-03",
+      "end": "2018-09-28",
+      "rows": 3460,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ANDW",
+      "start": "2005-01-03",
+      "end": "2007-12-27",
+      "rows": 752,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ANET",
+      "start": "2014-06-06",
+      "end": "2024-12-31",
+      "rows": 2661,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ANF",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ANR",
+      "start": "2005-02-15",
+      "end": "2015-07-15",
+      "rows": 2621,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ANSS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AON",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AOS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "APA",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "APC",
+      "start": "2005-01-03",
+      "end": "2019-08-08",
+      "rows": 3675,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "APCC",
+      "start": "2005-01-03",
+      "end": "2007-02-14",
+      "rows": 533,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "APD",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "APH",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "APO",
+      "start": "2011-03-30",
+      "end": "2024-12-31",
+      "rows": 3462,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "APOL",
+      "start": "2005-01-03",
+      "end": "2017-02-01",
+      "rows": 3042,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "APTV",
+      "start": "2011-11-17",
+      "end": "2024-12-31",
+      "rows": 3300,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ARE",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ARG",
+      "start": "2005-01-03",
+      "end": "2016-05-20",
+      "rows": 2866,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ASH",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ASIX",
+      "start": "2016-10-03",
+      "end": "2024-12-31",
+      "rows": 2075,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ASN",
+      "start": "2005-01-03",
+      "end": "2007-10-05",
+      "rows": 695,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ASO",
+      "start": "2005-01-03",
+      "end": "2006-11-03",
+      "rows": 465,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AT",
+      "start": "2005-01-03",
+      "end": "2007-11-16",
+      "rows": 725,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ATGE",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ATI",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ATO",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ATVI",
+      "start": "2005-01-03",
+      "end": "2023-10-12",
+      "rows": 4727,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AV",
+      "start": "2005-01-03",
+      "end": "2007-10-25",
+      "rows": 709,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AVB",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AVGO",
+      "start": "2009-08-06",
+      "end": "2024-12-31",
+      "rows": 3877,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AVP",
+      "start": "2005-01-03",
+      "end": "2020-01-03",
+      "rows": 3777,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AVY",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AW",
+      "start": "2005-01-03",
+      "end": "2008-12-05",
+      "rows": 990,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AWK",
+      "start": "2008-04-23",
+      "end": "2024-12-31",
+      "rows": 4202,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AXON",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AXP",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AYE",
+      "start": "2005-01-03",
+      "end": "2011-02-25",
+      "rows": 1549,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AYI",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "AZO",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BA",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BAC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BALL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BAX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BBBY",
+      "start": "2005-01-03",
+      "end": "2023-05-02",
+      "rows": 4614,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BBWI",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BBY",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BCR",
+      "start": "2005-01-03",
+      "end": "2017-12-28",
+      "rows": 3271,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BDK",
+      "start": "2005-01-03",
+      "end": "2010-03-12",
+      "rows": 1307,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BDX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BEAM",
+      "start": "2005-01-03",
+      "end": "2014-04-30",
+      "rows": 2347,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BEN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BF",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BFH",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BHF",
+      "start": "2017-08-07",
+      "end": "2024-12-31",
+      "rows": 1863,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BIG",
+      "start": "2005-01-03",
+      "end": "2024-09-06",
+      "rows": 4953,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BIIB",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 3,
+      "missing_volume": 3,
+      "nonpos_volume": 1
+    },
+    {
+      "symbol": "BIO",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BIVV",
+      "start": "2017-02-02",
+      "end": "2018-03-08",
+      "rows": 276,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BJS",
+      "start": "2005-01-03",
+      "end": "2010-04-28",
+      "rows": 1339,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BK",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BKNG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BKR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BLDR",
+      "start": "2005-06-22",
+      "end": "2024-12-31",
+      "rows": 4915,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BLK",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BLS",
+      "start": "2005-01-03",
+      "end": "2006-12-29",
+      "rows": 503,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BMC",
+      "start": "2005-01-03",
+      "end": "2013-09-10",
+      "rows": 2187,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BMET",
+      "start": "2005-01-03",
+      "end": "2007-09-25",
+      "rows": 687,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BMS",
+      "start": "2005-01-03",
+      "end": "2019-06-10",
+      "rows": 3633,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BMY",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BNI",
+      "start": "2005-01-03",
+      "end": "2010-02-12",
+      "rows": 1288,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BOL",
+      "start": "2005-01-03",
+      "end": "2007-10-26",
+      "rows": 710,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BPYU",
+      "start": "2005-01-03",
+      "end": "2021-07-26",
+      "rows": 4169,
+      "missing_close": 223,
+      "missing_volume": 223,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BR",
+      "start": "2007-04-02",
+      "end": "2024-12-31",
+      "rows": 4469,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BRCM",
+      "start": "2005-01-03",
+      "end": "2016-01-29",
+      "rows": 2788,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BRK",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BRL",
+      "start": "2005-01-03",
+      "end": "2008-12-22",
+      "rows": 1001,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BRO",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BSC",
+      "start": "2005-01-03",
+      "end": "2008-05-30",
+      "rows": 858,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BSX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BTU",
+      "start": "2005-01-03",
+      "end": "2016-04-13",
+      "rows": 2839,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 1
+    },
+    {
+      "symbol": "BUD",
+      "start": "2005-01-03",
+      "end": "2008-11-17",
+      "rows": 977,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BWA",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BX",
+      "start": "2007-06-22",
+      "end": "2024-12-31",
+      "rows": 4412,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BXLT",
+      "start": "2015-07-01",
+      "end": "2016-06-02",
+      "rows": 233,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "BXP",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "C",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 4,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CA",
+      "start": "2005-01-03",
+      "end": "2018-11-02",
+      "rows": 3485,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CAG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CAH",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CAM",
+      "start": "2005-01-03",
+      "end": "2016-04-01",
+      "rows": 2831,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CAR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CARR",
+      "start": "2020-04-03",
+      "end": "2024-12-31",
+      "rows": 1194,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CAT",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CB",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CBE",
+      "start": "2005-01-03",
+      "end": "2012-11-30",
+      "rows": 1993,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CBH",
+      "start": "2005-01-03",
+      "end": "2008-03-28",
+      "rows": 814,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CBOE",
+      "start": "2010-06-15",
+      "end": "2024-12-31",
+      "rows": 3662,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CBRE",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CBSS",
+      "start": "2005-01-03",
+      "end": "2007-09-06",
+      "rows": 674,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CC",
+      "start": "2005-01-03",
+      "end": "2008-11-07",
+      "rows": 971,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CCE",
+      "start": "2005-01-03",
+      "end": "2016-05-27",
+      "rows": 2871,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CCI",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CCL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CCU",
+      "start": "2005-01-03",
+      "end": "2008-07-30",
+      "rows": 900,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CDNS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CDW",
+      "start": "2013-06-27",
+      "end": "2024-12-31",
+      "rows": 2898,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CE",
+      "start": "2005-01-21",
+      "end": "2024-12-31",
+      "rows": 5020,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CEG",
+      "start": "2005-01-03",
+      "end": "2012-03-12",
+      "rows": 1811,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CELG",
+      "start": "2005-01-03",
+      "end": "2019-11-20",
+      "rows": 3748,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CEPH",
+      "start": "2005-01-03",
+      "end": "2011-10-13",
+      "rows": 1709,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CERN",
+      "start": "2005-01-03",
+      "end": "2022-06-07",
+      "rows": 4388,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CF",
+      "start": "2005-08-11",
+      "end": "2024-12-31",
+      "rows": 4880,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CFC",
+      "start": "2005-01-03",
+      "end": "2008-06-30",
+      "rows": 879,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CFG",
+      "start": "2014-09-24",
+      "end": "2024-12-31",
+      "rows": 2585,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CFN",
+      "start": "2009-09-01",
+      "end": "2015-03-16",
+      "rows": 1393,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CHD",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CHIR",
+      "start": "2005-01-03",
+      "end": "2006-04-19",
+      "rows": 326,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CHK",
+      "start": "2005-01-03",
+      "end": "2020-06-26",
+      "rows": 3898,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CHRW",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CHTR",
+      "start": "2010-09-14",
+      "end": "2024-12-31",
+      "rows": 3599,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CHX",
+      "start": "2018-05-09",
+      "end": "2024-12-31",
+      "rows": 1673,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CI",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CIEN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CIN",
+      "start": "2005-01-03",
+      "end": "2006-03-31",
+      "rows": 314,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CINF",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CIT",
+      "start": "2005-01-03",
+      "end": "2009-11-02",
+      "rows": 1218,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CLF",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CLX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CMA",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CMCSA",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CMCSK",
+      "start": "2005-01-03",
+      "end": "2015-12-11",
+      "rows": 2756,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CME",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CMG",
+      "start": "2006-01-26",
+      "end": "2024-12-31",
+      "rows": 4765,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CMI",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CMS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CMVT",
+      "start": "2005-01-03",
+      "end": "2013-02-04",
+      "rows": 2036,
+      "missing_close": 1171,
+      "missing_volume": 1171,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CMX",
+      "start": "2005-01-03",
+      "end": "2007-03-21",
+      "rows": 557,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CNC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CNP",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CNX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "COF",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "COL",
+      "start": "2005-01-03",
+      "end": "2018-11-26",
+      "rows": 3500,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "COO",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "COOP",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 1761,
+      "missing_volume": 1761,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "COP",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "COR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "COST",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "COTY",
+      "start": "2013-06-13",
+      "end": "2024-12-31",
+      "rows": 2908,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "COV",
+      "start": "2007-07-02",
+      "end": "2015-01-26",
+      "rows": 1906,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CPAY",
+      "start": "2010-12-15",
+      "end": "2024-12-31",
+      "rows": 3534,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CPB",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CPGX",
+      "start": "2015-07-02",
+      "end": "2016-06-30",
+      "rows": 252,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CPN",
+      "start": "2005-01-03",
+      "end": "2005-12-05",
+      "rows": 234,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CPRI",
+      "start": "2011-12-15",
+      "end": "2024-12-31",
+      "rows": 3281,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CPRT",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CPT",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CPWR",
+      "start": "2005-01-03",
+      "end": "2014-12-15",
+      "rows": 2506,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CRL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CRM",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CRWD",
+      "start": "2019-06-12",
+      "end": "2024-12-31",
+      "rows": 1399,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CSCO",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CSGP",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CSRA",
+      "start": "2015-11-30",
+      "end": "2018-04-03",
+      "rows": 589,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CSX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CTAS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CTB",
+      "start": "2005-01-03",
+      "end": "2021-06-04",
+      "rows": 4134,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CTLT",
+      "start": "2014-07-31",
+      "end": "2024-12-17",
+      "rows": 2614,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CTRA",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CTSH",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CTVA",
+      "start": "2019-06-03",
+      "end": "2024-12-31",
+      "rows": 1406,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CTX",
+      "start": "2005-01-03",
+      "end": "2009-08-18",
+      "rows": 1165,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CTXS",
+      "start": "2005-01-03",
+      "end": "2022-09-29",
+      "rows": 4467,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CVC",
+      "start": "2005-01-03",
+      "end": "2016-06-21",
+      "rows": 2887,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 1
+    },
+    {
+      "symbol": "CVET",
+      "start": "2019-02-08",
+      "end": "2022-10-12",
+      "rows": 927,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CVG",
+      "start": "2005-01-03",
+      "end": "2018-10-04",
+      "rows": 3464,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CVH",
+      "start": "2005-01-03",
+      "end": "2013-05-06",
+      "rows": 2099,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CVS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CVX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CXO",
+      "start": "2007-08-03",
+      "end": "2021-01-15",
+      "rows": 3388,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "CZR",
+      "start": "2014-09-22",
+      "end": "2024-12-31",
+      "rows": 2587,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "D",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DAL",
+      "start": "2007-05-03",
+      "end": "2024-12-31",
+      "rows": 4447,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DAY",
+      "start": "2018-04-26",
+      "end": "2024-12-31",
+      "rows": 1682,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DCN",
+      "start": "2005-01-03",
+      "end": "2006-03-03",
+      "rows": 294,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DD",
+      "start": "2017-09-01",
+      "end": "2024-12-31",
+      "rows": 1844,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DDS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DE",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DECK",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DELL",
+      "start": "2018-12-28",
+      "end": "2024-12-31",
+      "rows": 1512,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DF",
+      "start": "2005-01-03",
+      "end": "2019-11-12",
+      "rows": 3742,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 1
+    },
+    {
+      "symbol": "DFS",
+      "start": "2007-07-02",
+      "end": "2024-12-31",
+      "rows": 4406,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DG",
+      "start": "2009-11-13",
+      "end": "2024-12-31",
+      "rows": 3807,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DGX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DHI",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DHR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DINO",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DIS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DISCA",
+      "start": "2005-07-21",
+      "end": "2022-04-08",
+      "rows": 4210,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DISCK",
+      "start": "2008-09-18",
+      "end": "2022-04-08",
+      "rows": 3414,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DISH",
+      "start": "2005-01-03",
+      "end": "2023-12-29",
+      "rows": 4781,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DJ",
+      "start": "2005-01-03",
+      "end": "2007-12-13",
+      "rows": 743,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DLR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DLTR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DNB",
+      "start": "2005-01-03",
+      "end": "2019-02-07",
+      "rows": 3549,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DNR",
+      "start": "2005-01-03",
+      "end": "2020-07-29",
+      "rows": 3920,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 1
+    },
+    {
+      "symbol": "DO",
+      "start": "2005-01-03",
+      "end": "2020-04-24",
+      "rows": 3854,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DOC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DOV",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DOW",
+      "start": "2005-01-03",
+      "end": "2017-08-31",
+      "rows": 3189,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DPH",
+      "start": "2005-01-03",
+      "end": "2005-10-10",
+      "rows": 195,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DPS",
+      "start": "2008-05-07",
+      "end": "2018-07-09",
+      "rows": 2561,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DPZ",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DRE",
+      "start": "2005-01-03",
+      "end": "2022-09-30",
+      "rows": 4468,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DRI",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DTE",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DTV",
+      "start": "2005-01-03",
+      "end": "2015-07-24",
+      "rows": 2658,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DUK",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DVA",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DVMT",
+      "start": "2016-09-07",
+      "end": "2018-12-27",
+      "rows": 581,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DVN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DXC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DXCM",
+      "start": "2005-04-14",
+      "end": "2024-12-31",
+      "rows": 4963,
+      "missing_close": 1,
+      "missing_volume": 1,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "DYN",
+      "start": "2005-01-03",
+      "end": "2018-04-06",
+      "rows": 3338,
+      "missing_close": 62,
+      "missing_volume": 62,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EA",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EBAY",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EC",
+      "start": "2005-01-03",
+      "end": "2006-06-09",
+      "rows": 362,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ECL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ED",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EDS",
+      "start": "2005-01-03",
+      "end": "2008-08-25",
+      "rows": 918,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EFX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EIX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EK",
+      "start": "2005-01-03",
+      "end": "2012-01-18",
+      "rows": 1774,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ELV",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EMC",
+      "start": "2005-01-03",
+      "end": "2016-09-06",
+      "rows": 2940,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EMN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EMR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ENDP",
+      "start": "2005-01-03",
+      "end": "2022-08-25",
+      "rows": 4443,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ENPH",
+      "start": "2012-03-30",
+      "end": "2024-12-31",
+      "rows": 3209,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EOG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EOP",
+      "start": "2005-01-03",
+      "end": "2007-02-09",
+      "rows": 530,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EP",
+      "start": "2005-01-03",
+      "end": "2012-05-24",
+      "rows": 1863,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EPAM",
+      "start": "2012-02-08",
+      "end": "2024-12-31",
+      "rows": 3245,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EQ",
+      "start": "2006-05-18",
+      "end": "2009-06-30",
+      "rows": 785,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EQIX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EQR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EQT",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ERIE",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ES",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ESRX",
+      "start": "2005-01-03",
+      "end": "2018-12-20",
+      "rows": 3517,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ESS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ESV",
+      "start": "2005-01-03",
+      "end": "2009-12-22",
+      "rows": 1253,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ETFC",
+      "start": "2005-01-03",
+      "end": "2020-10-01",
+      "rows": 3965,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ETN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ETR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ETSY",
+      "start": "2015-04-16",
+      "end": "2024-12-31",
+      "rows": 2445,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EVHC",
+      "start": "2005-01-03",
+      "end": "2018-10-10",
+      "rows": 3468,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EVRG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EW",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EXC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EXPD",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EXPE",
+      "start": "2005-08-09",
+      "end": "2024-12-31",
+      "rows": 4882,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "EXR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "F",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FANG",
+      "start": "2012-10-12",
+      "end": "2024-12-31",
+      "rows": 3073,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FAST",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FBIN",
+      "start": "2011-10-04",
+      "end": "2024-12-31",
+      "rows": 3332,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FCPT",
+      "start": "2015-11-10",
+      "end": "2024-12-31",
+      "rows": 2300,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FCX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FDC",
+      "start": "2005-01-03",
+      "end": "2007-09-24",
+      "rows": 686,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FDO",
+      "start": "2005-01-03",
+      "end": "2015-07-06",
+      "rows": 2644,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FDS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FDX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FE",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FFIV",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FHI",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FHN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FI",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FICO",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FIS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FITB",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FLIR",
+      "start": "2005-01-03",
+      "end": "2021-05-13",
+      "rows": 4119,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FLR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FLS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FMC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FNM",
+      "start": "2005-01-03",
+      "end": "2010-07-07",
+      "rows": 1387,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FOSL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FOX",
+      "start": "2019-03-19",
+      "end": "2024-12-31",
+      "rows": 1458,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FOXA",
+      "start": "2019-03-19",
+      "end": "2024-12-31",
+      "rows": 1458,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FRC",
+      "start": "2010-12-09",
+      "end": "2023-04-28",
+      "rows": 3117,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FRE",
+      "start": "2005-01-03",
+      "end": "2010-07-07",
+      "rows": 1387,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FRT",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FRX",
+      "start": "2005-01-03",
+      "end": "2014-06-30",
+      "rows": 2389,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FSH",
+      "start": "2005-01-03",
+      "end": "2006-11-09",
+      "rows": 469,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FSL",
+      "start": "2005-01-03",
+      "end": "2006-12-01",
+      "rows": 484,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FSLR",
+      "start": "2006-11-17",
+      "end": "2024-12-31",
+      "rows": 4559,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FTI",
+      "start": "2005-01-03",
+      "end": "2017-01-13",
+      "rows": 3030,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FTNT",
+      "start": "2009-11-18",
+      "end": "2024-12-31",
+      "rows": 3804,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FTR",
+      "start": "2005-01-03",
+      "end": "2020-04-23",
+      "rows": 3853,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FTRE",
+      "start": "2023-07-03",
+      "end": "2024-12-31",
+      "rows": 378,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "FTV",
+      "start": "2016-07-05",
+      "end": "2024-12-31",
+      "rows": 2138,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "G",
+      "start": "2005-01-03",
+      "end": "2005-09-30",
+      "rows": 189,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GAP",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GAS",
+      "start": "2005-01-03",
+      "end": "2011-12-09",
+      "rows": 1749,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GD",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GDDY",
+      "start": "2015-04-01",
+      "end": "2024-12-31",
+      "rows": 2455,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GDT",
+      "start": "2005-01-03",
+      "end": "2006-04-21",
+      "rows": 328,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GDW",
+      "start": "2005-01-03",
+      "end": "2006-09-29",
+      "rows": 440,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GE",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GEHC",
+      "start": "2023-01-04",
+      "end": "2024-12-31",
+      "rows": 501,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GEN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GENZ",
+      "start": "2005-01-03",
+      "end": "2011-04-08",
+      "rows": 1579,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GEV",
+      "start": "2024-04-02",
+      "end": "2024-12-31",
+      "rows": 190,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GHC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GILD",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GIS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GLK",
+      "start": "2005-01-03",
+      "end": "2005-07-01",
+      "rows": 126,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GLW",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GM",
+      "start": "2010-11-18",
+      "end": "2024-12-31",
+      "rows": 3552,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GMCR",
+      "start": "2005-01-03",
+      "end": "2016-03-02",
+      "rows": 2810,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GME",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GNRC",
+      "start": "2010-02-11",
+      "end": "2024-12-31",
+      "rows": 3747,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GNW",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GOOG",
+      "start": "2014-04-03",
+      "end": "2024-12-31",
+      "rows": 2705,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GOOGL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GP",
+      "start": "2005-01-03",
+      "end": "2005-12-22",
+      "rows": 247,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GPC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GPN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GR",
+      "start": "2005-01-03",
+      "end": "2012-07-26",
+      "rows": 1906,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GRMN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GT",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GTW",
+      "start": "2005-01-03",
+      "end": "2007-10-16",
+      "rows": 702,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GTX",
+      "start": "2018-10-01",
+      "end": "2024-12-31",
+      "rows": 1573,
+      "missing_close": 154,
+      "missing_volume": 154,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "GWW",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "H",
+      "start": "2006-08-01",
+      "end": "2007-04-09",
+      "rows": 172,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HAL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HAR",
+      "start": "2005-01-03",
+      "end": "2017-03-10",
+      "rows": 3068,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HAS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HBAN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HBI",
+      "start": "2006-09-06",
+      "end": "2024-12-31",
+      "rows": 4611,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HCA",
+      "start": "2005-01-03",
+      "end": "2006-11-17",
+      "rows": 475,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HCBK",
+      "start": "2005-01-03",
+      "end": "2015-10-30",
+      "rows": 2727,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HCR",
+      "start": "2005-01-03",
+      "end": "2007-12-21",
+      "rows": 749,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HD",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HES",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HET",
+      "start": "2005-01-03",
+      "end": "2008-01-25",
+      "rows": 771,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HIG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HII",
+      "start": "2011-03-31",
+      "end": "2024-12-31",
+      "rows": 3461,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HLT",
+      "start": "2005-01-03",
+      "end": "2007-10-24",
+      "rows": 708,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HMA",
+      "start": "2005-01-03",
+      "end": "2014-01-24",
+      "rows": 2281,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HNZ",
+      "start": "2005-01-03",
+      "end": "2013-06-07",
+      "rows": 2122,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HOG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HOLX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HON",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HOT",
+      "start": "2006-04-10",
+      "end": "2016-09-22",
+      "rows": 2633,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HP",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HPC",
+      "start": "2005-01-03",
+      "end": "2008-11-13",
+      "rows": 975,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HPE",
+      "start": "2015-11-02",
+      "end": "2024-12-31",
+      "rows": 2306,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HPQ",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HRB",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HRL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HSH",
+      "start": "2005-01-03",
+      "end": "2014-08-28",
+      "rows": 2431,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HSIC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HSP",
+      "start": "2005-01-03",
+      "end": "2015-09-02",
+      "rows": 2686,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HST",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HSY",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HUBB",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HUM",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "HWM",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "IAC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "IBM",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ICE",
+      "start": "2005-11-16",
+      "end": "2024-12-31",
+      "rows": 4812,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "IDXX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "IEX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "IFF",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "IGT",
+      "start": "2005-01-03",
+      "end": "2015-04-06",
+      "rows": 2581,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ILG",
+      "start": "2008-08-21",
+      "end": "2018-08-31",
+      "rows": 2526,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ILMN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "INCY",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "INFO",
+      "start": "2014-06-19",
+      "end": "2022-02-25",
+      "rows": 1937,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "INTC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "INTU",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "INVH",
+      "start": "2017-02-01",
+      "end": "2024-12-31",
+      "rows": 1992,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "IP",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "IPG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "IPGP",
+      "start": "2006-12-13",
+      "end": "2024-12-31",
+      "rows": 4542,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "IQV",
+      "start": "2013-05-09",
+      "end": "2024-12-31",
+      "rows": 2932,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "IR",
+      "start": "2017-05-12",
+      "end": "2024-12-31",
+      "rows": 1922,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "IRM",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ISRG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "IT",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ITT",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ITW",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "IVZ",
+      "start": "2007-12-04",
+      "end": "2024-12-31",
+      "rows": 4298,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "J",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "JAVA",
+      "start": "2005-01-03",
+      "end": "2010-01-26",
+      "rows": 1275,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "JBHT",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "JBL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "JCI",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "JCP",
+      "start": "2005-01-03",
+      "end": "2020-05-18",
+      "rows": 3870,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "JEF",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "JKHY",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "JNJ",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "JNPR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "JNS",
+      "start": "2005-01-03",
+      "end": "2017-05-26",
+      "rows": 3122,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "JNY",
+      "start": "2005-01-03",
+      "end": "2014-04-08",
+      "rows": 2332,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "JOY",
+      "start": "2005-01-03",
+      "end": "2017-04-05",
+      "rows": 3086,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "JP",
+      "start": "2005-01-03",
+      "end": "2006-03-31",
+      "rows": 314,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "JPM",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "JWN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "K",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "KATE",
+      "start": "2005-01-03",
+      "end": "2017-07-11",
+      "rows": 3152,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "KBH",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "KDP",
+      "start": "2018-07-10",
+      "end": "2024-12-31",
+      "rows": 1631,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "KEY",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "KEYS",
+      "start": "2014-11-03",
+      "end": "2024-12-31",
+      "rows": 2557,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "KG",
+      "start": "2005-01-03",
+      "end": "2011-02-28",
+      "rows": 1550,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "KHC",
+      "start": "2015-07-06",
+      "end": "2024-12-31",
+      "rows": 2390,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "KIM",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "KKR",
+      "start": "2010-07-15",
+      "end": "2024-12-31",
+      "rows": 3641,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "KLAC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "KLG",
+      "start": "2023-10-02",
+      "end": "2024-12-31",
+      "rows": 315,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "KMB",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "KMG",
+      "start": "2005-01-03",
+      "end": "2006-08-10",
+      "rows": 405,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "KMI",
+      "start": "2005-01-03",
+      "end": "2007-05-30",
+      "rows": 605,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "KMX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "KO",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "KR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "KRB",
+      "start": "2005-01-03",
+      "end": "2005-12-30",
+      "rows": 252,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "KRFT",
+      "start": "2012-10-02",
+      "end": "2015-07-02",
+      "rows": 691,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "KRI",
+      "start": "2005-01-03",
+      "end": "2006-06-27",
+      "rows": 374,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "KSE",
+      "start": "2005-01-03",
+      "end": "2007-08-24",
+      "rows": 666,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "KSS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "KSU",
+      "start": "2005-01-03",
+      "end": "2021-12-13",
+      "rows": 4267,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "KTB",
+      "start": "2019-05-23",
+      "end": "2024-12-31",
+      "rows": 1412,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "KVUE",
+      "start": "2023-05-04",
+      "end": "2024-12-31",
+      "rows": 418,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "L",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LDOS",
+      "start": "2006-10-13",
+      "end": "2024-12-31",
+      "rows": 4584,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LEG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LEH",
+      "start": "2005-01-03",
+      "end": "2008-09-17",
+      "rows": 934,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LEN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LH",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LHX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LIFE",
+      "start": "2005-01-03",
+      "end": "2014-02-03",
+      "rows": 2287,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LII",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LIN",
+      "start": "2018-10-31",
+      "end": "2024-12-31",
+      "rows": 1551,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LKQ",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LLL",
+      "start": "2005-01-03",
+      "end": "2019-06-28",
+      "rows": 3647,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LLTC",
+      "start": "2005-01-03",
+      "end": "2017-03-10",
+      "rows": 3068,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LLY",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LM",
+      "start": "2005-01-03",
+      "end": "2020-07-31",
+      "rows": 3922,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LMT",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LNC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LNT",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LO",
+      "start": "2008-06-10",
+      "end": "2015-06-11",
+      "rows": 1764,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LOW",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LPX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LRCX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LSI",
+      "start": "2005-01-03",
+      "end": "2014-05-06",
+      "rows": 2351,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LU",
+      "start": "2005-01-03",
+      "end": "2006-11-30",
+      "rows": 483,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LULU",
+      "start": "2007-07-30",
+      "end": "2024-12-31",
+      "rows": 4387,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LUMN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LUV",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LVLT",
+      "start": "2005-01-03",
+      "end": "2017-10-31",
+      "rows": 3231,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LVS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LW",
+      "start": "2016-11-10",
+      "end": "2024-12-31",
+      "rows": 2047,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LXK",
+      "start": "2005-01-03",
+      "end": "2016-11-28",
+      "rows": 2998,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LYB",
+      "start": "2010-10-14",
+      "end": "2024-12-31",
+      "rows": 3577,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "LYV",
+      "start": "2005-12-22",
+      "end": "2024-12-31",
+      "rows": 4787,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "M",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MA",
+      "start": "2006-05-25",
+      "end": "2024-12-31",
+      "rows": 4682,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MAA",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MAC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MAR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MAS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MAT",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MAY",
+      "start": "2005-01-03",
+      "end": "2005-08-29",
+      "rows": 166,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MBC",
+      "start": "2022-12-15",
+      "end": "2024-12-31",
+      "rows": 513,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MBI",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MCD",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MCHP",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MCK",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MCO",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MDLZ",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MDP",
+      "start": "2005-01-03",
+      "end": "2021-12-01",
+      "rows": 4259,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MDT",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MEDI",
+      "start": "2005-01-03",
+      "end": "2007-06-18",
+      "rows": 618,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MEE",
+      "start": "2005-01-03",
+      "end": "2011-06-01",
+      "rows": 1615,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MEL",
+      "start": "2005-01-03",
+      "end": "2007-06-29",
+      "rows": 627,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MER",
+      "start": "2005-01-03",
+      "end": "2008-12-31",
+      "rows": 1007,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MERQ",
+      "start": "2005-01-03",
+      "end": "2006-01-03",
+      "rows": 253,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MET",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "META",
+      "start": "2012-05-18",
+      "end": "2024-12-31",
+      "rows": 3175,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MFE",
+      "start": "2005-01-03",
+      "end": "2011-02-28",
+      "rows": 1550,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MGM",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MHK",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MHS",
+      "start": "2005-01-03",
+      "end": "2012-03-30",
+      "rows": 1825,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MI",
+      "start": "2005-01-03",
+      "end": "2011-07-05",
+      "rows": 1638,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MIL",
+      "start": "2005-01-03",
+      "end": "2010-07-14",
+      "rows": 1392,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MJN",
+      "start": "2009-02-11",
+      "end": "2017-06-14",
+      "rows": 2100,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MKC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MKTX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MLM",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MMC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MMI",
+      "start": "2011-01-04",
+      "end": "2012-05-21",
+      "rows": 348,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MMM",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MNK",
+      "start": "2013-07-01",
+      "end": "2020-10-09",
+      "rows": 1834,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MNST",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MO",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MOH",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MOLX",
+      "start": "2005-01-03",
+      "end": "2013-12-06",
+      "rows": 2249,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MON",
+      "start": "2005-01-03",
+      "end": "2018-06-06",
+      "rows": 3380,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MOS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MPC",
+      "start": "2011-07-01",
+      "end": "2024-12-31",
+      "rows": 3397,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MPWR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MRK",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MRNA",
+      "start": "2018-12-07",
+      "end": "2024-12-31",
+      "rows": 1526,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MRO",
+      "start": "2005-01-03",
+      "end": "2024-11-21",
+      "rows": 5007,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MSCI",
+      "start": "2007-11-15",
+      "end": "2024-12-31",
+      "rows": 4310,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MSFT",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MSI",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MTB",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MTCH",
+      "start": "2015-11-19",
+      "end": "2024-12-31",
+      "rows": 2293,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MTD",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MTG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MTW",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MU",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MUR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MWW",
+      "start": "2005-01-03",
+      "end": "2016-10-31",
+      "rows": 2979,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MXIM",
+      "start": "2005-01-03",
+      "end": "2021-08-25",
+      "rows": 4191,
+      "missing_close": 257,
+      "missing_volume": 257,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MYG",
+      "start": "2005-01-03",
+      "end": "2006-03-31",
+      "rows": 314,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "MYL",
+      "start": "2005-01-03",
+      "end": "2020-11-16",
+      "rows": 3997,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NAV",
+      "start": "2005-01-03",
+      "end": "2021-06-30",
+      "rows": 4152,
+      "missing_close": 346,
+      "missing_volume": 346,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NAVI",
+      "start": "2014-05-01",
+      "end": "2024-12-31",
+      "rows": 2686,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NBL",
+      "start": "2005-01-03",
+      "end": "2020-10-02",
+      "rows": 3966,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NBR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NCC",
+      "start": "2005-01-03",
+      "end": "2008-12-31",
+      "rows": 1007,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NCLH",
+      "start": "2013-01-18",
+      "end": "2024-12-31",
+      "rows": 3008,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NDAQ",
+      "start": "2005-02-10",
+      "end": "2024-12-31",
+      "rows": 5006,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NDSN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NE",
+      "start": "2005-01-03",
+      "end": "2020-07-30",
+      "rows": 3921,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NEE",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NEM",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NFB",
+      "start": "2005-01-03",
+      "end": "2006-11-30",
+      "rows": 483,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NFLX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NFX",
+      "start": "2005-01-03",
+      "end": "2019-02-13",
+      "rows": 3553,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NGVT",
+      "start": "2016-05-16",
+      "end": "2024-12-31",
+      "rows": 2172,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NI",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NKE",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NKTR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 2,
+      "missing_volume": 2,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NLSN",
+      "start": "2011-01-26",
+      "end": "2022-10-11",
+      "rows": 2948,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NOC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NOV",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NOVL",
+      "start": "2005-01-03",
+      "end": "2011-04-27",
+      "rows": 1591,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NOW",
+      "start": "2012-06-29",
+      "end": "2024-12-31",
+      "rows": 3146,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NRG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NSC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NSM",
+      "start": "2005-01-03",
+      "end": "2011-09-23",
+      "rows": 1695,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NTAP",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NTRS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NUE",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NVDA",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NVLS",
+      "start": "2005-01-03",
+      "end": "2012-06-04",
+      "rows": 1869,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NVR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NVT",
+      "start": "2018-05-01",
+      "end": "2024-12-31",
+      "rows": 1679,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NWL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NWS",
+      "start": "2013-07-01",
+      "end": "2024-12-31",
+      "rows": 2896,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NWSA",
+      "start": "2013-07-01",
+      "end": "2024-12-31",
+      "rows": 2896,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NXPI",
+      "start": "2010-08-06",
+      "end": "2024-12-31",
+      "rows": 3625,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NXTL",
+      "start": "2005-01-03",
+      "end": "2005-08-12",
+      "rows": 155,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NYT",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "NYX",
+      "start": "2006-03-08",
+      "end": "2013-11-12",
+      "rows": 1936,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "O",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ODFL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ODP",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "OGN",
+      "start": "2021-06-03",
+      "end": "2024-12-31",
+      "rows": 901,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "OI",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "OKE",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "OMC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "OMX",
+      "start": "2005-01-03",
+      "end": "2013-11-05",
+      "rows": 2227,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ON",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ORCL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ORLY",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "OTIS",
+      "start": "2020-04-03",
+      "end": "2024-12-31",
+      "rows": 1194,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "OXY",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PANW",
+      "start": "2012-07-20",
+      "end": "2024-12-31",
+      "rows": 3132,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PARA",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PAYC",
+      "start": "2014-04-15",
+      "end": "2024-12-31",
+      "rows": 2697,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PAYX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PBCT",
+      "start": "2005-01-03",
+      "end": "2022-04-01",
+      "rows": 4343,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PBG",
+      "start": "2005-01-03",
+      "end": "2010-02-26",
+      "rows": 1297,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PBI",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PCAR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PCG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PCL",
+      "start": "2005-01-03",
+      "end": "2016-02-19",
+      "rows": 2802,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PCP",
+      "start": "2005-01-03",
+      "end": "2016-01-29",
+      "rows": 2788,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PD",
+      "start": "2005-01-03",
+      "end": "2007-03-19",
+      "rows": 555,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PDCO",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PEG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PENN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PEP",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PETM",
+      "start": "2005-01-03",
+      "end": "2015-03-11",
+      "rows": 2564,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PFE",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PFG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PGL",
+      "start": "2005-01-03",
+      "end": "2007-02-21",
+      "rows": 537,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PGN",
+      "start": "2005-01-03",
+      "end": "2012-07-02",
+      "rows": 1889,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PGR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PH",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PHIN",
+      "start": "2023-07-05",
+      "end": "2024-12-31",
+      "rows": 377,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PHM",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PKG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PLD",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PLL",
+      "start": "2005-01-03",
+      "end": "2015-08-28",
+      "rows": 2683,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PLTR",
+      "start": "2020-09-30",
+      "end": "2024-12-31",
+      "rows": 1070,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PM",
+      "start": "2008-03-31",
+      "end": "2024-12-31",
+      "rows": 4219,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PMCS",
+      "start": "2005-01-03",
+      "end": "2016-01-14",
+      "rows": 2778,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PNC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PNR",
+      "start": "2012-10-01",
+      "end": "2024-12-31",
+      "rows": 3082,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PNW",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PODD",
+      "start": "2007-05-15",
+      "end": "2024-12-31",
+      "rows": 4439,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "POM",
+      "start": "2005-01-03",
+      "end": "2016-03-23",
+      "rows": 2825,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "POOL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PPG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PPL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PRGO",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PRU",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PSA",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PSX",
+      "start": "2012-05-01",
+      "end": "2024-12-31",
+      "rows": 3188,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PTC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PTV",
+      "start": "2005-01-03",
+      "end": "2010-11-16",
+      "rows": 1480,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PVH",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PVN",
+      "start": "2005-01-03",
+      "end": "2005-09-30",
+      "rows": 189,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PWER",
+      "start": "2005-01-03",
+      "end": "2013-07-25",
+      "rows": 2155,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PWR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PX",
+      "start": "2005-01-03",
+      "end": "2018-10-30",
+      "rows": 3482,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PXD",
+      "start": "2005-01-03",
+      "end": "2024-05-02",
+      "rows": 4866,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "PYPL",
+      "start": "2015-07-20",
+      "end": "2024-12-31",
+      "rows": 2380,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "Q",
+      "start": "2005-01-03",
+      "end": "2011-03-31",
+      "rows": 1573,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "QCOM",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "QCP",
+      "start": "2016-11-01",
+      "end": "2018-07-26",
+      "rows": 436,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "QEP",
+      "start": "2010-07-01",
+      "end": "2021-03-16",
+      "rows": 2695,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "QLGC",
+      "start": "2005-01-03",
+      "end": "2016-08-16",
+      "rows": 2926,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 1
+    },
+    {
+      "symbol": "QRVO",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "R",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "RAI",
+      "start": "2005-01-03",
+      "end": "2017-07-24",
+      "rows": 3161,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "RBK",
+      "start": "2005-01-03",
+      "end": "2006-01-31",
+      "rows": 272,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "RCL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "RDC",
+      "start": "2005-01-03",
+      "end": "2019-04-10",
+      "rows": 3592,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "REG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "REGN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 1,
+      "missing_volume": 1,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "REZI",
+      "start": "2018-10-29",
+      "end": "2024-12-31",
+      "rows": 1553,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "RF",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "RHI",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "RHT",
+      "start": "2005-01-03",
+      "end": "2019-07-08",
+      "rows": 3652,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "RIG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "RJF",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "RL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "RMD",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ROH",
+      "start": "2005-01-03",
+      "end": "2009-04-01",
+      "rows": 1069,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ROK",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ROL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ROP",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ROST",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "RRC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "RRD",
+      "start": "2005-01-03",
+      "end": "2022-02-25",
+      "rows": 4318,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "RSG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "RSH",
+      "start": "2005-01-03",
+      "end": "2015-02-02",
+      "rows": 2538,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 1
+    },
+    {
+      "symbol": "RTN",
+      "start": "2005-01-03",
+      "end": "2020-04-02",
+      "rows": 3839,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "RTX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "RVTY",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "RX",
+      "start": "2005-01-03",
+      "end": "2010-02-25",
+      "rows": 1296,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "S",
+      "start": "2005-01-03",
+      "end": "2013-07-10",
+      "rows": 2144,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SAF",
+      "start": "2005-01-03",
+      "end": "2008-09-22",
+      "rows": 937,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SANM",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SBAC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SBL",
+      "start": "2005-01-03",
+      "end": "2007-01-09",
+      "rows": 508,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SBNY",
+      "start": "2005-01-03",
+      "end": "2023-03-10",
+      "rows": 4578,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SBUX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SCG",
+      "start": "2005-01-03",
+      "end": "2018-12-31",
+      "rows": 3523,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SCHW",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SDS",
+      "start": "2005-01-03",
+      "end": "2005-08-11",
+      "rows": 154,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SE",
+      "start": "2007-01-03",
+      "end": "2017-02-24",
+      "rows": 2555,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SEBL",
+      "start": "2005-01-03",
+      "end": "2006-01-31",
+      "rows": 272,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SEDG",
+      "start": "2015-03-26",
+      "end": "2024-12-31",
+      "rows": 2459,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SEE",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SFA",
+      "start": "2005-01-03",
+      "end": "2006-02-24",
+      "rows": 289,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SGP",
+      "start": "2005-01-03",
+      "end": "2009-11-03",
+      "rows": 1219,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SHLD",
+      "start": "2005-01-03",
+      "end": "2018-10-23",
+      "rows": 3477,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SHW",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SIAL",
+      "start": "2005-01-03",
+      "end": "2015-11-17",
+      "rows": 2739,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SIG",
+      "start": "2008-09-11",
+      "end": "2024-12-31",
+      "rows": 4104,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SII",
+      "start": "2005-01-03",
+      "end": "2010-08-27",
+      "rows": 1424,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SITC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SIVB",
+      "start": "2005-01-03",
+      "end": "2023-03-10",
+      "rows": 4578,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 1
+    },
+    {
+      "symbol": "SJM",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SLB",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SLG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SLM",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SLR",
+      "start": "2005-01-03",
+      "end": "2007-10-01",
+      "rows": 691,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SMCI",
+      "start": "2007-03-29",
+      "end": "2024-12-31",
+      "rows": 4471,
+      "missing_close": 349,
+      "missing_volume": 349,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SNA",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SNDK",
+      "start": "2005-01-03",
+      "end": "2016-05-11",
+      "rows": 2859,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SNI",
+      "start": "2008-07-01",
+      "end": "2018-03-06",
+      "rows": 2437,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SNPS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SNV",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SO",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SOLV",
+      "start": "2024-04-01",
+      "end": "2024-12-31",
+      "rows": 191,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SOV",
+      "start": "2005-01-03",
+      "end": "2009-01-29",
+      "rows": 1026,
+      "missing_close": 1,
+      "missing_volume": 1,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SPG",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SPGI",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SPLS",
+      "start": "2005-01-03",
+      "end": "2017-09-12",
+      "rows": 3196,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SRCL",
+      "start": "2005-01-03",
+      "end": "2024-11-01",
+      "rows": 4993,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SRE",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SSP",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "STE",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "STI",
+      "start": "2005-01-03",
+      "end": "2019-12-06",
+      "rows": 3759,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "STJ",
+      "start": "2005-01-03",
+      "end": "2017-01-04",
+      "rows": 3023,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "STLD",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "STR",
+      "start": "2005-01-03",
+      "end": "2016-09-16",
+      "rows": 2948,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "STT",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "STX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "STZ",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SUN",
+      "start": "2005-01-03",
+      "end": "2012-10-04",
+      "rows": 1955,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SUNE",
+      "start": "2005-01-03",
+      "end": "2016-04-20",
+      "rows": 2844,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SVU",
+      "start": "2005-01-03",
+      "end": "2018-10-19",
+      "rows": 3475,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SW",
+      "start": "2024-07-08",
+      "end": "2024-12-31",
+      "rows": 124,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SWK",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SWKS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SWN",
+      "start": "2005-01-03",
+      "end": "2024-09-30",
+      "rows": 4969,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SWY",
+      "start": "2005-01-03",
+      "end": "2015-01-29",
+      "rows": 2536,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SYF",
+      "start": "2014-07-31",
+      "end": "2024-12-31",
+      "rows": 2623,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SYK",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "SYY",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "T",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TAP",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TDC",
+      "start": "2007-10-01",
+      "end": "2024-12-31",
+      "rows": 4343,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TDG",
+      "start": "2006-03-15",
+      "end": "2024-12-31",
+      "rows": 4732,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TDY",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TE",
+      "start": "2005-01-03",
+      "end": "2016-06-30",
+      "rows": 2894,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TECH",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TEG",
+      "start": "2005-01-03",
+      "end": "2015-06-29",
+      "rows": 2640,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TEK",
+      "start": "2005-01-03",
+      "end": "2007-11-21",
+      "rows": 728,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TEL",
+      "start": "2007-07-02",
+      "end": "2024-12-31",
+      "rows": 4406,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TER",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TEX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TFC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TFCF",
+      "start": "2005-01-03",
+      "end": "2019-03-19",
+      "rows": 3576,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TFCFA",
+      "start": "2005-01-03",
+      "end": "2019-03-19",
+      "rows": 3576,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TFX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TGNA",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TGT",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "THC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TIE",
+      "start": "2005-01-03",
+      "end": "2013-01-07",
+      "rows": 2017,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TIF",
+      "start": "2005-01-03",
+      "end": "2021-01-06",
+      "rows": 4031,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TIN",
+      "start": "2005-01-03",
+      "end": "2012-02-10",
+      "rows": 1791,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TJX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TLAB",
+      "start": "2005-01-03",
+      "end": "2013-12-03",
+      "rows": 2246,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TMO",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TMUS",
+      "start": "2007-04-19",
+      "end": "2024-12-31",
+      "rows": 4457,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TNL",
+      "start": "2006-08-01",
+      "end": "2024-12-31",
+      "rows": 4636,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TOY",
+      "start": "2005-01-03",
+      "end": "2005-07-21",
+      "rows": 139,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TPL",
+      "start": "2021-01-11",
+      "end": "2024-12-31",
+      "rows": 1000,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TPR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TRB",
+      "start": "2005-01-03",
+      "end": "2007-12-20",
+      "rows": 748,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TRGP",
+      "start": "2010-12-07",
+      "end": "2024-12-31",
+      "rows": 3540,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TRIP",
+      "start": "2011-12-21",
+      "end": "2024-12-31",
+      "rows": 3277,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TRMB",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TROW",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TRV",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TSCO",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TSG",
+      "start": "2005-01-03",
+      "end": "2007-03-30",
+      "rows": 564,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TSLA",
+      "start": "2010-06-29",
+      "end": "2024-12-31",
+      "rows": 3652,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TSN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TSS",
+      "start": "2005-01-03",
+      "end": "2019-09-17",
+      "rows": 3702,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TT",
+      "start": "2005-01-03",
+      "end": "2008-06-05",
+      "rows": 862,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TTWO",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TWC",
+      "start": "2007-03-01",
+      "end": "2016-05-17",
+      "rows": 2321,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TWTR",
+      "start": "2013-11-07",
+      "end": "2022-10-27",
+      "rows": 2259,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TWX",
+      "start": "2005-01-03",
+      "end": "2018-06-14",
+      "rows": 3386,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TXN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TXT",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TXU",
+      "start": "2005-01-03",
+      "end": "2007-10-10",
+      "rows": 698,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "TYL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "UA",
+      "start": "2016-04-08",
+      "end": "2024-12-31",
+      "rows": 2198,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "UAA",
+      "start": "2005-11-18",
+      "end": "2024-12-31",
+      "rows": 4810,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "UAL",
+      "start": "2006-02-02",
+      "end": "2024-12-31",
+      "rows": 4760,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "UBER",
+      "start": "2019-05-10",
+      "end": "2024-12-31",
+      "rows": 1421,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "UCL",
+      "start": "2005-01-03",
+      "end": "2005-08-10",
+      "rows": 153,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "UDR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "UHS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "UIS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ULTA",
+      "start": "2007-10-25",
+      "end": "2024-12-31",
+      "rows": 4325,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "UNH",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "UNM",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "UNP",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "UPS",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "URBN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "URI",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "USB",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "UST",
+      "start": "2005-01-03",
+      "end": "2009-01-05",
+      "rows": 1009,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "UVN",
+      "start": "2005-01-03",
+      "end": "2007-03-28",
+      "rows": 562,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "V",
+      "start": "2008-03-19",
+      "end": "2024-12-31",
+      "rows": 4226,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "VAL",
+      "start": "2012-05-22",
+      "end": "2020-08-17",
+      "rows": 2073,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 1
+    },
+    {
+      "symbol": "VAR",
+      "start": "2005-01-03",
+      "end": "2021-04-14",
+      "rows": 4098,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "VC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 466,
+      "missing_volume": 466,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "VFC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "VIAB",
+      "start": "2006-01-03",
+      "end": "2019-12-04",
+      "rows": 3505,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "VIAV",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "VICI",
+      "start": "2018-02-01",
+      "end": "2024-12-31",
+      "rows": 1740,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "VLO",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "VLTO",
+      "start": "2023-10-02",
+      "end": "2024-12-31",
+      "rows": 315,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "VMC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "VNO",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "VNT",
+      "start": "2020-10-09",
+      "end": "2024-12-31",
+      "rows": 1063,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "VRSK",
+      "start": "2009-10-07",
+      "end": "2024-12-31",
+      "rows": 3834,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "VRSN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "VRTS",
+      "start": "2005-01-03",
+      "end": "2005-07-01",
+      "rows": 126,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "VRTX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 2,
+      "missing_volume": 2,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "VSM",
+      "start": "2016-10-03",
+      "end": "2019-10-04",
+      "rows": 757,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "VST",
+      "start": "2017-05-10",
+      "end": "2024-12-31",
+      "rows": 1924,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "VTR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "VTRS",
+      "start": "2020-11-17",
+      "end": "2024-12-31",
+      "rows": 1036,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "VYX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "VZ",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WAB",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WAT",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WB",
+      "start": "2005-01-03",
+      "end": "2008-12-31",
+      "rows": 1007,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WBA",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WBD",
+      "start": "2022-04-11",
+      "end": "2024-12-31",
+      "rows": 685,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WCG",
+      "start": "2005-01-03",
+      "end": "2020-01-23",
+      "rows": 3790,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WDAY",
+      "start": "2012-10-12",
+      "end": "2024-12-31",
+      "rows": 3073,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WDC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WEC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WELL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WEN",
+      "start": "2005-01-03",
+      "end": "2008-09-29",
+      "rows": 942,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WFC",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WFM",
+      "start": "2005-01-03",
+      "end": "2017-08-25",
+      "rows": 3185,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WFRD",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 1524,
+      "missing_volume": 1524,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WHR",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WIN",
+      "start": "2006-07-18",
+      "end": "2019-03-05",
+      "rows": 3179,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WM",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WMB",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WMT",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WPX",
+      "start": "2012-01-03",
+      "end": "2021-01-06",
+      "rows": 2268,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WRB",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WRK",
+      "start": "2005-01-03",
+      "end": "2024-07-05",
+      "rows": 4909,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WST",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WTW",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WU",
+      "start": "2006-10-02",
+      "end": "2024-12-31",
+      "rows": 4593,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WWY",
+      "start": "2005-01-03",
+      "end": "2008-10-06",
+      "rows": 947,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WY",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WYE",
+      "start": "2005-01-03",
+      "end": "2009-10-15",
+      "rows": 1206,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "WYNN",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "X",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "XEC",
+      "start": "2005-01-03",
+      "end": "2021-09-30",
+      "rows": 4216,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "XEL",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "XL",
+      "start": "2005-01-03",
+      "end": "2018-09-11",
+      "rows": 3447,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "XLNX",
+      "start": "2005-01-03",
+      "end": "2022-02-11",
+      "rows": 4309,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "XOM",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "XRAY",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "XRX",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "XTO",
+      "start": "2005-01-03",
+      "end": "2010-06-25",
+      "rows": 1380,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "XYL",
+      "start": "2011-11-01",
+      "end": "2024-12-31",
+      "rows": 3312,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "YHOO",
+      "start": "2005-01-03",
+      "end": "2017-06-16",
+      "rows": 3136,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "YUM",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "YUMC",
+      "start": "2016-11-01",
+      "end": "2024-12-31",
+      "rows": 2054,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ZBH",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ZBRA",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ZION",
+      "start": "2005-01-03",
+      "end": "2024-12-31",
+      "rows": 5033,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    },
+    {
+      "symbol": "ZTS",
+      "start": "2013-02-01",
+      "end": "2024-12-31",
+      "rows": 2999,
+      "missing_close": 0,
+      "missing_volume": 0,
+      "nonpos_volume": 0
+    }
+  ],
+  "missing_volume": [
+    {
+      "symbol": "AAL",
+      "missing_volume": 484
+    },
+    {
+      "symbol": "ABMD",
+      "missing_volume": 1
+    },
+    {
+      "symbol": "BIIB",
+      "missing_volume": 3
+    },
+    {
+      "symbol": "BPYU",
+      "missing_volume": 223
+    },
+    {
+      "symbol": "C",
+      "missing_volume": 4
+    },
+    {
+      "symbol": "CMVT",
+      "missing_volume": 1171
+    },
+    {
+      "symbol": "COOP",
+      "missing_volume": 1761
+    },
+    {
+      "symbol": "DXCM",
+      "missing_volume": 1
+    },
+    {
+      "symbol": "DYN",
+      "missing_volume": 62
+    },
+    {
+      "symbol": "GTX",
+      "missing_volume": 154
+    },
+    {
+      "symbol": "MXIM",
+      "missing_volume": 257
+    },
+    {
+      "symbol": "NAV",
+      "missing_volume": 346
+    },
+    {
+      "symbol": "NKTR",
+      "missing_volume": 2
+    },
+    {
+      "symbol": "REGN",
+      "missing_volume": 1
+    },
+    {
+      "symbol": "SMCI",
+      "missing_volume": 349
+    },
+    {
+      "symbol": "SOV",
+      "missing_volume": 1
+    },
+    {
+      "symbol": "VC",
+      "missing_volume": 466
+    },
+    {
+      "symbol": "VRTX",
+      "missing_volume": 2
+    },
+    {
+      "symbol": "WFRD",
+      "missing_volume": 1524
+    }
+  ],
+  "nonpos_volume": [
+    {
+      "symbol": "ABMD",
+      "nonpos_volume": 1
+    },
+    {
+      "symbol": "BIIB",
+      "nonpos_volume": 1
+    },
+    {
+      "symbol": "BTU",
+      "nonpos_volume": 1
+    },
+    {
+      "symbol": "CVC",
+      "nonpos_volume": 1
+    },
+    {
+      "symbol": "DF",
+      "nonpos_volume": 1
+    },
+    {
+      "symbol": "DNR",
+      "nonpos_volume": 1
+    },
+    {
+      "symbol": "QLGC",
+      "nonpos_volume": 1
+    },
+    {
+      "symbol": "RSH",
+      "nonpos_volume": 1
+    },
+    {
+      "symbol": "SIVB",
+      "nonpos_volume": 1
+    },
+    {
+      "symbol": "VAL",
+      "nonpos_volume": 1
+    }
+  ]
+}
