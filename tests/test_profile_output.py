@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
 import pandas as pd
@@ -22,7 +21,10 @@ def _make_cfg(tmp_path: Path) -> Path:
         "cash": 100000.0,
         "seed": 1,
         "exec": {"type": "instant", "commission": 0.0},
-        "strategy": {"name": "MeanReversionStrategy", "params": {"lookback": 2, "z_threshold": 0.5}},
+        "strategy": {
+            "name": "MeanReversionStrategy",
+            "params": {"lookback": 2, "z_threshold": 0.5},
+        },
         "artifacts_dir": str(tmp_path / "artifacts"),
     }
     path = tmp_path / "cfg.yaml"
@@ -38,4 +40,3 @@ def test_profile_written_to_run_artifacts(tmp_path: Path, monkeypatch) -> None:
     art = Path(result["artifacts_dir"])
     prof = art / "profile.pstats"
     assert prof.exists(), "expected profile output under artifacts directory"
-

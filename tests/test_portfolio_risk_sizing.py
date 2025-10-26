@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from microalpha.capital import VolatilityScaledPolicy
 from microalpha.events import MarketEvent, SignalEvent
 from microalpha.portfolio import Portfolio
 
@@ -47,3 +48,31 @@ def test_sector_cap_blocks_when_too_many_positions():
     orders = list(p.on_signal(s))
     assert orders == []
 
+
+class _DHWithHistory(_DH):
+    def __init__(self, prices):
+        super().__init__(price=prices[-1])
+        self._prices = prices
+
+    def get_recent_prices(self, symbol, end_timestamp, lookback):
+        return self._prices[-lookback:]
+
+
+def test_capital_policy_scales_by_volatility():
+    prices = [100, 110, 90, 120, 80, 130, 85, 140]
+    data_handler = _DHWithHistory(prices)
+    policy = VolatilityScaledPolicy(lookback=5, target_dollar_vol=5_000, min_qty=1)
+    portfolio = Portfolio(
+        data_handler=data_handler,
+        initial_cash=100_000.0,
+        default_order_qty=200,
+        capital_policy=policy,
+    )
+    portfolio.on_market(
+        MarketEvent(timestamp=1, symbol="SPY", price=prices[-1], volume=1.0)
+    )
+
+    signal = SignalEvent(timestamp=1, symbol="SPY", side="LONG")
+    orders = list(portfolio.on_signal(signal))
+    assert orders, "expected order to be generated"
+    assert 0 < orders[0].qty < 200

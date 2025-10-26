@@ -19,13 +19,31 @@ def main() -> None:
 
     run_parser = subparsers.add_parser("run")
     run_parser.add_argument("-c", "--config", required=True)
-    run_parser.add_argument("--out", dest="outdir", default=None, help="Override artifacts output directory root")
-    run_parser.add_argument("--profile", action="store_true", help="Enable cProfile and write to <artifacts_dir>/profile.pstats")
+    run_parser.add_argument(
+        "--out",
+        dest="outdir",
+        default=None,
+        help="Override artifacts output directory root",
+    )
+    run_parser.add_argument(
+        "--profile",
+        action="store_true",
+        help="Enable cProfile and write to <artifacts_dir>/profile.pstats",
+    )
 
     wfv_parser = subparsers.add_parser("wfv")
     wfv_parser.add_argument("-c", "--config", required=True)
-    wfv_parser.add_argument("--out", dest="outdir", default=None, help="Override artifacts output directory root")
-    wfv_parser.add_argument("--profile", action="store_true", help="Enable cProfile and write to <artifacts_dir>/profile.pstats")
+    wfv_parser.add_argument(
+        "--out",
+        dest="outdir",
+        default=None,
+        help="Override artifacts output directory root",
+    )
+    wfv_parser.add_argument(
+        "--profile",
+        action="store_true",
+        help="Enable cProfile and write to <artifacts_dir>/profile.pstats",
+    )
 
     subparsers.add_parser("info")
 
@@ -40,6 +58,7 @@ def main() -> None:
     if args.cmd == "run":
         if getattr(args, "profile", False):
             import os as _os
+
             _os.environ["MICROALPHA_PROFILE"] = "1"
         if args.outdir:
             manifest = run_from_config(args.config, override_artifacts_dir=args.outdir)
@@ -48,6 +67,7 @@ def main() -> None:
     else:
         if getattr(args, "profile", False):
             import os as _os
+
             _os.environ["MICROALPHA_PROFILE"] = "1"
         if args.outdir:
             manifest = run_walk_forward(args.config, override_artifacts_dir=args.outdir)

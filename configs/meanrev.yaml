@@ -14,9 +14,18 @@ exec:
   commission: 0.5
   price_impact: 0.00005
   slices: 4
+  slippage:
+    type: "volume"
+    impact: 0.0001
 
 strategy:
   name: "MeanReversionStrategy"
   params:
-    lookback: 3
-    z_threshold: 0.5
+    lookback: 2
+    z_threshold: 0.2
+
+capital_policy:
+  type: "volatility_scaled"
+  lookback: 5
+  target_dollar_vol: 15000.0
+  min_qty: 5

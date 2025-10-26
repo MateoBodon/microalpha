@@ -58,5 +58,52 @@ def test_fold_boundaries_and_metrics(tmp_path):
         if fold["spa_pvalue"] is not None:
             assert 0.0 <= fold["spa_pvalue"] <= 1.0
 
-    # ensure manifest style fields present
+        # ensure manifest style fields present
         assert Path(result["folds_path"]).exists()
+
+
+def test_multi_asset_walkforward_maintains_data_frames(tmp_path):
+    data_dir = tmp_path / "data"
+    data_dir.mkdir()
+    idx = pd.date_range("2025-01-01", periods=40, freq="D")
+    for symbol, slope in {"AAA": 0.5, "BBB": 0.3, "CCC": -0.1}.items():
+        prices = 100 + slope * (idx - idx[0]).days
+        pd.DataFrame({"close": prices}, index=idx).to_csv(data_dir / f"{symbol}.csv")
+
+    cfg = WFVCfg(
+        template=BacktestCfg(
+            data_path=str(data_dir),
+            symbol="SPY",
+            cash=100_000.0,
+            seed=11,
+            exec=ExecModelCfg(type="instant", commission=0.0),
+            strategy=StrategyCfg(
+                name="CrossSectionalMomentum",
+                params={
+                    "symbols": ["AAA", "BBB", "CCC"],
+                    "lookback_months": 1,
+                    "skip_months": 0,
+                    "top_frac": 0.34,
+                },
+            ),
+        ),
+        walkforward=WalkForwardWindow(
+            start="2025-01-01",
+            end="2025-02-09",
+            training_days=15,
+            testing_days=5,
+        ),
+        grid={"lookback_months": [1], "skip_months": [0]},
+        artifacts_dir=str(tmp_path / "artifacts"),
+    )
+
+    cfg_path = tmp_path / "multi_wfv.yaml"
+    cfg_path.write_text(yaml.safe_dump(cfg.model_dump(mode="json")))
+
+    result = run_walk_forward(str(cfg_path))
+    folds = result["folds"]
+
+    assert folds, "expected folds to be generated"
+    for fold in folds:
+        assert fold["test_metrics"] is not None
+        assert fold["best_params"] is not None

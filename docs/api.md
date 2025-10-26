@@ -31,25 +31,32 @@ CsvDataHandler(csv_dir: Path, symbol: str, mode: str = "exact")
 - Loads OHLCV CSV data and produces chronological `MarketEvent`s via `stream()`.
 - `get_latest_price(ts)` supports `"exact"` and `"ffill"` modes for timestamp alignment.
 - `get_future_timestamps(start_ts, n)` schedules TWAP child orders without lookahead.
+- `get_recent_prices(symbol, end_ts, lookback)` for sizing; `get_volume_at(symbol, ts)` for VWAP.
 
 ## Portfolio (`microalpha.portfolio.Portfolio`)
 
 ```python
 Portfolio(data_handler, initial_cash, *, max_exposure=None, max_drawdown_stop=None,
-          turnover_cap=None, kelly_fraction=None, trade_logger=None)
+          turnover_cap=None, kelly_fraction=None, trade_logger=None,
+          capital_policy=None)
 ```
 
 - Tracks cash, inventory, and equity while enforcing exposure/drawdown/turnover limits.
 - Emits fills to the `JsonlWriter` (`trade_logger`) so executions are captured in `trades.jsonl`.
 - Provides `on_market`, `on_signal`, and `on_fill` hooks consumed by the engine.
+- Adds realized PnL attribution per fill (average-cost) under `realized_pnl` and cumulative `cum_realized_pnl` in trades.
+- Resolve config-driven capital policies via `capital_policy` in YAML; the runner instantiates them automatically.
 
 ## Broker & Execution (`microalpha.broker`, `microalpha.execution`)
 
 - `SimulatedBroker(executor)` – wraps an `Executor` and enforces t+1 semantics before returning fills.
 - `Executor` – base class implementing simple price-impact + commission fills against the `DataHandler`.
 - `TWAP` – splits orders evenly across future timestamps supplied by the data handler.
+- `VWAP` – splits by future-tick volumes; uses `DataHandler.get_volume_at` if available (requires `volume` column).
+- `ImplementationShortfall` – front-loaded geometric schedule controlled by `urgency`.
 - `SquareRootImpact` / `KyleLambda` – stylised impact models for execution cost studies.
 - `LOBExecution` – routes orders to the in-memory level-2 book (`microalpha.lob.LimitOrderBook`) with latency simulation.
+- Supply `slippage` in YAML to enable `VolumeSlippageModel` without hand-wiring objects.
 
 ## Logging (`microalpha.logging.JsonlWriter`)
 
@@ -60,6 +67,11 @@ JsonlWriter(path: str)
 - Creates parent directories, writes JSON-serialised objects per line, and flushes eagerly so artifacts remain tail-able.
 
 Refer to the module docstrings and tests for deeper examples of composing these components.
+
+## Capital Allocation (`microalpha.capital`)
+
+- `VolatilityScaledPolicy(lookback=20, target_dollar_vol=10000)` scales base order qty inversely to recent per-symbol volatility.
+- Pass into `Portfolio(..., capital_policy=VolatilityScaledPolicy(...))` or declare under `capital_policy` in YAML to enable per-name risk targeting.
 
 ## CLI (`microalpha.cli`)
 

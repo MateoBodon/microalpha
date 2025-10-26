@@ -14,10 +14,19 @@ import pandas as pd
 import yaml
 
 from .broker import SimulatedBroker
-from .config import parse_config
+from .capital import VolatilityScaledPolicy
+from .config import CapitalPolicyCfg, SlippageCfg, parse_config
 from .data import CsvDataHandler, MultiCsvDataHandler
 from .engine import Engine
-from .execution import TWAP, Executor, KyleLambda, LOBExecution, SquareRootImpact
+from .execution import (
+    TWAP,
+    VWAP,
+    Executor,
+    ImplementationShortfall,
+    KyleLambda,
+    LOBExecution,
+    SquareRootImpact,
+)
 from .logging import JsonlWriter
 from .manifest import (
     build as build_manifest,
@@ -31,10 +40,11 @@ from .manifest import (
 )
 from .metrics import compute_metrics
 from .portfolio import Portfolio
+from .slippage import VolumeSlippageModel
 from .strategies.breakout import BreakoutStrategy
+from .strategies.cs_momentum import CrossSectionalMomentum
 from .strategies.meanrev import MeanReversionStrategy
 from .strategies.mm import NaiveMarketMakingStrategy
-from .strategies.cs_momentum import CrossSectionalMomentum
 
 STRATEGY_MAPPING = {
     "MeanReversionStrategy": MeanReversionStrategy,
@@ -47,6 +57,8 @@ EXECUTION_MAPPING = {
     "instant": Executor,
     "linear": Executor,
     "twap": TWAP,
+    "vwap": VWAP,
+    "is": ImplementationShortfall,
     "sqrt": SquareRootImpact,
     "squareroot": SquareRootImpact,
     "kyle": KyleLambda,
@@ -54,7 +66,9 @@ EXECUTION_MAPPING = {
 }
 
 
-def run_from_config(config_path: str, override_artifacts_dir: str | None = None) -> Dict[str, Any]:
+def run_from_config(
+    config_path: str, override_artifacts_dir: str | None = None
+) -> Dict[str, Any]:
     """Execute a backtest described by ``config_path``."""
 
     cfg_path = Path(config_path).expanduser().resolve()
@@ -101,6 +115,7 @@ def run_from_config(config_path: str, override_artifacts_dir: str | None = None)
         strategy_params.setdefault("z_threshold", cfg.strategy.z)
 
     # Multi-asset support (if config strategy expects symbols list)
+    data_handler: CsvDataHandler | MultiCsvDataHandler
     if strategy_name == "CrossSectionalMomentum":
         symbols = strategy_params.get("symbols") or config.get("symbols") or [symbol]
         strategy_params["symbols"] = symbols
@@ -113,6 +128,7 @@ def run_from_config(config_path: str, override_artifacts_dir: str | None = None)
         )
 
     trade_logger = JsonlWriter(str(artifacts_dir / "trades.jsonl"))
+    capital_policy = resolve_capital_policy(cfg.capital_policy)
 
     portfolio = Portfolio(
         data_handler=data_handler,
@@ -127,6 +143,7 @@ def run_from_config(config_path: str, override_artifacts_dir: str | None = None)
         max_portfolio_heat=cfg.max_portfolio_heat,
         sectors=getattr(cfg, "sectors", None),
         max_positions_per_sector=cfg.max_positions_per_sector,
+        capital_policy=capital_policy,
     )
     exec_type = cfg.exec.type.lower() if cfg.exec.type else "instant"
     executor_cls = EXECUTION_MAPPING.get(exec_type, Executor)
@@ -138,8 +155,10 @@ def run_from_config(config_path: str, override_artifacts_dir: str | None = None)
         exec_kwargs["lam"] = (
             cfg.exec.lam if cfg.exec.lam is not None else cfg.exec.price_impact
         )
-    if executor_cls is TWAP and cfg.exec.slices:
+    if executor_cls in (TWAP, VWAP, ImplementationShortfall) and cfg.exec.slices:
         exec_kwargs["slices"] = cfg.exec.slices
+    if executor_cls is ImplementationShortfall and cfg.exec.urgency is not None:
+        exec_kwargs["urgency"] = cfg.exec.urgency
     if executor_cls is LOBExecution:
         from .lob import LatencyModel, LimitOrderBook
 
@@ -167,6 +186,10 @@ def run_from_config(config_path: str, override_artifacts_dir: str | None = None)
         if cfg.exec.lob_tplus1 is not None:
             exec_kwargs["lob_tplus1"] = bool(cfg.exec.lob_tplus1)
 
+    slippage_model = resolve_slippage_model(cfg.exec.slippage)
+    if slippage_model is not None:
+        exec_kwargs["slippage_model"] = slippage_model
+
     executor = executor_cls(data_handler=data_handler, **exec_kwargs)
     broker = SimulatedBroker(executor)
 
@@ -177,6 +200,7 @@ def run_from_config(config_path: str, override_artifacts_dir: str | None = None)
     engine_rng = np.random.default_rng(root_rng.integers(2**32))
     # Hint engine where to place profiling outputs for this run
     import os as _os
+
     _os.environ["MICROALPHA_ARTIFACTS_DIR"] = str(artifacts_dir)
 
     engine = Engine(data_handler, strategy, portfolio, broker, rng=engine_rng)
@@ -276,3 +300,25 @@ def resolve_path(value: str, cfg_path: Path) -> Path:
         return candidate
 
     return (Path.cwd() / path).resolve()
+
+
+def resolve_capital_policy(
+    cfg: CapitalPolicyCfg | None,
+) -> VolatilityScaledPolicy | None:
+    if cfg is None:
+        return None
+    if cfg.type == "volatility_scaled":
+        return VolatilityScaledPolicy(
+            lookback=cfg.lookback,
+            target_dollar_vol=cfg.target_dollar_vol,
+            min_qty=cfg.min_qty,
+        )
+    raise ValueError(f"Unknown capital policy type '{cfg.type}'")
+
+
+def resolve_slippage_model(cfg: SlippageCfg | None):
+    if cfg is None:
+        return None
+    if cfg.type == "volume":
+        return VolumeSlippageModel(price_impact=cfg.impact)
+    raise ValueError(f"Unknown slippage model '{cfg.type}'")

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, Mapping, Sequence, Optional, List
+from typing import Any, Dict, List, Mapping, Optional, Sequence
 
 import numpy as np
 import pandas as pd
@@ -54,7 +54,7 @@ def compute_metrics(
     avg_exposure = float(df["exposure"].mean()) if "exposure" in df else 0.0
 
     # Annualized volatility and CAGR
-    ann_vol = float(returns.std(ddof=0) * (periods ** 0.5)) if len(returns) > 1 else 0.0
+    ann_vol = float(returns.std(ddof=0) * (periods**0.5)) if len(returns) > 1 else 0.0
     if len(equity_series) > 1:
         total_return = float(equity_series.iloc[-1] / equity_series.iloc[0] - 1.0)
         years = max(float(len(df)) / periods, 1e-9)
@@ -64,12 +64,19 @@ def compute_metrics(
 
     # Max drawdown duration in periods
     dd_boolean = (equity_series / running_max) < 1.0
-    max_dd_duration = int(dd_boolean.astype(int).groupby((dd_boolean != dd_boolean.shift()).cumsum()).transform("sum").max() or 0)
+    max_dd_duration = int(
+        dd_boolean.astype(int)
+        .groupby((dd_boolean != dd_boolean.shift()).cumsum())
+        .transform("sum")
+        .max()
+        or 0
+    )
 
     # Trade stats (if provided)
     num_trades = 0
     avg_trade_notional = 0.0
     win_rate = 0.0
+    total_realized_pnl = 0.0
     if trades:
         import pandas as _pd
 
@@ -77,23 +84,37 @@ def compute_metrics(
         num_trades = int(len(tdf))
         if num_trades:
             avg_trade_notional = float((tdf["qty"].abs() * tdf["price"].abs()).mean())
-        # Approximate per-trade PnL using mid-delta of equity if available
-        # This is a placeholder; detailed PnL attribution could be added later
-        win_rate = 0.0
+        # Realized PnL attribution if present
+        if "realized_pnl" in tdf:
+            total_realized_pnl = float(tdf["realized_pnl"].sum())
+            wins = (tdf["realized_pnl"] > 0).sum()
+            losses = (tdf["realized_pnl"] < 0).sum()
+            denom = max(wins + losses, 1)
+            win_rate = float(wins / denom)
 
     # Benchmark-relative metrics if provided
     alpha = beta = information_ratio = 0.0
     if benchmark_equity:
-        bdf = pd.DataFrame(benchmark_equity).drop_duplicates("timestamp").sort_values("timestamp")
+        bdf = (
+            pd.DataFrame(benchmark_equity)
+            .drop_duplicates("timestamp")
+            .sort_values("timestamp")
+        )
         bdf["returns"] = bdf["equity"].pct_change().fillna(0.0)
-        br = bdf["returns"].reindex(df.index, fill_value=0.0)
+        br = bdf["returns"].reindex(df.index, fill_value=0.0).astype(float)
+        returns_np = returns.astype(float).to_numpy()
+        br_np = br.astype(float).to_numpy()
         if br.std(ddof=0) > 0:
-            cov = float(np.cov(returns, br, ddof=0)[0, 1])
-            beta = cov / float(br.var(ddof=0)) if float(br.var(ddof=0)) != 0 else 0.0
-            alpha = float(returns.mean() * periods - beta * br.mean() * periods)
+            cov = float(np.cov(returns_np, br_np, ddof=0)[0, 1])
+            var_br = float(np.var(br_np, ddof=0))
+            beta = cov / var_br if var_br != 0.0 else 0.0
+            br_mean = float(np.mean(br_np))
+            alpha = float(returns.mean() * periods - beta * br_mean * periods)
             diff = returns - br
             std_diff = float(diff.std(ddof=0))
-            information_ratio = float((diff.mean() * periods) / std_diff) if std_diff > 0 else 0.0
+            information_ratio = (
+                float((diff.mean() * periods) / std_diff) if std_diff > 0 else 0.0
+            )
 
     return {
         "equity_df": df,
@@ -115,5 +136,6 @@ def compute_metrics(
         "num_trades": num_trades,
         "avg_trade_notional": float(avg_trade_notional),
         "win_rate": float(win_rate),
+        "total_realized_pnl": float(total_realized_pnl),
         "final_equity": float(equity_series.iloc[-1]),
     }

@@ -2,11 +2,18 @@
 
 from __future__ import annotations
 
+import warnings
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Literal, Optional
 
 from pydantic import BaseModel, Field, ValidationError, model_validator
-import warnings
+
+
+class SlippageCfg(BaseModel):
+    type: Literal["volume"]
+    impact: float = Field(
+        default=1e-4, description="Coefficient for volume-based slippage impact."
+    )
 
 
 class ExecModelCfg(BaseModel):
@@ -18,6 +25,7 @@ class ExecModelCfg(BaseModel):
     price_impact: float = 0.0
     lam: float | None = None
     slices: int | None = None
+    urgency: float | None = None
     book_levels: int | None = None
     level_size: int | None = None
     mid_price: float | None = None
@@ -28,6 +36,7 @@ class ExecModelCfg(BaseModel):
     latency_fill_jitter: float | None = None
     # LOB semantics: enforce t+1 fills by default (can be disabled)
     lob_tplus1: bool | None = True
+    slippage: Optional[SlippageCfg] = None
 
     @model_validator(mode="before")
     @classmethod
@@ -58,6 +67,13 @@ class StrategyCfg(BaseModel):
     param_grid: Dict[str, Any] | None = None
 
 
+class CapitalPolicyCfg(BaseModel):
+    type: Literal["volatility_scaled"]
+    lookback: int = 20
+    target_dollar_vol: float = 10_000.0
+    min_qty: int = 1
+
+
 class BacktestCfg(BaseModel):
     data_path: str
     symbol: str
@@ -75,6 +91,7 @@ class BacktestCfg(BaseModel):
     max_portfolio_heat: float | None = None
     max_positions_per_sector: int | None = None
     sectors: Dict[str, str] | None = None
+    capital_policy: CapitalPolicyCfg | None = None
 
     @property
     def resolved_data_path(self) -> Path:
