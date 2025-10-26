@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from microalpha.events import MarketEvent, OrderEvent
+from microalpha.events import OrderEvent
 from microalpha.execution import LOBExecution
 from microalpha.lob import LatencyModel, LimitOrderBook
 
@@ -39,4 +39,3 @@ def test_lob_same_tick_does_not_shift_timestamp():
     fill = exec_t0.execute(order, 1)
     assert fill is not None
     assert fill.timestamp == 1
-

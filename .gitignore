@@ -6,3 +6,11 @@ __pycache__/
 *.pyo
 *.pstats
 .DS_Store
+dist/
+build/
+*.egg-info/
+venv/
+.venv/
+src/**/__pycache__/
+tests/**/__pycache__/
+reports/summaries/_artifacts/

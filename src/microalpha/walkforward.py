@@ -16,9 +16,17 @@ import yaml
 from .broker import SimulatedBroker
 from .config import BacktestCfg, ExecModelCfg
 from .config_wfv import WFVCfg
-from .data import CsvDataHandler, MultiCsvDataHandler
+from .data import CsvDataHandler, DataHandler, MultiCsvDataHandler
 from .engine import Engine
-from .execution import TWAP, Executor, KyleLambda, LOBExecution, SquareRootImpact
+from .execution import (
+    TWAP,
+    VWAP,
+    Executor,
+    ImplementationShortfall,
+    KyleLambda,
+    LOBExecution,
+    SquareRootImpact,
+)
 from .logging import JsonlWriter
 from .manifest import (
     build as build_manifest,
@@ -32,11 +40,17 @@ from .manifest import (
 )
 from .metrics import compute_metrics
 from .portfolio import Portfolio
-from .runner import persist_config, prepare_artifacts_dir, resolve_path
+from .runner import (
+    persist_config,
+    prepare_artifacts_dir,
+    resolve_capital_policy,
+    resolve_path,
+    resolve_slippage_model,
+)
 from .strategies.breakout import BreakoutStrategy
+from .strategies.cs_momentum import CrossSectionalMomentum
 from .strategies.meanrev import MeanReversionStrategy
 from .strategies.mm import NaiveMarketMakingStrategy
-from .strategies.cs_momentum import CrossSectionalMomentum
 
 STRATEGY_MAPPING = {
     "MeanReversionStrategy": MeanReversionStrategy,
@@ -49,6 +63,8 @@ EXECUTION_MAPPING = {
     "instant": Executor,
     "linear": Executor,
     "twap": TWAP,
+    "vwap": VWAP,
+    "is": ImplementationShortfall,
     "sqrt": SquareRootImpact,
     "squareroot": SquareRootImpact,
     "kyle": KyleLambda,
@@ -126,7 +142,9 @@ def load_wfv_cfg(path: str) -> WFVCfg:
     raise ValueError("Invalid walk-forward configuration schema.")
 
 
-def run_walk_forward(config_path: str, override_artifacts_dir: str | None = None) -> Dict[str, Any]:
+def run_walk_forward(
+    config_path: str, override_artifacts_dir: str | None = None
+) -> Dict[str, Any]:
     cfg_path = Path(config_path).expanduser().resolve()
     raw_config = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
     cfg = load_wfv_cfg(str(cfg_path))
@@ -167,6 +185,8 @@ def run_walk_forward(config_path: str, override_artifacts_dir: str | None = None
     end_date = pd.Timestamp(cfg.walkforward.end)
 
     strategy_name = cfg.template.strategy.name
+    data_handler: DataHandler
+    cs_symbols: List[str] = []
     if strategy_name == "CrossSectionalMomentum":
         symbols = list(cfg.template.strategy.params.get("symbols") or [])
         if not symbols:
@@ -175,6 +195,7 @@ def run_walk_forward(config_path: str, override_artifacts_dir: str | None = None
         if not symbols:
             symbols = [symbol]
         data_handler = MultiCsvDataHandler(csv_dir=data_dir, symbols=symbols)
+        cs_symbols = symbols
     else:
         data_handler = CsvDataHandler(csv_dir=data_dir, symbol=symbol)
     if data_handler.data is None:
@@ -231,14 +252,29 @@ def run_walk_forward(config_path: str, override_artifacts_dir: str | None = None
                 current_date += pd.Timedelta(days=testing_days)
                 continue
 
-            warmup_prices = _collect_warmup_prices(
-                data_handler, train_end, best_params.get("lookback", 0)
-            )
+            warmup_prices: List[float] | None = None
+            warmup_history: Dict[str, List[float]] | None = None
+            if strategy_name == "CrossSectionalMomentum":
+                assert isinstance(data_handler, MultiCsvDataHandler)
+                warmup_history = _collect_cs_warmup_history(
+                    data_handler,
+                    train_start,
+                    train_end,
+                    cs_symbols,
+                )
+            else:
+                assert isinstance(data_handler, CsvDataHandler)
+                warmup_prices = _collect_warmup_prices(
+                    data_handler, train_end, best_params.get("lookback", 0)
+                )
 
             data_handler.set_date_range(test_start, test_end)
             if strategy_name == "CrossSectionalMomentum":
-                kwargs = _strategy_kwargs(best_params, warmup_prices)
+                assert isinstance(data_handler, MultiCsvDataHandler)
+                kwargs = _strategy_kwargs(best_params)
                 kwargs.pop("warmup_prices", None)
+                if warmup_history:
+                    kwargs["warmup_history"] = warmup_history
                 strategy = strategy_class(**kwargs)
             else:
                 strategy = strategy_class(
@@ -253,6 +289,7 @@ def run_walk_forward(config_path: str, override_artifacts_dir: str | None = None
             broker = SimulatedBroker(executor)
             # Hint engine where to place profiling outputs for this run
             import os as _os
+
             _os.environ["MICROALPHA_ARTIFACTS_DIR"] = str(artifacts_dir)
 
             engine = Engine(
@@ -310,7 +347,7 @@ def run_walk_forward(config_path: str, override_artifacts_dir: str | None = None
 
 
 def _optimise_parameters(
-    data_handler: CsvDataHandler,
+    data_handler: DataHandler,
     train_start: pd.Timestamp,
     train_end: pd.Timestamp,
     strategy_class,
@@ -393,6 +430,7 @@ def _build_portfolio(
         max_portfolio_heat=cfg.max_portfolio_heat,
         sectors=getattr(cfg, "sectors", None),
         max_positions_per_sector=cfg.max_positions_per_sector,
+        capital_policy=resolve_capital_policy(cfg.capital_policy),
     )
 
 
@@ -407,8 +445,10 @@ def _build_executor(data_handler, exec_cfg: ExecModelCfg, rng: np.random.Generat
         kwargs["lam"] = (
             exec_cfg.lam if exec_cfg.lam is not None else exec_cfg.price_impact
         )
-    if executor_cls is TWAP and exec_cfg.slices:
+    if executor_cls in (TWAP, VWAP, ImplementationShortfall) and exec_cfg.slices:
         kwargs["slices"] = exec_cfg.slices
+    if executor_cls is ImplementationShortfall and exec_cfg.urgency is not None:
+        kwargs["urgency"] = exec_cfg.urgency
     if executor_cls is LOBExecution:
         from .lob import LatencyModel, LimitOrderBook
 
@@ -434,6 +474,10 @@ def _build_executor(data_handler, exec_cfg: ExecModelCfg, rng: np.random.Generat
         kwargs["book"] = book
         if exec_cfg.lob_tplus1 is not None:
             kwargs["lob_tplus1"] = bool(exec_cfg.lob_tplus1)
+    slippage_model = resolve_slippage_model(exec_cfg.slippage)
+    if slippage_model is not None:
+        kwargs["slippage_model"] = slippage_model
+
     return executor_cls(data_handler=data_handler, **kwargs)
 
 
@@ -450,6 +494,19 @@ def _collect_warmup_prices(
     warmup_start = train_end - pd.Timedelta(days=lookback)
     data_handler.set_date_range(warmup_start, train_end)
     return [event.price for event in data_handler.stream()]
+
+
+def _collect_cs_warmup_history(
+    data_handler: MultiCsvDataHandler,
+    train_start: pd.Timestamp,
+    train_end: pd.Timestamp,
+    symbols: Sequence[str],
+) -> Dict[str, List[float]]:
+    data_handler.set_date_range(train_start, train_end)
+    history: Dict[str, List[float]] = {sym: [] for sym in symbols}
+    for event in data_handler.stream():
+        history.setdefault(event.symbol, []).append(event.price)
+    return history
 
 
 def _summarise_walkforward(

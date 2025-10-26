@@ -28,7 +28,11 @@ def test_multicsv_union_index_and_price_modes(tmp_path: Path) -> None:
     # union should be 1st, 2nd, 3rd
     union_ts = list(dh._iter_union_index())
     assert union_ts == sorted(union_ts)
-    assert [ts.date().isoformat() for ts in union_ts] == ["2025-01-01", "2025-01-02", "2025-01-03"]
+    assert [ts.date().isoformat() for ts in union_ts] == [
+        "2025-01-01",
+        "2025-01-02",
+        "2025-01-03",
+    ]
 
     # ffill lookup returns latest known
     mid = int((pd.Timestamp("2025-01-01") + pd.Timedelta(hours=12)).value)
@@ -38,4 +42,3 @@ def test_multicsv_union_index_and_price_modes(tmp_path: Path) -> None:
     dh_exact = MultiCsvDataHandler(csv_dir=data_dir, symbols=["A", "B"], mode="exact")
     dh_exact.set_date_range("2025-01-01", "2025-01-03")
     assert dh_exact.get_latest_price("A", mid) is None
-

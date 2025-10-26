@@ -221,14 +221,41 @@ Microalpha provides several stylised models:
 - Linear impact (default in `Executor`): `slippage = price_impact * |qty|`
 - Square-root impact (`SquareRootImpact`): `slippage = k * sqrt(|qty|)`
 - Kyle-λ (`KyleLambda`): `slippage = λ * qty`
-- Quadratic example (`VolumeSlippageModel` in `slippage.py`): not wired by default, useful for experiments
+- Volume-based (`VolumeSlippageModel`): `slippage = impact * qty²`, now selectable via config
 
-Configure via YAML under `exec:` with `type: instant|twap|sqrt|kyle|lob` and `price_impact`/`commission` as needed.
+Configure via YAML under `exec:` with `type: instant|twap|vwap|is|sqrt|kyle|lob` and `price_impact`/`commission` as needed. Enable volume-aware slippage as:
+
+```yaml
+exec:
+  type: twap
+  price_impact: 0.00005
+  slippage:
+    type: volume
+    impact: 0.0001
+```
+
+### Scheduling Models
+- `TWAP`: Even time slicing across the next N timestamps (`slices`)
+- `VWAP`: Volume-weighted slicing using `get_volume_at` when available
+- `IS` (Implementation Shortfall): Front-loaded geometric schedule configured by `urgency`
 
 ### Cost Components
 - Slippage: as per configured model above
 - Commission: per-share (or unit) commission `commission * |qty|`
 - Market impact: implied by price slippage and execution scheduling
+
+### Capital Allocation Policies
+- `VolatilityScaledPolicy` scales raw order sizes inversely to recent realised volatility to keep dollar risk per trade stable.
+- Supply per-symbol sectors and heat limits simultaneously for portfolio-aware sizing.
+- Configure in YAML with:
+
+```yaml
+capital_policy:
+  type: volatility_scaled
+  lookback: 5
+  target_dollar_vol: 15000
+  min_qty: 5
+```
 
 ---
 
@@ -459,16 +486,16 @@ strategy:
 
 ### CSV Structure
 ```csv
-Date,close
-2025-01-01,100.0
-2025-01-02,101.5
-2025-01-03,99.8
+date,close,volume
+2025-01-02,400.00,56000000
+2025-01-03,402.15,57200000
+2025-01-06,401.20,54800000
 ```
 
 ### Requirements
 - **Index**: Datetime index (parsed automatically)
-- **Columns**: `close` price column required
-- **Format**: Standard CSV with date in first column
+- **Columns**: `close` required; include `volume` for VWAP/IS execution or impact modelling
+- **Format**: Standard CSV with date in first column (header case-insensitive)
 - **Frequency**: Daily data recommended (any frequency supported)
 
 ### Data Loading
@@ -503,6 +530,15 @@ Interactive HTML report:
 ```bash
 python reports/html_report.py artifacts/<run-id>/equity_curve.csv --trades artifacts/<run-id>/trades.jsonl --output artifacts/<run-id>/report.html
 ```
+
+Resume-ready overview:
+
+```bash
+python reports/generate_summary.py
+cat reports/summaries/quant_summary.md
+```
+
+The summary script replays highlighted configs, writes fresh artifacts under `reports/summaries/_artifacts/`, and renders a Markdown dashboard of Sharpe, CAGR, drawdown, and fold-level walk-forward stats.
 
 ### Example Output
 ```

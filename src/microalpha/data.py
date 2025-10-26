@@ -1,8 +1,9 @@
 # microalpha/data.py
 from __future__ import annotations
 
+import numbers
 from pathlib import Path
-from typing import Dict, Iterator, List, Optional, Sequence, Tuple, cast
+from typing import Dict, Iterator, List, Optional, Sequence, cast
 
 import pandas as pd
 
@@ -16,6 +17,9 @@ class DataHandler:
 
     def stream(self) -> Iterator[MarketEvent]:
         raise NotImplementedError("stream() must be implemented")
+
+    def set_date_range(self, start_date, end_date) -> None:  # pragma: no cover - interface stub
+        raise NotImplementedError("set_date_range() must be implemented")
 
 
 class CsvDataHandler(DataHandler):
@@ -100,6 +104,36 @@ class CsvDataHandler(DataHandler):
         # Return the next n dates, or fewer if we are at the end of the data
         return [self._to_int_timestamp(idx) for idx in future_dates[:n]]
 
+    # --- Extensions for sizing/execution models ---
+    def get_recent_prices(
+        self, symbol: str, end_timestamp: int, lookback: int
+    ) -> List[float]:
+        if symbol != self.symbol or self.data is None or lookback <= 0:
+            return []
+        ts = self._to_datetime(end_timestamp)
+        df = self.data.loc[:ts]
+        if df.empty:
+            return []
+        return [float(x) for x in df["close"].iloc[-lookback:].tolist()]
+
+    def get_volume_at(self, symbol: str, timestamp: int) -> Optional[float]:
+        if symbol != self.symbol or self.data is None:
+            return None
+        ts = self._to_datetime(timestamp)
+        try:
+            if "volume" not in self.data.columns:
+                return None
+            value = self.data.loc[ts, "volume"]
+            if isinstance(value, pd.Series):
+                if value.empty:
+                    return None
+                value = value.iloc[0]
+            if isinstance(value, numbers.Real):
+                return float(value)
+            return None
+        except KeyError:
+            return None
+
     @staticmethod
     def _to_int_timestamp(value) -> int:
         if isinstance(value, (int, float)):
@@ -175,7 +209,9 @@ class MultiCsvDataHandler(DataHandler):
                 if price is None:
                     continue
                 # Reuse CsvDataHandler timestamp helpers
-                yield MarketEvent(CsvDataHandler._to_int_timestamp(ts), sym, float(price), 0.0)
+                yield MarketEvent(
+                    CsvDataHandler._to_int_timestamp(ts), sym, float(price), 0.0
+                )
 
     def get_latest_price(self, symbol: str, timestamp: int):
         df = self.frames.get(symbol)
@@ -201,3 +237,36 @@ class MultiCsvDataHandler(DataHandler):
         if idx < 0:
             return None
         return cast(float, df.iloc[idx]["close"])  # type: ignore[index]
+
+    # --- Extensions for sizing/execution models ---
+    def get_recent_prices(
+        self, symbol: str, end_timestamp: int, lookback: int
+    ) -> List[float]:
+        df = self.frames.get(symbol)
+        if df is None or lookback <= 0:
+            return []
+        ts = CsvDataHandler._to_datetime(end_timestamp)
+        window = df.loc[:ts]
+        if window is None or window.empty:
+            return []
+        series = window["close"].iloc[-lookback:]
+        return [float(x) for x in series.tolist()]
+
+    def get_volume_at(self, symbol: str, timestamp: int) -> Optional[float]:
+        df = self.frames.get(symbol)
+        if df is None:
+            return None
+        ts = CsvDataHandler._to_datetime(timestamp)
+        if "volume" not in df.columns:
+            return None
+        try:
+            value = df.loc[ts, "volume"]  # type: ignore[index]
+            if isinstance(value, pd.Series):
+                if value.empty:
+                    return None
+                value = value.iloc[0]
+            if isinstance(value, numbers.Real):
+                return float(value)
+            return None
+        except KeyError:
+            return None

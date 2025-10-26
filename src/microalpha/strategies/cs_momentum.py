@@ -23,7 +23,7 @@ class CrossSectionalMomentum:
 
     # State
     price_history: Dict[str, List[float]]
-    invested: Dict[str, bool]
+    invested: Dict[str, int]
     last_month: int | None
 
     def __init__(
@@ -34,6 +34,7 @@ class CrossSectionalMomentum:
         top_frac: float = 0.3,
         bottom_frac: float | None = None,
         long_short: bool = True,
+        warmup_history: Dict[str, Sequence[float]] | None = None,
     ):
         self.symbols = list(symbols)
         self.lookback_months = lookback_months
@@ -41,7 +42,10 @@ class CrossSectionalMomentum:
         self.top_frac = top_frac
         self.bottom_frac = bottom_frac if bottom_frac is not None else top_frac
         self.long_short = bool(long_short)
-        self.price_history = {s: [] for s in self.symbols}
+        self.price_history = {
+            s: list(warmup_history.get(s, [])) if warmup_history else []
+            for s in self.symbols
+        }
         # position state: 1 long, -1 short, 0 flat
         self.invested = {s: 0 for s in self.symbols}
         self.last_month = None
@@ -90,11 +94,11 @@ class CrossSectionalMomentum:
         if not valid:
             return []
         k_top = max(1, int(len(valid) * self.top_frac))
-        top = set(sorted(valid, key=valid.get, reverse=True)[:k_top])
+        top = set(sorted(valid, key=lambda sym: valid[sym], reverse=True)[:k_top])
         bottom: set[str] = set()
         if self.long_short and self.bottom_frac and self.bottom_frac > 0:
             k_bot = max(1, int(len(valid) * self.bottom_frac))
-            bottom = set(sorted(valid, key=valid.get)[:k_bot])
+            bottom = set(sorted(valid, key=lambda sym: valid[sym])[:k_bot])
 
         # Emit signals: LONG for top, SHORT for bottom, EXIT when leaving sets
         for sym in self.symbols:
@@ -105,18 +109,20 @@ class CrossSectionalMomentum:
                     if st < 0:
                         signals.append(SignalEvent(event.timestamp, sym, "EXIT"))
                     self.invested[sym] = 1
-                    signals.append(SignalEvent(event.timestamp, sym, "LONG", meta={"qty": 1}))
+                    signals.append(
+                        SignalEvent(event.timestamp, sym, "LONG", meta={"qty": 1})
+                    )
             elif sym in bottom and self.long_short:
                 if st >= 0:
                     if st > 0:
                         signals.append(SignalEvent(event.timestamp, sym, "EXIT"))
                     self.invested[sym] = -1
-                    signals.append(SignalEvent(event.timestamp, sym, "SHORT", meta={"qty": 1}))
+                    signals.append(
+                        SignalEvent(event.timestamp, sym, "SHORT", meta={"qty": 1})
+                    )
             else:
                 if st != 0:
                     self.invested[sym] = 0
                     signals.append(SignalEvent(event.timestamp, sym, "EXIT"))
 
         return signals
-
-

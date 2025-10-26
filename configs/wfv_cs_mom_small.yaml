@@ -1,7 +1,7 @@
 # Walk-forward validation for cross-sectional momentum on small bundled dataset
 
 template:
-  data_path: "data"
+  data_path: "data_sp500"
   symbol: "SPY"
   cash: 1000000.0
   seed: 7
@@ -12,7 +12,7 @@ template:
   strategy:
     name: "CrossSectionalMomentum"
     params:
-      symbols: ["AAPL", "AMZN", "GOOG", "JPM", "META", "MSFT", "NVDA", "SPY", "TSLA", "V"]
+      symbols: ["AAPL", "AMZN", "GOOG", "JPM", "META", "MSFT", "NVDA", "TSLA", "V"]
       lookback_months: 12
       skip_months: 1
       top_frac: 0.3
@@ -24,9 +24,8 @@ walkforward:
   testing_days: 63
 
 grid:
-  lookback_months: [9, 12]
+  lookback_months: [6, 9, 12]
+  skip_months: [0, 1]
   top_frac: [0.2, 0.3, 0.4]
 
 artifacts_dir: "artifacts"
-
-

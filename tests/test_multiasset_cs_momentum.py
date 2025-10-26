@@ -33,7 +33,12 @@ def test_cs_momentum_smoke(tmp_path: Path) -> None:
         "exec": {"type": "instant", "commission": 0.0},
         "strategy": {
             "name": "CrossSectionalMomentum",
-            "params": {"symbols": ["A", "B", "C"], "lookback_months": 2, "skip_months": 0, "top_frac": 0.34},
+            "params": {
+                "symbols": ["A", "B", "C"],
+                "lookback_months": 2,
+                "skip_months": 0,
+                "top_frac": 0.34,
+            },
         },
         "artifacts_dir": str(tmp_path / "artifacts"),
     }
@@ -45,4 +50,3 @@ def test_cs_momentum_smoke(tmp_path: Path) -> None:
     assert Path(result["artifacts_dir"]).exists()
     trades_path = Path(result.get("trades_path") or "")
     assert trades_path.exists()
-

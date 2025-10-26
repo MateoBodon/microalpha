@@ -8,7 +8,7 @@ Kick off experiments quickly using the bundled configuration files in `configs/`
 microalpha run -c configs/meanrev.yaml
 ```
 
-Produces equity, metrics, and trade logs under `artifacts/<run_id>/` while exercising the TWAP execution model.
+Produces equity, metrics, and trade logs under `artifacts/<run_id>/` while exercising the TWAP execution model, volume-aware slippage, and volatility-scaled capital sizing.
 
 ## Breakout momentum
 

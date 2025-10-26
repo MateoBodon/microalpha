@@ -2,6 +2,7 @@ import math
 
 from microalpha.events import OrderEvent
 from microalpha.execution import TWAP, Executor, KyleLambda, SquareRootImpact
+from microalpha.slippage import VolumeSlippageModel
 
 
 class StubDataHandler:
@@ -74,3 +75,19 @@ def test_twap_executor_averages_partial_fills():
     assert fill.qty == 4
     expected_price = (100.0 * 2 + 102.0 * 2) / 4
     assert math.isclose(fill.price, expected_price)
+
+
+def test_executor_uses_volume_slippage_model():
+    prices = {2: 50.0}
+    futures = {1: [2]}
+    data = StubDataHandler(prices, futures)
+    model = VolumeSlippageModel(price_impact=0.01)
+    executor = Executor(
+        data_handler=data, price_impact=0.0, commission=0.0, slippage_model=model
+    )
+
+    order = StubOrder(timestamp=1, qty=10, side="BUY")
+    fill = executor.execute(order, 1)
+
+    assert math.isclose(fill.slippage, 0.01 * 100)
+    assert math.isclose(fill.price, prices[2] + fill.slippage)
