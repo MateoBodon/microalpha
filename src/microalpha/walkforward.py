@@ -50,6 +50,7 @@ from .runner import (
 )
 from .strategies.breakout import BreakoutStrategy
 from .strategies.cs_momentum import CrossSectionalMomentum
+from .strategies.flagship_mom import FlagshipMomentumStrategy
 from .strategies.meanrev import MeanReversionStrategy
 from .strategies.mm import NaiveMarketMakingStrategy
 from .risk_stats import block_bootstrap
@@ -59,6 +60,7 @@ STRATEGY_MAPPING = {
     "BreakoutStrategy": BreakoutStrategy,
     "NaiveMarketMakingStrategy": NaiveMarketMakingStrategy,
     "CrossSectionalMomentum": CrossSectionalMomentum,
+    "FlagshipMomentumStrategy": FlagshipMomentumStrategy,
 }
 
 EXECUTION_MAPPING = {
@@ -203,15 +205,33 @@ def run_walk_forward(
     strategy_name = cfg.template.strategy.name
     data_handler: DataHandler
     cs_symbols: List[str] = []
-    if strategy_name == "CrossSectionalMomentum":
-        symbols = list(cfg.template.strategy.params.get("symbols") or [])
-        if not symbols:
-            # fallback: allow symbol string list under template
-            symbols = list(getattr(cfg.template, "symbols", []) or [])
-        if not symbols:
-            symbols = [symbol]
-        data_handler = MultiCsvDataHandler(csv_dir=data_dir, symbols=symbols)
-        cs_symbols = symbols
+    if strategy_name in {"CrossSectionalMomentum", "FlagshipMomentumStrategy"}:
+        if strategy_name == "CrossSectionalMomentum":
+            raw_symbols = list(cfg.template.strategy.params.get("symbols") or [])
+            if not raw_symbols:
+                raw_symbols = list(getattr(cfg.template, "symbols", []) or [])
+            if not raw_symbols:
+                raw_symbols = [symbol]
+            cs_symbols = [str(sym).upper() for sym in raw_symbols]
+            base_params.setdefault("symbols", cs_symbols)
+        else:
+            universe_path = base_params.get("universe_path") or cfg.template.strategy.params.get(
+                "universe_path"
+            )
+            if universe_path is None:
+                raise ValueError(
+                    "FlagshipMomentumStrategy requires 'universe_path' defined in template params"
+                )
+            u_path = resolve_path(str(universe_path), cfg_path)
+            if not u_path.exists():
+                raise FileNotFoundError(f"Flagship universe file not found: {u_path}")
+            base_params["universe_path"] = str(u_path)
+            universe_df = pd.read_csv(u_path)
+            if "symbol" not in universe_df.columns:
+                raise ValueError("Flagship universe file must contain 'symbol' column")
+            cs_symbols = sorted(universe_df["symbol"].astype(str).str.upper().unique())
+            base_params["symbols"] = cs_symbols
+        data_handler = MultiCsvDataHandler(csv_dir=data_dir, symbols=cs_symbols)
     else:
         data_handler = CsvDataHandler(csv_dir=data_dir, symbol=symbol)
     if data_handler.data is None:
@@ -272,7 +292,7 @@ def run_walk_forward(
 
             warmup_prices: List[float] | None = None
             warmup_history: Dict[str, List[float]] | None = None
-            if strategy_name == "CrossSectionalMomentum":
+            if strategy_name in {"CrossSectionalMomentum", "FlagshipMomentumStrategy"}:
                 assert isinstance(data_handler, MultiCsvDataHandler)
                 warmup_history = _collect_cs_warmup_history(
                     data_handler,
@@ -287,7 +307,7 @@ def run_walk_forward(
                 )
 
             data_handler.set_date_range(test_start, test_end)
-            if strategy_name == "CrossSectionalMomentum":
+            if strategy_name in {"CrossSectionalMomentum", "FlagshipMomentumStrategy"}:
                 assert isinstance(data_handler, MultiCsvDataHandler)
                 kwargs = _strategy_kwargs(best_params)
                 kwargs.pop("warmup_prices", None)
@@ -301,6 +321,8 @@ def run_walk_forward(
             portfolio = _build_portfolio(
                 data_handler, cfg.template, trade_logger=trade_logger
             )
+            if hasattr(strategy, "sector_map") and strategy.sector_map:
+                portfolio.sector_of.update(strategy.sector_map)
             test_rng = _spawn_rng(fold_rng)
             exec_rng = _spawn_rng(test_rng)
             executor = _build_executor(data_handler, cfg.template.exec, exec_rng)
@@ -391,11 +413,13 @@ def _optimise_parameters(
         data_handler.set_date_range(train_start, train_end)
         combined = dict(base_params)
         combined.update(params)
-        if strategy_class is CrossSectionalMomentum:
+        if strategy_class in (CrossSectionalMomentum, FlagshipMomentumStrategy):
             strategy = strategy_class(**_strategy_kwargs(combined))
         else:
             strategy = strategy_class(symbol=cfg.symbol, **_strategy_kwargs(combined))
         portfolio = _build_portfolio(data_handler, cfg)
+        if hasattr(strategy, "sector_map") and strategy.sector_map:
+            portfolio.sector_of.update(strategy.sector_map)
         exec_rng = _spawn_rng(sim_rng)
         executor = _build_executor(data_handler, cfg.exec, exec_rng)
         broker = SimulatedBroker(executor)

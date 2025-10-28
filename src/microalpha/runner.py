@@ -43,6 +43,7 @@ from .portfolio import Portfolio
 from .slippage import VolumeSlippageModel
 from .strategies.breakout import BreakoutStrategy
 from .strategies.cs_momentum import CrossSectionalMomentum
+from .strategies.flagship_momentum import FlagshipMomentumStrategy
 from .strategies.meanrev import MeanReversionStrategy
 from .strategies.mm import NaiveMarketMakingStrategy
 
@@ -51,6 +52,7 @@ STRATEGY_MAPPING = {
     "BreakoutStrategy": BreakoutStrategy,
     "NaiveMarketMakingStrategy": NaiveMarketMakingStrategy,
     "CrossSectionalMomentum": CrossSectionalMomentum,
+    "FlagshipMomentumStrategy": FlagshipMomentumStrategy,
 }
 
 EXECUTION_MAPPING = {
@@ -116,12 +118,36 @@ def run_from_config(
 
     # Multi-asset support (if config strategy expects symbols list)
     data_handler: CsvDataHandler | MultiCsvDataHandler
-    if strategy_name == "CrossSectionalMomentum":
+    if strategy_name in {"CrossSectionalMomentum", "FlagshipMomentumStrategy"}:
+        if strategy_name == "FlagshipMomentumStrategy":
+            universe_path = strategy_params.get("universe_path")
+            if universe_path is None:
+                raise ValueError(
+                    "FlagshipMomentumStrategy requires 'universe_path' in params"
+                )
+            u_path = resolve_path(str(universe_path), cfg_path)
+            if not u_path.exists():
+                raise FileNotFoundError(f"Flagship universe file not found: {u_path}")
+            strategy_params["universe_path"] = str(u_path)
+            universe_df = pd.read_csv(u_path)
+            if "symbol" not in universe_df.columns:
+                raise ValueError("Universe file must contain 'symbol' column")
+            universe_symbols = sorted(
+                universe_df["symbol"].astype(str).str.upper().unique()
+            )
+            strategy_params["symbols"] = universe_symbols
+            strategy_params.setdefault("warmup_history", None)
+        if strategy_name == "CrossSectionalMomentum" and "symbols" not in strategy_params:
+            strategy_params["symbols"] = config.get("symbols") or [symbol]
+
         symbols = strategy_params.get("symbols") or config.get("symbols") or [symbol]
+        symbols = [str(sym).upper() for sym in symbols]
         strategy_params["symbols"] = symbols
         data_handler = MultiCsvDataHandler(csv_dir=data_dir, symbols=symbols)
     else:
         data_handler = CsvDataHandler(csv_dir=data_dir, symbol=symbol)
+    if cfg.start_date or cfg.end_date:
+        data_handler.set_date_range(cfg.start_date, cfg.end_date)
     if data_handler.data is None:
         raise FileNotFoundError(
             f"Unable to load data for symbol '{symbol}' from {data_dir}"
@@ -193,10 +219,12 @@ def run_from_config(
     executor = executor_cls(data_handler=data_handler, **exec_kwargs)
     broker = SimulatedBroker(executor)
 
-    if strategy_name == "CrossSectionalMomentum":
+    if strategy_name in {"CrossSectionalMomentum", "FlagshipMomentumStrategy"}:
         strategy = strategy_class(**strategy_params)
     else:
         strategy = strategy_class(symbol=symbol, **strategy_params)
+    if hasattr(strategy, "sector_map") and strategy.sector_map:
+        portfolio.sector_of.update(strategy.sector_map)
     engine_rng = np.random.default_rng(root_rng.integers(2**32))
     # Hint engine where to place profiling outputs for this run
     import os as _os

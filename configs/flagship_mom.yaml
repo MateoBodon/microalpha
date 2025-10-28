@@ -1,0 +1,41 @@
+# Flagship cross-sectional momentum run (single pass)
+
+data_path: "../data_sp500_enriched"
+symbol: "SPY"
+cash: 5000000.0
+seed: 42
+max_exposure: 1.5
+max_drawdown_stop: 0.25
+turnover_cap: 250000000.0
+max_portfolio_heat: 3.0
+max_positions_per_sector: 20
+kelly_fraction: null
+start_date: "2012-01-01"
+end_date: "2024-12-31"
+
+exec:
+  type: "vwap"
+  commission: 0.0005
+  slices: 4
+  slippage:
+    type: "volume"
+    impact: 0.0005
+
+strategy:
+  name: "FlagshipMomentumStrategy"
+  params:
+    universe_path: "../data/flagship_universe/all.csv"
+    lookback_months: 12
+    skip_months: 1
+    top_frac: 0.25
+    bottom_frac: 0.20
+    max_positions_per_sector: 20
+    turnover_target_pct_adv: 0.1
+    min_adv: 15000000.0
+    min_price: 5.0
+
+capital_policy:
+  type: "volatility_scaled"
+  lookback: 21
+  target_dollar_vol: 20000.0
+  min_qty: 10
