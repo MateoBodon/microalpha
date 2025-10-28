@@ -44,6 +44,17 @@ def main() -> None:
         action="store_true",
         help="Enable cProfile and write to <artifacts_dir>/profile.pstats",
     )
+    wfv_parser.add_argument(
+        "--reality-check-method",
+        choices=["stationary", "circular", "iid"],
+        help="Bootstrap method for walk-forward reality check",
+    )
+    wfv_parser.add_argument(
+        "--reality-check-block-len",
+        type=int,
+        dest="reality_check_block_len",
+        help="Override block length for walk-forward bootstrap (default Politis-White)",
+    )
 
     subparsers.add_parser("info")
 
@@ -69,10 +80,16 @@ def main() -> None:
             import os as _os
 
             _os.environ["MICROALPHA_PROFILE"] = "1"
+        run_kwargs = {
+            "reality_check_method": getattr(args, "reality_check_method", None),
+            "reality_check_block_len": getattr(args, "reality_check_block_len", None),
+        }
         if args.outdir:
-            manifest = run_walk_forward(args.config, override_artifacts_dir=args.outdir)
+            manifest = run_walk_forward(
+                args.config, override_artifacts_dir=args.outdir, **run_kwargs
+            )
         else:
-            manifest = run_walk_forward(args.config)
+            manifest = run_walk_forward(args.config, **run_kwargs)
 
     manifest["runtime_sec"] = round(time.time() - t0, 3)
     manifest["version"] = _resolve_version()

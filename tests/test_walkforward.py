@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import pandas as pd
@@ -55,11 +56,14 @@ def test_fold_boundaries_and_metrics(tmp_path):
         test_start = pd.to_datetime(fold["test_metrics"]["period_start"]).date()
         assert train_end < test_start
         assert fold["test_metrics"]["observations"] > 0
-        if fold["spa_pvalue"] is not None:
-            assert 0.0 <= fold["spa_pvalue"] <= 1.0
-
-        # ensure manifest style fields present
-        assert Path(result["folds_path"]).exists()
+        assert "reality_check_pvalue" in fold
+        if fold["reality_check_pvalue"] is not None:
+            assert 0.0 <= fold["reality_check_pvalue"] <= 1.0
+        assert fold["spa_pvalue"] is None
+    folds_path = Path(result["folds_path"])
+    assert folds_path.exists()
+    persisted = json.loads(folds_path.read_text())
+    assert all("reality_check_pvalue" in fold for fold in persisted)
 
 
 def test_multi_asset_walkforward_maintains_data_frames(tmp_path):

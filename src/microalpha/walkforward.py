@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import warnings
 from dataclasses import asdict
 from itertools import product
 from pathlib import Path
@@ -15,7 +16,7 @@ import yaml
 
 from .broker import SimulatedBroker
 from .config import BacktestCfg, ExecModelCfg
-from .config_wfv import WFVCfg
+from .config_wfv import RealityCheckCfg, WFVCfg
 from .data import CsvDataHandler, DataHandler, MultiCsvDataHandler
 from .engine import Engine
 from .execution import (
@@ -51,6 +52,7 @@ from .strategies.breakout import BreakoutStrategy
 from .strategies.cs_momentum import CrossSectionalMomentum
 from .strategies.meanrev import MeanReversionStrategy
 from .strategies.mm import NaiveMarketMakingStrategy
+from .risk_stats import block_bootstrap
 
 STRATEGY_MAPPING = {
     "MeanReversionStrategy": MeanReversionStrategy,
@@ -132,22 +134,36 @@ def load_wfv_cfg(path: str) -> WFVCfg:
             kelly_fraction=portfolio_cfg.get("kelly_fraction"),
         )
 
+        reality_payload = raw.get("reality_check") or {}
         return WFVCfg(
             template=template,
             walkforward=raw["walkforward"],
             grid=grid,
             artifacts_dir=raw.get("artifacts_dir"),
+            reality_check=reality_payload,
         )
 
     raise ValueError("Invalid walk-forward configuration schema.")
 
 
 def run_walk_forward(
-    config_path: str, override_artifacts_dir: str | None = None
+    config_path: str,
+    override_artifacts_dir: str | None = None,
+    reality_check_method: str | None = None,
+    reality_check_block_len: int | None = None,
 ) -> Dict[str, Any]:
     cfg_path = Path(config_path).expanduser().resolve()
     raw_config = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
     cfg = load_wfv_cfg(str(cfg_path))
+    if reality_check_method or reality_check_block_len is not None:
+        rc_update: Dict[str, Any] = {}
+        if reality_check_method:
+            rc_update["method"] = reality_check_method.lower()
+        if reality_check_block_len is not None:
+            rc_update["block_length"] = reality_check_block_len
+        if rc_update:
+            rc_cfg = cfg.reality_check.model_copy(update=rc_update)
+            cfg = cfg.model_copy(update={"reality_check": rc_cfg})
     config_hash = hashlib.sha256(yaml.safe_dump(raw_config).encode("utf-8")).hexdigest()
 
     full_sha, short_sha = resolve_git_sha()
@@ -225,7 +241,7 @@ def run_walk_forward(
             fold_rng = _spawn_rng(master_rng)
             train_rng = _spawn_rng(fold_rng)
 
-            best_params, train_metrics, spa_pvalue = _optimise_parameters(
+            best_params, train_metrics, rc_pvalue = _optimise_parameters(
                 data_handler,
                 train_start,
                 train_end,
@@ -234,6 +250,7 @@ def run_walk_forward(
                 base_params,
                 cfg.template,
                 train_rng,
+                cfg.reality_check,
             )
 
             if not best_params or not train_metrics:
@@ -246,6 +263,7 @@ def run_walk_forward(
                         "best_params": None,
                         "train_metrics": None,
                         "test_metrics": None,
+                        "reality_check_pvalue": None,
                         "spa_pvalue": None,
                     }
                 )
@@ -317,7 +335,10 @@ def run_walk_forward(
                 "best_params": best_params,
                 "train_metrics": _metrics_summary(train_metrics),
                 "test_metrics": _metrics_summary(test_metrics),
-                "spa_pvalue": None if spa_pvalue is None else float(spa_pvalue),
+                "reality_check_pvalue": (
+                    None if rc_pvalue is None else float(rc_pvalue)
+                ),
+                "spa_pvalue": None,
             }
 
             folds.append(fold_entry)
@@ -355,6 +376,7 @@ def _optimise_parameters(
     base_params: Dict[str, Any],
     cfg: BacktestCfg,
     rng: np.random.Generator,
+    reality_cfg: RealityCheckCfg,
 ) -> Tuple[Dict[str, Any], Dict[str, Any] | None, float | None]:
     best_entry: Dict[str, Any] | None = None
     results: List[Dict[str, Any]] = []
@@ -407,11 +429,20 @@ def _optimise_parameters(
     best_entry = max(
         results, key=lambda item: item["metrics"].get("sharpe_ratio", float("-inf"))
     )
-    spa_pvalue = bootstrap_reality_check(results, seed=cfg.seed)
+    rc_method = reality_cfg.method.lower()
+    rc_block_len = reality_cfg.block_length
+    rc_samples = int(reality_cfg.samples)
+    reality_pvalue = bootstrap_reality_check(
+        results,
+        seed=cfg.seed,
+        n_bootstrap=rc_samples,
+        method=rc_method,
+        block_len=rc_block_len,
+    )
 
     params = dict(base_params)
     params.update(best_entry["params"])
-    return params, best_entry["metrics"], spa_pvalue
+    return params, best_entry["metrics"], reality_pvalue
 
 
 def _build_portfolio(
@@ -585,6 +616,8 @@ def bootstrap_reality_check(
     results: List[Dict[str, Any]],
     seed: int,
     n_bootstrap: int = 200,
+    method: str = "stationary",
+    block_len: int | None = None,
 ) -> float | None:
     valid = [res for res in results if res["returns"].size > 1]
     if len(valid) < 2:
@@ -596,12 +629,32 @@ def bootstrap_reality_check(
         return None
 
     rng = np.random.default_rng(seed)
+    method_lower = method.lower()
+    use_iid = method_lower == "iid"
+    if use_iid:
+        warnings.warn(
+            "IID resampling for walk-forward reality check is deprecated; "
+            "prefer stationary or circular block bootstrap.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
     exceed = 0
     for _ in range(n_bootstrap):
         max_sharpe = float("-inf")
         for entry in valid:
             returns = entry["returns"]
-            sample = rng.choice(returns, size=returns.size, replace=True)
+            if use_iid:
+                sample = rng.choice(returns, size=returns.size, replace=True)
+            else:
+                sample = next(
+                    block_bootstrap(
+                        returns,
+                        B=1,
+                        method=method_lower,  # type: ignore[arg-type]
+                        block_len=block_len,
+                        rng=rng,
+                    )
+                )
             sharpe = _annualised_sharpe(sample)
             max_sharpe = max(max_sharpe, sharpe)
         if max_sharpe >= best_sharpe:
