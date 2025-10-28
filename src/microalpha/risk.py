@@ -1,16 +1,36 @@
 # microalpha/risk.py
+from __future__ import annotations
+
+import warnings
+from typing import Optional
+
 import numpy as np
+import pandas as pd
+
+from .risk_stats import block_bootstrap, sharpe_stats
 
 
-def create_sharpe_ratio(returns, periods=252):
+def create_sharpe_ratio(
+    returns,
+    periods: int = 252,
+    *,
+    rf: float = 0.0,
+    ddof: int = 0,
+    hac_lags: Optional[int] = None,
+):
     """
     Calculates the annualized Sharpe ratio of a returns stream.
     `returns` is a pandas Series.
     `periods` is the number of periods per year (252 for daily).
     """
-    if returns.std() == 0:
-        return 0.0
-    return np.sqrt(periods) * (returns.mean() / returns.std())
+    stats = sharpe_stats(
+        returns=pd.Series(returns),
+        rf=rf,
+        periods=periods,
+        ddof=ddof,
+        hac_lags=hac_lags,
+    )
+    return float(stats["sharpe"])
 
 
 def create_drawdowns(equity_curve):
@@ -27,33 +47,66 @@ def create_drawdowns(equity_curve):
     return drawdown_percentage, max_drawdown
 
 
-def bootstrap_sharpe_ratio(returns, num_simulations=5000, periods=252):
+def bootstrap_sharpe_ratio(
+    returns,
+    num_simulations: int = 5000,
+    periods: int = 252,
+    *,
+    rf: float = 0.0,
+    ddof: int = 0,
+    hac_lags: Optional[int] = None,
+    method: str = "stationary",
+    block_len: Optional[int] = None,
+    rng: Optional[np.random.Generator] = None,
+):
     """
     Performs a bootstrap analysis on a returns stream to determine the
     statistical significance of its Sharpe ratio.
     """
-    if returns.std() == 0 or len(returns) < 3:  # Not enough data
+    series = pd.Series(returns).dropna().astype(float)
+    if series.std(ddof=ddof) == 0 or len(series) < 3:  # Not enough data
         return {"sharpe_dist": [0.0], "p_value": 1.0, "confidence_interval": (0.0, 0.0)}
 
+    method_lower = method.lower()
+    rng = rng or np.random.default_rng()
+    if method_lower == "iid":
+        warnings.warn(
+            "IID bootstrap is deprecated. Use block_bootstrap with stationary "
+            "or circular blocks for serial dependence.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        samples = (
+            rng.choice(series.to_numpy(), size=len(series), replace=True)
+            for _ in range(num_simulations)
+        )
+    else:
+        samples = block_bootstrap(
+            series.to_numpy(),
+            B=num_simulations,
+            method=method_lower,  # type: ignore[arg-type]
+            block_len=block_len,
+            rng=rng,
+        )
+
     sharpe_dist = []
+    for sample in samples:
+        stats = sharpe_stats(
+            returns=pd.Series(sample),
+            rf=rf,
+            periods=periods,
+            ddof=ddof,
+            hac_lags=hac_lags,
+        )
+        sharpe_dist.append(float(stats["sharpe"]))
+    if not sharpe_dist:
+        return {"sharpe_dist": [0.0], "p_value": 1.0, "confidence_interval": (0.0, 0.0)}
 
-    for _ in range(num_simulations):
-        # Create a bootstrap sample by sampling with replacement
-        bootstrapped_returns = returns.sample(n=len(returns), replace=True)
-
-        # Calculate the Sharpe for this random sample
-        sim_sharpe = create_sharpe_ratio(bootstrapped_returns, periods)
-        sharpe_dist.append(sim_sharpe)
-
-    # --- STATISTICAL SIGNIFICANCE ---
-    # The p-value is the probability of observing a Sharpe <= 0
-    # by random chance, given our returns distribution.
-    p_value = sum(1 for s in sharpe_dist if s <= 0.0) / num_simulations
-
-    # Calculate the 95% confidence interval
+    sharpe_arr = np.asarray(sharpe_dist, dtype=float)
+    p_value = float(np.mean(sharpe_arr <= 0.0))
     confidence_interval = (
-        np.percentile(sharpe_dist, 2.5),
-        np.percentile(sharpe_dist, 97.5),
+        float(np.percentile(sharpe_arr, 2.5)),
+        float(np.percentile(sharpe_arr, 97.5)),
     )
 
     return {

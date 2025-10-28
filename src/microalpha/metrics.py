@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+import os
 from typing import Any, Dict, List, Mapping, Optional, Sequence
 
 import numpy as np
 import pandas as pd
+
+from .risk_stats import sharpe_stats
 
 
 def compute_metrics(
@@ -14,6 +17,7 @@ def compute_metrics(
     periods: int = 252,
     trades: Optional[List[Mapping[str, Any]]] = None,
     benchmark_equity: Optional[Sequence[Mapping[str, float | int]]] = None,
+    rf: float = 0.0,
 ) -> Dict[str, Any]:
     if not equity_records:
         df = pd.DataFrame(columns=["timestamp", "equity", "exposure", "returns"])
@@ -34,10 +38,32 @@ def compute_metrics(
 
     returns = df["returns"]
     mean_return = returns.mean()
-    std_return = returns.std(ddof=0)
-    sharpe = 0.0
-    if std_return > 0:
-        sharpe = np.sqrt(periods) * (mean_return / std_return)
+
+    hac_env = os.getenv("METRICS_HAC_LAGS")
+    hac_lags: Optional[int]
+    if hac_env:
+        try:
+            hac_lags = int(hac_env)
+        except ValueError:
+            hac_lags = None
+        else:
+            if hac_lags < 0:
+                hac_lags = None
+    else:
+        hac_lags = None
+
+    sharpe_summary = sharpe_stats(
+        returns=returns,
+        rf=rf,
+        periods=periods,
+        ddof=0,
+        hac_lags=hac_lags,
+    )
+    sharpe = float(sharpe_summary["sharpe"])
+    sharpe_se = float(sharpe_summary["se"])
+    sharpe_tstat = float(sharpe_summary["tstat"])
+    sharpe_ci_low = float(sharpe_summary["ci_low"])
+    sharpe_ci_high = float(sharpe_summary["ci_high"])
 
     downside = returns[returns < 0]
     downside_std = np.sqrt((downside**2).mean()) if not downside.empty else 0.0
@@ -138,4 +164,9 @@ def compute_metrics(
         "win_rate": float(win_rate),
         "total_realized_pnl": float(total_realized_pnl),
         "final_equity": float(equity_series.iloc[-1]),
+        "sharpe_ratio_se": sharpe_se,
+        "sharpe_ratio_tstat": sharpe_tstat,
+        "sharpe_ratio_ci_low": sharpe_ci_low,
+        "sharpe_ratio_ci_high": sharpe_ci_high,
+        "sharpe_hac_lags": float(hac_lags or 0),
     }
