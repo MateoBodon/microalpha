@@ -1,0 +1,114 @@
+symbol,sector,industry
+AAPL,Information Technology,Technology Hardware
+MSFT,Information Technology,System Software
+AMZN,Consumer Discretionary,Internet & Direct Marketing Retail
+GOOG,Communication Services,Interactive Media & Services
+GOOGL,Communication Services,Interactive Media & Services
+META,Communication Services,Interactive Media & Services
+NFLX,Communication Services,Movies & Entertainment
+TSLA,Consumer Discretionary,Automobile Manufacturers
+NVDA,Information Technology,Semiconductors
+AVGO,Information Technology,Semiconductors
+AMD,Information Technology,Semiconductors
+INTC,Information Technology,Semiconductors
+CSCO,Information Technology,Communications Equipment
+ADBE,Information Technology,Application Software
+CRM,Information Technology,Application Software
+ORCL,Information Technology,System Software
+IBM,Information Technology,IT Consulting & Other Services
+UBER,Industrials,Road & Rail
+LYFT,Industrials,Road & Rail
+SHOP,Consumer Discretionary,Internet & Direct Marketing Retail
+SQ,Information Technology,Data Processing & Outsourced Services
+PYPL,Information Technology,Data Processing & Outsourced Services
+BAC,Financials,Banks
+JPM,Financials,Banks
+GS,Financials,Capital Markets
+MS,Financials,Capital Markets
+V,Information Technology,Data Processing & Outsourced Services
+MA,Information Technology,Data Processing & Outsourced Services
+AXP,Financials,Consumer Finance
+BRK.B,Financials,Multi-Sector Holdings
+BRK.A,Financials,Multi-Sector Holdings
+XOM,Energy,Integrated Oil & Gas
+CVX,Energy,Integrated Oil & Gas
+COP,Energy,Oil & Gas Exploration & Production
+SLB,Energy,Oil & Gas Equipment & Services
+EOG,Energy,Oil & Gas Exploration & Production
+PXD,Energy,Oil & Gas Exploration & Production
+F,Consumer Discretionary,Automobile Manufacturers
+GM,Consumer Discretionary,Automobile Manufacturers
+T,Communication Services,Telecom Services
+VZ,Communication Services,Telecom Services
+TMUS,Communication Services,Telecom Services
+WMT,Consumer Staples,Hypermarkets & Super Centers
+COST,Consumer Staples,Hypermarkets & Super Centers
+PG,Consumer Staples,Household Products
+KO,Consumer Staples,Soft Drinks
+PEP,Consumer Staples,Soft Drinks
+HD,Consumer Discretionary,Home Improvement Retail
+LOW,Consumer Discretionary,Home Improvement Retail
+NKE,Consumer Discretionary,Apparel & Footwear
+MCD,Consumer Discretionary,Restaurants
+SBUX,Consumer Discretionary,Restaurants
+CAT,Industrials,Construction Machinery & Heavy Trucks
+DE,Industrials,Agricultural & Farm Machinery
+BA,Industrials,Aerospace & Defense
+UNP,Industrials,Railroads
+LMT,Industrials,Aerospace & Defense
+RTX,Industrials,Aerospace & Defense
+GE,Industrials,Industrial Conglomerates
+HON,Industrials,Industrial Conglomerates
+MMM,Industrials,Industrial Conglomerates
+SPG,Real Estate,Real Estate Investment Trusts
+PLD,Real Estate,Industrial REITs
+O,Real Estate,Real Estate Investment Trusts
+AMT,Real Estate,Specialized REITs
+WELL,Real Estate,Health Care REITs
+EQR,Real Estate,Residential REITs
+D,Utilities,Multi-Utilities
+DUK,Utilities,Electric Utilities
+SO,Utilities,Electric Utilities
+NEE,Utilities,Electric Utilities
+AEP,Utilities,Electric Utilities
+ED,Utilities,Multi-Utilities
+LULU,Consumer Discretionary,Apparel & Footwear
+TTD,Communication Services,Advertising
+PANW,Information Technology,Internet Services & Infrastructure
+NOW,Information Technology,Application Software
+SNOW,Information Technology,Application Software
+DOCU,Information Technology,Application Software
+CRWD,Information Technology,Application Software
+ZS,Information Technology,Application Software
+MRNA,Health Care,Biotechnology
+PFE,Health Care,Pharmaceuticals
+JNJ,Health Care,Pharmaceuticals
+UNH,Health Care,Managed Health Care
+CVS,Health Care,Health Care Services
+TMO,Health Care,Life Sciences Tools & Services
+ABT,Health Care,Health Care Equipment
+ABBV,Health Care,Pharmaceuticals
+LLY,Health Care,Pharmaceuticals
+BMY,Health Care,Pharmaceuticals
+AMGN,Health Care,Biotechnology
+GILD,Health Care,Biotechnology
+ISRG,Health Care,Health Care Equipment
+VRTX,Health Care,Biotechnology
+REGN,Health Care,Biotechnology
+CSX,Industrials,Railroads
+NSC,Industrials,Railroads
+FDX,Industrials,Air Freight & Logistics
+UPS,Industrials,Air Freight & Logistics
+TGT,Consumer Discretionary,General Merchandise Stores
+BBY,Consumer Discretionary,Consumer Electronics Retail
+DG,Consumer Staples,General Merchandise Stores
+KR,Consumer Staples,Food Retail
+WBA,Consumer Staples,Drug Retail
+DIS,Communication Services,Movies & Entertainment
+CMCSA,Communication Services,Cable & Satellite
+FOX,Communication Services,Movies & Entertainment
+FOXA,Communication Services,Movies & Entertainment
+CL,Consumer Staples,Household Products
+DHR,Health Care,Life Sciences Tools & Services
+ILMN,Health Care,Life Sciences Tools & Services
+WBD,Communication Services,Movies & Entertainment
