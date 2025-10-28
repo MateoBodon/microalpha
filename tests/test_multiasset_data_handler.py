@@ -42,3 +42,72 @@ def test_multicsv_union_index_and_price_modes(tmp_path: Path) -> None:
     dh_exact = MultiCsvDataHandler(csv_dir=data_dir, symbols=["A", "B"], mode="exact")
     dh_exact.set_date_range("2025-01-01", "2025-01-03")
     assert dh_exact.get_latest_price("A", mid) is None
+
+
+def _baseline_events(handler: MultiCsvDataHandler) -> list[tuple[int, str, float]]:
+    frames = {
+        sym: df for sym, df in handler.frames.items() if df is not None and not df.empty
+    }
+    if not frames:
+        return []
+    union = None
+    for df in frames.values():
+        union = df.index if union is None else union.union(df.index)
+    if union is None:
+        return []
+    union = union.sort_values()
+    events: list[tuple[int, str, float]] = []
+    for ts in union:
+        ts_int = int(ts.value)
+        for sym in handler.symbols:
+            df = frames.get(sym)
+            if df is None:
+                continue
+            if handler.mode == "exact":
+                try:
+                    value = df.loc[ts, "close"]  # type: ignore[index]
+                except KeyError:
+                    continue
+                if isinstance(value, pd.Series):
+                    if value.empty:
+                        continue
+                    price = float(value.iloc[0])
+                else:
+                    price = float(value)
+                events.append((ts_int, sym, price))
+            else:
+                idx = df.index.searchsorted(ts, side="right") - 1
+                if idx < 0:
+                    continue
+                price = float(df.iloc[idx]["close"])  # type: ignore[index]
+                events.append((ts_int, sym, price))
+    return events
+
+
+def _collect_events(handler: MultiCsvDataHandler) -> list[tuple[int, str, float]]:
+    return [
+        (event.timestamp, event.symbol, float(event.price))
+        for event in handler.stream()
+    ]
+
+
+def test_stream_matches_baseline_logic(tmp_path: Path) -> None:
+    data_dir = tmp_path / "panel"
+    data_dir.mkdir()
+
+    idx = pd.date_range("2025-01-01", periods=6, freq="D")
+    # Introduce gaps for each symbol
+    symbol_data = {
+        "AAA": ([idx[0], idx[2], idx[5]], [100.0, 101.0, 103.0]),
+        "BBB": ([idx[1], idx[3]], [50.0, 55.0]),
+        "CCC": ([idx[0], idx[1], idx[4]], [200.0, 201.0, 202.0]),
+    }
+    for sym, (dates, prices) in symbol_data.items():
+        _write_csv(data_dir / f"{sym}.csv", list(dates), prices)
+
+    for mode in ("ffill", "exact"):
+        handler = MultiCsvDataHandler(csv_dir=data_dir, symbols=list(symbol_data), mode=mode)
+        handler.set_date_range(idx[0], idx[-1])
+        expected = _baseline_events(handler)
+        observed = _collect_events(handler)
+        assert observed == expected
