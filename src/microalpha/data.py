@@ -2,9 +2,11 @@
 from __future__ import annotations
 
 import numbers
+import heapq
 from pathlib import Path
 from typing import Dict, Iterator, List, Optional, Sequence, cast
 
+import numpy as np
 import pandas as pd
 
 from .events import MarketEvent
@@ -18,7 +20,9 @@ class DataHandler:
     def stream(self) -> Iterator[MarketEvent]:
         raise NotImplementedError("stream() must be implemented")
 
-    def set_date_range(self, start_date, end_date) -> None:  # pragma: no cover - interface stub
+    def set_date_range(
+        self, start_date, end_date
+    ) -> None:  # pragma: no cover - interface stub
         raise NotImplementedError("set_date_range() must be implemented")
 
 
@@ -190,28 +194,51 @@ class MultiCsvDataHandler(DataHandler):
                 self.frames[sym] = df.loc[start_date:end_date]
 
     def _iter_union_index(self) -> Iterator[pd.Timestamp]:
-        indices = [df.index for df in self.frames.values() if df is not None]
-        if not indices:
-            return iter(())
-        union = indices[0]
-        for idx in indices[1:]:
-            union = union.union(idx)
-        return iter(union.sort_values())
+        arrays = [
+            df.index.view("i8") for df in self.frames.values() if df is not None
+        ]
+        for ts_int in self._merge_timestamp_arrays(arrays):
+            yield pd.Timestamp(ts_int, unit="ns")
+
+    @staticmethod
+    def _merge_timestamp_arrays(arrays: Sequence[np.ndarray]) -> Iterator[int]:
+        iterables = [iter(arr) for arr in arrays if len(arr)]
+        if not iterables:
+            return
+        last: Optional[int] = None
+        for value in heapq.merge(*iterables):
+            ts_int = int(value)
+            if last != ts_int:
+                last = ts_int
+                yield ts_int
+
+    def _build_states(self) -> Dict[str, "_SymbolState"]:
+        states: Dict[str, "_SymbolState"] = {}
+        for sym in self.symbols:
+            df = self.frames.get(sym)
+            if df is None or df.empty:
+                continue
+            timestamps = df.index.view("i8")
+            prices = df["close"].to_numpy(dtype=float)
+            states[sym] = _SymbolState(timestamps=timestamps, prices=prices)
+        return states
 
     def stream(self) -> Iterator[MarketEvent]:
         if not self.frames:
             return
-        for ts in self._iter_union_index():
-            for sym, df in self.frames.items():
-                if df is None:
+        states = self._build_states()
+        if not states:
+            return
+        arrays = [state.timestamps for state in states.values()]
+        for ts_int in self._merge_timestamp_arrays(arrays):
+            for sym in self.symbols:
+                state = states.get(sym)
+                if state is None:
                     continue
-                price = self._lookup_price(df, ts)
+                price = state.price_at(ts_int, mode=self.mode)
                 if price is None:
                     continue
-                # Reuse CsvDataHandler timestamp helpers
-                yield MarketEvent(
-                    CsvDataHandler._to_int_timestamp(ts), sym, float(price), 0.0
-                )
+                yield MarketEvent(ts_int, sym, price, 0.0)
 
     def get_latest_price(self, symbol: str, timestamp: int):
         df = self.frames.get(symbol)
@@ -270,3 +297,31 @@ class MultiCsvDataHandler(DataHandler):
             return None
         except KeyError:
             return None
+
+
+class _SymbolState:
+    __slots__ = ("timestamps", "prices", "position", "last_ts", "last_price")
+
+    def __init__(self, timestamps: np.ndarray, prices: np.ndarray):
+        self.timestamps = timestamps
+        self.prices = prices
+        self.position = 0
+        self.last_ts: Optional[int] = None
+        self.last_price: Optional[float] = None
+
+    def _advance(self, ts_int: int) -> None:
+        size = self.timestamps.shape[0]
+        while self.position < size and int(self.timestamps[self.position]) <= ts_int:
+            current_ts = int(self.timestamps[self.position])
+            current_price = float(self.prices[self.position])
+            self.last_ts = current_ts
+            self.last_price = current_price
+            self.position += 1
+
+    def price_at(self, ts_int: int, mode: str) -> Optional[float]:
+        self._advance(ts_int)
+        if mode == "exact":
+            if self.last_ts == ts_int:
+                return self.last_price
+            return None
+        return self.last_price
