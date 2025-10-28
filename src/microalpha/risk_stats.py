@@ -93,7 +93,11 @@ def sharpe_stats(
 
 
 def _default_block_len(n: int) -> int:
-    return max(1, int(round(n ** (1.0 / 3.0))))
+    if n <= 1:
+        return 1
+    # Politis–White rule of thumb for stationary bootstrap (approximate)
+    block = int(round(1.1447 * (n ** (1.0 / 3.0))))
+    return max(1, block)
 
 
 def block_bootstrap(
