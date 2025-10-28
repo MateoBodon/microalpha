@@ -4,6 +4,7 @@ from .engine import Engine
 from .execution import TWAP, Executor, KyleLambda, LOBExecution, SquareRootImpact
 from .manifest import Manifest
 from .metrics import compute_metrics
+from .risk_stats import block_bootstrap, sharpe_stats
 from .portfolio import Portfolio
 
 __all__ = [
@@ -19,4 +20,6 @@ __all__ = [
     "LOBExecution",
     "compute_metrics",
     "Manifest",
+    "sharpe_stats",
+    "block_bootstrap",
 ]
