@@ -84,7 +84,11 @@ def compute_metrics(
     if len(equity_series) > 1:
         total_return = float(equity_series.iloc[-1] / equity_series.iloc[0] - 1.0)
         years = max(float(len(df)) / periods, 1e-9)
-        cagr = float((1.0 + total_return) ** (1.0 / years) - 1.0)
+        base = 1.0 + total_return
+        if base <= 0.0:
+            cagr = -1.0
+        else:
+            cagr = float(base ** (1.0 / years) - 1.0)
     else:
         cagr = 0.0
 
