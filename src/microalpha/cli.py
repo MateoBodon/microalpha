@@ -11,7 +11,11 @@ import time
 from pathlib import Path
 
 from microalpha.reporting.summary import generate_summary
-from microalpha.reporting.tearsheet import render_tearsheet
+from microalpha.reporting.tearsheet import (
+    DEFAULT_BOOTSTRAP_NAME,
+    DEFAULT_EQUITY_NAME,
+    render_tearsheet,
+)
 
 from .runner import run_from_config
 from .walkforward import run_walk_forward
@@ -74,7 +78,18 @@ def main() -> None:
     report_parser.add_argument(
         "--tearsheet-out",
         default=None,
-        help="PNG output path for the tearsheet (default: <artifact>/tearsheet.png).",
+        help=(
+            "PNG output path for the equity curve plot "
+            f"(default: <artifact>/{DEFAULT_EQUITY_NAME})."
+        ),
+    )
+    report_parser.add_argument(
+        "--bootstrap-out",
+        default=None,
+        help=(
+            "PNG output path for the bootstrap histogram "
+            f"(default: <artifact>/{DEFAULT_BOOTSTRAP_NAME})."
+        ),
     )
     report_parser.add_argument(
         "--title",
@@ -133,16 +148,25 @@ def main() -> None:
         if not equity_csv.exists():
             raise SystemExit("Artifact directory missing equity_curve.csv")
 
-        tearsheet_path = (
+        equity_plot_path = (
             Path(args.tearsheet_out).resolve()
             if args.tearsheet_out
-            else artifact_dir / "tearsheet.png"
+            else (artifact_dir / DEFAULT_EQUITY_NAME)
+        )
+        bootstrap_plot_path = (
+            Path(args.bootstrap_out).resolve()
+            if args.bootstrap_out
+            else (
+                (equity_plot_path.parent if equity_plot_path.suffix else equity_plot_path)
+                / DEFAULT_BOOTSTRAP_NAME
+            )
         )
 
-        render_tearsheet(
+        outputs = render_tearsheet(
             equity_csv=equity_csv,
             bootstrap_json=bootstrap_path if bootstrap_path.exists() else None,
-            output_path=tearsheet_path,
+            output_path=equity_plot_path,
+            bootstrap_output=bootstrap_plot_path,
             metrics_path=metrics_path if metrics_path.exists() else None,
             title=args.title,
         )
@@ -152,12 +176,15 @@ def main() -> None:
             output_path=args.summary_out,
             title=args.title,
             top_exposures=args.top_exposures,
+            equity_image=outputs.get("equity_curve"),
+            bootstrap_image=outputs.get("bootstrap_hist"),
         )
 
         manifest = {
             "artifact_dir": str(artifact_dir),
             "summary_path": str(summary_path.resolve()),
-            "tearsheet_path": str(Path(tearsheet_path).resolve()),
+            "equity_curve_path": str(outputs["equity_curve"]),
+            "bootstrap_hist_path": str(outputs["bootstrap_hist"]),
         }
     else:
         raise SystemExit(f"Unknown command: {args.cmd}")

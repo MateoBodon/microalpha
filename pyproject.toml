@@ -28,6 +28,8 @@ dev = [
     "pydantic",
     "pandas-stubs",
     "types-PyYAML",
+    "mkdocs>=1.6",
+    "mkdocs-material>=9.5",
 ]
 
 [tool.black]

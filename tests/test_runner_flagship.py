@@ -22,9 +22,12 @@ def test_runner_executes_flagship_strategy(tmp_path: Path) -> None:
 
     bootstrap_path = Path(result["bootstrap_path"])
     assert bootstrap_path.exists()
-    bootstrap = json.loads(bootstrap_path.read_text())
-    assert len(bootstrap.get("distribution", [])) >= 1024
-    assert 0.0 <= float(bootstrap.get("p_value", 0.5)) <= 1.0
+    bootstrap_samples = json.loads(bootstrap_path.read_text())
+    assert isinstance(bootstrap_samples, list)
+    assert len(bootstrap_samples) >= 1024
+    assert all(isinstance(x, (int, float)) for x in bootstrap_samples)
+    assert metrics_info.get("bootstrap_samples", 0) >= 1024
+    assert 0.0 <= float(metrics_info.get("bootstrap_p_value", 0.5)) <= 1.0
 
     exposures_path = Path(result["exposures_path"])
     assert exposures_path.exists()

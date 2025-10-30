@@ -1,17 +1,19 @@
-"""Render an equity + bootstrap tearsheet for Microalpha runs."""
+"""Render separate equity and bootstrap plots for Microalpha runs."""
 
 from __future__ import annotations
 
 import argparse
 import json
 from pathlib import Path
-from typing import Sequence
+from typing import Mapping, Sequence
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
 DEFAULT_TITLE = "Microalpha Flagship Performance"
+DEFAULT_EQUITY_NAME = "equity_curve.png"
+DEFAULT_BOOTSTRAP_NAME = "bootstrap_hist.png"
 
 
 def _ensure_path(path: str | Path | None) -> Path | None:
@@ -41,6 +43,8 @@ def _load_bootstrap(path: Path | None) -> list[float]:
         dist = payload.get("distribution") or []
         return [float(x) for x in dist]
     if isinstance(payload, list):
+        if payload and isinstance(payload[0], (int, float)):
+            return [float(x) for x in payload]
         samples: list[float] = []
         for entry in payload:
             dist = entry.get("distribution") if isinstance(entry, dict) else None
@@ -61,9 +65,29 @@ def render_tearsheet(
     bootstrap_json: str | Path | None,
     output_path: str | Path,
     *,
+    bootstrap_output: str | Path | None = None,
     metrics_path: str | Path | None = None,
     title: str | None = None,
-) -> Path:
+) -> Mapping[str, Path]:
+    """Render equity and bootstrap plots.
+
+    Parameters
+    ----------
+    equity_csv
+        Equity curve CSV containing "timestamp" and "equity" columns.
+    bootstrap_json
+        JSON file containing bootstrap samples (list of floats or legacy payload).
+    output_path
+        Either the target path for the equity plot or a directory in which the
+        default filenames will be written.
+    bootstrap_output
+        Optional explicit path for the bootstrap histogram PNG. Defaults to
+        ``<artifacts_dir>/bootstrap_hist.png``.
+    metrics_path
+        Optional metrics.json providing additional annotations.
+    title
+        Optional title for the plots.
+    """
     equity_df = pd.read_csv(equity_csv)
     if "equity" not in equity_df.columns:
         raise ValueError("equity_curve.csv must include an 'equity' column.")
@@ -79,15 +103,33 @@ def render_tearsheet(
     metrics = _load_metrics(_ensure_path(metrics_path))
     bootstrap_samples = _load_bootstrap(_ensure_path(bootstrap_json))
 
-    title = title or DEFAULT_TITLE
-    fig, axes = plt.subplots(
-        3,
-        1,
-        figsize=(10, 8),
-        sharex=False,
-        gridspec_kw={"height_ratios": [1.4, 0.8, 1.0], "hspace": 0.35},
+    base_path = Path(output_path)
+    if base_path.suffix.lower() == ".png":
+        equity_path = base_path
+        artifacts_dir = equity_path.parent
+    else:
+        artifacts_dir = base_path
+        equity_path = artifacts_dir / DEFAULT_EQUITY_NAME
+
+    bootstrap_path = (
+        Path(bootstrap_output)
+        if bootstrap_output is not None
+        else artifacts_dir / DEFAULT_BOOTSTRAP_NAME
     )
 
+    artifacts_dir.mkdir(parents=True, exist_ok=True)
+    equity_path.parent.mkdir(parents=True, exist_ok=True)
+    bootstrap_path.parent.mkdir(parents=True, exist_ok=True)
+
+    title = title or DEFAULT_TITLE
+
+    fig_equity, axes = plt.subplots(
+        2,
+        1,
+        figsize=(10, 6),
+        sharex=True,
+        gridspec_kw={"height_ratios": [1.2, 0.8], "hspace": 0.15},
+    )
     axes[0].plot(equity.index, equity.values, color="tab:blue", linewidth=1.5)
     axes[0].set_title(title)
     axes[0].set_ylabel("Equity")
@@ -118,11 +160,22 @@ def render_tearsheet(
             bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.8),
         )
 
-    axes[1].fill_between(drawdown.index, drawdown.values, 0.0, color="tab:red", alpha=0.3)
+    axes[1].fill_between(
+        drawdown.index,
+        drawdown.values,
+        0.0,
+        color="tab:red",
+        alpha=0.3,
+    )
     axes[1].set_ylabel("Drawdown")
+    axes[1].set_xlabel("Date")
     axes[1].grid(True, alpha=0.2, linestyle=":")
 
-    ax_hist = axes[2]
+    fig_equity.tight_layout()
+    fig_equity.savefig(equity_path, dpi=200)
+    plt.close(fig_equity)
+
+    fig_hist, ax_hist = plt.subplots(figsize=(10, 4))
     if bootstrap_samples:
         ax_hist.hist(
             bootstrap_samples,
@@ -132,11 +185,7 @@ def render_tearsheet(
         )
         ax_hist.set_xlabel("Bootstrapped Sharpe")
         ax_hist.set_ylabel("Frequency")
-        p_value = metrics.get("p_value")
-        if p_value is None and isinstance(bootstrap_json, (str, Path)):
-            payload = json.loads(Path(bootstrap_json).read_text(encoding="utf-8"))
-            if isinstance(payload, dict):
-                p_value = payload.get("p_value")
+        p_value = metrics.get("reality_check_p_value") or metrics.get("bootstrap_p_value")
         mean = float(np.mean(bootstrap_samples))
         std = float(np.std(bootstrap_samples))
         textbox = [
@@ -167,12 +216,11 @@ def render_tearsheet(
             fontsize=12,
         )
 
-    output_path = Path(output_path)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.tight_layout()
-    fig.savefig(output_path, dpi=200)
-    plt.close(fig)
-    return output_path
+    fig_hist.tight_layout()
+    fig_hist.savefig(bootstrap_path, dpi=200)
+    plt.close(fig_hist)
+
+    return {"equity_curve": equity_path.resolve(), "bootstrap_hist": bootstrap_path.resolve()}
 
 
 def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
@@ -181,20 +229,38 @@ def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--bootstrap", help="Path to bootstrap.json")
     parser.add_argument("--metrics", help="Path to metrics.json")
     parser.add_argument("--output", required=True, help="Output PNG file path")
+    parser.add_argument(
+        "--bootstrap-output",
+        default=None,
+        help="Optional override for bootstrap histogram PNG path",
+    )
     parser.add_argument("--title", default=None, help="Optional custom title")
     return parser.parse_args(argv)
 
 
 def main(argv: Sequence[str] | None = None) -> None:
     args = _parse_args(argv)
-    render_tearsheet(
+    outputs = render_tearsheet(
         equity_csv=args.equity_csv,
         bootstrap_json=args.bootstrap,
         output_path=args.output,
+        bootstrap_output=args.bootstrap_output,
         metrics_path=args.metrics,
         title=args.title,
     )
-    print(f"Tearsheet written to {Path(args.output).resolve()}")
+    print(
+        "\n".join(
+            [
+                f"Equity curve plot written to {outputs['equity_curve']}",
+                f"Bootstrap histogram written to {outputs['bootstrap_hist']}",
+            ]
+        )
+    )
 
 
-__all__ = ["render_tearsheet", "main"]
+__all__ = [
+    "render_tearsheet",
+    "main",
+    "DEFAULT_EQUITY_NAME",
+    "DEFAULT_BOOTSTRAP_NAME",
+]

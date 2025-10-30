@@ -248,7 +248,9 @@ def run_walk_forward(
 
     equity_records: List[Dict[str, Any]] = []
     folds: List[Dict[str, Any]] = []
-    bootstrap_records: List[Dict[str, Any]] = []
+    bootstrap_samples: List[float] = []
+    reality_metadata: Dict[str, Any] | None = None
+    reality_pvalues: List[float] = []
     fold_exposure_paths: List[str] = []
     fold_factor_paths: List[str] = []
     total_turnover = 0.0
@@ -398,23 +400,13 @@ def run_walk_forward(
                     "method": rc_result.get("method"),
                     "block_length": rc_result.get("block_length"),
                     "num_bootstrap": rc_result.get("num_bootstrap"),
+                    "num_models": rc_result.get("num_models"),
                 }
                 distribution = rc_result.get("distribution", [])
-                bootstrap_records.append(
-                    {
-                        "fold": len(folds),
-                        "train_start": str(train_start.date()),
-                        "train_end": str(train_end.date()),
-                        "test_start": str(test_start.date()),
-                        "test_end": str(test_end.date()),
-                        "p_value": float(rc_pvalue) if rc_pvalue is not None else None,
-                        "best_sharpe": best_sharpe_val,
-                        "distribution": [float(x) for x in distribution],
-                        "method": rc_result.get("method"),
-                        "block_length": rc_result.get("block_length"),
-                        "num_bootstrap": rc_result.get("num_bootstrap"),
-                    }
-                )
+                bootstrap_samples.extend(float(x) for x in distribution)
+                reality_metadata = dict(rc_summary)
+                if rc_pvalue is not None:
+                    reality_pvalues.append(float(rc_pvalue))
 
             fold_entry = {
                 "train_start": str(train_start.date()),
@@ -456,15 +448,36 @@ def run_walk_forward(
     with folds_path.open("w", encoding="utf-8") as handle:
         json.dump(folds, handle, indent=2)
 
+    aggregated_p_value: float | None = (
+        float(np.mean(reality_pvalues)) if reality_pvalues else None
+    )
+
     bootstrap_path = artifacts_dir / "bootstrap.json"
     with bootstrap_path.open("w", encoding="utf-8") as handle:
-        json.dump(bootstrap_records, handle, indent=2)
+        json.dump([float(x) for x in bootstrap_samples], handle, indent=2)
+
+    reality_check_path: str | None = None
+    if reality_metadata:
+        rc_payload = dict(reality_metadata)
+        if aggregated_p_value is not None:
+            rc_payload["p_value_mean"] = aggregated_p_value
+        rc_payload["num_samples"] = len(bootstrap_samples)
+        rc_path = artifacts_dir / "reality_check.json"
+        with rc_path.open("w", encoding="utf-8") as handle:
+            json.dump(rc_payload, handle, indent=2)
+        reality_check_path = str(rc_path)
+    else:
+        reality_check_path = None
 
     metrics = _summarise_walkforward(
         equity_records,
         artifacts_dir,
         total_turnover,
         hac_lags=cfg.template.metrics_hac_lags,
+        extra_metrics={
+            "reality_check_p_value": aggregated_p_value,
+            "bootstrap_samples": len(bootstrap_samples),
+        },
     )
 
     result: Dict[str, Any] = asdict(manifest)
@@ -474,6 +487,7 @@ def run_walk_forward(
             "strategy": strategy_name,
             "folds_path": str(folds_path),
             "bootstrap_path": str(bootstrap_path),
+            "reality_check_path": reality_check_path,
             "exposures_path": exposures_path,
             "factor_exposure_path": factor_exposure_path,
             "metrics": metrics,
@@ -705,6 +719,7 @@ def _summarise_walkforward(
     artifacts_dir: Path,
     total_turnover: float,
     hac_lags: int | None = None,
+    extra_metrics: Mapping[str, Any] | None = None,
 ) -> Dict[str, Any]:
     metrics = compute_metrics(
         equity_records,
@@ -713,6 +728,10 @@ def _summarise_walkforward(
     )
     metrics_copy = dict(metrics)
     df = cast(pd.DataFrame, metrics_copy.pop("equity_df"))
+    if extra_metrics:
+        for key, value in extra_metrics.items():
+            if value is not None:
+                metrics_copy[key] = value
 
     equity_path: str | None = None
     if not df.empty:

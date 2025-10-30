@@ -34,7 +34,12 @@ def test_sample_walkforward_produces_folds(tmp_path: Path) -> None:
     assert bootstrap_path.exists()
     bootstrap_payload = json.loads(bootstrap_path.read_text())
     assert isinstance(bootstrap_payload, list)
-    assert all("distribution" in entry for entry in bootstrap_payload)
+    if bootstrap_payload:
+        assert all(isinstance(entry, (int, float)) for entry in bootstrap_payload)
+
+    metrics = result["metrics"]
+    if metrics.get("reality_check_p_value") is not None:
+        assert 0.0 <= float(metrics["reality_check_p_value"]) <= 1.0
 
     exposures_path = result.get("exposures_path")
     if exposures_path:
