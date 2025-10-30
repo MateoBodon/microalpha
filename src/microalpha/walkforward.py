@@ -39,14 +39,15 @@ from .manifest import (
 from .manifest import (
     write as write_manifest,
 )
+from .market_metadata import load_symbol_meta
 from .metrics import compute_metrics
 from .portfolio import Portfolio
-from .market_metadata import load_symbol_meta
+from .risk_stats import block_bootstrap
 from .runner import (
     persist_config,
+    persist_exposures,
     prepare_artifacts_dir,
     resolve_capital_policy,
-    persist_exposures,
     resolve_path,
     resolve_slippage_model,
 )
@@ -55,7 +56,6 @@ from .strategies.cs_momentum import CrossSectionalMomentum
 from .strategies.flagship_mom import FlagshipMomentumStrategy
 from .strategies.meanrev import MeanReversionStrategy
 from .strategies.mm import NaiveMarketMakingStrategy
-from .risk_stats import block_bootstrap
 
 STRATEGY_MAPPING = {
     "MeanReversionStrategy": MeanReversionStrategy,
