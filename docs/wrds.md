@@ -6,18 +6,21 @@ pointing the engine at production-quality datasets.
 
 ## Data Layout
 
-Set the `template.data_path` field in `configs/wfv_flagship_wrds.yaml` to a directory containing
-per-symbol pricing files exported from WRDS/CRSP. Each file can be CSV or Parquet and must be
-named `SYMBOL.ext` (upper-case ticker symbols). Microalpha reads the following columns:
+Set the `template.data_path` field in [`configs/wfv_flagship_wrds.yaml`](../configs/wfv_flagship_wrds.yaml)
+to a directory containing per-symbol pricing files exported from WRDS/CRSP. Each file can be CSV
+or Parquet and must be named `SYMBOL.ext` (upper-case ticker symbols). Microalpha expects the
+following schema:
 
-- `date` – trading day in ISO format (`YYYY-MM-DD`).
-- `open`, `high`, `low`, `close` – split- and dividend-adjusted prices.
-- `volume` – shares traded.
-- `ret` – daily total-return (optional, used for verification only).
-- `shares_out` – shares outstanding (optional, used for ADV calculations).
+| Column | Description | Type | Frequency |
+| --- | --- | --- | --- |
+| `date` | Trading day in ISO format (`YYYY-MM-DD`) | date | Daily (NYSE calendar) |
+| `open`, `high`, `low`, `close` | Split- and dividend-adjusted prices | float | Daily |
+| `volume` | Shares traded | float/int | Daily |
+| `ret` | Total return for the period (optional; used for QA) | float | Daily |
+| `shares_out` | Shares outstanding (optional; feeds ADV calc) | float | Daily |
 
-All files should share the same frequency (daily) and timezone (New York). Missing trading days
-must be forward-filled by WRDS; Microalpha will drop dates that are absent in the price file.
+All files should share the same timezone (New York). Missing trading days must be forward-filled
+by WRDS; Microalpha will drop dates that are absent in the price file.
 
 ## Metadata & Universe
 

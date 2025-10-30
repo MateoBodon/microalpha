@@ -1,0 +1,12 @@
+{
+  "run_id": "2025-10-30T18-39-31Z-a4ab8e7",
+  "git_sha": "a4ab8e7d0a2c0e97efb39c18683ae38d690194b8",
+  "microalpha_version": "0.1.0",
+  "python": "3.12.2 (v3.12.2:6abddd9f6a, Feb  6 2024, 17:02:06) [Clang 13.0.0 (clang-1300.0.29.30)]",
+  "platform": "macOS-26.0.1-arm64-arm-64bit",
+  "numpy_version": "2.2.6",
+  "pandas_version": "2.2.3",
+  "seed": 123,
+  "config_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/configs/flagship_sample.yaml",
+  "config_sha256": "c2cf8578eb736c050dbe5d89eb6db276feca7ec3af9aaba373945fd52bcc8e33"
+}
