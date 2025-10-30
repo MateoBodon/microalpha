@@ -1,0 +1,57 @@
+# Reproducible flagship momentum case study using bundled sample data
+
+data_path: "data/sample/prices"
+meta_path: "data/sample/meta_sample.csv"
+symbol: "ALFA"
+cash: 1000000.0
+seed: 123
+max_exposure: 1.25
+max_drawdown_stop: 0.25
+turnover_cap: 1000000.0
+max_portfolio_heat: 2.5
+max_positions_per_sector: 3
+metrics_hac_lags: 5
+start_date: "2020-01-02"
+end_date: "2021-12-31"
+
+exec:
+  type: "twap"
+  commission: 0.0005
+  slices: 3
+  price_impact: 0.0
+  limit_mode: "ioc"
+  queue_coefficient: 0.12
+  queue_passive_multiplier: 0.35
+  queue_seed: 2024
+  queue_randomize: true
+  volatility_lookback: 30
+  slippage:
+    type: "linear_sqrt"
+    k_lin: 45.0
+    eta: 110.0
+    default_adv: 2000000.0
+    default_spread_bps: 12.0
+
+strategy:
+  name: "FlagshipMomentumStrategy"
+  allocator: "budgeted_rp"
+  allocator_params:
+    risk_model: "lw_min_var"
+    ridge: 1e-6
+  params:
+    universe_path: "data/sample/universe_sample.csv"
+    lookback_months: 6
+    skip_months: 1
+    top_frac: 0.40
+    bottom_frac: 0.35
+    max_positions_per_sector: 2
+    turnover_target_pct_adv: 0.12
+    min_adv: 1500000.0
+    min_price: 10.0
+    total_risk_budget: 1.0
+
+capital_policy:
+  type: "volatility_scaled"
+  lookback: 21
+  target_dollar_vol: 15000.0
+  min_qty: 5

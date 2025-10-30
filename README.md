@@ -21,6 +21,9 @@
 
 _Source artifacts: `artifacts/sample_flagship/2025-10-30T18-39-31Z-a4ab8e7` and `artifacts/sample_wfv/2025-10-30T18-39-47Z-a4ab8e7`._
 
+![Sample Flagship Equity Curve](artifacts/sample_flagship/2025-10-30T18-39-31Z-a4ab8e7/equity_curve.png)
+![Sample Flagship Bootstrap Histogram](artifacts/sample_flagship/2025-10-30T18-39-31Z-a4ab8e7/bootstrap_hist.png)
+
 ### Reproduce in One Command
 
 ```bash
