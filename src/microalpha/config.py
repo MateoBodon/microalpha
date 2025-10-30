@@ -92,6 +92,8 @@ class BacktestCfg(BaseModel):
     max_positions_per_sector: int | None = None
     sectors: Dict[str, str] | None = None
     capital_policy: CapitalPolicyCfg | None = None
+    start_date: str | None = None
+    end_date: str | None = None
 
     @property
     def resolved_data_path(self) -> Path:

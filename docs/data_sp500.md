@@ -54,3 +54,24 @@ PY
 ```
 
 (Already executed and committed so you don’t have to rerun unless the panel changes.)
+
+## Enrichment & Metadata
+
+Before running flagship strategies, clean the raw panel and emit symbol-level metadata:
+
+```bash
+python scripts/augment_sp500.py \
+    --source data_sp500 \
+    --dest data_sp500_enriched \
+    --sector-map metadata/sp500_sector_overrides.csv \
+    --metadata-output metadata/sp500_enriched.csv \
+    --summary-output reports/data_sp500_cleaning.json
+```
+
+The script forward-fills missing volume, clips non-positive prints, and produces:
+
+- `data_sp500_enriched/` – cleaned per-symbol CSVs.
+- `metadata/sp500_enriched.csv` – ADV, market-cap proxy, sector labels, history summary.
+- `reports/data_sp500_cleaning.json` – overview of fixes and outstanding issues.
+
+Supply additional sector metadata by appending CSVs via repeated `--sector-map` arguments (the overrides in `metadata/sp500_sector_overrides.csv` cover the liquid names bundled with this repo).

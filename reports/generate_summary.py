@@ -124,7 +124,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "configs",
         nargs="*",
-        default=["configs/breakout.yaml", "configs/wfv_cs_mom_small.yaml"],
+        default=[
+            "configs/flagship_mom.yaml",
+            "configs/wfv_flagship_mom.yaml",
+            "configs/breakout.yaml",
+        ],
         help="Config files to run",
     )
     parser.add_argument(
