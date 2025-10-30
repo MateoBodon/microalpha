@@ -1,5 +1,9 @@
 .hypothesis/
 artifacts/
+!artifacts/sample_flagship/
+!artifacts/sample_flagship/**
+!artifacts/sample_wfv/
+!artifacts/sample_wfv/**
 __pycache__/
 .pytest_cache/
 *.pyc

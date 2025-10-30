@@ -14,10 +14,10 @@
 ## Bootstrap Reality Check
 
 - Samples: 1024
-- Mean Sharpe: -0.68
-- Std: 0.59
-- 95% CI: [-1.84, 0.46]
-- p-value: 0.871
+- Mean Sharpe: -0.65
+- Std: 0.58
+- 95% CI: [-1.73, 0.52]
+- p-value: 0.869
 
 ## Top Exposures
 

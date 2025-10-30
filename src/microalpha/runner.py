@@ -280,7 +280,7 @@ def run_from_config(
         hac_lags=cfg.metrics_hac_lags,
     )
     metrics_paths = _persist_metrics(metrics, artifacts_dir)
-    exposures_path = persist_exposures(portfolio, artifacts_dir)
+    exposures_path, factor_path = persist_exposures(portfolio, artifacts_dir)
     bootstrap_path = _persist_bootstrap(metrics, artifacts_dir)
     trades_path = _persist_trades(portfolio, artifacts_dir)
 
@@ -292,6 +292,7 @@ def run_from_config(
             "seed": cfg.seed,
             "metrics": metrics_paths,
             "exposures_path": exposures_path,
+            "factor_exposure_path": factor_path,
             "bootstrap_path": bootstrap_path,
             "trades_path": trades_path,
         }
@@ -343,8 +344,11 @@ def _persist_metrics(metrics: Dict[str, Any], artifacts_dir: Path) -> Dict[str, 
 
 
 def persist_exposures(
-    portfolio: Portfolio, artifacts_dir: Path, filename: str = "exposures.csv"
-) -> str | None:
+    portfolio: Portfolio,
+    artifacts_dir: Path,
+    filename: str = "exposures.csv",
+    factor_filename: str = "factor_exposure.csv",
+) -> tuple[str | None, str | None]:
     equity = portfolio.last_equity or portfolio.initial_cash
     current_ts = portfolio.current_time
     exposures: list[Dict[str, Any]] = []
@@ -374,13 +378,35 @@ def persist_exposures(
         )
 
     if not exposures:
-        return None
+        return None, None
 
     df = pd.DataFrame(exposures).sort_values("abs_weight", ascending=False)
     df = df.drop(columns=["abs_weight"])
     path = artifacts_dir / filename
     df.to_csv(path, index=False)
-    return str(path)
+
+    sectors = []
+    for row in exposures:
+        symbol = row["symbol"]
+        sectors.append(portfolio.sector_of.get(symbol, "UNKNOWN"))
+    factor_df = pd.DataFrame(
+        {
+            "sector": sectors,
+            "market_value": [row["market_value"] for row in exposures],
+            "weight": [row["weight"] for row in exposures],
+        }
+    )
+    factor_summary = (
+        factor_df.groupby("sector", as_index=True)
+        .sum(numeric_only=True)
+        .assign(abs_weight=lambda x: x["weight"].abs())
+        .sort_values("abs_weight", ascending=False)
+        .drop(columns=["abs_weight"])
+    )
+    factor_path = artifacts_dir / factor_filename
+    factor_summary.to_csv(factor_path)
+
+    return str(path), str(factor_path)
 
 
 def _persist_bootstrap(
