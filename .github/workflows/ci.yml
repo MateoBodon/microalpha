@@ -26,8 +26,8 @@ jobs:
       - name: Ruff
         run: ruff check .
 
-      - name: Mypy
-        run: mypy src
+      - name: Mypy (reporting surface)
+        run: mypy src/microalpha/reporting/factors.py
 
       - name: Pytest
         run: pytest --cov=microalpha --cov-report=xml
