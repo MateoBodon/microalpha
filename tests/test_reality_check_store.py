@@ -15,8 +15,12 @@ def test_bootstrap_distribution_persisted(tmp_path: Path) -> None:
 
     bootstrap_path = Path(manifest["bootstrap_path"])
     assert bootstrap_path.exists()
-    payload = json.loads(bootstrap_path.read_text())
-    distribution = payload.get("distribution", [])
-    assert len(distribution) >= 1024
-    p_value = float(payload.get("p_value", 0.5))
+    samples = json.loads(bootstrap_path.read_text())
+    assert isinstance(samples, list)
+    assert len(samples) >= 1024
+    assert all(isinstance(x, (int, float)) for x in samples)
+
+    metrics = manifest["metrics"]
+    assert metrics.get("bootstrap_samples", 0) >= 1024
+    p_value = float(metrics.get("bootstrap_p_value", 0.5))
     assert 0.0 <= p_value <= 1.0

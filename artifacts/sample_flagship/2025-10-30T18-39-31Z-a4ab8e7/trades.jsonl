@@ -1,0 +1,4 @@
+{"timestamp": 1596672000000000000, "order_id": null, "symbol": "ALFA", "side": "BUY", "qty": 5239.0, "price": 128.47118472532927, "commission": 2.6195000000000004, "slippage": 0.0, "inventory": 5239.0, "cash": 326936.843724}
+{"timestamp": 1609891200000000000, "order_id": null, "symbol": "ALFA", "side": "SELL", "qty": -4989.0, "price": 102.00931934616155, "commission": 2.4945000000000004, "slippage": 0.0, "inventory": 250.0, "cash": 835858.843442}
+{"timestamp": 1622764800000000000, "order_id": null, "symbol": "ALFA", "side": "SELL", "qty": -219.0, "price": 125.15736223287672, "commission": 0.10950000000000001, "slippage": 0.0, "inventory": 31.0, "cash": 863268.196271}
+{"timestamp": 1630886400000000000, "order_id": null, "symbol": "ALFA", "side": "SELL", "qty": -29.0, "price": 88.87418786206896, "commission": 0.014500000000000002, "slippage": 0.0, "inventory": 2.0, "cash": 865845.5332189999}
