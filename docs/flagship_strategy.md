@@ -5,6 +5,32 @@
 - Target annualised Sharpe > **1.2**, max drawdown < **10%**, turnover manageable (< 400% annual).
 - Showcase realistic execution (VWAP/TWAP with volume slippage) and portfolio risk controls (volatility scaling, sector neutrality, turnover heat).
 
+## Data Preparation (scripts)
+
+1. **Augment the raw panel** – fill volume gaps and extract liquidity stats:
+
+   ```bash
+   python scripts/augment_sp500.py --source data_sp500 --dest data_sp500_enriched \
+       --sector-map metadata/sp500_sector_overrides.csv \
+       --metadata-output metadata/sp500_enriched.csv \
+       --summary-output reports/data_sp500_cleaning.json
+   ```
+
+2. **Build the monthly universe** – apply price/liquidity/sector filters and cap exposures:
+
+   ```bash
+   python scripts/build_flagship_universe.py --data-dir data_sp500_enriched \
+       --metadata metadata/sp500_enriched.csv \
+       --out-dir data/flagship_universe \
+       --min-dollar-volume 15000000 --top-n 120 --start-date 2012-01-01
+   ```
+
+3. **Run configs** – use `configs/flagship_mom.yaml` for single runs and `configs/wfv_flagship_mom.yaml` for walk-forward analysis. The CLI run can take tens of minutes:
+
+   ```bash
+   python -m microalpha.cli run -c configs/flagship_mom.yaml --out artifacts/flagship_single
+   ```
+
 ## Universe & Data
 - Universe: top 450 US equities by 20-day average dollar volume, rebalanced monthly, drawn from `data_sp500/` (post-processed for liquidity, sector metadata).
 - Exclusions: remove tickers with missing/zero volume, corporate actions unresolved, or price below $5.
@@ -68,4 +94,3 @@
 - Source for up-to-date sector & shares-outstanding metadata.
 - Handling of corporate events (splits, mergers) in `data_sp500/` pipeline.
 - Whether to include transaction cost model beyond linear + volume slippage (e.g., borrow costs).
-

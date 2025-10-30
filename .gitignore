@@ -14,3 +14,10 @@ venv/
 src/**/__pycache__/
 tests/**/__pycache__/
 reports/summaries/_artifacts/
+
+# Flagship generated data
+/data_sp500_enriched/
+/data/flagship_universe/
+metadata/sp500_enriched.csv
+reports/data_sp500_cleaning.json
+reports/flagship_universe_summary.json
