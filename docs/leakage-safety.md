@@ -31,4 +31,9 @@ exec:
 
 During walk-forward validation, the optimizer only uses in-sample data to select parameters. Each fold records train/test windows in the JSON fold summary, providing an audit trail that the optimizer never touches out-of-sample data ([`tests/test_walkforward.py`](https://github.com/MateoBodon/microalpha/blob/main/tests/test_walkforward.py)).
 
+## Statistical inference invariants
+
+- **Sharpe statistics** use the same deterministic return stream as performance metrics, with optional HAC adjustments (`METRICS_HAC_LAGS`) that never peek beyond the evaluated window. [`tests/test_risk_stats.py`](https://github.com/MateoBodon/microalpha/blob/main/tests/test_risk_stats.py) asserts IID vs HAC behaviour on synthetic AR(1) data and validates block bootstrap coverage.
+- **Reality check bootstraps** in walk-forward mode rely on stationary/circular block resampling, seeded from the configuration manifest so repeated runs reproduce identical `reality_check_pvalue` results.
+
 Together, these invariants provide strong protection against accidentally leaking future information into historical tests.
