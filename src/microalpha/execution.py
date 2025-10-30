@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 import math
-from typing import Any, Dict, Mapping, Optional, Protocol, Sequence, Literal
+from dataclasses import dataclass
+from typing import Any, Dict, Literal, Mapping, Optional, Protocol, Sequence
+
 import numpy as np
 
 from .events import FillEvent, OrderEvent

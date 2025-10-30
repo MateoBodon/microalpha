@@ -1,8 +1,8 @@
 # microalpha/data.py
 from __future__ import annotations
 
-import numbers
 import heapq
+import numbers
 from pathlib import Path
 from typing import Dict, Iterator, List, Optional, Sequence, cast
 
