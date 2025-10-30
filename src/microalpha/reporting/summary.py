@@ -74,6 +74,7 @@ def generate_summary(
     top_exposures: int = 8,
     equity_image: str | Path | None = None,
     bootstrap_image: str | Path | None = None,
+    factor_csv: str | Path | None = Path("data/factors/ff3_sample.csv"),
 ) -> Path:
     artifact_dir = Path(artifact_dir).resolve()
     if not artifact_dir.exists():
@@ -156,6 +157,14 @@ def generate_summary(
     )
     lines.append("")
 
+    factor_section = _render_factor_section(
+        artifact_dir=artifact_dir,
+        factor_csv=Path(factor_csv) if factor_csv else None,
+    )
+    if factor_section:
+        lines.append(factor_section)
+        lines.append("")
+
     output_path = Path(output_path).resolve()
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text("\n".join(lines).strip() + "\n", encoding="utf-8")
@@ -187,6 +196,7 @@ def main(argv: Sequence[str] | None = None) -> None:
         output_path=args.output,
         title=args.title,
         top_exposures=args.top,
+        factor_csv=None,
     )
     print(f"Summary written to {output_path}")
 
@@ -231,3 +241,37 @@ def _relpath(path: Path, output_path: Path) -> str:
         return os.path.relpath(path.resolve(), start)
     except ValueError:
         return str(path.resolve())
+
+
+def _render_factor_section(
+    *,
+    artifact_dir: Path | str,
+    factor_csv: Path | None,
+    hac_lags: int = 5,
+) -> str | None:
+    if factor_csv is None or not factor_csv.exists():
+        return None
+    artifact_dir = Path(artifact_dir)
+    equity_csv = artifact_dir / "equity_curve.csv"
+    if not equity_csv.exists():
+        return None
+
+    from .factors import compute_factor_regression, FactorResult
+
+    try:
+        results = compute_factor_regression(equity_csv, factor_csv, hac_lags=hac_lags)
+    except Exception:  # pragma: no cover - fallback when regression fails
+        return None
+    if not results:
+        return None
+
+    lines = ["## Factor Regression (FF3 sample)", ""]
+    lines.append("| Factor | Beta | t-stat |")
+    lines.append("| --- | ---:| ---:|")
+    for row in results:
+        lines.append(f"| {row.name} | {row.beta:.4f} | {row.t_stat:.2f} |")
+    lines.append("")
+    lines.append(
+        "_Computed against `data/factors/ff3_sample.csv` using Newey-West standard errors._"
+    )
+    return "\n".join(lines)

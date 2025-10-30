@@ -32,3 +32,14 @@
 | BETA | 31525 | $754,333 | 74.30% |
 | GAMM | -18684 | $-590,860 | -58.20% |
 | ALFA | -6175 | $-528,997 | -52.10% |
+
+## Factor Regression (FF3 sample)
+
+| Factor | Beta | t-stat |
+| --- | ---:| ---:|
+| Alpha | -0.0055 | -1.42 |
+| Mkt_RF | 10.7236 | 1.74 |
+| SMB | 1.4014 | 0.12 |
+| HML | -13.1416 | -0.77 |
+
+_Computed against `data/factors/ff3_sample.csv` using Newey-West standard errors._
