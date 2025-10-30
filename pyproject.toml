@@ -11,6 +11,7 @@ dependencies = [
     "pandas",
     "pyyaml",
     "pydantic>=2",
+    "matplotlib>=3.7",
 ]
 
 [project.optional-dependencies]
@@ -45,6 +46,12 @@ ignore = [
     # Temporarily ignore long lines in CI to unblock; keep Black for wrapping
     "E501",
 ]
+
+[tool.mypy]
+python_version = "3.12"
+packages = ["microalpha"]
+ignore_missing_imports = true
+warn_unused_ignores = true
 
 [tool.setuptools.packages.find]
 where = ["src"]

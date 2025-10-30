@@ -14,8 +14,8 @@ def test_sqrt_impact_slippage_increases_sublinearly():
     small_qty = 100
     big_qty = 10_000
 
-    small_slip = model._slippage(small_qty, 100.0)
-    big_slip = model._slippage(big_qty, 100.0)
+    small_slip = model._slippage("TEST", small_qty, 100.0)
+    big_slip = model._slippage("TEST", big_qty, 100.0)
 
     assert big_slip > small_slip
     assert math.isclose(small_slip, 0.02 * math.sqrt(small_qty))
@@ -26,5 +26,5 @@ def test_kyle_lambda_linear_slippage():
     handler = _DummyDataHandler()
     model = KyleLambda(handler, lam=1e-5)
 
-    assert model._slippage(2_000, 100.0) == 0.02
-    assert model._slippage(0, 100.0) == 0.0
+    assert model._slippage("TEST", 2_000, 100.0) == 0.02
+    assert model._slippage("TEST", 0, 100.0) == 0.0

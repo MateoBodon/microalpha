@@ -3,10 +3,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, Iterable, List, Literal, cast
+from typing import Dict, Iterable, List, Literal, Mapping, cast
 
 from .events import FillEvent, LookaheadError, MarketEvent, OrderEvent, SignalEvent
 from .logging import JsonlWriter
+from .market_metadata import SymbolMeta
+
+NS_PER_DAY = 86_400_000_000_000
+TRADING_DAYS_PER_YEAR = 252
 
 
 @dataclass
@@ -31,6 +35,7 @@ class Portfolio:
         sectors: Dict[str, str] | None = None,
         max_positions_per_sector: int | None = None,
         capital_policy=None,
+        symbol_meta: Mapping[str, SymbolMeta] | None = None,
     ):
         self.data_handler = data_handler
         self.initial_cash = initial_cash
@@ -59,15 +64,29 @@ class Portfolio:
         self.capital_policy = capital_policy
         self.avg_cost: Dict[str, float] = {}
         self.cum_realized_pnl: float = 0.0
+        self._symbol_meta: Dict[str, SymbolMeta] = {}
+        if symbol_meta:
+            self._symbol_meta = {sym.upper(): meta for sym, meta in symbol_meta.items()}
+        self.borrow_cost_total: float = 0.0
+        self._last_borrow_day: Dict[str, int] = {}
 
     def on_market(self, event: MarketEvent) -> None:
         self.current_time = event.timestamp
         market_value = 0.0
+        borrow_cost = 0.0
         for symbol, position in self.positions.items():
             price = self.data_handler.get_latest_price(symbol, event.timestamp)
             if price is None:
                 continue
             market_value += position.qty * price
+            borrow_cost += self._borrow_cost_for(
+                symbol, position.qty, price, event.timestamp
+            )
+
+        if borrow_cost > 0.0:
+            self.cash -= borrow_cost
+            self.cum_realized_pnl -= borrow_cost
+            self.borrow_cost_total += borrow_cost
 
         total_equity = self.cash + market_value
         exposure = market_value / total_equity if total_equity else 0.0
@@ -217,9 +236,55 @@ class Portfolio:
             )
             self.trade_log_path = self.trade_logger.path
 
+    def _borrow_cost_for(
+        self, symbol: str, qty: int, price: float, timestamp: int
+    ) -> float:
+        key = symbol.upper()
+        if qty >= 0:
+            self._last_borrow_day.pop(key, None)
+            return 0.0
+
+        meta = self._symbol_meta.get(key)
+        if meta is None or not meta.borrow_fee_annual_bps:
+            self._last_borrow_day.pop(key, None)
+            return 0.0
+
+        current_day = int(timestamp // NS_PER_DAY)
+        prev_day = self._last_borrow_day.get(key)
+
+        if prev_day == current_day:
+            return 0.0
+
+        if prev_day is None:
+            days = 1
+        else:
+            days = max(current_day - prev_day, 1)
+
+        self._last_borrow_day[key] = current_day
+
+        annual_rate = meta.borrow_fee_annual_bps / 10_000.0
+        daily_rate = annual_rate / TRADING_DAYS_PER_YEAR
+        notional = abs(qty) * price
+        return notional * daily_rate * days
+
     def _signal_quantity(self, signal: SignalEvent) -> int:
-        if signal.meta and "qty" in signal.meta:
-            return int(signal.meta["qty"])
+        if signal.meta:
+            if "qty" in signal.meta:
+                return int(signal.meta["qty"])
+            if "weight" in signal.meta:
+                target_weight = float(signal.meta["weight"])
+                equity = self.last_equity if self.last_equity is not None else self.initial_cash
+                if equity and equity > 0:
+                    price = self.data_handler.get_latest_price(signal.symbol, signal.timestamp)
+                    if price is None and self.current_time is not None:
+                        price = self.data_handler.get_latest_price(
+                            signal.symbol, self.current_time
+                        )
+                    if price and price > 0:
+                        target_dollar = target_weight * equity
+                        qty = int(abs(target_dollar / price))
+                        if qty > 0:
+                            return qty
         if self.kelly_fraction and self.last_equity and self.current_time is not None:
             price = self.data_handler.get_latest_price(signal.symbol, self.current_time)
             if price:

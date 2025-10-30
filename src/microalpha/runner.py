@@ -7,7 +7,7 @@ import json
 import shutil
 from dataclasses import asdict
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Mapping
 
 import numpy as np
 import pandas as pd
@@ -25,9 +25,10 @@ from .execution import (
     ImplementationShortfall,
     KyleLambda,
     LOBExecution,
-    SquareRootImpact,
+    SquareRootImpact as SquareRootImpactExecutor,
 )
 from .logging import JsonlWriter
+from .market_metadata import load_symbol_meta
 from .manifest import (
     build as build_manifest,
 )
@@ -40,7 +41,13 @@ from .manifest import (
 )
 from .metrics import compute_metrics
 from .portfolio import Portfolio
-from .slippage import VolumeSlippageModel
+from .risk import bootstrap_sharpe_ratio
+from .slippage import (
+    LinearImpact,
+    LinearPlusSqrtImpact,
+    SquareRootImpact as SquareRootImpactSlippage,
+    VolumeSlippageModel,
+)
 from .strategies.breakout import BreakoutStrategy
 from .strategies.cs_momentum import CrossSectionalMomentum
 from .strategies.flagship_momentum import FlagshipMomentumStrategy
@@ -61,8 +68,8 @@ EXECUTION_MAPPING = {
     "twap": TWAP,
     "vwap": VWAP,
     "is": ImplementationShortfall,
-    "sqrt": SquareRootImpact,
-    "squareroot": SquareRootImpact,
+    "sqrt": SquareRootImpactExecutor,
+    "squareroot": SquareRootImpactExecutor,
     "kyle": KyleLambda,
     "lob": LOBExecution,
 }
@@ -105,6 +112,11 @@ def run_from_config(
     symbol = cfg.symbol
     initial_cash = cfg.cash
 
+    symbol_meta: Dict[str, Any] = {}
+    if getattr(cfg, "meta_path", None):
+        meta_resolved = resolve_path(cfg.meta_path, cfg_path)
+        symbol_meta = load_symbol_meta(meta_resolved)
+
     strategy_name = cfg.strategy.name
     strategy_class = STRATEGY_MAPPING.get(strategy_name)
     if strategy_class is None:
@@ -115,6 +127,12 @@ def run_from_config(
         strategy_params.setdefault("lookback", cfg.strategy.lookback)
     if cfg.strategy.z is not None:
         strategy_params.setdefault("z_threshold", cfg.strategy.z)
+    if cfg.strategy.allocator:
+        strategy_params.setdefault("allocator", cfg.strategy.allocator)
+    if cfg.strategy.allocator_params:
+        strategy_params.setdefault(
+            "allocator_kwargs", dict(cfg.strategy.allocator_params)
+        )
 
     # Multi-asset support (if config strategy expects symbols list)
     data_handler: CsvDataHandler | MultiCsvDataHandler
@@ -170,6 +188,7 @@ def run_from_config(
         sectors=getattr(cfg, "sectors", None),
         max_positions_per_sector=cfg.max_positions_per_sector,
         capital_policy=capital_policy,
+        symbol_meta=symbol_meta,
     )
     exec_type = cfg.exec.type.lower() if cfg.exec.type else "instant"
     executor_cls = EXECUTION_MAPPING.get(exec_type, Executor)
@@ -212,9 +231,27 @@ def run_from_config(
         if cfg.exec.lob_tplus1 is not None:
             exec_kwargs["lob_tplus1"] = bool(cfg.exec.lob_tplus1)
 
-    slippage_model = resolve_slippage_model(cfg.exec.slippage)
+    slippage_model = resolve_slippage_model(cfg.exec.slippage, symbol_meta)
     if slippage_model is not None:
         exec_kwargs["slippage_model"] = slippage_model
+    if symbol_meta:
+        exec_kwargs.setdefault("symbol_meta", symbol_meta)
+    if cfg.exec.limit_mode and cfg.exec.limit_mode.lower() != "market":
+        exec_kwargs["limit_mode"] = cfg.exec.limit_mode.upper()
+    if cfg.exec.queue_coefficient is not None:
+        exec_kwargs["queue_coefficient"] = float(cfg.exec.queue_coefficient)
+    if cfg.exec.queue_passive_multiplier is not None:
+        exec_kwargs["queue_passive_multiplier"] = float(
+            cfg.exec.queue_passive_multiplier
+        )
+    if cfg.exec.queue_seed is not None:
+        exec_kwargs["queue_seed"] = int(cfg.exec.queue_seed)
+    if cfg.exec.queue_randomize is not None:
+        exec_kwargs["queue_randomize"] = bool(cfg.exec.queue_randomize)
+    if cfg.exec.volatility_lookback is not None:
+        exec_kwargs["volatility_lookback"] = int(cfg.exec.volatility_lookback)
+    if cfg.exec.min_fill_qty is not None:
+        exec_kwargs["min_fill_qty"] = int(cfg.exec.min_fill_qty)
 
     executor = executor_cls(data_handler=data_handler, **exec_kwargs)
     broker = SimulatedBroker(executor)
@@ -240,8 +277,11 @@ def run_from_config(
         portfolio.equity_curve,
         portfolio.total_turnover,
         trades=getattr(portfolio, "trades", None),
+        hac_lags=cfg.metrics_hac_lags,
     )
     metrics_paths = _persist_metrics(metrics, artifacts_dir)
+    exposures_path = persist_exposures(portfolio, artifacts_dir)
+    bootstrap_path = _persist_bootstrap(metrics, artifacts_dir)
     trades_path = _persist_trades(portfolio, artifacts_dir)
 
     result: Dict[str, Any] = asdict(manifest)
@@ -251,6 +291,8 @@ def run_from_config(
             "strategy": strategy_name,
             "seed": cfg.seed,
             "metrics": metrics_paths,
+            "exposures_path": exposures_path,
+            "bootstrap_path": bootstrap_path,
             "trades_path": trades_path,
         }
     )
@@ -300,6 +342,82 @@ def _persist_metrics(metrics: Dict[str, Any], artifacts_dir: Path) -> Dict[str, 
     return manifest_metrics
 
 
+def persist_exposures(
+    portfolio: Portfolio, artifacts_dir: Path, filename: str = "exposures.csv"
+) -> str | None:
+    equity = portfolio.last_equity or portfolio.initial_cash
+    current_ts = portfolio.current_time
+    exposures: list[Dict[str, Any]] = []
+
+    for symbol, position in portfolio.positions.items():
+        qty = getattr(position, "qty", 0)
+        if qty == 0:
+            continue
+        price = None
+        if current_ts is not None:
+            price = portfolio.data_handler.get_latest_price(symbol, current_ts)
+        if price is None:
+            price = portfolio.avg_cost.get(symbol)
+        if price is None:
+            continue
+        market_value = float(qty * price)
+        weight = float(market_value / equity) if equity else 0.0
+        exposures.append(
+            {
+                "symbol": symbol,
+                "qty": float(qty),
+                "price": float(price),
+                "market_value": market_value,
+                "weight": weight,
+                "abs_weight": abs(weight),
+            }
+        )
+
+    if not exposures:
+        return None
+
+    df = pd.DataFrame(exposures).sort_values("abs_weight", ascending=False)
+    df = df.drop(columns=["abs_weight"])
+    path = artifacts_dir / filename
+    df.to_csv(path, index=False)
+    return str(path)
+
+
+def _persist_bootstrap(
+    metrics: Dict[str, Any],
+    artifacts_dir: Path,
+    *,
+    periods: int = 252,
+    simulations: int = 1024,
+) -> str:
+    bootstrap_path = artifacts_dir / "bootstrap.json"
+    payload: Dict[str, Any] = {
+        "distribution": [],
+        "p_value": None,
+        "confidence_interval": None,
+        "num_simulations": simulations,
+        "periods": periods,
+    }
+
+    df = metrics.get("equity_df")
+    if isinstance(df, pd.DataFrame) and not df.empty:
+        returns = df["returns"].to_numpy()
+        bootstrap = bootstrap_sharpe_ratio(
+            returns,
+            num_simulations=simulations,
+            periods=periods,
+        )
+        payload["distribution"] = [float(x) for x in bootstrap["sharpe_dist"]]
+        payload["p_value"] = float(bootstrap["p_value"])
+        ci = bootstrap.get("confidence_interval")
+        if ci is not None:
+            payload["confidence_interval"] = [float(ci[0]), float(ci[1])]
+
+    with bootstrap_path.open("w", encoding="utf-8") as handle:
+        json.dump(payload, handle, indent=2)
+    return str(bootstrap_path)
+
+
 def _stable_metrics(metrics: Dict[str, Any]) -> Dict[str, Any]:
     disallowed = {"run_id", "timestamp", "artifacts_dir", "config_path"}
     return {key: value for key, value in metrics.items() if key not in disallowed}
@@ -344,9 +462,39 @@ def resolve_capital_policy(
     raise ValueError(f"Unknown capital policy type '{cfg.type}'")
 
 
-def resolve_slippage_model(cfg: SlippageCfg | None):
+def resolve_slippage_model(
+    cfg: SlippageCfg | None,
+    symbol_meta: Mapping[str, Any] | None = None,
+):
     if cfg is None:
         return None
-    if cfg.type == "volume":
-        return VolumeSlippageModel(price_impact=cfg.impact)
+    stype = cfg.type.lower()
+    meta = symbol_meta or {}
+    if stype == "volume":
+        return VolumeSlippageModel(price_impact=cfg.impact, metadata=meta)
+    if stype == "linear":
+        return LinearImpact(
+            k_lin=cfg.k_lin if cfg.k_lin is not None else cfg.impact,
+            metadata=meta,
+            default_adv=cfg.default_adv,
+            default_spread_bps=cfg.default_spread_bps,
+            spread_floor_multiplier=cfg.spread_floor_multiplier,
+        )
+    if stype in {"sqrt", "squareroot"}:
+        return SquareRootImpactSlippage(
+            eta=cfg.eta if cfg.eta is not None else cfg.impact,
+            metadata=meta,
+            default_adv=cfg.default_adv,
+            default_spread_bps=cfg.default_spread_bps,
+            spread_floor_multiplier=cfg.spread_floor_multiplier,
+        )
+    if stype in {"linear_sqrt", "linear+sqrt"}:
+        return LinearPlusSqrtImpact(
+            k_lin=cfg.k_lin if cfg.k_lin is not None else cfg.impact,
+            eta=cfg.eta if cfg.eta is not None else cfg.impact,
+            metadata=meta,
+            default_adv=cfg.default_adv,
+            default_spread_bps=cfg.default_spread_bps,
+            spread_floor_multiplier=cfg.spread_floor_multiplier,
+        )
     raise ValueError(f"Unknown slippage model '{cfg.type}'")

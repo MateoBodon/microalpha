@@ -11,6 +11,29 @@
 
 ---
 
+## Flagship Sample Pipeline (New)
+
+| Run | Sharpe | CAGR | Max DD | Bootstrap p-value |
+| --- | ---:| ---:| ---:| ---:|
+| Single backtest (`configs/flagship_sample.yaml`) | -0.66 | -7.06% | 17.26% | 0.871 |
+| Walk-forward (`configs/wfv_flagship_sample.yaml`) | 0.22 | 1.07% | 34.79% | 1.000 |
+
+Recreate the full artefact bundle with one command each:
+
+```bash
+microalpha run --config configs/flagship_sample.yaml --out artifacts/sample_flagship
+microalpha report --artifact-dir artifacts/sample_flagship
+
+microalpha wfv --config configs/wfv_flagship_sample.yaml --out artifacts/sample_wfv
+microalpha report --artifact-dir artifacts/sample_wfv --summary-out reports/summaries/flagship_mom_wfv.md --title "Flagship Walk-Forward"
+```
+
+- The `artifacts/` directories now include `metrics.json`, `bootstrap.json`, `exposures.csv`, `trades.jsonl`, and `tearsheet.png`.
+- `reports/summaries/flagship_mom.md` is auto-generated from `metrics + bootstrap + exposures`.
+- Sample data (prices, metadata, risk-free series, universe) ships under `data/sample/`—no external vendors required.
+
+---
+
 ## Table of Contents
 
 - [Features](#features)

@@ -16,6 +16,11 @@ def test_compute_metrics_includes_hac_fields(monkeypatch) -> None:
     assert metrics["sharpe_hac_lags"] == 5.0
     monkeypatch.delenv("METRICS_HAC_LAGS")
 
+    metrics_override = compute_metrics(
+        equity_records, turnover=123.0, hac_lags=7
+    )
+    assert metrics_override["sharpe_hac_lags"] == 7.0
+
     crash_records = [
         {"timestamp": 0, "equity": 100.0, "exposure": 0.5},
         {"timestamp": 1, "equity": 0.0, "exposure": 0.5},

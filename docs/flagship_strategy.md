@@ -1,96 +1,66 @@
-# Flagship Strategy Blueprint
+# Flagship Strategy Blueprint (Sample Edition)
 
-## Objectives
-- Deliver a **cross-sectional momentum** product that survives institutional scrutiny.
-- Target annualised Sharpe > **1.2**, max drawdown < **10%**, turnover manageable (< 400% annual).
-- Showcase realistic execution (VWAP/TWAP with volume slippage) and portfolio risk controls (volatility scaling, sector neutrality, turnover heat).
+The flagship package now ships with a reproducible cross-sectional momentum pipeline that demonstrates the full microstructure stack—configurable slippage, borrow accrual, limit-order queueing, covariance allocators, and bootstrap reporting.
 
-## Data Preparation (scripts)
+## Dataset
 
-1. **Augment the raw panel** – fill volume gaps and extract liquidity stats:
+- Location: `data/sample/`
+- Files:
+  - `prices_sample.csv`: panel of six synthetic equities (~3y of business days).
+  - `prices/`: per-symbol CSVs consumed by `MultiCsvDataHandler`.
+  - `meta_sample.csv`: ADV, borrow cost, and spread inputs for slippage/queue modelling.
+  - `rf_sample.csv`: daily risk-free rate in basis points.
+  - `universe_sample.csv`: monthly eligibility snapshot with sector and liquidity stats.
 
-   ```bash
-   python scripts/augment_sp500.py --source data_sp500 --dest data_sp500_enriched \
-       --sector-map metadata/sp500_sector_overrides.csv \
-       --metadata-output metadata/sp500_enriched.csv \
-       --summary-output reports/data_sp500_cleaning.json
-   ```
+No external data vendors are required; runs are deterministic.
 
-2. **Build the monthly universe** – apply price/liquidity/sector filters and cap exposures:
+## Pipeline Overview
 
-   ```bash
-   python scripts/build_flagship_universe.py --data-dir data_sp500_enriched \
-       --metadata metadata/sp500_enriched.csv \
-       --out-dir data/flagship_universe \
-       --min-dollar-volume 15000000 --top-n 120 --start-date 2012-01-01
-   ```
+| Component | Implementation |
+| --- | --- |
+| Signals | 12-1 sector-neutral momentum (`FlagshipMomentumStrategy`) |
+| Allocation | Budgeted risk parity with Ledoit–Wolf fallback (`microalpha.allocators`) |
+| Execution | TWAP with IOC queue model, linear+sqrt impact with spread floor |
+| Financing | Daily borrow accrual from `meta_sample.csv` |
+| Risk Controls | Sector caps, exposure heat, ADV turnover clamp |
+| Evaluation | HAC-adjusted Sharpe, Politis–White bootstrap (stationary blocks) |
 
-3. **Run configs** – use `configs/flagship_mom.yaml` for single runs and `configs/wfv_flagship_mom.yaml` for walk-forward analysis. The CLI run can take tens of minutes:
+## Reproduce the Single-Run Case Study
 
-   ```bash
-   python -m microalpha.cli run -c configs/flagship_mom.yaml --out artifacts/flagship_single
-   ```
+```bash
+make dev          # optional helper -> pip install -e '.[dev]'
+microalpha run --config configs/flagship_sample.yaml --out artifacts/sample_flagship
+microalpha report --artifact-dir artifacts/sample_flagship
+```
 
-## Universe & Data
-- Universe: top 450 US equities by 20-day average dollar volume, rebalanced monthly, drawn from `data_sp500/` (post-processed for liquidity, sector metadata).
-- Exclusions: remove tickers with missing/zero volume, corporate actions unresolved, or price below $5.
-- Metadata augmentations:
-  - Sector classification (GICS / NAICS) for neutralisation and concentration checks.
-  - Market capitalisation or shares outstanding to enable size filters.
+- Outputs `metrics.json`, `bootstrap.json`, `exposures.csv`, `trades.jsonl`, and `tearsheet.png`.
+- `reports/summaries/flagship_mom.md` is refreshed automatically by the `report` step.
 
-## Signals
-1. **Momentum Leg**
-   - 12-1 total return (skip most recent 21 trading days) measured over trailing 252 days.
-   - Normalize within sector; rank to pick top `q_long` and bottom `q_short` per month.
-2. **Quality Filter (optional)**
-   - Optional overlay: trailing realised volatility or idiosyncratic residual to avoid recent blowups.
-3. **Liquidity Filter**
-   - Enforce minimum 20-day ADV threshold.
+## Walk-Forward Reality Check
 
-## Portfolio Construction
-- Long-short with net exposure ~0 (target equal-weighted, risk scaled by volatility).
-- Risk sizing: `VolatilityScaledPolicy` to target $20k daily dollar vol per position.
-- Sector caps: max 3 names per sector in each sleeve.
-- Turnover limit: < 10% of ADV per rebalance; soft cap via `turnover_cap` and portfolio heat.
+```bash
+microalpha wfv --config configs/wfv_flagship_sample.yaml --out artifacts/sample_wfv
+microalpha report --artifact-dir artifacts/sample_wfv --summary-out reports/summaries/flagship_mom_wfv.md --title \"Flagship Walk-Forward\"
+```
 
-## Execution
-- VWAP executor with 4 slices, pulling volume via `DataHandler.get_volume_at`.
-- Volume-based slippage: `impact = 5e-4` to mimic 50 bps impact on 10% ADV trade.
-- Commission assumption: $0.0005/share.
+- Sliding window: 252-day train / 63-day test.
+- Grid: `{top_frac ∈ {0.3, 0.4}, skip_months ∈ {1, 2}}`.
+- Stores per-fold metrics, queue-aware execution logs, and bootstrap Sharpe distributions.
 
-## Walk-Forward Design
-- Period: 2010-01-01 to 2024-12-31.
-- Training window: 504 trading days (~2 years).
-- Testing window: 126 trading days (~6 months).
-- Grid search over:
-  - Momentum lookback: {6, 9, 12} months.
-  - Skip window: {1, 2} months.
-  - Percentile for longs/shorts: {0.2, 0.25, 0.3} of universe.
-  - Volatility target: {10k, 20k, 30k} dollar vol.
-- Metrics captured per fold: Sharpe, Sortino, max drawdown, turnover, win rate, SPA p-value.
+## Key Metrics (generated)
 
-## Success Metrics
-- Out-of-sample (WFV average) Sharpe ≥ 0.8.
-- Worst fold Sharpe > 0.
-- Max drawdown ≤ 12% across folds.
-- Annualised turnover < 4x.
-- Hit rate > 50% on trades with positive expectancy.
+Results will vary slightly with config tweaks; the shipped summary documents the canonical run and includes:
 
-## Deliverables
-1. **Code**
-   - `src/microalpha/strategies/flagship_mom.py`
-   - Configs: `configs/flagship_mom.yaml`, `configs/wfv_flagship_mom.yaml`
-   - Data prep script: `scripts/build_flagship_universe.py`
-2. **Tests**
-   - Strategy smoke test, ranking logic, risk sizing invariants, data prep validation.
-3. **Artifacts**
-   - Updated `reports/generate_summary.py` to include flagship runs.
-   - Plots (PNG/HTML) for equity, drawdown, per-fold Sharpe, turnover vs. PnL.
-4. **Docs**
-   - README additions summarising methodology and reproducibility command.
-   - `docs/flagship_strategy.md` (this file) kept in sync with implementation.
+- Sharpe ratio with HAC standard errors.
+- Calmar / Sortino / turnover.
+- Bootstrap Sharpe histogram + p-value.
+- Top absolute exposure table driven by final holdings.
 
-## Open Questions
-- Source for up-to-date sector & shares-outstanding metadata.
-- Handling of corporate events (splits, mergers) in `data_sp500/` pipeline.
-- Whether to include transaction cost model beyond linear + volume slippage (e.g., borrow costs).
+## Extending Beyond the Sample
+
+1. Swap `data_path` to a directory of per-symbol CSVs (format identical to `data/sample/prices/*.csv`).
+2. Update `meta_path` with symbol-specific ADV/borrow/spread estimates.
+3. Adjust allocator settings via `strategy.allocator` / `allocator_kwargs` in the config.
+4. Tune queue parameters under `exec.queue_*` for different liquidity regimes.
+
+The accompanying tests (`tests/test_flagship_momentum.py`, `tests/test_allocators.py`, `tests/test_reality_check_store.py`) codify invariants for momentum selection, covariance allocation, and bootstrap artefact persistence.

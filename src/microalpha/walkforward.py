@@ -41,10 +41,12 @@ from .manifest import (
 )
 from .metrics import compute_metrics
 from .portfolio import Portfolio
+from .market_metadata import load_symbol_meta
 from .runner import (
     persist_config,
     prepare_artifacts_dir,
     resolve_capital_policy,
+    persist_exposures,
     resolve_path,
     resolve_slippage_model,
 )
@@ -239,8 +241,15 @@ def run_walk_forward(
             f"Unable to load data for symbol '{symbol}' from {data_dir}"
         )
 
+    symbol_meta: Dict[str, Any] = {}
+    if getattr(cfg.template, "meta_path", None):
+        meta_resolved = resolve_path(cfg.template.meta_path, cfg_path)
+        symbol_meta = load_symbol_meta(meta_resolved)
+
     equity_records: List[Dict[str, Any]] = []
     folds: List[Dict[str, Any]] = []
+    bootstrap_records: List[Dict[str, Any]] = []
+    fold_exposure_paths: List[str] = []
     total_turnover = 0.0
 
     current_date = start_date
@@ -261,7 +270,7 @@ def run_walk_forward(
             fold_rng = _spawn_rng(master_rng)
             train_rng = _spawn_rng(fold_rng)
 
-            best_params, train_metrics, rc_pvalue = _optimise_parameters(
+            best_params, train_metrics, rc_result = _optimise_parameters(
                 data_handler,
                 train_start,
                 train_end,
@@ -271,6 +280,7 @@ def run_walk_forward(
                 cfg.template,
                 train_rng,
                 cfg.reality_check,
+                symbol_meta=symbol_meta,
             )
 
             if not best_params or not train_metrics:
@@ -284,6 +294,7 @@ def run_walk_forward(
                         "train_metrics": None,
                         "test_metrics": None,
                         "reality_check_pvalue": None,
+                        "reality_check": None,
                         "spa_pvalue": None,
                     }
                 )
@@ -319,13 +330,21 @@ def run_walk_forward(
                     symbol=symbol, **_strategy_kwargs(best_params, warmup_prices)
                 )
             portfolio = _build_portfolio(
-                data_handler, cfg.template, trade_logger=trade_logger
+                data_handler,
+                cfg.template,
+                trade_logger=trade_logger,
+                symbol_meta=symbol_meta,
             )
             if hasattr(strategy, "sector_map") and strategy.sector_map:
                 portfolio.sector_of.update(strategy.sector_map)
             test_rng = _spawn_rng(fold_rng)
             exec_rng = _spawn_rng(test_rng)
-            executor = _build_executor(data_handler, cfg.template.exec, exec_rng)
+            executor = _build_executor(
+                data_handler,
+                cfg.template.exec,
+                exec_rng,
+                symbol_meta=symbol_meta,
+            )
             broker = SimulatedBroker(executor)
             # Hint engine where to place profiling outputs for this run
             import os as _os
@@ -345,9 +364,53 @@ def run_walk_forward(
                 equity_records.extend(portfolio.equity_curve)
             total_turnover += float(portfolio.total_turnover)
 
-            test_metrics = compute_metrics(
-                portfolio.equity_curve, portfolio.total_turnover
+            fold_index = len(folds)
+            exposure_path = persist_exposures(
+                portfolio,
+                artifacts_dir,
+                filename=f"exposures_fold_{fold_index}.csv",
             )
+            if exposure_path:
+                fold_exposure_paths.append(exposure_path)
+
+            test_metrics = compute_metrics(
+                portfolio.equity_curve,
+                portfolio.total_turnover,
+                hac_lags=cfg.template.metrics_hac_lags,
+            )
+
+            rc_summary: Dict[str, Any] | None = None
+            rc_pvalue = None
+            if rc_result:
+                rc_pvalue = rc_result.get("p_value")
+                best_sharpe_val = rc_result.get("best_sharpe")
+                if best_sharpe_val is not None and np.isfinite(best_sharpe_val):
+                    best_sharpe_val = float(best_sharpe_val)
+                else:
+                    best_sharpe_val = None
+                rc_summary = {
+                    "p_value": float(rc_pvalue) if rc_pvalue is not None else None,
+                    "best_sharpe": best_sharpe_val,
+                    "method": rc_result.get("method"),
+                    "block_length": rc_result.get("block_length"),
+                    "num_bootstrap": rc_result.get("num_bootstrap"),
+                }
+                distribution = rc_result.get("distribution", [])
+                bootstrap_records.append(
+                    {
+                        "fold": len(folds),
+                        "train_start": str(train_start.date()),
+                        "train_end": str(train_end.date()),
+                        "test_start": str(test_start.date()),
+                        "test_end": str(test_end.date()),
+                        "p_value": float(rc_pvalue) if rc_pvalue is not None else None,
+                        "best_sharpe": best_sharpe_val,
+                        "distribution": [float(x) for x in distribution],
+                        "method": rc_result.get("method"),
+                        "block_length": rc_result.get("block_length"),
+                        "num_bootstrap": rc_result.get("num_bootstrap"),
+                    }
+                )
 
             fold_entry = {
                 "train_start": str(train_start.date()),
@@ -360,6 +423,8 @@ def run_walk_forward(
                 "reality_check_pvalue": (
                     None if rc_pvalue is None else float(rc_pvalue)
                 ),
+                "reality_check": rc_summary,
+                "exposures_path": exposure_path,
                 "spa_pvalue": None,
             }
 
@@ -369,11 +434,27 @@ def run_walk_forward(
     finally:
         trade_logger.close()
 
+    exposures_path: str | None = None
+    if fold_exposure_paths:
+        final_path = artifacts_dir / "exposures.csv"
+        last_df = pd.read_csv(fold_exposure_paths[-1])
+        last_df.to_csv(final_path, index=False)
+        exposures_path = str(final_path)
+
     folds_path = artifacts_dir / "folds.json"
     with folds_path.open("w", encoding="utf-8") as handle:
         json.dump(folds, handle, indent=2)
 
-    metrics = _summarise_walkforward(equity_records, artifacts_dir, total_turnover)
+    bootstrap_path = artifacts_dir / "bootstrap.json"
+    with bootstrap_path.open("w", encoding="utf-8") as handle:
+        json.dump(bootstrap_records, handle, indent=2)
+
+    metrics = _summarise_walkforward(
+        equity_records,
+        artifacts_dir,
+        total_turnover,
+        hac_lags=cfg.template.metrics_hac_lags,
+    )
 
     result: Dict[str, Any] = asdict(manifest)
     result.update(
@@ -381,6 +462,8 @@ def run_walk_forward(
             "artifacts_dir": str(artifacts_dir),
             "strategy": strategy_name,
             "folds_path": str(folds_path),
+            "bootstrap_path": str(bootstrap_path),
+            "exposures_path": exposures_path,
             "metrics": metrics,
             "folds": folds,
             "trades_path": str(artifacts_dir / "trades.jsonl"),
@@ -399,7 +482,8 @@ def _optimise_parameters(
     cfg: BacktestCfg,
     rng: np.random.Generator,
     reality_cfg: RealityCheckCfg,
-) -> Tuple[Dict[str, Any], Dict[str, Any] | None, float | None]:
+    symbol_meta: Mapping[str, Any] | None = None,
+) -> Tuple[Dict[str, Any], Dict[str, Any] | None, Dict[str, Any] | None]:
     best_entry: Dict[str, Any] | None = None
     results: List[Dict[str, Any]] = []
 
@@ -417,11 +501,20 @@ def _optimise_parameters(
             strategy = strategy_class(**_strategy_kwargs(combined))
         else:
             strategy = strategy_class(symbol=cfg.symbol, **_strategy_kwargs(combined))
-        portfolio = _build_portfolio(data_handler, cfg)
+        portfolio = _build_portfolio(
+            data_handler,
+            cfg,
+            symbol_meta=symbol_meta,
+        )
         if hasattr(strategy, "sector_map") and strategy.sector_map:
             portfolio.sector_of.update(strategy.sector_map)
         exec_rng = _spawn_rng(sim_rng)
-        executor = _build_executor(data_handler, cfg.exec, exec_rng)
+        executor = _build_executor(
+            data_handler,
+            cfg.exec,
+            exec_rng,
+            symbol_meta=symbol_meta,
+        )
         broker = SimulatedBroker(executor)
 
         engine = Engine(
@@ -436,7 +529,11 @@ def _optimise_parameters(
         if not portfolio.equity_curve:
             continue
 
-        metrics = compute_metrics(portfolio.equity_curve, portfolio.total_turnover)
+        metrics = compute_metrics(
+            portfolio.equity_curve,
+            portfolio.total_turnover,
+            hac_lags=cfg.metrics_hac_lags,
+        )
         results.append(
             {
                 "params": dict(params),
@@ -456,7 +553,7 @@ def _optimise_parameters(
     rc_method = reality_cfg.method.lower()
     rc_block_len = reality_cfg.block_length
     rc_samples = int(reality_cfg.samples)
-    reality_pvalue = bootstrap_reality_check(
+    reality_result = bootstrap_reality_check(
         results,
         seed=cfg.seed,
         n_bootstrap=rc_samples,
@@ -466,11 +563,14 @@ def _optimise_parameters(
 
     params = dict(base_params)
     params.update(best_entry["params"])
-    return params, best_entry["metrics"], reality_pvalue
+    return params, best_entry["metrics"], reality_result
 
 
 def _build_portfolio(
-    data_handler, cfg: BacktestCfg, trade_logger: JsonlWriter | None = None
+    data_handler,
+    cfg: BacktestCfg,
+    trade_logger: JsonlWriter | None = None,
+    symbol_meta: Mapping[str, Any] | None = None,
 ) -> Portfolio:
     return Portfolio(
         data_handler=data_handler,
@@ -486,10 +586,16 @@ def _build_portfolio(
         sectors=getattr(cfg, "sectors", None),
         max_positions_per_sector=cfg.max_positions_per_sector,
         capital_policy=resolve_capital_policy(cfg.capital_policy),
+        symbol_meta=symbol_meta,
     )
 
 
-def _build_executor(data_handler, exec_cfg: ExecModelCfg, rng: np.random.Generator):
+def _build_executor(
+    data_handler,
+    exec_cfg: ExecModelCfg,
+    rng: np.random.Generator,
+    symbol_meta: Mapping[str, Any] | None = None,
+):
     exec_type = exec_cfg.type.lower() if exec_cfg.type else "twap"
     executor_cls = EXECUTION_MAPPING.get(exec_type, Executor)
     kwargs: Dict[str, Any] = {
@@ -529,9 +635,27 @@ def _build_executor(data_handler, exec_cfg: ExecModelCfg, rng: np.random.Generat
         kwargs["book"] = book
         if exec_cfg.lob_tplus1 is not None:
             kwargs["lob_tplus1"] = bool(exec_cfg.lob_tplus1)
-    slippage_model = resolve_slippage_model(exec_cfg.slippage)
+    slippage_model = resolve_slippage_model(exec_cfg.slippage, symbol_meta)
     if slippage_model is not None:
         kwargs["slippage_model"] = slippage_model
+    if symbol_meta:
+        kwargs.setdefault("symbol_meta", symbol_meta)
+    if exec_cfg.limit_mode and exec_cfg.limit_mode.lower() != "market":
+        kwargs["limit_mode"] = exec_cfg.limit_mode.upper()
+    if exec_cfg.queue_coefficient is not None:
+        kwargs["queue_coefficient"] = float(exec_cfg.queue_coefficient)
+    if exec_cfg.queue_passive_multiplier is not None:
+        kwargs["queue_passive_multiplier"] = float(
+            exec_cfg.queue_passive_multiplier
+        )
+    if exec_cfg.queue_seed is not None:
+        kwargs["queue_seed"] = int(exec_cfg.queue_seed)
+    if exec_cfg.queue_randomize is not None:
+        kwargs["queue_randomize"] = bool(exec_cfg.queue_randomize)
+    if exec_cfg.volatility_lookback is not None:
+        kwargs["volatility_lookback"] = int(exec_cfg.volatility_lookback)
+    if exec_cfg.min_fill_qty is not None:
+        kwargs["min_fill_qty"] = int(exec_cfg.min_fill_qty)
 
     return executor_cls(data_handler=data_handler, **kwargs)
 
@@ -568,8 +692,13 @@ def _summarise_walkforward(
     equity_records: List[Dict[str, Any]],
     artifacts_dir: Path,
     total_turnover: float,
+    hac_lags: int | None = None,
 ) -> Dict[str, Any]:
-    metrics = compute_metrics(equity_records, total_turnover)
+    metrics = compute_metrics(
+        equity_records,
+        total_turnover,
+        hac_lags=hac_lags,
+    )
     metrics_copy = dict(metrics)
     df = cast(pd.DataFrame, metrics_copy.pop("equity_df"))
 
@@ -642,7 +771,7 @@ def bootstrap_reality_check(
     n_bootstrap: int = 200,
     method: str = "stationary",
     block_len: int | None = None,
-) -> float | None:
+) -> Dict[str, Any] | None:
     valid = [res for res in results if res["returns"].size > 1]
     if len(valid) < 2:
         return None
@@ -662,8 +791,10 @@ def bootstrap_reality_check(
             DeprecationWarning,
             stacklevel=2,
         )
+
     exceed = 0
-    for _ in range(n_bootstrap):
+    distribution: List[float] = []
+    for _ in range(max(1, n_bootstrap)):
         max_sharpe = float("-inf")
         for entry in valid:
             returns = entry["returns"]
@@ -681,10 +812,20 @@ def bootstrap_reality_check(
                 )
             sharpe = _annualised_sharpe(sample)
             max_sharpe = max(max_sharpe, sharpe)
+        distribution.append(float(max_sharpe))
         if max_sharpe >= best_sharpe:
             exceed += 1
 
-    return (exceed + 1) / (n_bootstrap + 1)
+    p_value = (exceed + 1) / (len(distribution) + 1)
+    return {
+        "p_value": float(p_value),
+        "distribution": distribution,
+        "best_sharpe": float(best_sharpe),
+        "method": method_lower,
+        "block_length": block_len,
+        "num_models": len(valid),
+        "num_bootstrap": len(distribution),
+    }
 
 
 def _strategy_params(strategy_cfg) -> Dict[str, Any]:

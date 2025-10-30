@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from pathlib import Path
 from typing import Dict, Sequence
 
@@ -86,6 +87,12 @@ def test_flagship_sector_normalised_signals(tmp_path: Path) -> None:
     assert all(s.meta and "sector_z" in s.meta for s in signals if s.side != "EXIT")
     assert all(s.meta and s.meta.get("turnover_heat") == 0.08 for s in signals)
     assert all(s.meta and s.meta.get("sleeve") in {"long", "short"} for s in signals if s.side != "EXIT")
+    assert all("weight" in (s.meta or {}) for s in signals if s.side in {"LONG", "SHORT"})
+    long_budget = sum(s.meta["weight"] for s in signals if s.side == "LONG")
+    short_budget = sum(abs(s.meta["weight"]) for s in signals if s.side == "SHORT")
+    assert long_budget > 0
+    assert short_budget > 0
+    assert math.isclose(long_budget + short_budget, strategy.total_risk_budget, rel_tol=1e-6)
 
 
 def test_flagship_requires_full_warmup_before_signalling(tmp_path: Path) -> None:

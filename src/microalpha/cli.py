@@ -8,6 +8,10 @@ import json
 import platform
 import sys
 import time
+from pathlib import Path
+
+from microalpha.reporting.summary import generate_summary
+from microalpha.reporting.tearsheet import render_tearsheet
 
 from .runner import run_from_config
 from .walkforward import run_walk_forward
@@ -56,6 +60,34 @@ def main() -> None:
         help="Override block length for walk-forward bootstrap (default Politis-White)",
     )
 
+    report_parser = subparsers.add_parser("report")
+    report_parser.add_argument(
+        "--artifact-dir",
+        required=True,
+        help="Existing artifact directory produced by a run or walk-forward job.",
+    )
+    report_parser.add_argument(
+        "--summary-out",
+        default=str(Path("reports/summaries/flagship_mom.md")),
+        help="Markdown output path (default: reports/summaries/flagship_mom.md).",
+    )
+    report_parser.add_argument(
+        "--tearsheet-out",
+        default=None,
+        help="PNG output path for the tearsheet (default: <artifact>/tearsheet.png).",
+    )
+    report_parser.add_argument(
+        "--title",
+        default=None,
+        help="Optional title override for both summary and plot.",
+    )
+    report_parser.add_argument(
+        "--top-exposures",
+        type=int,
+        default=8,
+        help="Number of exposures to display in the summary table (default: 8).",
+    )
+
     subparsers.add_parser("info")
 
     args = parser.parse_args()
@@ -75,7 +107,7 @@ def main() -> None:
             manifest = run_from_config(args.config, override_artifacts_dir=args.outdir)
         else:
             manifest = run_from_config(args.config)
-    else:
+    elif args.cmd == "wfv":
         if getattr(args, "profile", False):
             import os as _os
 
@@ -90,6 +122,45 @@ def main() -> None:
             )
         else:
             manifest = run_walk_forward(args.config, **run_kwargs)
+    elif args.cmd == "report":
+        artifact_dir = Path(args.artifact_dir).resolve()
+        if not artifact_dir.exists():
+            raise SystemExit(f"Artifact directory not found: {artifact_dir}")
+
+        metrics_path = artifact_dir / "metrics.json"
+        bootstrap_path = artifact_dir / "bootstrap.json"
+        equity_csv = artifact_dir / "equity_curve.csv"
+        if not equity_csv.exists():
+            raise SystemExit("Artifact directory missing equity_curve.csv")
+
+        tearsheet_path = (
+            Path(args.tearsheet_out).resolve()
+            if args.tearsheet_out
+            else artifact_dir / "tearsheet.png"
+        )
+
+        render_tearsheet(
+            equity_csv=equity_csv,
+            bootstrap_json=bootstrap_path if bootstrap_path.exists() else None,
+            output_path=tearsheet_path,
+            metrics_path=metrics_path if metrics_path.exists() else None,
+            title=args.title,
+        )
+
+        summary_path = generate_summary(
+            artifact_dir=artifact_dir,
+            output_path=args.summary_out,
+            title=args.title,
+            top_exposures=args.top_exposures,
+        )
+
+        manifest = {
+            "artifact_dir": str(artifact_dir),
+            "summary_path": str(summary_path.resolve()),
+            "tearsheet_path": str(Path(tearsheet_path).resolve()),
+        }
+    else:
+        raise SystemExit(f"Unknown command: {args.cmd}")
 
     manifest["runtime_sec"] = round(time.time() - t0, 3)
     manifest["version"] = _resolve_version()
