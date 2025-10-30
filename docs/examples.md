@@ -46,3 +46,30 @@ microalpha wfv -c configs/wfv_cs_mom.yaml
 ```bash
 python reports/html_report.py artifacts/<run-id>/equity_curve.csv --trades artifacts/<run-id>/trades.jsonl --output artifacts/<run-id>/report.html
 ```
+
+## Flagship cross-sectional momentum
+
+```bash
+python scripts/augment_sp500.py --source data_sp500 --dest data_sp500_enriched \
+    --sector-map metadata/sp500_sector_overrides.csv
+python scripts/build_flagship_universe.py --data-dir data_sp500_enriched \
+    --metadata metadata/sp500_enriched.csv --out-dir data/flagship_universe
+microalpha wfv -c configs/wfv_flagship_mom.yaml --out artifacts_flagship
+```
+
+- Generates the enriched flagship universe, runs the walk-forward validation, and writes artifacts to `artifacts_flagship/`.
+- Summarise the headline metrics:
+
+```bash
+python reports/generate_summary.py configs/flagship_mom.yaml configs/wfv_flagship_mom.yaml
+```
+
+- Analyse factor loadings with the rolling exposure helper:
+
+```bash
+python reports/factor_exposure.py \
+    --equity artifacts_flagship/<run-id>/equity_curve.csv \
+    --factors data/factors/fama_french_daily.csv \
+    --window 63 \
+    --output artifacts_flagship/<run-id>/factor_exposures.png
+```
