@@ -25,10 +25,11 @@ from .execution import (
     ImplementationShortfall,
     KyleLambda,
     LOBExecution,
+)
+from .execution import (
     SquareRootImpact as SquareRootImpactExecutor,
 )
 from .logging import JsonlWriter
-from .market_metadata import load_symbol_meta
 from .manifest import (
     build as build_manifest,
 )
@@ -39,14 +40,17 @@ from .manifest import (
 from .manifest import (
     write as write_manifest,
 )
+from .market_metadata import load_symbol_meta
 from .metrics import compute_metrics
 from .portfolio import Portfolio
 from .risk import bootstrap_sharpe_ratio
 from .slippage import (
     LinearImpact,
     LinearPlusSqrtImpact,
-    SquareRootImpact as SquareRootImpactSlippage,
     VolumeSlippageModel,
+)
+from .slippage import (
+    SquareRootImpact as SquareRootImpactSlippage,
 )
 from .strategies.breakout import BreakoutStrategy
 from .strategies.cs_momentum import CrossSectionalMomentum
