@@ -1,0 +1,596 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://mateobodon.github.io/microalpha/api/">
+      
+      
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.22">
+    
+    
+      
+        <title>API Reference - Microalpha</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.84d31ad4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#api-reference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Microalpha" class="md-header__button md-logo" aria-label="Microalpha" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Microalpha
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              API Reference
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Microalpha" class="md-nav__button md-logo" aria-label="Microalpha" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Microalpha
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../flagship_strategy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Flagship Strategy
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Examples
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reproducibility/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Reproducibility
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../leakage-safety/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Leakage Safety
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../wrds/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    WRDS & Real Data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../factors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Factors
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#runner-microalpharunner" class="md-nav__link">
+    <span class="md-ellipsis">
+      Runner (microalpha.runner)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#engine-microalphaengineengine" class="md-nav__link">
+    <span class="md-ellipsis">
+      Engine (microalpha.engine.Engine)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-microalphadatacsvdatahandler" class="md-nav__link">
+    <span class="md-ellipsis">
+      Data (microalpha.data.CsvDataHandler)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#portfolio-microalphaportfolioportfolio" class="md-nav__link">
+    <span class="md-ellipsis">
+      Portfolio (microalpha.portfolio.Portfolio)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#broker-execution-microalphabroker-microalphaexecution" class="md-nav__link">
+    <span class="md-ellipsis">
+      Broker &amp; Execution (microalpha.broker, microalpha.execution)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#logging-microalphaloggingjsonlwriter" class="md-nav__link">
+    <span class="md-ellipsis">
+      Logging (microalpha.logging.JsonlWriter)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#capital-allocation-microalphacapital" class="md-nav__link">
+    <span class="md-ellipsis">
+      Capital Allocation (microalpha.capital)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli-microalphacli" class="md-nav__link">
+    <span class="md-ellipsis">
+      CLI (microalpha.cli)
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="api-reference">API Reference</h1>
+<p>This page summarises the primary extension points for building strategies and tooling on top of Microalpha.</p>
+<h2 id="runner-microalpharunner">Runner (<code>microalpha.runner</code>)</h2>
+<ul>
+<li><code>run_from_config(path: str, override_artifacts_dir: str | None = None) -&gt; dict</code></li>
+<li>Loads a YAML config, resolves paths, executes the backtest, and returns a manifest-style dictionary containing artifact paths.</li>
+<li><code>override_artifacts_dir</code> overrides the root output directory without modifying the on-disk YAML.</li>
+<li><code>prepare_artifacts_dir(cfg_path: Path, config: dict) -&gt; tuple[str, Path]</code></li>
+<li>Allocates an isolated <code>artifacts/&lt;run_id&gt;</code> directory for each run.</li>
+</ul>
+<h2 id="engine-microalphaengineengine">Engine (<code>microalpha.engine.Engine</code>)</h2>
+<pre><code class="language-python">Engine(data, strategy, portfolio, broker, rng: numpy.random.Generator | None = None)
+</code></pre>
+<ul>
+<li>Streams <code>MarketEvent</code>s from the data handler, enforces monotonic timestamps, and routes signals/orders/fills between components.</li>
+<li>Accepts a <code>numpy.random.Generator</code> for reproducibility; randomness is typically consumed by downstream components (e.g., latency models) rather than the engine itself.</li>
+</ul>
+<p>Profiling:
+- Set <code>MICROALPHA_PROFILE=1</code> or pass <code>--profile</code> via the CLI to record a <code>profile.pstats</code> under the active run’s artifact directory.</p>
+<h2 id="data-microalphadatacsvdatahandler">Data (<code>microalpha.data.CsvDataHandler</code>)</h2>
+<pre><code class="language-python">CsvDataHandler(csv_dir: Path, symbol: str, mode: str = &quot;exact&quot;)
+</code></pre>
+<ul>
+<li>Loads OHLCV CSV data and produces chronological <code>MarketEvent</code>s via <code>stream()</code>.</li>
+<li><code>get_latest_price(ts)</code> supports <code>"exact"</code> and <code>"ffill"</code> modes for timestamp alignment.</li>
+<li><code>get_future_timestamps(start_ts, n)</code> schedules TWAP child orders without lookahead.</li>
+<li><code>get_recent_prices(symbol, end_ts, lookback)</code> for sizing; <code>get_volume_at(symbol, ts)</code> for VWAP.</li>
+</ul>
+<h2 id="portfolio-microalphaportfolioportfolio">Portfolio (<code>microalpha.portfolio.Portfolio</code>)</h2>
+<pre><code class="language-python">Portfolio(data_handler, initial_cash, *, max_exposure=None, max_drawdown_stop=None,
+          turnover_cap=None, kelly_fraction=None, trade_logger=None,
+          capital_policy=None)
+</code></pre>
+<ul>
+<li>Tracks cash, inventory, and equity while enforcing exposure/drawdown/turnover limits.</li>
+<li>Emits fills to the <code>JsonlWriter</code> (<code>trade_logger</code>) so executions are captured in <code>trades.jsonl</code>.</li>
+<li>Provides <code>on_market</code>, <code>on_signal</code>, and <code>on_fill</code> hooks consumed by the engine.</li>
+<li>Adds realized PnL attribution per fill (average-cost) under <code>realized_pnl</code> and cumulative <code>cum_realized_pnl</code> in trades.</li>
+<li>Resolve config-driven capital policies via <code>capital_policy</code> in YAML; the runner instantiates them automatically.</li>
+</ul>
+<h2 id="broker-execution-microalphabroker-microalphaexecution">Broker &amp; Execution (<code>microalpha.broker</code>, <code>microalpha.execution</code>)</h2>
+<ul>
+<li><code>SimulatedBroker(executor)</code> – wraps an <code>Executor</code> and enforces t+1 semantics before returning fills.</li>
+<li><code>Executor</code> – base class implementing simple price-impact + commission fills against the <code>DataHandler</code>.</li>
+<li><code>TWAP</code> – splits orders evenly across future timestamps supplied by the data handler.</li>
+<li><code>VWAP</code> – splits by future-tick volumes; uses <code>DataHandler.get_volume_at</code> if available (requires <code>volume</code> column).</li>
+<li><code>ImplementationShortfall</code> – front-loaded geometric schedule controlled by <code>urgency</code>.</li>
+<li><code>SquareRootImpact</code> / <code>KyleLambda</code> – stylised impact models for execution cost studies.</li>
+<li><code>LOBExecution</code> – routes orders to the in-memory level-2 book (<code>microalpha.lob.LimitOrderBook</code>) with latency simulation.</li>
+<li>Supply <code>slippage</code> in YAML to enable <code>VolumeSlippageModel</code> without hand-wiring objects.</li>
+</ul>
+<h2 id="logging-microalphaloggingjsonlwriter">Logging (<code>microalpha.logging.JsonlWriter</code>)</h2>
+<pre><code class="language-python">JsonlWriter(path: str)
+</code></pre>
+<ul>
+<li>Creates parent directories, writes JSON-serialised objects per line, and flushes eagerly so artifacts remain tail-able.</li>
+</ul>
+<p>Refer to the module docstrings and tests for deeper examples of composing these components.</p>
+<h2 id="capital-allocation-microalphacapital">Capital Allocation (<code>microalpha.capital</code>)</h2>
+<ul>
+<li><code>VolatilityScaledPolicy(lookback=20, target_dollar_vol=10000)</code> scales base order qty inversely to recent per-symbol volatility.</li>
+<li>Pass into <code>Portfolio(..., capital_policy=VolatilityScaledPolicy(...))</code> or declare under <code>capital_policy</code> in YAML to enable per-name risk targeting.</li>
+</ul>
+<h2 id="cli-microalphacli">CLI (<code>microalpha.cli</code>)</h2>
+<ul>
+<li><code>microalpha run -c &lt;cfg&gt; [--out DIR] [--profile]</code></li>
+<li><code>microalpha wfv -c &lt;cfg&gt; [--out DIR] [--profile]</code></li>
+</ul>
+<p><code>--out</code> overrides the artifacts root directory; <code>--profile</code> enables cProfile.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/MateoBodon/microalpha" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.sections"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>
