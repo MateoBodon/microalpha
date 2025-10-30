@@ -256,7 +256,7 @@ def _render_factor_section(
     if not equity_csv.exists():
         return None
 
-    from .factors import compute_factor_regression, FactorResult
+    from .factors import compute_factor_regression
 
     try:
         results = compute_factor_regression(equity_csv, factor_csv, hac_lags=hac_lags)
