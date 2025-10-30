@@ -111,3 +111,86 @@ def test_multi_asset_walkforward_maintains_data_frames(tmp_path):
     for fold in folds:
         assert fold["test_metrics"] is not None
         assert fold["best_params"] is not None
+
+
+def _write_panel(data_dir: Path, symbol: str, prices: list[float]) -> None:
+    idx = pd.date_range("2024-01-01", periods=len(prices), freq="D")
+    pd.DataFrame({"close": prices, "volume": [1_000_000] * len(prices)}, index=idx).to_csv(
+        data_dir / f"{symbol}.csv"
+    )
+
+
+def test_flagship_walkforward_small_panel(tmp_path: Path) -> None:
+    data_dir = tmp_path / "data"
+    data_dir.mkdir()
+    _write_panel(data_dir, "AAA", [50 + 0.2 * i for i in range(30)])
+    _write_panel(data_dir, "BBB", [40 - 0.1 * i for i in range(30)])
+    _write_panel(data_dir, "SPY", [100 + 0.05 * i for i in range(30)])
+
+    universe = tmp_path / "universe.csv"
+    pd.DataFrame(
+        [
+            {
+                "symbol": "AAA",
+                "date": "2024-01-31",
+                "sector": "TECH",
+                "adv_20": 5_000_000.0,
+                "adv_63": 5_000_000.0,
+                "adv_126": 5_000_000.0,
+                "market_cap_proxy": 1_000_000_000.0,
+                "close": 55.0,
+            },
+            {
+                "symbol": "BBB",
+                "date": "2024-01-31",
+                "sector": "HEALTH",
+                "adv_20": 5_000_000.0,
+                "adv_63": 5_000_000.0,
+                "adv_126": 5_000_000.0,
+                "market_cap_proxy": 1_000_000_000.0,
+                "close": 42.0,
+            },
+        ]
+    ).to_csv(universe, index=False)
+
+    cfg = WFVCfg(
+        template=BacktestCfg(
+            data_path=str(data_dir),
+            symbol="SPY",
+            cash=200_000.0,
+            seed=5,
+            exec=ExecModelCfg(type="instant", commission=0.0),
+            strategy=StrategyCfg(
+                name="FlagshipMomentumStrategy",
+                params={
+                    "universe_path": str(universe),
+                    "lookback_months": 1,
+                    "skip_months": 0,
+                    "top_frac": 0.5,
+                    "bottom_frac": 0.5,
+                    "max_positions_per_sector": 1,
+                    "min_adv": 0.0,
+                    "min_price": 0.0,
+                    "turnover_target_pct_adv": 0.1,
+                },
+            ),
+            max_positions_per_sector=2,
+        ),
+        walkforward=WalkForwardWindow(
+            start="2024-01-01",
+            end="2024-02-20",
+            training_days=12,
+            testing_days=5,
+        ),
+        grid={"top_frac": [0.4, 0.5]},
+        artifacts_dir=str(tmp_path / "artifacts"),
+    )
+
+    cfg_path = tmp_path / "flagship_wfv.yaml"
+    cfg_path.write_text(yaml.safe_dump(cfg.model_dump(mode="json")))
+
+    result = run_walk_forward(str(cfg_path))
+    assert result["folds"], "walk-forward should produce folds"
+    for fold in result["folds"]:
+        assert "reality_check_pvalue" in fold
+        assert fold["spa_pvalue"] is None
