@@ -3,7 +3,8 @@
 **Leakage-safe, event-driven backtesting engine with walk-forward cross-validation, parameter optimization, and advanced execution modeling.**
 
 [![CI](https://github.com/mateobodon/microalpha/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/mateobodon/microalpha/actions/workflows/ci.yml?query=branch%3Amain)
-![Coverage](https://img.shields.io/badge/coverage-%3E85%25-brightgreen.svg)
+[![Docs](https://img.shields.io/badge/docs-pages-blue)](https://mateobodon.github.io/microalpha)
+![Coverage](https://img.shields.io/badge/coverage-78%25-blue.svg)
 
 **TL;DR:** An opinionated, research-hygienic backtester that enforces strict time-ordering, offers out-of-sample walk-forward evaluation with per-fold parameter selection, and includes realistic market frictions including TWAP + linear/√-impact/Kyle-λ execution modeling, slippage, and commission costs.
 
@@ -11,26 +12,30 @@
 
 ---
 
-## Flagship Sample Pipeline (New)
+## Headline Metrics
 
-| Run | Sharpe | CAGR | Max DD | Bootstrap p-value |
-| --- | ---:| ---:| ---:| ---:|
-| Single backtest (`configs/flagship_sample.yaml`) | -0.66 | -7.06% | 17.26% | 0.871 |
-| Walk-forward (`configs/wfv_flagship_sample.yaml`) | 0.22 | 1.07% | 34.79% | 1.000 |
+| Run | Sharpe_HAC | MAR | MaxDD | RealityCheck_p_value | Turnover |
+| --- | ---:| ---:| ---:| ---:| ---:|
+| Single backtest ([configs/flagship_sample.yaml](configs/flagship_sample.yaml)) | -0.66 | -0.41 | 17.26% | 0.861 | $1.21M |
+| Walk-forward ([configs/wfv_flagship_sample.yaml](configs/wfv_flagship_sample.yaml)) | 0.22 | 0.03 | 34.79% | 1.000 | $28.53M |
 
-Recreate the full artefact bundle with one command each:
+_Source artifacts: `artifacts/sample_flagship/2025-10-30T18-39-31Z-a4ab8e7` and `artifacts/sample_wfv/2025-10-30T18-39-47Z-a4ab8e7`._
+
+![Sample Flagship Equity Curve](artifacts/sample_flagship/2025-10-30T18-39-31Z-a4ab8e7/equity_curve.png)
+![Sample Flagship Bootstrap Histogram](artifacts/sample_flagship/2025-10-30T18-39-31Z-a4ab8e7/bootstrap_hist.png)
+
+### Reproduce in One Command
 
 ```bash
-microalpha run --config configs/flagship_sample.yaml --out artifacts/sample_flagship
-microalpha report --artifact-dir artifacts/sample_flagship
-
-microalpha wfv --config configs/wfv_flagship_sample.yaml --out artifacts/sample_wfv
-microalpha report --artifact-dir artifacts/sample_wfv --summary-out reports/summaries/flagship_mom_wfv.md --title "Flagship Walk-Forward"
+make sample && make report
+make wfv && make report-wfv
 ```
 
-- The `artifacts/` directories now include `metrics.json`, `bootstrap.json`, `exposures.csv`, `trades.jsonl`, and `tearsheet.png`.
-- `reports/summaries/flagship_mom.md` is auto-generated from `metrics + bootstrap + exposures`.
+- The `artifacts/` directories now include `metrics.json`, `bootstrap.json`, `equity_curve.png`, `bootstrap_hist.png`, `exposures.csv`, and `trades.jsonl`.
+- `reports/summaries/flagship_mom.md` and `reports/summaries/flagship_mom_wfv.md` are auto-generated from the sample runs.
 - Sample data (prices, metadata, risk-free series, universe) ships under `data/sample/`—no external vendors required.
+- WRDS/CRSP workflow documentation lives in [`docs/wrds.md`](docs/wrds.md); update [`configs/wfv_flagship_wrds.yaml`](configs/wfv_flagship_wrds.yaml) and run `make wrds` to exercise it.
+- `configs/wfv_flagship_public.yaml` showcases an 8-ticker bundle sourced from publicly known symbols in `data/public/`.
 
 ---
 

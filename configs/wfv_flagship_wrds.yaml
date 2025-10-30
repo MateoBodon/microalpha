@@ -1,0 +1,64 @@
+# Walk-forward validation using WRDS/CRSP data (update the placeholder paths).
+
+template:
+  data_path: "/wrds/crsp/dsf/daily_prices"  # replace with your WRDS DSF parquet/CSV directory
+  meta_path: "/wrds/crsp/security_master.csv"  # replace with your WRDS security master export
+  symbol: "WRDS_UNIVERSE_PLACEHOLDER"
+  cash: 1000000.0
+  seed: 321
+  max_exposure: 1.5
+  max_drawdown_stop: 0.3
+  max_portfolio_heat: 3.0
+  metrics_hac_lags: 5
+  exec:
+    type: "twap"
+    commission: 0.0005
+    slices: 4
+    limit_mode: "ioc"
+    queue_coefficient: 0.2
+    queue_passive_multiplier: 0.5
+    queue_seed: 2025
+    volatility_lookback: 60
+    slippage:
+      type: "linear_sqrt"
+      k_lin: 25.0
+      eta: 75.0
+      default_adv: 5000000.0
+      default_spread_bps: 5.0
+  strategy:
+    name: "FlagshipMomentumStrategy"
+    allocator: "budgeted_rp"
+    allocator_params:
+      risk_model: "risk_parity"
+    params:
+      universe_path: "/wrds/crsp/universe_flagship.csv"  # replace with WRDS-derived universe listing
+      lookback_months: 6
+      skip_months: 1
+      top_frac: 0.35
+      bottom_frac: 0.30
+      max_positions_per_sector: 2
+      turnover_target_pct_adv: 0.08
+      min_adv: 3000000.0
+      min_price: 5.0
+      total_risk_budget: 1.0
+  capital_policy:
+    type: "volatility_scaled"
+    lookback: 21
+    target_dollar_vol: 25000.0
+    min_qty: 10
+
+walkforward:
+  start: "2014-01-02"
+  end: "2024-12-31"
+  training_days: 252
+  testing_days: 63
+
+grid:
+  top_frac: [0.30, 0.40]
+  skip_months: [1, 2]
+  turnover_target_pct_adv: [0.08, 0.12]
+
+reality_check:
+  method: "stationary"
+  samples: 1200
+  block_length: 30

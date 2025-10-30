@@ -7,11 +7,12 @@ theme:
     - navigation.sections
 nav:
   - Home: index.md
-  - Benchmarks: benchmarks.md
-  - Leakage Safety: leakage-safety.md
-  - Reproducibility: reproducibility.md
-  - API Reference: api.md
+  - Flagship Strategy: flagship_strategy.md
   - Examples: examples.md
+  - Reproducibility: reproducibility.md
+  - Leakage Safety: leakage-safety.md
+  - WRDS & Real Data: wrds.md
+  - Factors: factors.md
 extra:
   social:
     - icon: fontawesome/brands/github

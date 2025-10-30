@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 from typing import Mapping, Sequence
 
@@ -25,6 +26,8 @@ def _flatten_bootstrap(path: Path) -> tuple[list[float], float | None]:
             float(payload["p_value"]) if "p_value" in payload else None
         )
     if isinstance(payload, list):
+        if payload and isinstance(payload[0], (int, float)):
+            return [float(x) for x in payload], None
         samples: list[float] = []
         p_values: list[float] = []
         for entry in payload:
@@ -69,6 +72,9 @@ def generate_summary(
     *,
     title: str | None = None,
     top_exposures: int = 8,
+    equity_image: str | Path | None = None,
+    bootstrap_image: str | Path | None = None,
+    factor_csv: str | Path | None = Path("data/factors/ff3_sample.csv"),
 ) -> Path:
     artifact_dir = Path(artifact_dir).resolve()
     if not artifact_dir.exists():
@@ -86,38 +92,41 @@ def generate_summary(
     bootstrap_pvalue: float | None = None
     if bootstrap_path.exists():
         bootstrap_samples, bootstrap_pvalue = _flatten_bootstrap(bootstrap_path)
+    if bootstrap_pvalue is None:
+        candidate = metrics.get("reality_check_p_value") or metrics.get(
+            "bootstrap_p_value"
+        )
+        if candidate is not None:
+            bootstrap_pvalue = float(candidate)
+
+    output_path = Path(output_path)
 
     lines: list[str] = []
     header = title or DEFAULT_TITLE
     lines.append(f"# {header}")
     lines.append("")
 
-    lines.append("## Headline Metrics")
+    lines.append("## Performance Snapshot")
     lines.append("")
-    sharpe = metrics.get("sharpe_ratio")
-    sortino = metrics.get("sortino_ratio")
-    cagr = metrics.get("cagr")
-    max_dd = metrics.get("max_drawdown")
-    turnover = metrics.get("total_turnover")
-    hac_lags = metrics.get("sharpe_hac_lags")
-    num_trades = metrics.get("num_trades")
-    win_rate = metrics.get("win_rate")
+    lines.extend(_render_metric_table(metrics))
+    lines.append("")
 
-    headline = [
-        f"- Sharpe: {sharpe:.2f}" if sharpe is not None else "- Sharpe: n/a",
-        f"- Sortino: {sortino:.2f}" if sortino is not None else "- Sortino: n/a",
-        f"- CAGR: {_format_pct(cagr if isinstance(cagr, (float, int)) else None)}",
-        f"- Max Drawdown: {_format_pct(max_dd if isinstance(max_dd, (float, int)) else None)}",
-        f"- Turnover: ${turnover:,.0f}" if turnover is not None else "- Turnover: n/a",
-    ]
-    if hac_lags:
-        headline.append(f"- HAC Lags: {int(hac_lags)}")
-    if num_trades is not None:
-        headline.append(f"- Trades: {int(num_trades)}")
-    if win_rate is not None:
-        headline.append(f"- Win Rate: {win_rate * 100:.1f}%")
-    lines.extend(headline)
+    lines.append("## Visuals")
     lines.append("")
+    visuals_rendered = False
+    if equity_image and Path(equity_image).exists():
+        rel = _relpath(Path(equity_image), output_path)
+        lines.append(f"![Equity Curve]({rel})")
+        lines.append("")
+        visuals_rendered = True
+    if bootstrap_image and Path(bootstrap_image).exists():
+        rel = _relpath(Path(bootstrap_image), output_path)
+        lines.append(f"![Bootstrap Sharpe Histogram]({rel})")
+        lines.append("")
+        visuals_rendered = True
+    if not visuals_rendered:
+        lines.append("_No visuals available._")
+        lines.append("")
 
     lines.append("## Bootstrap Reality Check")
     lines.append("")
@@ -147,6 +156,14 @@ def generate_summary(
         )
     )
     lines.append("")
+
+    factor_section = _render_factor_section(
+        artifact_dir=artifact_dir,
+        factor_csv=Path(factor_csv) if factor_csv else None,
+    )
+    if factor_section:
+        lines.append(factor_section)
+        lines.append("")
 
     output_path = Path(output_path).resolve()
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -179,8 +196,82 @@ def main(argv: Sequence[str] | None = None) -> None:
         output_path=args.output,
         title=args.title,
         top_exposures=args.top,
+        factor_csv=None,
     )
     print(f"Summary written to {output_path}")
 
 
 __all__ = ["generate_summary", "main"]
+
+
+def _render_metric_table(metrics: Mapping[str, object]) -> list[str]:
+    entries = {
+        "Sharpe_HAC": metrics.get("sharpe_ratio"),
+        "MAR": metrics.get("calmar_ratio"),
+        "MaxDD": metrics.get("max_drawdown"),
+        "Turnover": metrics.get("total_turnover"),
+        "RealityCheck_p_value": metrics.get("reality_check_p_value")
+        or metrics.get("bootstrap_p_value"),
+    }
+    lines = ["| Metric | Value |", "| --- | ---:|"]
+    for label, value in entries.items():
+        lines.append(f"| {label} | {_format_metric(label, value)} |")
+    return lines
+
+
+def _format_metric(label: str, value: object) -> str:
+    if value is None:
+        return "n/a"
+    try:
+        numeric = float(value)
+    except (TypeError, ValueError):
+        return str(value)
+    if label == "MaxDD":
+        return f"{numeric * 100:.2f}%"
+    if label == "Turnover":
+        return f"${numeric:,.0f}"
+    if label == "RealityCheck_p_value":
+        return f"{numeric:.3f}"
+    return f"{numeric:.2f}"
+
+
+def _relpath(path: Path, output_path: Path) -> str:
+    start = output_path.resolve().parent
+    try:
+        return os.path.relpath(path.resolve(), start)
+    except ValueError:
+        return str(path.resolve())
+
+
+def _render_factor_section(
+    *,
+    artifact_dir: Path | str,
+    factor_csv: Path | None,
+    hac_lags: int = 5,
+) -> str | None:
+    if factor_csv is None or not factor_csv.exists():
+        return None
+    artifact_dir = Path(artifact_dir)
+    equity_csv = artifact_dir / "equity_curve.csv"
+    if not equity_csv.exists():
+        return None
+
+    from .factors import compute_factor_regression, FactorResult
+
+    try:
+        results = compute_factor_regression(equity_csv, factor_csv, hac_lags=hac_lags)
+    except Exception:  # pragma: no cover - fallback when regression fails
+        return None
+    if not results:
+        return None
+
+    lines = ["## Factor Regression (FF3 sample)", ""]
+    lines.append("| Factor | Beta | t-stat |")
+    lines.append("| --- | ---:| ---:|")
+    for row in results:
+        lines.append(f"| {row.name} | {row.beta:.4f} | {row.t_stat:.2f} |")
+    lines.append("")
+    lines.append(
+        "_Computed against `data/factors/ff3_sample.csv` using Newey-West standard errors._"
+    )
+    return "\n".join(lines)

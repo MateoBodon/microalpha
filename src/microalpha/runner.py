@@ -279,9 +279,17 @@ def run_from_config(
         trades=getattr(portfolio, "trades", None),
         hac_lags=cfg.metrics_hac_lags,
     )
-    metrics_paths = _persist_metrics(metrics, artifacts_dir)
+    bootstrap_path, bootstrap_meta = _persist_bootstrap(metrics, artifacts_dir)
+    metrics_paths = _persist_metrics(
+        metrics,
+        artifacts_dir,
+        extra_metrics={
+            key: value
+            for key, value in bootstrap_meta.items()
+            if value is not None or key == "bootstrap_samples"
+        },
+    )
     exposures_path, factor_path = persist_exposures(portfolio, artifacts_dir)
-    bootstrap_path = _persist_bootstrap(metrics, artifacts_dir)
     trades_path = _persist_trades(portfolio, artifacts_dir)
 
     result: Dict[str, Any] = asdict(manifest)
@@ -326,9 +334,17 @@ def persist_config(cfg_path: Path, artifacts_dir: Path) -> None:
     shutil.copy2(cfg_path, destination)
 
 
-def _persist_metrics(metrics: Dict[str, Any], artifacts_dir: Path) -> Dict[str, Any]:
+def _persist_metrics(
+    metrics: Dict[str, Any],
+    artifacts_dir: Path,
+    *,
+    extra_metrics: Mapping[str, Any] | None = None,
+) -> Dict[str, Any]:
     metrics_copy = dict(metrics)
     df = metrics_copy.pop("equity_df")
+    if extra_metrics:
+        for key, value in extra_metrics.items():
+            metrics_copy[key] = value
     equity_path = artifacts_dir / "equity_curve.csv"
     df.to_csv(equity_path, index=False)
 
@@ -415,14 +431,14 @@ def _persist_bootstrap(
     *,
     periods: int = 252,
     simulations: int = 1024,
-) -> str:
+) -> tuple[str, Dict[str, Any]]:
     bootstrap_path = artifacts_dir / "bootstrap.json"
-    payload: Dict[str, Any] = {
-        "distribution": [],
-        "p_value": None,
-        "confidence_interval": None,
-        "num_simulations": simulations,
-        "periods": periods,
+    samples: list[float] = []
+    stats: Dict[str, Any] = {
+        "bootstrap_samples": 0,
+        "bootstrap_p_value": None,
+        "bootstrap_ci_low": None,
+        "bootstrap_ci_high": None,
     }
 
     df = metrics.get("equity_df")
@@ -432,16 +448,19 @@ def _persist_bootstrap(
             returns,
             num_simulations=simulations,
             periods=periods,
+            rng=np.random.default_rng(0),
         )
-        payload["distribution"] = [float(x) for x in bootstrap["sharpe_dist"]]
-        payload["p_value"] = float(bootstrap["p_value"])
+        samples = [float(x) for x in bootstrap["sharpe_dist"]]
+        stats["bootstrap_samples"] = len(samples)
+        stats["bootstrap_p_value"] = float(bootstrap["p_value"])
         ci = bootstrap.get("confidence_interval")
         if ci is not None:
-            payload["confidence_interval"] = [float(ci[0]), float(ci[1])]
+            stats["bootstrap_ci_low"] = float(ci[0])
+            stats["bootstrap_ci_high"] = float(ci[1])
 
     with bootstrap_path.open("w", encoding="utf-8") as handle:
-        json.dump(payload, handle, indent=2)
-    return str(bootstrap_path)
+        json.dump(samples, handle, indent=2)
+    return str(bootstrap_path), stats
 
 
 def _stable_metrics(metrics: Dict[str, Any]) -> Dict[str, Any]:
