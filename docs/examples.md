@@ -1,75 +1,49 @@
 # Examples
 
-Kick off experiments quickly using the bundled configuration files in `configs/`.
+Kick off experiments quickly using the bundled configuration files and the reproducible sample data under `data/sample/`.
 
-## Mean reversion backtest
-
-```bash
-microalpha run -c configs/meanrev.yaml
-```
-
-Produces equity, metrics, and trade logs under `artifacts/<run_id>/` while exercising the TWAP execution model, volume-aware slippage, and volatility-scaled capital sizing.
-
-## Breakout momentum
+## 1. Flagship momentum quickstart
 
 ```bash
-microalpha run -c configs/breakout.yaml
+microalpha run --config configs/flagship_sample.yaml --out artifacts/sample_flagship
+microalpha report --artifact-dir artifacts/sample_flagship --summary-out reports/summaries/flagship_mom.md
 ```
 
-Runs the breakout strategy with configurable lookbacks and writes results to its own artifact directory.
+The run command generates deterministic artifacts (metrics, bootstrap distribution, exposures, trades) using the new linear+sqrt slippage model, IOC queueing, and covariance-aware allocator. The report command renders a PNG tear sheet plus a Markdown case study.
 
-## Limit order book market making
+## 2. Walk-forward reality check on the sample universe
 
 ```bash
-microalpha run -c configs/mm.yaml
+microalpha wfv --config configs/wfv_flagship_sample.yaml --out artifacts/sample_wfv
+microalpha report --artifact-dir artifacts/sample_wfv --summary-out reports/summaries/flagship_mom_wfv.md --title "Flagship Walk-Forward"
 ```
 
-Bootstraps the level-2 order book simulator for a naive market-making strategy to showcase FIFO, partial fills, and latency.
+This executes a rolling walk-forward with Politis–White bootstrap and writes `folds.json`, `bootstrap.json`, `exposures.csv`, and aggregated metrics for the flagship strategy.
 
-## Walk-forward validation
+## 3. Classic single-asset examples
 
-```bash
-microalpha wfv -c configs/wfv_meanrev.yaml
-```
+- **Mean reversion**
 
-Executes the unified walk-forward configuration model, emitting per-fold manifests and out-of-sample metrics for each parameter combination.
+  ```bash
+  microalpha run --config configs/meanrev.yaml
+  ```
 
-## Cross-sectional momentum (multi-asset)
+- **Breakout momentum**
 
-```bash
-microalpha wfv -c configs/wfv_cs_mom.yaml
-```
+  ```bash
+  microalpha run --config configs/breakout.yaml
+  ```
 
-- Demonstrates monthly rebalanced 12-1 momentum across symbols using the `MultiCsvDataHandler`.
-- Produces `folds.json`, `metrics.json`, `equity_curve.csv`, and you can render an interactive report with:
+- **Market making (LOB simulator)**
 
-```bash
-python reports/html_report.py artifacts/<run-id>/equity_curve.csv --trades artifacts/<run-id>/trades.jsonl --output artifacts/<run-id>/report.html
-```
+  ```bash
+  microalpha run --config configs/mm.yaml
+  ```
 
-## Flagship cross-sectional momentum
+- **Parameter walk-forward (single asset)**
 
-```bash
-python scripts/augment_sp500.py --source data_sp500 --dest data_sp500_enriched \
-    --sector-map metadata/sp500_sector_overrides.csv
-python scripts/build_flagship_universe.py --data-dir data_sp500_enriched \
-    --metadata metadata/sp500_enriched.csv --out-dir data/flagship_universe
-microalpha wfv -c configs/wfv_flagship_mom.yaml --out artifacts_flagship
-```
+  ```bash
+  microalpha wfv --config configs/wfv_meanrev.yaml
+  ```
 
-- Generates the enriched flagship universe, runs the walk-forward validation, and writes artifacts to `artifacts_flagship/`.
-- Summarise the headline metrics:
-
-```bash
-python reports/generate_summary.py configs/flagship_mom.yaml configs/wfv_flagship_mom.yaml
-```
-
-- Analyse factor loadings with the rolling exposure helper:
-
-```bash
-python reports/factor_exposure.py \
-    --equity artifacts_flagship/<run-id>/equity_curve.csv \
-    --factors data/factors/fama_french_daily.csv \
-    --window 63 \
-    --output artifacts_flagship/<run-id>/factor_exposures.png
-```
+Each command drops a self-contained artifact directory; you can call `microalpha report --artifact-dir <dir>` on any of them to render the markdown/PNG bundle.

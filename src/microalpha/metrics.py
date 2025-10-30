@@ -18,6 +18,7 @@ def compute_metrics(
     trades: Optional[List[Mapping[str, Any]]] = None,
     benchmark_equity: Optional[Sequence[Mapping[str, float | int]]] = None,
     rf: float = 0.0,
+    hac_lags: int | None = None,
 ) -> Dict[str, Any]:
     if not equity_records:
         df = pd.DataFrame(columns=["timestamp", "equity", "exposure", "returns"])
@@ -39,25 +40,25 @@ def compute_metrics(
     returns = df["returns"]
     mean_return = returns.mean()
 
-    hac_env = os.getenv("METRICS_HAC_LAGS")
-    hac_lags: Optional[int]
-    if hac_env:
-        try:
-            hac_lags = int(hac_env)
-        except ValueError:
-            hac_lags = None
-        else:
-            if hac_lags < 0:
-                hac_lags = None
-    else:
-        hac_lags = None
+    resolved_hac = hac_lags
+    if resolved_hac is None:
+        hac_env = os.getenv("METRICS_HAC_LAGS")
+        if hac_env:
+            try:
+                candidate = int(hac_env)
+            except ValueError:
+                candidate = None
+            else:
+                if candidate < 0:
+                    candidate = None
+            resolved_hac = candidate
 
     sharpe_summary = sharpe_stats(
         returns=returns,
         rf=rf,
         periods=periods,
         ddof=0,
-        hac_lags=hac_lags,
+        hac_lags=resolved_hac,
     )
     sharpe = float(sharpe_summary["sharpe"])
     sharpe_se = float(sharpe_summary["se"])
@@ -172,5 +173,5 @@ def compute_metrics(
         "sharpe_ratio_tstat": sharpe_tstat,
         "sharpe_ratio_ci_low": sharpe_ci_low,
         "sharpe_ratio_ci_high": sharpe_ci_high,
-        "sharpe_hac_lags": float(hac_lags or 0),
+        "sharpe_hac_lags": float(resolved_hac or 0),
     }

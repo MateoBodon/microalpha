@@ -9,6 +9,7 @@ from typing import Dict, Iterable, List, Mapping, Optional, Sequence
 import numpy as np
 import pandas as pd
 
+from ..allocators import budgeted_allocator
 from ..events import SignalEvent
 
 TRADING_DAYS_MONTH = 21
@@ -37,6 +38,10 @@ class FlagshipMomentumStrategy:
         turnover_target_pct_adv: float = 0.1,
         rebalance_frequency: str = "M",
         warmup_history: Mapping[str, Sequence[float]] | None = None,
+        cov_lookback_days: int = 63,
+        allocator: str = "budgeted_rp",
+        allocator_kwargs: Mapping[str, float] | None = None,
+        total_risk_budget: float = 1.0,
     ) -> None:
         if not universe_path:
             raise ValueError("FlagshipMomentumStrategy expects a universe_path.")
@@ -52,6 +57,10 @@ class FlagshipMomentumStrategy:
         self.min_price = float(min_price)
         self.turnover_target_pct_adv = float(max(turnover_target_pct_adv, 0.0))
         self.rebalance_frequency = rebalance_frequency
+        self.cov_lookback_days = int(max(10, cov_lookback_days))
+        self.allocator_name = str(allocator).lower()
+        self.allocator_kwargs = dict(allocator_kwargs or {})
+        self.total_risk_budget = float(max(total_risk_budget, 0.0))
 
         self.price_history: Dict[str, List[float]] = {
             sym: list(warmup_history.get(sym, [])) if warmup_history else []
@@ -284,6 +293,8 @@ class FlagshipMomentumStrategy:
                 longs.frame = longs.frame[longs.frame["symbol"] != sym]
 
         signals: List[SignalEvent] = []
+        weights = self._compute_weights(longs, shorts)
+
         for symbol, side in list(self.position_side.items()):
             if side == 0:
                 continue
@@ -295,7 +306,11 @@ class FlagshipMomentumStrategy:
                         event_timestamp,
                         symbol,
                         "EXIT",
-                        meta={"reason": "rebalance", "period_end": str(period_end.date())},
+                        meta={
+                            "reason": "rebalance",
+                            "period_end": str(period_end.date()),
+                            "weight": 0.0,
+                        },
                     )
                 )
                 self.position_side[symbol] = 0
@@ -303,13 +318,18 @@ class FlagshipMomentumStrategy:
         for _, row in longs.frame.iterrows():
             symbol = str(row["symbol"])
             meta = self._signal_meta(row, "long", period_end)
+            meta["weight"] = float(weights.get(symbol, 0.0))
             if self.position_side.get(symbol, 0) < 0:
                 signals.append(
                     SignalEvent(
                         event_timestamp,
                         symbol,
                         "EXIT",
-                        meta={"reason": "flip_to_long", "period_end": str(period_end.date())},
+                        meta={
+                            "reason": "flip_to_long",
+                            "period_end": str(period_end.date()),
+                            "weight": 0.0,
+                        },
                     )
                 )
             if self.position_side.get(symbol, 0) <= 0:
@@ -319,13 +339,18 @@ class FlagshipMomentumStrategy:
         for _, row in shorts.frame.iterrows():
             symbol = str(row["symbol"])
             meta = self._signal_meta(row, "short", period_end)
+            meta["weight"] = float(weights.get(symbol, 0.0))
             if self.position_side.get(symbol, 0) > 0:
                 signals.append(
                     SignalEvent(
                         event_timestamp,
                         symbol,
                         "EXIT",
-                        meta={"reason": "flip_to_short", "period_end": str(period_end.date())},
+                        meta={
+                            "reason": "flip_to_short",
+                            "period_end": str(period_end.date()),
+                            "weight": 0.0,
+                        },
                     )
                 )
             if self.position_side.get(symbol, 0) >= 0:
@@ -333,6 +358,90 @@ class FlagshipMomentumStrategy:
             self.position_side[symbol] = -1
 
         return signals
+
+    def _compute_weights(
+        self, longs: SleeveSelection, shorts: SleeveSelection
+    ) -> pd.Series:
+        symbols_order = list(dict.fromkeys(longs.symbols + shorts.symbols))
+        if not symbols_order or self.total_risk_budget <= 0.0:
+            return pd.Series(dtype=float)
+
+        returns_df, cov = self._covariance_inputs(symbols_order)
+        if cov.empty:
+            return self._fallback_weights(longs, shorts)
+
+        signals = {}
+        for _, row in longs.frame.iterrows():
+            value = float(row.get("sector_z", row.get("momentum", 0.0)))
+            signals[str(row["symbol"])] = max(value, 0.0) + 1e-9
+        for _, row in shorts.frame.iterrows():
+            value = float(row.get("sector_z", row.get("momentum", 0.0)))
+            signals[str(row["symbol"])] = -abs(value) - 1e-9
+
+        signal_series = pd.Series(signals)
+        ridge = float(self.allocator_kwargs.get("ridge", 1e-8))
+        risk_model = str(self.allocator_kwargs.get("risk_model", self.allocator_name))
+        allow_short = bool(self.allocator_kwargs.get("allow_short", False))
+
+        try:
+            weights = budgeted_allocator(
+                signal_series,
+                cov,
+                total_budget=self.total_risk_budget,
+                ridge=ridge,
+                risk_model=risk_model,
+                returns=returns_df,
+                allow_short=allow_short,
+            )
+        except ValueError:
+            weights = self._fallback_weights(longs, shorts)
+
+        return weights.reindex(symbols_order).fillna(0.0)
+
+    def _covariance_inputs(
+        self, symbols: Sequence[str]
+    ) -> tuple[pd.DataFrame, pd.DataFrame]:
+        returns: Dict[str, np.ndarray] = {}
+        lookback = self.cov_lookback_days
+        for sym in symbols:
+            prices = self.price_history.get(sym, [])
+            if prices is None or len(prices) < lookback + 1:
+                continue
+            tail = np.asarray(prices[-(lookback + 1) :], dtype=float)
+            if np.any(tail <= 0):
+                continue
+            rets = np.diff(np.log(tail))
+            if np.allclose(rets, 0):
+                continue
+            returns[sym] = rets
+
+        if not returns:
+            return pd.DataFrame(), pd.DataFrame()
+
+        returns_df = pd.DataFrame(returns).dropna(axis=0, how="any")
+        if returns_df.empty:
+            return pd.DataFrame(), pd.DataFrame()
+        cov = returns_df.cov()
+        return returns_df, cov
+
+    def _fallback_weights(
+        self, longs: SleeveSelection, shorts: SleeveSelection
+    ) -> pd.Series:
+        weights: Dict[str, float] = {}
+        total = len(longs.symbols) + len(shorts.symbols)
+        if total == 0:
+            return pd.Series(dtype=float)
+        if longs.symbols:
+            long_budget = self.total_risk_budget * (len(longs.symbols) / total)
+            per_long = long_budget / max(len(longs.symbols), 1)
+            for sym in longs.symbols:
+                weights[sym] = per_long
+        if shorts.symbols:
+            short_budget = self.total_risk_budget * (len(shorts.symbols) / total)
+            per_short = short_budget / max(len(shorts.symbols), 1)
+            for sym in shorts.symbols:
+                weights[sym] = -per_short
+        return pd.Series(weights)
 
     # ------------------------------------------------------------------
     def _signal_meta(

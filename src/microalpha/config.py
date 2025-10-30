@@ -10,10 +10,37 @@ from pydantic import BaseModel, Field, ValidationError, model_validator
 
 
 class SlippageCfg(BaseModel):
-    type: Literal["volume"]
+    type: Literal["volume", "linear", "sqrt", "linear_sqrt", "linear+sqrt"]
     impact: float = Field(
-        default=1e-4, description="Coefficient for volume-based slippage impact."
+        default=1e-4, description="Generic impact coefficient (legacy support)."
     )
+    k_lin: float | None = Field(
+        default=None, description="Linear impact coefficient for ADV scaling."
+    )
+    eta: float | None = Field(
+        default=None, description="Square-root impact coefficient."
+    )
+    default_adv: float = Field(
+        default=1_000_000.0,
+        description="Fallback ADV when metadata is unavailable.",
+    )
+    default_spread_bps: float = Field(
+        default=5.0,
+        description="Fallback bid-ask spread in basis points.",
+    )
+    spread_floor_multiplier: float = Field(
+        default=0.5, description="Floor multiplier applied to spread for impact."
+    )
+
+    @model_validator(mode="before")
+    @classmethod
+    def _normalise_type(cls, values):  # type: ignore[override]
+        if not isinstance(values, dict):
+            return values
+        stype = str(values.get("type", "")).lower()
+        if stype in {"linear+sqrt", "linear_plus_sqrt", "linear-sqrt"}:
+            values["type"] = "linear_sqrt"
+        return values
 
 
 class ExecModelCfg(BaseModel):
@@ -37,6 +64,13 @@ class ExecModelCfg(BaseModel):
     # LOB semantics: enforce t+1 fills by default (can be disabled)
     lob_tplus1: bool | None = True
     slippage: Optional[SlippageCfg] = None
+    limit_mode: Literal["market", "ioc", "po"] | None = None
+    queue_coefficient: float | None = None
+    queue_passive_multiplier: float | None = None
+    queue_seed: int | None = None
+    queue_randomize: bool | None = None
+    volatility_lookback: int | None = None
+    min_fill_qty: int | None = None
 
     @model_validator(mode="before")
     @classmethod
@@ -56,6 +90,8 @@ class ExecModelCfg(BaseModel):
         # Support legacy execution naming variants
         if values.get("type") in {"squareroot", "sqrt"}:
             values["type"] = "sqrt"
+        if "limit_mode" in values and values["limit_mode"] is not None:
+            values["limit_mode"] = str(values["limit_mode"]).lower()
         return values
 
 
@@ -65,6 +101,8 @@ class StrategyCfg(BaseModel):
     z: float | None = None
     params: Dict[str, Any] = Field(default_factory=dict)
     param_grid: Dict[str, Any] | None = None
+    allocator: str | None = None
+    allocator_params: Dict[str, Any] = Field(default_factory=dict)
 
 
 class CapitalPolicyCfg(BaseModel):
@@ -94,6 +132,8 @@ class BacktestCfg(BaseModel):
     capital_policy: CapitalPolicyCfg | None = None
     start_date: str | None = None
     end_date: str | None = None
+    metrics_hac_lags: int | None = None
+    meta_path: str | None = None
 
     @property
     def resolved_data_path(self) -> Path:
