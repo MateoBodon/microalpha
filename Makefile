@@ -18,10 +18,16 @@ wfv:
 	microalpha wfv --config $(SAMPLE_WFV_CONFIG) --out $(WFV_ARTIFACT_DIR)
 
 report:
-	microalpha report --artifact-dir $(ARTIFACT_DIR)
+	@if [ ! -d "$(ARTIFACT_DIR)" ]; then echo "No artifacts at $(ARTIFACT_DIR)"; exit 1; fi
+	@latest=$$(ls -td $(ARTIFACT_DIR)/* 2>/dev/null | head -1); \
+	if [ -z "$$latest" ]; then echo "No run directories under $(ARTIFACT_DIR)"; exit 1; fi; \
+	microalpha report --artifact-dir $$latest
 
 report-wfv:
-	microalpha report --artifact-dir $(WFV_ARTIFACT_DIR) --summary-out reports/summaries/flagship_mom_wfv.md --title "Flagship Walk-Forward"
+	@if [ ! -d "$(WFV_ARTIFACT_DIR)" ]; then echo "No artifacts at $(WFV_ARTIFACT_DIR)"; exit 1; fi
+	@latest=$$(ls -td $(WFV_ARTIFACT_DIR)/* 2>/dev/null | head -1); \
+	if [ -z "$$latest" ]; then echo "No run directories under $(WFV_ARTIFACT_DIR)"; exit 1; fi; \
+	microalpha report --artifact-dir $$latest --summary-out reports/summaries/flagship_mom_wfv.md --title "Flagship Walk-Forward"
 
 docs:
 	mkdocs build

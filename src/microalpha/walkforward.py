@@ -250,6 +250,7 @@ def run_walk_forward(
     folds: List[Dict[str, Any]] = []
     bootstrap_records: List[Dict[str, Any]] = []
     fold_exposure_paths: List[str] = []
+    fold_factor_paths: List[str] = []
     total_turnover = 0.0
 
     current_date = start_date
@@ -365,13 +366,16 @@ def run_walk_forward(
             total_turnover += float(portfolio.total_turnover)
 
             fold_index = len(folds)
-            exposure_path = persist_exposures(
+            exposure_path, factor_path = persist_exposures(
                 portfolio,
                 artifacts_dir,
                 filename=f"exposures_fold_{fold_index}.csv",
+                factor_filename=f"factor_exposure_fold_{fold_index}.csv",
             )
             if exposure_path:
                 fold_exposure_paths.append(exposure_path)
+            if factor_path:
+                fold_factor_paths.append(factor_path)
 
             test_metrics = compute_metrics(
                 portfolio.equity_curve,
@@ -425,6 +429,7 @@ def run_walk_forward(
                 ),
                 "reality_check": rc_summary,
                 "exposures_path": exposure_path,
+                "factor_exposure_path": factor_path,
                 "spa_pvalue": None,
             }
 
@@ -435,11 +440,17 @@ def run_walk_forward(
         trade_logger.close()
 
     exposures_path: str | None = None
+    factor_exposure_path: str | None = None
     if fold_exposure_paths:
         final_path = artifacts_dir / "exposures.csv"
         last_df = pd.read_csv(fold_exposure_paths[-1])
         last_df.to_csv(final_path, index=False)
         exposures_path = str(final_path)
+    if fold_factor_paths:
+        final_factor_path = artifacts_dir / "factor_exposure.csv"
+        last_factor_df = pd.read_csv(fold_factor_paths[-1], index_col=0)
+        last_factor_df.to_csv(final_factor_path)
+        factor_exposure_path = str(final_factor_path)
 
     folds_path = artifacts_dir / "folds.json"
     with folds_path.open("w", encoding="utf-8") as handle:
@@ -464,6 +475,7 @@ def run_walk_forward(
             "folds_path": str(folds_path),
             "bootstrap_path": str(bootstrap_path),
             "exposures_path": exposures_path,
+            "factor_exposure_path": factor_exposure_path,
             "metrics": metrics,
             "folds": folds,
             "trades_path": str(artifacts_dir / "trades.jsonl"),
