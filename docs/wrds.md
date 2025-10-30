@@ -6,8 +6,7 @@ pointing the engine at production-quality datasets.
 
 ## Data Layout
 
-Set the `template.data_path` field in [`configs/wfv_flagship_wrds.yaml`](https://github.com/MateoBodon/microalpha/blob/main/configs/wfv_flagship_wrds.yaml)
-to a directory containing per-symbol pricing files exported from WRDS/CRSP. Each file can be CSV
+Set the `template.data_path` field in ``configs/wfv_flagship_wrds.yaml`` to a directory containing per-symbol pricing files exported from WRDS/CRSP. Each file can be CSV
 or Parquet and must be named `SYMBOL.ext` (upper-case ticker symbols). Microalpha expects the
 following schema:
 

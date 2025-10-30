@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/mateobodon/microalpha/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/mateobodon/microalpha/actions/workflows/ci.yml?query=branch%3Amain)
 [![Docs](https://img.shields.io/badge/docs-pages-blue)](https://mateobodon.github.io/microalpha)
-![Coverage](https://img.shields.io/badge/coverage-79%25-blue.svg)
+![Coverage](https://img.shields.io/badge/coverage-78%25-blue.svg)
 
 **TL;DR:** An opinionated, research-hygienic backtester that enforces strict time-ordering, offers out-of-sample walk-forward evaluation with per-fold parameter selection, and includes realistic market frictions including TWAP + linear/√-impact/Kyle-λ execution modeling, slippage, and commission costs.
 
@@ -35,6 +35,7 @@ make wfv && make report-wfv
 - `reports/summaries/flagship_mom.md` and `reports/summaries/flagship_mom_wfv.md` are auto-generated from the sample runs.
 - Sample data (prices, metadata, risk-free series, universe) ships under `data/sample/`—no external vendors required.
 - WRDS/CRSP workflow documentation lives in [`docs/wrds.md`](docs/wrds.md); update [`configs/wfv_flagship_wrds.yaml`](configs/wfv_flagship_wrds.yaml) and run `make wrds` to exercise it.
+- `configs/wfv_flagship_public.yaml` showcases an 8-ticker bundle sourced from publicly known symbols in `data/public/`.
 
 ---
 

@@ -171,6 +171,11 @@ def main() -> None:
             title=args.title,
         )
 
+        default_factor_csv = Path("data/factors/ff3_sample.csv")
+        factor_csv_arg: Path | None = None
+        if default_factor_csv.exists() and "sample_wfv" in str(artifact_dir):
+            factor_csv_arg = default_factor_csv
+
         summary_path = generate_summary(
             artifact_dir=artifact_dir,
             output_path=args.summary_out,
@@ -178,6 +183,7 @@ def main() -> None:
             top_exposures=args.top_exposures,
             equity_image=outputs.get("equity_curve"),
             bootstrap_image=outputs.get("bootstrap_hist"),
+            factor_csv=factor_csv_arg,
         )
 
         manifest = {
