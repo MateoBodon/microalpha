@@ -8,7 +8,13 @@ from microalpha.data import MultiCsvDataHandler
 
 
 def _write_csv(path: Path, idx: list[pd.Timestamp], closes: list[float]) -> None:
-    df = pd.DataFrame({"close": closes}, index=pd.DatetimeIndex(idx))
+    df = pd.DataFrame(
+        {
+            "close": closes,
+            "volume": [1_000_000 + i * 10_000 for i in range(len(closes))],
+        },
+        index=pd.DatetimeIndex(idx),
+    )
     df.to_csv(path)
 
 
@@ -111,3 +117,12 @@ def test_stream_matches_baseline_logic(tmp_path: Path) -> None:
         expected = _baseline_events(handler)
         observed = _collect_events(handler)
         assert observed == expected
+
+        future = handler.get_future_timestamps(int(idx[1].value), 2)
+        assert len(future) == 2
+        aligned_ts = int(idx[2].value)
+        bridge_ts = int((idx[2] + pd.Timedelta(hours=12)).value)
+        aligned_vol = handler.get_volume_at("AAA", aligned_ts)
+        assert aligned_vol is not None and aligned_vol > 0
+        bridge_vol = handler.get_volume_at("AAA", bridge_ts)
+        assert bridge_vol is None
