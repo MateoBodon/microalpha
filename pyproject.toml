@@ -30,6 +30,8 @@ dev = [
     "types-PyYAML",
     "mkdocs>=1.6",
     "mkdocs-material>=9.5",
+    "isort>=5.13",
+    "detect-secrets>=1.5",
 ]
 
 [tool.black]

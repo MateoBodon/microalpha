@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import warnings
 from pathlib import Path
 from typing import Any, Dict, Literal, Optional
@@ -137,7 +138,8 @@ class BacktestCfg(BaseModel):
 
     @property
     def resolved_data_path(self) -> Path:
-        return Path(self.data_path)
+        expanded = os.path.expandvars(os.path.expanduser(self.data_path))
+        return Path(expanded)
 
 
 def parse_config(raw: Any) -> BacktestCfg:

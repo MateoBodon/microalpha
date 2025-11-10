@@ -2,6 +2,7 @@ numpy
 pandas
 pyyaml
 pydantic>=2
+matplotlib>=3.7
 
 [dev]
 pytest
@@ -11,7 +12,12 @@ mypy
 ruff>=0.4.0
 black>=23.7
 matplotlib
+plotly>=5.15
 pyarrow
 pydantic
 pandas-stubs
 types-PyYAML
+mkdocs>=1.6
+mkdocs-material>=9.5
+isort>=5.13
+detect-secrets>=1.5
