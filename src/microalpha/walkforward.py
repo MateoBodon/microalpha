@@ -248,6 +248,7 @@ def run_walk_forward(
 
     equity_records: List[Dict[str, Any]] = []
     folds: List[Dict[str, Any]] = []
+    grid_rows: List[Dict[str, Any]] = []
     bootstrap_samples: List[float] = []
     reality_metadata: Dict[str, Any] | None = None
     reality_pvalues: List[float] = []
@@ -273,7 +274,13 @@ def run_walk_forward(
             fold_rng = _spawn_rng(master_rng)
             train_rng = _spawn_rng(fold_rng)
 
-            best_params, train_metrics, rc_result = _optimise_parameters(
+            (
+                best_params,
+                train_metrics,
+                rc_result,
+                grid_payload,
+                grid_summary,
+            ) = _optimise_parameters(
                 data_handler,
                 train_start,
                 train_end,
@@ -299,6 +306,7 @@ def run_walk_forward(
                         "reality_check_pvalue": None,
                         "reality_check": None,
                         "spa_pvalue": None,
+                        "grid_summary": [],
                     }
                 )
                 current_date += pd.Timedelta(days=testing_days)
@@ -423,7 +431,17 @@ def run_walk_forward(
                 "exposures_path": exposure_path,
                 "factor_exposure_path": factor_path,
                 "spa_pvalue": None,
+                "grid_summary": grid_summary,
             }
+
+            if grid_payload:
+                grid_rows.extend(
+                    _grid_rows_for_fold(
+                        grid_payload,
+                        fold_index=fold_index,
+                        phase="train",
+                    )
+                )
 
             folds.append(fold_entry)
 
@@ -433,6 +451,7 @@ def run_walk_forward(
 
     exposures_path: str | None = None
     factor_exposure_path: str | None = None
+    grid_returns_path: str | None = None
     if fold_exposure_paths:
         final_path = artifacts_dir / "exposures.csv"
         last_df = pd.read_csv(fold_exposure_paths[-1])
@@ -443,6 +462,11 @@ def run_walk_forward(
         last_factor_df = pd.read_csv(fold_factor_paths[-1], index_col=0)
         last_factor_df.to_csv(final_factor_path)
         factor_exposure_path = str(final_factor_path)
+    if grid_rows:
+        grid_df = pd.DataFrame(grid_rows)
+        grid_path = artifacts_dir / "grid_returns.csv"
+        grid_df.to_csv(grid_path, index=False)
+        grid_returns_path = str(grid_path)
 
     folds_path = artifacts_dir / "folds.json"
     with folds_path.open("w", encoding="utf-8") as handle:
@@ -490,6 +514,7 @@ def run_walk_forward(
             "reality_check_path": reality_check_path,
             "exposures_path": exposures_path,
             "factor_exposure_path": factor_exposure_path,
+            "grid_returns_path": grid_returns_path,
             "metrics": metrics,
             "folds": folds,
             "trades_path": str(artifacts_dir / "trades.jsonl"),
@@ -509,7 +534,13 @@ def _optimise_parameters(
     rng: np.random.Generator,
     reality_cfg: RealityCheckCfg,
     symbol_meta: Mapping[str, Any] | None = None,
-) -> Tuple[Dict[str, Any], Dict[str, Any] | None, Dict[str, Any] | None]:
+) -> Tuple[
+    Dict[str, Any],
+    Dict[str, Any] | None,
+    Dict[str, Any] | None,
+    List[Dict[str, Any]],
+    List[Dict[str, Any]],
+]:
     best_entry: Dict[str, Any] | None = None
     results: List[Dict[str, Any]] = []
 
@@ -571,7 +602,10 @@ def _optimise_parameters(
         )
 
     if not results:
-        return {}, None, None
+        return {}, None, None, [], []
+
+    grid_payload = _build_grid_payload(results)
+    grid_summary = _grid_summary_from_payload(grid_payload)
 
     best_entry = max(
         results, key=lambda item: item["metrics"].get("sharpe_ratio", float("-inf"))
@@ -589,7 +623,7 @@ def _optimise_parameters(
 
     params = dict(base_params)
     params.update(best_entry["params"])
-    return params, best_entry["metrics"], reality_result
+    return params, best_entry["metrics"], reality_result, grid_payload, grid_summary
 
 
 def _build_portfolio(
@@ -753,6 +787,90 @@ def _summarise_walkforward(
 def _stable_metrics(metrics: Dict[str, Any]) -> Dict[str, Any]:
     disallowed = {"run_id", "timestamp", "artifacts_dir", "config_path"}
     return {key: value for key, value in metrics.items() if key not in disallowed}
+
+
+def _build_grid_payload(entries: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    payload: List[Dict[str, Any]] = []
+    for entry in entries:
+        params = dict(entry.get("params") or {})
+        metrics = entry.get("metrics") or {}
+        eq_df = metrics.get("equity_df")
+        returns: List[float] = []
+        timestamps: List[str] = []
+        if isinstance(eq_df, pd.DataFrame) and not eq_df.empty:
+            if "returns" in eq_df:
+                returns = [float(x) for x in eq_df["returns"].astype(float).tolist()]
+            ts_series = eq_df.get("timestamp")
+            if ts_series is not None:
+                timestamps = [_format_ts(val) for val in ts_series]
+        else:
+            arr = np.asarray(entry.get("returns"), dtype=float)
+            if arr.size:
+                returns = [float(x) for x in arr.tolist()]
+        payload.append(
+            {
+                "params": params,
+                "model": _format_param_label(params),
+                "returns": returns,
+                "timestamps": timestamps,
+                "sharpe_ratio": float(metrics.get("sharpe_ratio", 0.0) or 0.0),
+                "cagr": float(metrics.get("cagr", 0.0) or 0.0),
+                "ann_vol": float(metrics.get("ann_vol", 0.0) or 0.0),
+            }
+        )
+    return payload
+
+
+def _grid_summary_from_payload(payload: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    summary: List[Dict[str, Any]] = []
+    for entry in payload:
+        summary.append(
+            {
+                "model": entry.get("model"),
+                "params": entry.get("params", {}),
+                "sharpe_ratio": entry.get("sharpe_ratio", 0.0),
+                "cagr": entry.get("cagr", 0.0),
+                "ann_vol": entry.get("ann_vol", 0.0),
+            }
+        )
+    return summary
+
+
+def _grid_rows_for_fold(
+    payload: List[Dict[str, Any]],
+    fold_index: int,
+    phase: str,
+) -> List[Dict[str, Any]]:
+    rows: List[Dict[str, Any]] = []
+    for entry in payload:
+        returns = entry.get("returns") or []
+        timestamps = entry.get("timestamps") or []
+        if not timestamps or len(timestamps) != len(returns):
+            timestamps = [str(i) for i in range(len(returns))]
+        for ts, value in zip(timestamps, returns):
+            rows.append(
+                {
+                    "fold": fold_index,
+                    "phase": phase,
+                    "model": entry.get("model"),
+                    "timestamp": ts,
+                    "panel_id": f"{fold_index}:{ts}",
+                    "value": float(value),
+                }
+            )
+    return rows
+
+
+def _format_param_label(params: Mapping[str, Any]) -> str:
+    if not params:
+        return "default"
+    parts: List[str] = []
+    for key, value in sorted(params.items()):
+        if isinstance(value, float):
+            parts.append(f"{key}={value:.4f}")
+        else:
+            parts.append(f"{key}={value}")
+    return "|".join(parts)
 
 
 def _metrics_summary(metrics: Dict[str, Any]) -> Dict[str, Any]:

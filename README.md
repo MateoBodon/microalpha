@@ -83,9 +83,18 @@ Prices live under `data/public/prices/` (AAPL, MSFT, AMZN, GOOGL, TSLA, NVDA); m
 
 ### WRDS/CRSP workflow (guarded)
 1. Export WRDS DSF prices + security master to local paths.
-2. Replace the placeholders in [`configs/wfv_flagship_wrds.yaml`](configs/wfv_flagship_wrds.yaml).
-3. Run `make wrds`. The Makefile refuses to execute until the placeholders are updated.
-4. Consult [docs/wrds.md](docs/wrds.md) for schema tables, licensing notes, and survivorship guidance.
+2. Point [`configs/wfv_flagship_wrds.yaml`](configs/wfv_flagship_wrds.yaml) at `$WRDS_DATA_ROOT` exports (env vars are expanded automatically).
+3. Run the guarded pipeline:
+
+   ```bash
+   make wfv-wrds && make report-wrds
+   python reports/analytics.py artifacts/wrds_flagship/<RUN_ID>
+   python reports/factors.py artifacts/wrds_flagship/<RUN_ID> --model ff5_mom
+   python reports/spa.py --grid artifacts/wrds_flagship/<RUN_ID>/grid_returns.csv
+   ```
+
+4. Drop the resulting PNG/MD/JSON artefacts into git (never WRDS raw data) and link them from [docs/results_wrds.md](docs/results_wrds.md).
+5. Consult [docs/wrds.md](docs/wrds.md) for schema tables, licensing notes, and survivorship guidance.
 
 ---
 
