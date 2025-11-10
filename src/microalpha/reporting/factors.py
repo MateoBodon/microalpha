@@ -5,10 +5,16 @@ from __future__ import annotations
 import argparse
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, Sequence
 
 import numpy as np
 import pandas as pd
+
+MODEL_FACTORS = {
+    "ff3": ["Mkt_RF", "SMB", "HML"],
+    "carhart": ["Mkt_RF", "SMB", "HML", "MOM"],
+    "ff5_mom": ["Mkt_RF", "SMB", "HML", "RMW", "CMA", "MOM"],
+}
 
 
 @dataclass
@@ -28,24 +34,25 @@ def _prepare_returns(equity_csv: Path) -> pd.Series:
     return returns
 
 
-def _prepare_factors(factor_csv: Path) -> pd.DataFrame:
+def _prepare_factors(factor_csv: Path, required: Sequence[str]) -> pd.DataFrame:
     factors = pd.read_csv(factor_csv, parse_dates=["date"])
-    required = {"Mkt_RF", "SMB", "HML", "RF"}
-    missing = required.difference(factors.columns)
+    required_cols = set(required) | {"RF"}
+    missing = required_cols.difference(factors.columns)
     if missing:
         raise ValueError(f"Factor CSV missing columns: {sorted(missing)}")
     frame = factors.set_index("date").sort_index()
-    # Assume inputs are expressed in decimal form (e.g. 0.01 = 1%).
     return frame
 
 
-def _design_matrix(factors: pd.DataFrame, excess_returns: pd.Series) -> tuple[np.ndarray, np.ndarray]:
-    aligned = factors.join(excess_returns.rename("excess"), how="inner")
+def _design_matrix(
+    factors: pd.DataFrame, factor_names: Sequence[str], excess_returns: pd.Series
+) -> tuple[np.ndarray, np.ndarray]:
+    aligned = factors[list(factor_names)].join(excess_returns.rename("excess"), how="inner")
     aligned = aligned.dropna()
     if aligned.empty:
         raise ValueError("No overlapping dates between factors and returns")
     y = aligned["excess"].to_numpy(dtype=float)
-    X = aligned[["Mkt_RF", "SMB", "HML"]].to_numpy(dtype=float)
+    X = aligned[list(factor_names)].to_numpy(dtype=float)
     intercept = np.ones((X.shape[0], 1), dtype=float)
     X_design = np.hstack((intercept, X))
     return X_design, y
@@ -74,19 +81,25 @@ def _newey_west_se(X: np.ndarray, residuals: np.ndarray, lag: int) -> np.ndarray
 def compute_factor_regression(
     equity_csv: Path,
     factor_csv: Path,
+    model: str = "ff3",
     hac_lags: int = 5,
 ) -> list[FactorResult]:
-    """Run a simple FF3-style regression with Newey-West errors."""
+    """Run Carhart/FF5(+MOM) regressions with Newey-West errors."""
 
+    model_key = model.lower()
+    if model_key not in MODEL_FACTORS:
+        raise ValueError(f"Unknown factor model '{model}'. Valid options: {sorted(MODEL_FACTORS)}")
+
+    factor_names = MODEL_FACTORS[model_key]
     returns = _prepare_returns(equity_csv)
-    factors = _prepare_factors(factor_csv)
+    factors = _prepare_factors(factor_csv, factor_names)
     common = factors.index.intersection(returns.index)
     if common.empty:
         raise ValueError("No overlapping dates between factors and returns")
     returns_aligned = returns.loc[common]
     rf = factors.loc[common, "RF"].astype(float)
     excess = returns_aligned - rf
-    X, y = _design_matrix(factors.loc[common], excess)
+    X, y = _design_matrix(factors.loc[common], factor_names, excess)
 
     beta, *_ = np.linalg.lstsq(X, y, rcond=None)
     residuals = y - X @ beta
@@ -94,7 +107,7 @@ def compute_factor_regression(
     with np.errstate(divide="ignore", invalid="ignore"):
         t_stats = np.where(se > 0, beta / se, np.nan)
 
-    labels = ["Alpha", "Mkt_RF", "SMB", "HML"]
+    labels = ["Alpha", *factor_names]
     return [FactorResult(name=lab, beta=float(b), t_stat=float(t)) for lab, b, t in zip(labels, beta, t_stats)]
 
 
@@ -106,7 +119,7 @@ def _format_markdown_table(results: Iterable[FactorResult]) -> str:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Run FF3 regression on Microalpha artifacts")
+    parser = argparse.ArgumentParser(description="Run factor regressions on Microalpha artifacts")
     parser.add_argument("artifact_dir", type=Path, help="Artifact directory containing equity_curve.csv")
     parser.add_argument(
         "--factors",
@@ -121,6 +134,12 @@ def main() -> None:
         help="Optional markdown file to write the regression table to",
     )
     parser.add_argument("--hac-lags", type=int, default=5, help="Newey-West lag length (default: 5)")
+    parser.add_argument(
+        "--model",
+        choices=sorted(MODEL_FACTORS.keys()),
+        default="carhart",
+        help="Factor model to run (default: carhart)",
+    )
     args = parser.parse_args()
 
     equity_csv = args.artifact_dir / "equity_curve.csv"
@@ -129,7 +148,12 @@ def main() -> None:
     if not args.factors.exists():
         raise SystemExit(f"Factor CSV not found: {args.factors}")
 
-    results = compute_factor_regression(equity_csv, args.factors, hac_lags=args.hac_lags)
+    results = compute_factor_regression(
+        equity_csv,
+        args.factors,
+        model=args.model,
+        hac_lags=args.hac_lags,
+    )
     table = _format_markdown_table(results)
     print(table)
     if args.output:

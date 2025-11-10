@@ -12,6 +12,7 @@ nav:
   - Reproducibility: reproducibility.md
   - Leakage Safety: leakage-safety.md
   - WRDS & Real Data: wrds.md
+  - WRDS Results: results_wrds.md
   - Factors: factors.md
 extra:
   social:
