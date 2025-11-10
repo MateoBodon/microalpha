@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import shutil
 from dataclasses import asdict
 from pathlib import Path
@@ -486,7 +487,8 @@ def _persist_trades(portfolio: Portfolio, artifacts_dir: Path) -> str | None:
 
 
 def resolve_path(value: str, cfg_path: Path) -> Path:
-    path = Path(value)
+    expanded = os.path.expandvars(os.path.expanduser(value))
+    path = Path(expanded)
     if path.is_absolute():
         return path
 

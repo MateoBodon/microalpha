@@ -1,27 +1,41 @@
 .hypothesis/
-artifacts/
-!artifacts/sample_flagship/
-!artifacts/sample_flagship/**
-!artifacts/sample_wfv/
-!artifacts/sample_wfv/**
-__pycache__/
 .pytest_cache/
+.ruff_cache/
+.mypy_cache/
+dist/
+build/
+*.egg-info/
+__pycache__/
+src/**/__pycache__/
+tests/**/__pycache__/
 *.pyc
 *.pyo
 *.pstats
 .DS_Store
-dist/
-build/
-*.egg-info/
-venv/
+.env*
 .venv/
-src/**/__pycache__/
-tests/**/__pycache__/
-reports/summaries/_artifacts/
+venv/
 
-# Flagship generated data
+# Artifacts (allow published png/md/json summaries)
+artifacts/**
+!artifacts/**/*.png
+!artifacts/**/*.md
+!artifacts/**/*.json
+artifacts/**/*.log
+
+# Logs
+artifacts/logs/
+artifacts/logs/**
+
+# WRDS and large data exports
+data/wrds/
+data/wrds/**
 /data_sp500_enriched/
 /data/flagship_universe/
 metadata/sp500_enriched.csv
 reports/data_sp500_cleaning.json
 reports/flagship_universe_summary.json
+configs/artifacts/
+
+# Misc
+reports/summaries/_artifacts/
