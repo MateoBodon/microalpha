@@ -1,6 +1,6 @@
 # WRDS Walk-Forward Results (Flagship Momentum)
 
-> Latest run: **2025-11-12T08-51-11Z-65187e4** (`configs/wfv_flagship_wrds.yaml`, 2012-01-03 → 2024-12-11, 21 folds with 9-month forward tests)
+> Latest run: **2025-11-12T18-50-58Z-b2eaf50** (`configs/wfv_flagship_wrds.yaml`, 2012-01-03 -> 2024-12-11, 21 folds with 189-day forward tests (~9.0 months))
 
 ## Performance Snapshot
 
@@ -10,23 +10,26 @@
 | MAR | -0.01 |
 | Max Drawdown | 93.20% |
 | Turnover | $2.23B |
+| Reality Check p-value | 0.908 |
 | SPA p-value | 0.454 |
 
 ## Key Visuals
 
-![Equity Curve](img/wrds_flagship/2025-11-12T08-51-11Z-65187e4/equity_curve.png)
+![Equity Curve](img/wrds_flagship/2025-11-12T18-50-58Z-b2eaf50/equity_curve.png)
 
-![Bootstrap Sharpe Histogram](img/wrds_flagship/2025-11-12T08-51-11Z-65187e4/bootstrap_hist.png)
+![Bootstrap Sharpe Histogram](img/wrds_flagship/2025-11-12T18-50-58Z-b2eaf50/bootstrap_hist.png)
 
-![IC / Rolling IR](img/wrds_flagship/2025-11-12T08-51-11Z-65187e4/2025-11-12T08-51-11Z-65187e4_ic_ir.png)
+![SPA Comparator t-stats](img/wrds_flagship/2025-11-12T18-50-58Z-b2eaf50/spa_tstats.png)
 
-![Decile Spreads](img/wrds_flagship/2025-11-12T08-51-11Z-65187e4/2025-11-12T08-51-11Z-65187e4_deciles.png)
+![IC / Rolling IR](img/wrds_flagship/2025-11-12T18-50-58Z-b2eaf50/2025-11-12T18-50-58Z-b2eaf50_ic_ir.png)
 
-![Rolling FF5+MOM Betas](img/wrds_flagship/2025-11-12T08-51-11Z-65187e4/2025-11-12T08-51-11Z-65187e4_rolling_betas.png)
+![Decile Spreads](img/wrds_flagship/2025-11-12T18-50-58Z-b2eaf50/2025-11-12T18-50-58Z-b2eaf50_deciles.png)
+
+![Rolling FF5+MOM Betas](img/wrds_flagship/2025-11-12T18-50-58Z-b2eaf50/2025-11-12T18-50-58Z-b2eaf50_rolling_betas.png)
 
 ## SPA & Factor Highlights
 
-- Hansen SPA best model: **top_frac=0.25, turnover_target_pct_adv=0.10** with p-value **0.454** (2,000 stationary bootstrap draws, block=63). See `reports/summaries/wrds_flagship_spa.md`.
+- Hansen SPA best model: **top_frac=0.2500|turnover_target_pct_adv=0.1000** with p-value **0.454** (2000 stationary bootstrap draws, block=63). See `reports/summaries/wrds_flagship_spa.md`.
 - FF5 + MOM regression (HAC lags=5):
 
 ```
@@ -43,14 +46,14 @@
 
 ## Capacity & Turnover
 
-- Average daily turnover: ~$0.81MM (≈5.4% of the $15MM book), total turnover $2.23B across 2,541 traded days.
-- Portfolio heat cap 3.5× gross exposure; engine never breached the limit during this run.
-- Active sleeves obey max 10 names per sector with ADV floor $30,000,000.
+- Average daily turnover: ~$814.76K (total $2.23B) across 2541 traded days.
+- Portfolio heat cap enforced via max positions per sector and ADV floor; no guardrail breaches detected.
 
 ## Notes
 
-- Signals derived from WRDS flagship universe (`wrds_cache/universes/flagship_sector_neutral.csv`) with 12M lookback / 1M skip and ADV ≥ $30MM.
-- Execution assumptions: 5 bps explicit commission, square-root impact calibrated to 35MM ADV, borrow spread floor 8 bps, TWAP slices=6.
-- Training window: 3 years; testing window: 189 trading days (~9 months) per fold, yielding 21 folds that span 2012 through Q4 2024.
+- Signals derived from the WRDS flagship universe with 12M lookback / 1M skip and ADV >= $30.00MM.
+- Training window spans 756 trading days; forward tests run 189 days each.
+- Target turnover ≈ 12.00% of ADV with max 10 positions per sector.
+- Execution assumes TWAP slicing with linear+sqrt impact, 5 bps commissions, and borrow spread floor of 8 bps.
 
-Published artifacts (PNG/MD/JSON summaries) live under `docs/img/wrds_flagship/2025-11-12T08-51-11Z-65187e4/` and `reports/summaries/wrds_flagship*.{md,json}` for reproducibility.
+Published artifacts (PNG/MD/JSON summaries) live under `docs/img/wrds_flagship/2025-11-12T18-50-58Z-b2eaf50` and reports/summaries for reproducibility.

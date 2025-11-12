@@ -13,4 +13,4 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Changed
 - Walk-forward WRDS config aligned to universe coverage (2012–2024) and report pipeline now emits WRDS signals before analytics.
-- WRDS flagship run now uses 3y/9m folds (21 folds), trimmed grid (top_frac × turnover only), higher turnover cap, and produces tearsheet/SPAs/factors for run `2025-11-12T08-51-11Z-65187e4` with docs populated accordingly.
+- WRDS flagship run now uses 3y/9m folds (21 folds), trimmed grid (top_frac × turnover only), higher turnover cap, and produces reproducible signals/analytics/factors/SPA assets for run `2025-11-12T18-50-58Z-b2eaf50` with docs, plots, and summaries updated in lockstep.

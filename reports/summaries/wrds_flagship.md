@@ -13,9 +13,11 @@
 
 ## Visuals
 
-![Equity Curve](../../docs/img/wrds_flagship/2025-11-12T08-51-11Z-65187e4/equity_curve.png)
+![Equity Curve](../../docs/img/wrds_flagship/2025-11-12T18-50-58Z-b2eaf50/equity_curve.png)
 
-![Bootstrap Sharpe Histogram](../../docs/img/wrds_flagship/2025-11-12T08-51-11Z-65187e4/bootstrap_hist.png)
+![Bootstrap Sharpe Histogram](../../docs/img/wrds_flagship/2025-11-12T18-50-58Z-b2eaf50/bootstrap_hist.png)
+
+![SPA Comparator t-stats](../../docs/img/wrds_flagship/2025-11-12T18-50-58Z-b2eaf50/spa_tstats.png)
 
 ## Hansen SPA Summary
 

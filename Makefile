@@ -23,12 +23,13 @@ wfv:
 	microalpha wfv --config $(SAMPLE_WFV_CONFIG) --out $(WFV_ARTIFACT_DIR)
 
 wfv-wrds:
+	@if [ -z "$$WRDS_DATA_ROOT" ]; then echo "Set WRDS_DATA_ROOT before running wfv-wrds."; exit 1; fi
 	@if [ ! -f "$(WRDS_CONFIG)" ]; then echo "Missing $(WRDS_CONFIG)."; exit 1; fi
 	@if grep -q 'WRDS_UNIVERSE_PLACEHOLDER' $(WRDS_CONFIG); then \
 		echo "Update WRDS config placeholders before running (see $(WRDS_CONFIG))."; \
 		exit 1; \
 	fi
-	microalpha wfv --config $(WRDS_CONFIG) --out $(WRDS_ARTIFACT_DIR)
+	WRDS_DATA_ROOT="$$WRDS_DATA_ROOT" microalpha wfv --config $(WRDS_CONFIG) --out $(WRDS_ARTIFACT_DIR)
 
 wrds: wfv-wrds
 
@@ -52,15 +53,18 @@ report-wfv:
 
 report-wrds:
 	@if [ ! -d "$(WRDS_ARTIFACT_DIR)" ]; then echo "No artifacts at $(WRDS_ARTIFACT_DIR)"; exit 1; fi
+	@if [ -z "$$WRDS_DATA_ROOT" ]; then echo "Set WRDS_DATA_ROOT before running report-wrds."; exit 1; fi
 	@latest=$$(ls -td $(WRDS_ARTIFACT_DIR)/* 2>/dev/null | head -1); \
 	if [ -z "$$latest" ]; then echo "No run directories under $(WRDS_ARTIFACT_DIR)"; exit 1; fi; \
 	echo "Using WRDS run $$latest"; \
-	PYTHONPATH=src:$$PYTHONPATH WRDS_DATA_ROOT="$$WRDS_DATA_ROOT" scripts/build_wrds_signals.py --output $$latest/signals.csv --lookback-months 12 --skip-months 1 --min-adv 30000000; \
-	python reports/analytics.py $$latest --factors data/factors/ff5_mom_daily.csv; \
-	python reports/factors.py $$latest --factors data/factors/ff5_mom_daily.csv --model ff5_mom --output reports/summaries/wrds_flagship_factors.md; \
-	python reports/tearsheet.py $$latest/equity_curve.csv --bootstrap $$latest/bootstrap.json --metrics $$latest/metrics.json --output $$latest/equity_curve.png --bootstrap-output $$latest/bootstrap_hist.png --title "WRDS Flagship Walk-Forward"; \
-	python reports/spa.py --grid $$latest/grid_returns.csv --output-json $$latest/spa.json --output-md $$latest/spa.md --bootstrap 2000 --avg-block 63; \
-	python reports/render_wrds_flagship.py $$latest --output reports/summaries/wrds_flagship.md --factors-md reports/summaries/wrds_flagship_factors.md
+	img_root=docs/img/wrds_flagship; \
+	PYTHONPATH=src:$$PYTHONPATH WRDS_DATA_ROOT="$$WRDS_DATA_ROOT" python3 scripts/build_wrds_signals.py --output $$latest/signals.csv --lookback-months 12 --skip-months 1 --min-adv 30000000; \
+	PYTHONPATH=src:$$PYTHONPATH python3 reports/analytics.py $$latest --factors data/factors/ff5_mom_daily.csv; \
+	PYTHONPATH=src:$$PYTHONPATH python3 reports/factors.py $$latest --factors data/factors/ff5_mom_daily.csv --model ff5_mom --hac-lags 5 --output $$latest/factors_ff5_mom.md; \
+	cp $$latest/factors_ff5_mom.md reports/summaries/wrds_flagship_factors.md; \
+	PYTHONPATH=src:$$PYTHONPATH python3 reports/tearsheet.py $$latest/equity_curve.csv --bootstrap $$latest/bootstrap.json --metrics $$latest/metrics.json --output $$latest/equity_curve.png --bootstrap-output $$latest/bootstrap_hist.png --title "WRDS Flagship Walk-Forward"; \
+	PYTHONPATH=src:$$PYTHONPATH python3 reports/spa.py --grid $$latest/grid_returns.csv --output-json $$latest/spa.json --output-md $$latest/spa.md --bootstrap 2000 --avg-block 63; \
+	PYTHONPATH=src:$$PYTHONPATH python3 reports/render_wrds_flagship.py $$latest --output reports/summaries/wrds_flagship.md --factors-md $$latest/factors_ff5_mom.md --docs-results docs/results_wrds.md --docs-image-root $$img_root --analytics-plots artifacts/plots --metrics-json-out reports/summaries/wrds_flagship_metrics.json --spa-json-out reports/summaries/wrds_flagship_spa.json --spa-md-out reports/summaries/wrds_flagship_spa.md
 
 docs:
 	mkdocs build
