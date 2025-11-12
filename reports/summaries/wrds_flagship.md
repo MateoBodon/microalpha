@@ -1,29 +1,45 @@
-# WRDS Flagship
+# WRDS Flagship Walk-Forward
 
-## Performance Snapshot
+## Headline Metrics
 
 | Metric | Value |
 | --- | ---:|
-| Sharpe_HAC | 0.00 |
-| MAR | 0.00 |
-| MaxDD | 0.00% |
-| Turnover | $0 |
-| RealityCheck_p_value | 1.000 |
+| Sharpe_HAC | 0.46 |
+| MAR | -0.01 |
+| MaxDD | 93.20% |
+| Turnover | $2,229,998,821 |
+| RealityCheck_p_value | 0.908 |
+| SPA_p_value | 0.454 |
 
 ## Visuals
 
-![Equity Curve](../../artifacts/wrds_flagship/2025-11-11T01-03-46Z-012ab4a/equity_curve.png)
+![Equity Curve](../../docs/img/wrds_flagship/2025-11-12T18-50-58Z-b2eaf50/equity_curve.png)
 
-![Bootstrap Sharpe Histogram](../../artifacts/wrds_flagship/2025-11-11T01-03-46Z-012ab4a/bootstrap_hist.png)
+![Bootstrap Sharpe Histogram](../../docs/img/wrds_flagship/2025-11-12T18-50-58Z-b2eaf50/bootstrap_hist.png)
 
-## Bootstrap Reality Check
+![SPA Comparator t-stats](../../docs/img/wrds_flagship/2025-11-12T18-50-58Z-b2eaf50/spa_tstats.png)
 
-- Samples: 80400
-- Mean Sharpe: 0.00
-- Std: 0.00
-- 95% CI: [0.00, 0.00]
-- p-value: 1.000
+## Hansen SPA Summary
 
-## Top Exposures
+- **Best model:** top_frac=0.2500|turnover_target_pct_adv=0.1000
+- **Observed max t-stat:** 1.724
+- **p-value:** 0.454
+- **Bootstrap draws:** 2000 (avg block 63)
 
-_Exposures unavailable._
+| Comparator | Mean Diff | t-stat |
+| --- | ---:| ---:|
+| top_frac=0.2500|turnover_target_pct_adv=0.1400 | 0.0000 | 0.00 |
+| top_frac=0.3500|turnover_target_pct_adv=0.1000 | 0.0042 | 1.72 |
+| top_frac=0.3500|turnover_target_pct_adv=0.1400 | 0.0042 | 1.72 |
+
+## Factor Attribution (FF5+MOM)
+
+| Factor | Beta | t-stat |
+| --- | ---:| ---:|
+| Alpha | 0.0007 | 0.61 |
+| Mkt_RF | 2.2319 | 6.28 |
+| SMB | 0.3238 | 1.35 |
+| HML | -0.7878 | -2.87 |
+| RMW | -0.6352 | -2.11 |
+| CMA | -0.3157 | -0.76 |
+| MOM | 0.3266 | 1.64 |

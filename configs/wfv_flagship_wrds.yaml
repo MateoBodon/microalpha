@@ -10,7 +10,7 @@ template:
   max_drawdown_stop: 0.25
   max_portfolio_heat: 3.5
   max_positions_per_sector: 10
-  turnover_cap: 0.35
+  turnover_cap: 250000000.0
   metrics_hac_lags: 10
   exec:
     type: "twap"
@@ -54,16 +54,14 @@ template:
     min_qty: 10
 
 walkforward:
-  start: "2000-01-03"
-  end: "2025-06-30"
+  start: "2012-01-03"
+  end: "2024-12-31"
   training_days: 756  # ~3y training window
-  testing_days: 126   # ~6m forward test
+  testing_days: 189   # ~9m forward test
 
 grid:
   top_frac: [0.25, 0.35]
-  skip_months: [1, 2]
   turnover_target_pct_adv: [0.10, 0.14]
-  max_positions_per_sector: [8, 10]
 
 reality_check:
   method: "stationary"

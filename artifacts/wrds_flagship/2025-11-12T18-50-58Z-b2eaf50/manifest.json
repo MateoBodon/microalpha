@@ -1,0 +1,12 @@
+{
+  "run_id": "2025-11-12T18-50-58Z-b2eaf50",
+  "git_sha": "b2eaf5082bce0aa12d66c0a2e22aa3e2150f035c",
+  "microalpha_version": "0.1.0",
+  "python": "3.12.2 (v3.12.2:6abddd9f6a, Feb  6 2024, 17:02:06) [Clang 13.0.0 (clang-1300.0.29.30)]",
+  "platform": "macOS-26.0.1-arm64-arm-64bit",
+  "numpy_version": "2.2.6",
+  "pandas_version": "2.2.3",
+  "seed": 20251010,
+  "config_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/configs/wfv_flagship_wrds.yaml",
+  "config_sha256": "e8ca0b39d592c33159540d9ba2997ce4d9887c524928b289bec5e9a093ee9eb1"
+}
