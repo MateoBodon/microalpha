@@ -5,7 +5,7 @@ WFV_ARTIFACT_DIR ?= artifacts/sample_wfv
 WRDS_CONFIG ?= configs/wfv_flagship_wrds.yaml
 WRDS_ARTIFACT_DIR ?= artifacts/wrds_flagship
 
-.PHONY: dev test test-wrds sample wfv wfv-wrds wrds report report-wrds docs clean
+.PHONY: dev test test-wrds sample wfv wfv-wrds wrds report report-wrds docs clean export-wrds report-wfv
 
 dev:
 	pip install -e '.[dev]'
@@ -32,6 +32,12 @@ wfv-wrds:
 
 wrds: wfv-wrds
 
+export-wrds:
+	@if [ -z "$$WRDS_DATA_ROOT" ]; then echo "Set WRDS_DATA_ROOT before running export-wrds."; exit 1; fi
+	@if [ ! -f "$$HOME/.pgpass" ]; then echo "Missing $$HOME/.pgpass for WRDS access."; exit 1; fi
+	@python -c 'from pathlib import Path; import sys; path = Path.home() / ".pgpass"; mode = path.stat().st_mode & 0o777; (mode == 0o600) or (print(f"{path} must have 600 permissions (found {oct(mode)})"), sys.exit(1))'
+	PYTHONPATH=src:$$PYTHONPATH python scripts/export_wrds_flagship.py
+
 report:
 	@if [ ! -d "$(ARTIFACT_DIR)" ]; then echo "No artifacts at $(ARTIFACT_DIR)"; exit 1; fi
 	@latest=$$(ls -td $(ARTIFACT_DIR)/* 2>/dev/null | head -1); \
@@ -48,7 +54,13 @@ report-wrds:
 	@if [ ! -d "$(WRDS_ARTIFACT_DIR)" ]; then echo "No artifacts at $(WRDS_ARTIFACT_DIR)"; exit 1; fi
 	@latest=$$(ls -td $(WRDS_ARTIFACT_DIR)/* 2>/dev/null | head -1); \
 	if [ -z "$$latest" ]; then echo "No run directories under $(WRDS_ARTIFACT_DIR)"; exit 1; fi; \
-	microalpha report --artifact-dir $$latest --summary-out reports/summaries/wrds_flagship.md --title "WRDS Flagship"
+	echo "Using WRDS run $$latest"; \
+	PYTHONPATH=src:$$PYTHONPATH WRDS_DATA_ROOT="$$WRDS_DATA_ROOT" scripts/build_wrds_signals.py --output $$latest/signals.csv --lookback-months 12 --skip-months 1 --min-adv 30000000; \
+	python reports/analytics.py $$latest --factors data/factors/ff5_mom_daily.csv; \
+	python reports/factors.py $$latest --factors data/factors/ff5_mom_daily.csv --model ff5_mom --output reports/summaries/wrds_flagship_factors.md; \
+	python reports/tearsheet.py $$latest/equity_curve.csv --bootstrap $$latest/bootstrap.json --metrics $$latest/metrics.json --output $$latest/equity_curve.png --bootstrap-output $$latest/bootstrap_hist.png --title "WRDS Flagship Walk-Forward"; \
+	python reports/spa.py --grid $$latest/grid_returns.csv --output-json $$latest/spa.json --output-md $$latest/spa.md --bootstrap 2000 --avg-block 63; \
+	python reports/render_wrds_flagship.py $$latest --output reports/summaries/wrds_flagship.md --factors-md reports/summaries/wrds_flagship_factors.md
 
 docs:
 	mkdocs build
