@@ -1,0 +1,18 @@
+{
+  "run_id": "2025-11-12T08-51-11Z-65187e4",
+  "sharpe_ratio": 0.45520414749033733,
+  "sortino_ratio": 0.49728750478596684,
+  "max_drawdown": 0.9320150054268082,
+  "max_drawdown_duration": 867,
+  "cagr": -0.012539752694956996,
+  "calmar_ratio": -0.013454453653580958,
+  "ann_vol": 1.022084033672069,
+  "avg_exposure": 2.021690203053045,
+  "exposure_std": 1.8031562623607917,
+  "total_turnover": 2229998821.1521,
+  "turnover_per_day": 814760.256175411,
+  "traded_days": 2541,
+  "num_trades": 504,
+  "sharpe_hac_lags": 10,
+  "reality_check_p_value": 0.9080528131319138
+}

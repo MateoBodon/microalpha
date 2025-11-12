@@ -1,0 +1,24 @@
+{
+  "best_model": "top_frac=0.2500|turnover_target_pct_adv=0.1000",
+  "p_value": 0.454,
+  "observed_stat": 1.7236134574375435,
+  "num_bootstrap": 2000,
+  "avg_block": 63,
+  "candidate_stats": [
+    {
+      "model": "top_frac=0.2500|turnover_target_pct_adv=0.1400",
+      "mean_diff": 0.0,
+      "t_stat": 0.0
+    },
+    {
+      "model": "top_frac=0.3500|turnover_target_pct_adv=0.1000",
+      "mean_diff": 0.004189644899748915,
+      "t_stat": 1.7236134574375435
+    },
+    {
+      "model": "top_frac=0.3500|turnover_target_pct_adv=0.1400",
+      "mean_diff": 0.004189644899748915,
+      "t_stat": 1.7236134574375435
+    }
+  ]
+}
