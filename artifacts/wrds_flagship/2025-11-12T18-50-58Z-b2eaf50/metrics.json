@@ -25,6 +25,5 @@
   "sharpe_ratio_ci_high": 0.9907428696758276,
   "sharpe_hac_lags": 10.0,
   "reality_check_p_value": 0.9080528131319138,
-  "bootstrap_samples": 25200,
-  "run_id": "2025-11-12T18-50-58Z-b2eaf50"
+  "bootstrap_samples": 25200
 }
