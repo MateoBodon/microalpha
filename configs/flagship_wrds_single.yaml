@@ -1,0 +1,58 @@
+# Single backtest of flagship momentum on WRDS CRSP exports
+
+data_path: "${WRDS_DATA_ROOT}/crsp/daily_csv"
+meta_path: "${WRDS_DATA_ROOT}/meta/crsp_security_metadata.csv"
+symbol: "WRDS"
+cash: 15000000.0
+seed: 20251010
+max_exposure: 1.8
+max_drawdown_stop: 0.25
+turnover_cap: 250000000.0
+max_portfolio_heat: 3.5
+max_positions_per_sector: 10
+metrics_hac_lags: 10
+start_date: "2012-01-03"
+end_date: "2014-12-31"
+
+exec:
+  type: "twap"
+  commission: 0.0005
+  slices: 6
+  price_impact: 0.0
+  limit_mode: "ioc"
+  queue_coefficient: 0.25
+  queue_passive_multiplier: 0.6
+  queue_seed: 321
+  volatility_lookback: 30
+  slippage:
+    type: "linear_sqrt"
+    k_lin: 32.0
+    eta: 105.0
+    default_adv: 35000000.0
+    default_spread_bps: 8.0
+    spread_floor_multiplier: 0.75
+
+strategy:
+  name: "FlagshipMomentumStrategy"
+  allocator: "budgeted_rp"
+  allocator_params:
+    risk_model: "risk_parity"
+  params:
+    universe_path: "${WRDS_DATA_ROOT}/universes/flagship_sector_neutral.csv"
+    lookback_months: 12
+    skip_months: 1
+    top_frac: 0.3
+    bottom_frac: 0.3
+    rebalance_frequency: "M"
+    cov_lookback_days: 63
+    max_positions_per_sector: 10
+    turnover_target_pct_adv: 0.12
+    min_adv: 30000000.0
+    min_price: 10.0
+    total_risk_budget: 1.0
+
+capital_policy:
+  type: "volatility_scaled"
+  lookback: 21
+  target_dollar_vol: 350000.0
+  min_qty: 10
