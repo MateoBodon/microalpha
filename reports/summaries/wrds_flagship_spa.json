@@ -1,24 +1,124 @@
 {
-  "best_model": "top_frac=0.2500|turnover_target_pct_adv=0.1000",
-  "p_value": 0.454,
-  "observed_stat": 1.7236134574375441,
+  "best_model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=2|top_frac=0.2000",
+  "p_value": 0.603,
+  "observed_stat": 0.9786146131580648,
   "num_bootstrap": 2000,
   "avg_block": 63,
   "candidate_stats": [
     {
-      "model": "top_frac=0.2500|turnover_target_pct_adv=0.1400",
-      "mean_diff": 0.0,
-      "t_stat": 0.0
+      "model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=12|skip_months=1|top_frac=0.2000",
+      "mean_diff": 0.0030431365731475634,
+      "t_stat": 0.889333810300129
     },
     {
-      "model": "top_frac=0.3500|turnover_target_pct_adv=0.1000",
-      "mean_diff": 0.004189644899748917,
-      "t_stat": 1.7236134574375441
+      "model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=12|skip_months=1|top_frac=0.3000",
+      "mean_diff": 0.0030224121448551404,
+      "t_stat": 0.8834687491691241
     },
     {
-      "model": "top_frac=0.3500|turnover_target_pct_adv=0.1400",
-      "mean_diff": 0.004189644899748917,
-      "t_stat": 1.7236134574375441
+      "model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=12|skip_months=2|top_frac=0.2000",
+      "mean_diff": 0.0030672933766565003,
+      "t_stat": 0.8968536076100369
+    },
+    {
+      "model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=12|skip_months=2|top_frac=0.3000",
+      "mean_diff": 0.003073097024202289,
+      "t_stat": 0.8984512307469773
+    },
+    {
+      "model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=18|skip_months=1|top_frac=0.2000",
+      "mean_diff": 0.0032544623377761795,
+      "t_stat": 0.951077828687072
+    },
+    {
+      "model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=18|skip_months=1|top_frac=0.3000",
+      "mean_diff": 0.0032081665859564727,
+      "t_stat": 0.9375668426300896
+    },
+    {
+      "model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=18|skip_months=2|top_frac=0.2000",
+      "mean_diff": 0.0033279114632672156,
+      "t_stat": 0.9727884627906485
+    },
+    {
+      "model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=18|skip_months=2|top_frac=0.3000",
+      "mean_diff": 0.0033085068099912534,
+      "t_stat": 0.9672432413374392
+    },
+    {
+      "model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=1|top_frac=0.2000",
+      "mean_diff": 0.002613805022803222,
+      "t_stat": 0.7599902412598496
+    },
+    {
+      "model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=1|top_frac=0.3000",
+      "mean_diff": 0.0026093527890025405,
+      "t_stat": 0.75936240022715
+    },
+    {
+      "model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=2|top_frac=0.3000",
+      "mean_diff": 0.002363162168201189,
+      "t_stat": 0.6540093437135439
+    },
+    {
+      "model": "allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=12|skip_months=1|top_frac=0.2000",
+      "mean_diff": 0.0030351576813962933,
+      "t_stat": 0.887001672597495
+    },
+    {
+      "model": "allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=12|skip_months=1|top_frac=0.3000",
+      "mean_diff": 0.0030231292810151415,
+      "t_stat": 0.8836758922286059
+    },
+    {
+      "model": "allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=12|skip_months=2|top_frac=0.2000",
+      "mean_diff": 0.0030686603916845064,
+      "t_stat": 0.8972313405738459
+    },
+    {
+      "model": "allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=12|skip_months=2|top_frac=0.3000",
+      "mean_diff": 0.00305518495600333,
+      "t_stat": 0.8931623121984495
+    },
+    {
+      "model": "allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=18|skip_months=1|top_frac=0.2000",
+      "mean_diff": 0.0032413983536282386,
+      "t_stat": 0.947264893487716
+    },
+    {
+      "model": "allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=18|skip_months=1|top_frac=0.3000",
+      "mean_diff": 0.0031847637068606275,
+      "t_stat": 0.9307908951115054
+    },
+    {
+      "model": "allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=18|skip_months=2|top_frac=0.2000",
+      "mean_diff": 0.0033476169152561242,
+      "t_stat": 0.9786146131580648
+    },
+    {
+      "model": "allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=18|skip_months=2|top_frac=0.3000",
+      "mean_diff": 0.0033085068099912534,
+      "t_stat": 0.9672432413374392
+    },
+    {
+      "model": "allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=9|skip_months=1|top_frac=0.2000",
+      "mean_diff": 0.0026829471177650097,
+      "t_stat": 0.781114525210362
+    },
+    {
+      "model": "allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=9|skip_months=1|top_frac=0.3000",
+      "mean_diff": 0.002530920807662607,
+      "t_stat": 0.7363908869181943
+    },
+    {
+      "model": "allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=9|skip_months=2|top_frac=0.2000",
+      "mean_diff": 2.5534487367432615e-05,
+      "t_stat": 0.26343420711171484
+    },
+    {
+      "model": "allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=9|skip_months=2|top_frac=0.3000",
+      "mean_diff": 0.002413283949699866,
+      "t_stat": 0.6677939916933914
     }
   ]
 }

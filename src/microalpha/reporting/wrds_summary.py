@@ -390,7 +390,7 @@ def render_wrds_summary(
     _parse_factor_table(factors_text)
 
     manifest_payload = _load_json(manifest_path)
-    run_id = artifact_dir.name or manifest_payload.get("run_id") or "wrds_run"
+    run_id = manifest_payload.get("run_id") or artifact_dir.name or "wrds_run"
     config_path_value = manifest_payload.get("config_path")
     config_path = Path(config_path_value).expanduser() if config_path_value else None
     config_meta = _load_config_metadata(config_path if config_path and config_path.exists() else None)

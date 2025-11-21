@@ -5,7 +5,7 @@ WFV_ARTIFACT_DIR ?= artifacts/sample_wfv
 WRDS_CONFIG ?= configs/wfv_flagship_wrds.yaml
 WRDS_ARTIFACT_DIR ?= artifacts/wrds_flagship
 
-.PHONY: dev test test-wrds sample wfv wfv-wrds wrds report report-wrds docs clean export-wrds report-wfv
+.PHONY: dev test test-wrds sample wfv wfv-wrds wrds wrds-flagship report report-wrds docs clean export-wrds report-wfv
 
 dev:
 	pip install -e '.[dev]'
@@ -32,6 +32,9 @@ wfv-wrds:
 	WRDS_DATA_ROOT="$$WRDS_DATA_ROOT" microalpha wfv --config $(WRDS_CONFIG) --out $(WRDS_ARTIFACT_DIR)
 
 wrds: wfv-wrds
+
+# Full WRDS flagship pipeline: run walk-forward and render summaries/plots
+wrds-flagship: wfv-wrds report-wrds
 
 export-wrds:
 	@if [ -z "$$WRDS_DATA_ROOT" ]; then echo "Set WRDS_DATA_ROOT before running export-wrds."; exit 1; fi

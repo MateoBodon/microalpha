@@ -47,17 +47,34 @@ them forward to the testing window (e.g., keep entries where `namedt <= test_end
 
 - WRDS/CRSP data is licensed content. Do **not** commit any of it to this repository or build
   artifacts.
-- The provided Makefile target `wrds` will refuse to run until you replace the placeholder
-  values in `configs/wfv_flagship_wrds.yaml`.
+- The provided Makefile targets expect `WRDS_DATA_ROOT` to point at your local export. Paths are
+  interpolated from that env var in `configs/wfv_flagship_wrds.yaml` (no hardcoded directories).
 - Store your WRDS credentials outside the repo (environment variables or `.pgpass`). Microalpha
   only consumes local CSV/Parquet exports and does not connect to WRDS directly.
+
+## Flagship WRDS walk-forward defaults
+
+The flagship momentum configuration (`configs/wfv_flagship_wrds.yaml`) encodes the study described
+in Plan.md and the docs. Key defaults:
+
+- Data window: **2005-01-03 → 2024-12-31**.
+- Walk-forward windows: **36 months training** (`training_days=756`) then **12 months testing**
+  (`testing_days=252`) per fold.
+- Strategy: 12–1 sector-neutral momentum with ADV and price filters (`min_adv=30MM`,
+  `min_price=10`), turnover target capped at **5% of ADV** and bottom sleeve fixed at 20%.
+- Grid: `lookback_months ∈ {9,12,18}`, `skip_months ∈ {1,2}`, `top_frac ∈ {0.20,0.30}`,
+  allocator risk model ∈ {`risk_parity`, `equal`} (bottom_frac remains 0.20).
+- Artefacts root: `artifacts/wrds_flagship/<RUN_ID>`; summaries land in
+  `reports/summaries/wrds_flagship*.md` and docs assets under `docs/img/wrds_flagship/<RUN_ID>`.
 
 ## Recommended Workflow
 
 1. Export CRSP/Compustat data to a local directory (`/wrds/crsp/<project>`).
-2. Update `configs/wfv_flagship_wrds.yaml` with the absolute paths from step 1.
-3. Run `make wrds` to produce walk-forward artifacts under `artifacts/wrds_flagship/`.
-4. Execute `microalpha report --artifact-dir <artifact>` to render summaries and visuals.
+2. Ensure `WRDS_DATA_ROOT` points at the export root (paths inside the YAML are env-expanded).
+3. Run `make wrds-flagship` to execute the walk-forward grid and build the summary/plots; artefacts
+   will appear under `artifacts/wrds_flagship/<RUN_ID>`.
+4. Optionally run `make report-wrds` again to refresh docs after inspecting the artefacts or
+   tweaking plots.
 
 By keeping raw data outside the repository and documenting every transformation, you maintain a
 clear audit trail while respecting WRDS licensing requirements.

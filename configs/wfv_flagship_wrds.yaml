@@ -1,5 +1,7 @@
 # Walk-forward validation on WRDS-backed CRSP equities (sector-neutral momentum)
 
+artifacts_dir: "artifacts/wrds_flagship"
+
 template:
   data_path: "${WRDS_DATA_ROOT}/crsp/daily_csv"
   meta_path: "${WRDS_DATA_ROOT}/meta/crsp_security_metadata.csv"
@@ -31,19 +33,20 @@ template:
       spread_floor_multiplier: 0.75
   strategy:
     name: "FlagshipMomentumStrategy"
-    allocator: "budgeted_rp"
-    allocator_params:
-      risk_model: "risk_parity"
     params:
+      allocator: "budgeted_rp"
+      allocator_kwargs:
+        risk_model: "risk_parity"
+        ridge: 1.0e-8
       universe_path: "${WRDS_DATA_ROOT}/universes/flagship_sector_neutral.csv"
       lookback_months: 12
       skip_months: 1
-      top_frac: 0.3
-      bottom_frac: 0.3
+      top_frac: 0.2
+      bottom_frac: 0.2
       rebalance_frequency: "M"
       cov_lookback_days: 63
       max_positions_per_sector: 10
-      turnover_target_pct_adv: 0.12
+      turnover_target_pct_adv: 0.05
       min_adv: 30000000.0
       min_price: 10.0
       total_risk_budget: 1.0
@@ -54,16 +57,20 @@ template:
     min_qty: 10
 
 walkforward:
-  start: "2012-01-03"
+  start: "2005-01-03"
   end: "2024-12-31"
-  training_days: 756  # ~3y training window
-  testing_days: 189   # ~9m forward test
+  training_days: 756  # 36-month training window
+  testing_days: 252   # 12-month forward test
 
 grid:
-  top_frac: [0.25, 0.35]
-  turnover_target_pct_adv: [0.10, 0.14]
+  lookback_months: [9, 12, 18]
+  skip_months: [1, 2]
+  top_frac: [0.2, 0.3]
+  allocator_kwargs:
+    - {risk_model: "risk_parity"}
+    - {risk_model: "equal"}
 
 reality_check:
   method: "stationary"
-  samples: 1200
+  samples: 2000
   block_length: 63
