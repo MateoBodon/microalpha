@@ -1,0 +1,42 @@
+# Function & Class Index
+
+| File | Name | Type | Arguments (key) | Returns | Description | Internal deps | External deps |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| src/microalpha/engine.py | Engine.run | method | self | None | Drives event loop, enforcing monotonic timestamps and calling strategy → portfolio → broker | Portfolio, Strategy, Broker | numpy |
+| src/microalpha/data.py | CsvDataHandler.stream | method | self | Iterator[MarketEvent] | Yields ordered market events from single CSV after optional date slicing | MarketEvent | pandas |
+| src/microalpha/data.py | CsvDataHandler.get_latest_price | method | symbol, timestamp | float\|None | Lookup price using exact or ffill logic | — | pandas |
+| src/microalpha/data.py | CsvDataHandler.get_future_timestamps | method | start_timestamp, n | List[int] | Next n timestamps after a point (drives TWAP/VWAP) | — | pandas |
+| src/microalpha/data.py | MultiCsvDataHandler.stream | method | self | Iterator[MarketEvent] | Merges multi‑asset timestamps, forward/back fills per mode | MarketEvent, _merge_timestamp_arrays | pandas, numpy |
+| src/microalpha/portfolio.py | Portfolio.on_market | method | MarketEvent | None | Marks equity/exposure, accrues borrow cost, updates drawdown halt | _borrow_cost_for | — |
+| src/microalpha/portfolio.py | Portfolio.on_signal | method | SignalEvent | Iterable[OrderEvent] | Applies constraints (exposure, turnover, heat, sector caps), sizes orders | _sized_quantity, data_handler | — |
+| src/microalpha/portfolio.py | Portfolio.on_fill | method | FillEvent | None | Updates cash/positions, realised PnL, trade logs, avg cost | JsonlWriter | — |
+| src/microalpha/execution.py | Executor.execute | method | OrderEvent, current_ts | FillEvent\|None | Builds single fill with slippage/commission, optional limit logic | _build_fill, _fill_timestamp | numpy |
+| src/microalpha/execution.py | TWAP.execute | method | OrderEvent, current_ts | FillEvent\|None | Schedules slices over future timestamps, aggregates fills | Executor._build_fill | numpy |
+| src/microalpha/execution.py | LOBExecution.execute | method | OrderEvent, current_ts | FillEvent\|None | Submits to internal LOB, enforces optional t+1 fill timestamp | LimitOrderBook, data_handler.get_future_timestamps | — |
+| src/microalpha/slippage.py | LinearPlusSqrtImpact.calculate_slippage | method | quantity, price, symbol? | float | Hybrid linear + sqrt impact with spread floor and ADV defaults | SymbolMeta metadata | math |
+| src/microalpha/allocators.py | risk_parity | function | cov, tol, max_iter, ridge | pd.Series | Long‑only risk parity weights | _as_dataframe | numpy, pandas |
+| src/microalpha/allocators.py | lw_min_var | function | returns, allow_short, epsilon | pd.Series\|(Series,cov) | Ledoit–Wolf min‑var weights (optionally returns cov) | _ledoit_wolf_cov, _min_var_weights | numpy, pandas |
+| src/microalpha/allocators.py | budgeted_allocator | function | signals, cov, total_budget, risk_model | pd.Series | Combines long/short sleeves with risk parity / LW / equal allocation | _bucket_weights | numpy, pandas |
+| src/microalpha/capital.py | VolatilityScaledPolicy.size | method | symbol, side, price, base_qty, portfolio, timestamp | int | Scales order size to target dollar volatility using recent returns | portfolio.data_handler.get_recent_prices | numpy |
+| src/microalpha/risk_stats.py | sharpe_stats | function | returns, rf, periods, ddof, hac_lags? | dict | Annualised Sharpe + SE/t‑stat/CI with optional HAC | _newey_west_lrv | numpy, pandas |
+| src/microalpha/risk_stats.py | block_bootstrap | generator | returns array, B, method, block_len | Generator[np.ndarray] | Stationary/circular block bootstrap preserving serial dependence | — | numpy |
+| src/microalpha/risk.py | bootstrap_sharpe_ratio | function | returns, num_simulations, method, block_len | dict | Bootstrap Sharpe distribution + p‑value/CI | block_bootstrap, sharpe_stats | numpy, pandas |
+| src/microalpha/metrics.py | compute_metrics | function | equity_records, turnover, periods, trades?, benchmark?, rf?, hac_lags? | dict | Computes returns, Sharpe/Sortino/CAGR/DD, turnover, trade stats; writes equity_df | sharpe_stats | numpy, pandas |
+| src/microalpha/config.py | parse_config | function | raw mapping | BacktestCfg | Validates single‑run YAML via Pydantic, normalises exec/slippage aliases | BacktestCfg | pydantic |
+| src/microalpha/config_wfv.py | WFVCfg | model | template, walkforward, grid, artifacts_dir?, reality_check | WFVCfg | Structured walk‑forward config object | BacktestCfg | pydantic |
+| src/microalpha/runner.py | run_from_config | function | config_path, override_artifacts_dir? | dict | Orchestrates single backtest, writes manifest/config/metrics/bootstrap/exposures/trades | Engine, Portfolio, Executor, compute_metrics | numpy, pandas, yaml |
+| src/microalpha/walkforward.py | run_walk_forward | function | config_path, out?, reality_check_method?, block_len? | dict | Runs WFV grid per fold, best‑param selection, reality‑check bootstrap, aggregates metrics/folds/grid returns | _optimise_parameters, compute_metrics, block_bootstrap | numpy, pandas, yaml |
+| src/microalpha/walkforward.py | bootstrap_reality_check | function | results, seed, n_bootstrap, method, block_len | dict\|None | SPA‑like bootstrap over model Sharpe to compute p‑value/distribution | block_bootstrap | numpy |
+| src/microalpha/reporting/tearsheet.py | render_tearsheet | function | equity_csv, bootstrap_json?, output_path, bootstrap_output?, metrics_path?, title? | dict[str,Path] | Saves equity+drawdown PNG and bootstrap histogram with annotations | _compute_drawdown | matplotlib, numpy, pandas |
+| src/microalpha/reporting/summary.py | generate_summary | function | artifact_dir, output_path, title?, top_exposures, equity_image?, bootstrap_image?, factor_csv? | Path | Markdown summary with metrics table, visuals, bootstrap stats, exposures, optional factor regression | _render_metric_table, _render_exposures | pandas |
+| src/microalpha/reporting/factors.py | compute_factor_regression | function | equity_csv, factor_csv, model, hac_lags | list[FactorResult] | OLS with Newey–West SE for FF3/Carhart/FF5+MOM factors | _design_matrix, _newey_west_se | numpy, pandas |
+| src/microalpha/reporting/analytics.py | generate_analytics | function | artifact_dir, signals_path?, equity_path?, factor_path?, plots_dir?, analytics_dir?, window, deciles | AnalyticsArtifacts | Computes IC/IR, deciles, rolling betas; writes CSVs and plots | compute_ic_series, compute_decile_table, compute_rolling_betas | numpy, pandas, matplotlib |
+| src/microalpha/reporting/spa.py | compute_spa | function | pivot returns, avg_block, num_bootstrap, seed | SpaSummary | Hansen SPA statistic/p‑value + comparator stats | _stationary_bootstrap_indices, _spa_stat | numpy, pandas |
+| src/microalpha/reporting/wrds_summary.py | render_wrds_summary | function | artifact_dir, output_path, factors_md?, spa_json?, docs_results?, docs_image_root?, analytics_plots? | Path | Builds WRDS markdown, copies images/assets, optional docs/results update | _render_spa_plot, _write_docs_results | matplotlib, yaml |
+| src/microalpha/strategies/flagship_mom.py | FlagshipMomentumStrategy.on_market | method | event | list[SignalEvent] | Periodic rebalance with sector‑normalised momentum, ADV/price filters, weight metadata | _rebalance, _compute_weights, budgeted_allocator | numpy, pandas |
+| src/microalpha/strategies/cs_momentum.py | CrossSectionalMomentum.on_market | method | event | list[SignalEvent] | Monthly top/bottom momentum selection with optional short sleeve | _momentum_score | pandas |
+| src/microalpha/strategies/meanrev.py | MeanReversionStrategy.on_market | method | event | list[SignalEvent] | Z‑score based long/exit triggers | pandas |
+| src/microalpha/wrds/__init__.py | has_wrds_data | function | min_entries=1 | bool | Detects local WRDS export availability via `WRDS_DATA_ROOT` | get_wrds_data_root | os, pathlib |
+| src/microalpha/manifest.py | generate_run_id | function | short_sha, timestamp? | str | Timestamp+git short SHA identifier for run folders | — | datetime |
+| src/microalpha/manifest.py | build | function | seed, config_path, run_id, config_sha256, git_sha? | Manifest | Seeds RNGs, captures versions/platform paths for reproducibility | resolve_git_sha, _resolve_distribution_version | numpy, random |
+| src/microalpha/logging.py | JsonlWriter.write | method | obj | None | Append JSON line to trade log, flush immediately | — | json |

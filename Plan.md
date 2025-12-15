@@ -35,6 +35,12 @@ Factor regression on FF3 sample:
 
 These are demo‑metrics on toy panels, not “showcase this on a resume” numbers. Real WRDS results are architected but not surfaced prominently.
 
+## Short‑term execution plan (next steps)
+
+- [x] **S0 – WRDS run sanity + docs** (2025-11-21): refreshed `docs/results_wrds.md` and `notebooks/wrds_flagship_mom.ipynb` to point at the latest run and outline the rerun checklist.
+- [x] **S1 – Tighten WRDS flagship risk spec**: hardened caps in `configs/wfv_flagship_wrds.yaml` (1.25x gross, 20% DD halt, 1.5x heat, 3% ADV turnover, 8 names/sector, higher ADV/price floors) and documented in `docs/flagship_momentum_wrds.md`; added tests to pin these values.
+- [ ] **S2 – Drawdown reduction validation**: new smoke config `configs/wfv_flagship_wrds_smoke.yaml` for quicker checks; full WRDS re-run pending due to absent local WRDS data. Next human step: `WRDS_DATA_ROOT=/path/to/wrds WRDS_CONFIG=configs/wfv_flagship_wrds_smoke.yaml make wfv-wrds && WRDS_DATA_ROOT=/path/to/wrds make report-wrds` then refresh `docs/results_wrds.md`.
+
 ---
 
 ## 1. High‑level goals (6–12 months)
@@ -431,3 +437,135 @@ Once the above is done, you have enough to:
 
 This is where you harvest the work.
 
+
+## Short-term execution plan – updated (post S0/S1)
+
+### S2 – Execute and analyse WRDS runs under tightened risk spec
+
+**Goal:** Produce at least one WRDS flagship WFV run with the new risk spec, smoke-validated first, and fully documented.
+
+**Status (2025-11-22):** Smoke WFV completed with tightened caps (`2025-11-22T00-21-14Z-c792b44`, 2015–2019 window; Sharpe≈0.06, MaxDD≈40%). Full 2005–2024 WFV still pending—current interactive runs time out after ~2 hours; rerun locally with a longer wall clock before updating headline metrics/docs.
+
+Tasks:
+
+- [ ] Run smoke WRDS WFV using the smoke config:
+
+  ```bash
+  WRDS_CONFIG=configs/wfv_flagship_wrds_smoke.yaml \
+  WRDS_DATA_ROOT=/path/to/wrds \
+  make wfv-wrds
+ Confirm a new run directory appears under artifacts/wrds_flagship/ with a shortened date range and the same risk limits.
+ Inspect metrics.json for the smoke run:
+Check max drawdown (should be well below 82%).
+Check gross exposure / turnover stats if available.
+ If smoke run fails or behaves weirdly, fix configs/code before full run.
+ Run full WRDS WFV + reports using the main config:
+bash
+Copy code
+WRDS_DATA_ROOT=/path/to/wrds \
+make wfv-wrds && \
+WRDS_DATA_ROOT=/path/to/wrds \
+make report-wrds
+ Note the new RUN_ID (timestamp slug under artifacts/wrds_flagship/).
+ Confirm that:
+metrics.json, bootstrap.json, reality_check.json, folds.json, grid_returns.csv exist.
+Plots were regenerated and copied under docs/img/wrds_flagship/<RUN_ID>/.
+ Inspect the new full-run metrics:
+ Compare:
+Sharpe_HAC vs old (0.40).
+MaxDD vs old (82.35%).
+MAR and turnover.
+ Check that risk caps are active in practice:
+Max gross exposure not > ~1.25x.
+DD capped around the configured halt threshold.
+Turnover and ADV limits respected.
+ Update docs for the new RUN_ID:
+ In docs/results_wrds.md:
+Update any hard-coded RUN_ID to the new one.
+Replace metric values with the new run’s results.
+Add a short subsection summarising “old vs new” (one or two bullets on how DD changed, how Sharpe changed).
+ Log session:
+ Append to metadata/codex_sessions.md:
+Date/time.
+Commands run.
+Old vs new key metrics.
+Any issues.
+ Update Plan.md:
+ Mark S2 as “in progress” initially, then “done” once full WRDS WFV + docs are consistent.
+ Store the new RUN_ID in a short note.
+S3 – Strengthen WRDS analytics and narrative
+Goal: Turn the WRDS flagship into a properly analysed case study you can walk someone through. Tasks:
+ Extend the WRDS notebook notebooks/wrds_flagship_mom.ipynb:
+ Auto-detect the latest WRDS RUN_ID or accept a RUN_ID parameter.
+ Load:
+metrics.json
+equity_curve.csv
+drawdown.csv (or reconstruct drawdown from equity)
+grid_returns.csv
+Factor exposure CSV if present.
+ Add plots:
+Equity curve with vertical lines marking fold boundaries (if fold info present).
+Drawdown curve over time.
+Rolling 12-month Sharpe.
+Per-fold Sharpe/MAR bar chart.
+ Implement IC / decile analytics if not done:
+ In reports/analytics.py (or equivalent):
+Compute cross-sectional IC for the flagship signal vs next-period returns per rebalance.
+Save ic_timeseries.csv, ic_hist.png, ic_rolling_ir.csv, ic_rolling_ir.png.
+Compute decile returns and cumulative curves; save decile_returns.csv, decile_equity.png.
+ Run these for the latest WRDS run and commit resulting summary plots.
+ Factor regression for WRDS:
+ Ensure there is a WRDS-compatible factor config (FF5+MOM path) documented in docs/wrds.md.
+ Use reports/factors.py to run HAC regression for the WRDS flagship (e.g. --model ff5_mom).
+ Save and commit:
+factors_ff5_mom.json
+factors_ff5_mom.md (table with alpha, betas, t-stats)
+ Link this factor table from docs/results_wrds.md.
+ SPA / grid summary:
+ Enhance reports/spa.py (or whatever script you use) to output:
+A CSV of SPA p-values per grid config.
+A Markdown ML-style table summarising:
+Config parameters (lookback, skip, top, allocator).
+Sharpe, MaxDD, SPA p-value.
+ Run SPA on the latest WRDS run and commit that summary.
+ Update docs/results_wrds.md:
+ Add sections:
+“Signal quality and IC/IR”
+“Factor attribution (FF5+MOM)”
+“Hyperparameter robustness and SPA”
+ Embed plots or link to images generated above.
+S4 – Lock in WRDS flagship as a first-class “case study”
+Goal: Make the WRDS flagship feel like a finished, honest case study. Tasks:
+ In README.md:
+ Add a “WRDS flagship (momentum)” subsection:
+Period (2005–2024).
+Out-of-sample Sharpe (HAC), MAR, MaxDD, turnover.
+SPA and RC p-values.
+A one-line summary of factor attribution (e.g., “loads heavily on MOM, residual alpha modest/insignificant”).
+ In docs/index.md or your main landing page:
+ Add a short “Flagship case study” blurb linking to docs/results_wrds.md.
+ Re-run mkdocs build and fix any doc warnings.
+ Make sure all the above avoids overselling:
+If p-values are high (i.e. no significant alpha), say that plainly.
+Emphasise the process and rigor (leakage-safety, WFV, SPA, factor checks) as the “selling point”.
+S5 – Prepare for additional WRDS strategies (value/quality)
+Goal: Set up the skeleton for value/quality WRDS strategies without yet doing huge research lifts. Tasks:
+ Define configs:
+ configs/wfv_value_wrds.yaml – B/M or E/P, sector-neutral, annual/quarterly rebalance.
+ configs/wfv_quality_wrds.yaml – profitability or ROE-based signal.
+ Ensure they reuse:
+Same WRDS universe and data pipeline.
+Same WFV structure (36m/12m, 2005–2024).
+Reasonable risk caps (borrow from flagship config).
+ Add stub docs:
+ docs/value_wrds.md
+ docs/quality_wrds.md
+With a short description of signal, rebalance frequency, and config paths.
+ Add Make targets:
+make wrds-value
+make wrds-quality
+wired to those configs.
+ Add minimal tests:
+tests/test_wrds_value_spec.py
+tests/test_wrds_quality_spec.py
+verifying configs and basic behaviours (no data/dependency on WRDS).

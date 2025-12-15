@@ -2,6 +2,10 @@
 
 > Latest run: **2025-11-21T00-28-22Z-54912a8** (`configs/wfv_flagship_wrds.yaml`, 2005-01-03 -> 2024-04-30, 25 folds with 252-day forward tests (~12.0 months))
 
+*(Metrics below reflect the pre-tightening spec. On 2025-11-21 we tightened exposure/turnover limits; rerun with the updated config to refresh these numbers.)*
+
+**Rerun status (2025-11-22):** a smoke walk-forward using the tightened caps finished on `2025-11-22T00-21-14Z-c792b44` (2015–2019 window) with Sharpe≈0.06 and MaxDD≈40%—drawdown cap now binds. A full 2005–2024 rerun with the tightened spec is still pending; previous attempts exceeded the interactive time window (>2h). Run it locally with a longer wall clock if you need the updated headline metrics.
+
 ## Performance Snapshot
 
 | Metric | Value |
@@ -44,6 +48,14 @@
 | MOM | 0.4449 | 4.25 |
 ```
 
+## Current risk spec (2025-11-21 refresh)
+
+- Gross exposure ≤ **1.25x**, drawdown halt at **20%**, portfolio heat ≤ **1.5x equity**.
+- Liquidity floor: **ADV ≥ $50MM**, **price ≥ $12**; max **8 positions per sector**.
+- Turnover discipline: **3% of ADV** turnover target plus **$180MM** turnover cap per fold.
+- Volatility sizing: target **$225k** daily dollar-vol (21-day lookback), min order qty 10.
+- Execution: TWAP (6 slices), IOC limits, linear+sqrt impact (`k_lin=32`, `eta=105`), 5 bps commissions, spread floor 8 bps.
+
 ## Capacity & Turnover
 
 - Average daily turnover: ~$423.00K (total $1.84B) across 2909 traded days.
@@ -51,9 +63,15 @@
 
 ## Notes
 
-- Signals derived from the WRDS flagship universe with 12M lookback / 1M skip and ADV >= $30.00MM.
+- Signals derived from the WRDS flagship universe with 12M lookback / 1M skip and ADV >= $50.00MM.
 - Training window spans 756 trading days; forward tests run 252 days each.
-- Target turnover ≈ 5.00% of ADV with max 10 positions per sector.
+- Target turnover ≈ 3.00% of ADV with max 8 positions per sector.
 - Execution assumes TWAP slicing with linear+sqrt impact, 5 bps commissions, and borrow spread floor of 8 bps.
+
+## Rerun checklist
+
+- Quick smoke (faster turnaround): `WRDS_CONFIG=configs/wfv_flagship_wrds_smoke.yaml WRDS_DATA_ROOT=/path/to/wrds make wfv-wrds`
+- Full refresh with tightened limits: `WRDS_DATA_ROOT=/path/to/wrds make wfv-wrds && WRDS_DATA_ROOT=/path/to/wrds make report-wrds`
+- After rerun, rebuild docs: `mkdocs build` (or `make report-wrds` to regenerate summaries + plots).
 
 Published artifacts (PNG/MD/JSON summaries) live under `docs/img/wrds_flagship/2025-11-21T00-28-22Z-54912a8` and reports/summaries for reproducibility.

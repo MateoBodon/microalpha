@@ -57,7 +57,7 @@ report-wfv:
 report-wrds:
 	@if [ ! -d "$(WRDS_ARTIFACT_DIR)" ]; then echo "No artifacts at $(WRDS_ARTIFACT_DIR)"; exit 1; fi
 	@if [ -z "$$WRDS_DATA_ROOT" ]; then echo "Set WRDS_DATA_ROOT before running report-wrds."; exit 1; fi
-	@latest=$$(ls -td $(WRDS_ARTIFACT_DIR)/* 2>/dev/null | head -1); \
+	@latest=$$(ls -td $(WRDS_ARTIFACT_DIR)/*/metrics.json 2>/dev/null | head -1 | xargs -I{} dirname {}); \
 	if [ -z "$$latest" ]; then echo "No run directories under $(WRDS_ARTIFACT_DIR)"; exit 1; fi; \
 	echo "Using WRDS run $$latest"; \
 	img_root=docs/img/wrds_flagship; \

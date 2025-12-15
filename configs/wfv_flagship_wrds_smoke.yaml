@@ -1,11 +1,11 @@
-# Walk-forward validation on WRDS-backed CRSP equities (sector-neutral momentum)
+# Shortened WRDS walk-forward smoke test (faster turnaround, same risk limits)
 
-artifacts_dir: "artifacts/wrds_flagship"
+artifacts_dir: "artifacts/wrds_flagship_smoke"
 
 template:
   data_path: "${WRDS_DATA_ROOT}/crsp/daily_csv"
   meta_path: "${WRDS_DATA_ROOT}/meta/crsp_security_metadata.csv"
-  symbol: "FLAGSHIP_WRDS"
+  symbol: "FLAGSHIP_WRDS_SMOKE"
   cash: 15000000.0
   seed: 20251010
   max_exposure: 1.25
@@ -57,20 +57,20 @@ template:
     min_qty: 10
 
 walkforward:
-  start: "2005-01-03"
-  end: "2024-12-31"
-  training_days: 756  # 36-month training window
-  testing_days: 252   # 12-month forward test
+  start: "2015-01-05"
+  end: "2019-12-31"
+  training_days: 504   # ~24-month training window
+  testing_days: 126    # ~6-month forward test
 
 grid:
-  lookback_months: [9, 12, 18]
-  skip_months: [1, 2]
-  top_frac: [0.2, 0.3]
+  lookback_months: [12]
+  skip_months: [1]
+  top_frac: [0.2]
   allocator_kwargs:
     - {risk_model: "risk_parity"}
     - {risk_model: "equal"}
 
 reality_check:
   method: "stationary"
-  samples: 2000
+  samples: 500
   block_length: 63

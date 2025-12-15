@@ -298,7 +298,7 @@ class Portfolio:
             return base
         price = (
             self.data_handler.get_latest_price(signal.symbol, self.current_time)
-            if self.current_time
+            if self.current_time is not None
             else None
         )
         if self.vol_target_annualized and price:
@@ -322,7 +322,7 @@ class Portfolio:
             for sym, pos in self.positions.items():
                 p = (
                     self.data_handler.get_latest_price(sym, self.current_time)
-                    if self.current_time
+                    if self.current_time is not None
                     else None
                 )
                 if p:

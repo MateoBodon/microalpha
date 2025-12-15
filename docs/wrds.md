@@ -60,12 +60,13 @@ in Plan.md and the docs. Key defaults:
 - Data window: **2005-01-03 → 2024-12-31**.
 - Walk-forward windows: **36 months training** (`training_days=756`) then **12 months testing**
   (`testing_days=252`) per fold.
-- Strategy: 12–1 sector-neutral momentum with ADV and price filters (`min_adv=30MM`,
-  `min_price=10`), turnover target capped at **5% of ADV** and bottom sleeve fixed at 20%.
+- Strategy: 12–1 sector-neutral momentum with ADV and price filters (`min_adv=50MM`,
+  `min_price=12`), turnover target capped at **3% of ADV**, max **8 names per sector**, and bottom sleeve fixed at 20%.
 - Grid: `lookback_months ∈ {9,12,18}`, `skip_months ∈ {1,2}`, `top_frac ∈ {0.20,0.30}`,
   allocator risk model ∈ {`risk_parity`, `equal`} (bottom_frac remains 0.20).
 - Artefacts root: `artifacts/wrds_flagship/<RUN_ID>`; summaries land in
   `reports/summaries/wrds_flagship*.md` and docs assets under `docs/img/wrds_flagship/<RUN_ID>`.
+- Risk caps baked into the template: gross exposure ≤ **1.25x**, drawdown stop at **20%**, portfolio heat ≤ **1.5x equity**, turnover cap **$180MM** per fold, and volatility-scaling target of **$225k** daily dollar-vol with a 21-day lookback.
 
 ## Recommended Workflow
 
