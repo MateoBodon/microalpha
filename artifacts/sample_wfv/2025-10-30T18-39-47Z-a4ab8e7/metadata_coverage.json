@@ -1,0 +1,57 @@
+{
+  "meta_source": "/Users/mateobodon/Documents/Programming/Projects/microalpha/data/sample/meta_sample.csv",
+  "coverage": {
+    "pct_notional_with_adv": 1.0,
+    "pct_notional_with_spread": 1.0,
+    "pct_short_notional_with_borrow_fee": 1.0
+  },
+  "totals": {
+    "total_notional": 28525695.104399,
+    "short_notional": 11627234.042225,
+    "trades": 34
+  },
+  "fallback_top": [
+    {
+      "symbol": "BETA",
+      "missing_adv_trades": 0,
+      "missing_spread_trades": 0,
+      "missing_borrow_trades": 0
+    },
+    {
+      "symbol": "ALFA",
+      "missing_adv_trades": 0,
+      "missing_spread_trades": 0,
+      "missing_borrow_trades": 0
+    },
+    {
+      "symbol": "EPSI",
+      "missing_adv_trades": 0,
+      "missing_spread_trades": 0,
+      "missing_borrow_trades": 0
+    },
+    {
+      "symbol": "ZETA",
+      "missing_adv_trades": 0,
+      "missing_spread_trades": 0,
+      "missing_borrow_trades": 0
+    },
+    {
+      "symbol": "GAMM",
+      "missing_adv_trades": 0,
+      "missing_spread_trades": 0,
+      "missing_borrow_trades": 0
+    },
+    {
+      "symbol": "DELT",
+      "missing_adv_trades": 0,
+      "missing_spread_trades": 0,
+      "missing_borrow_trades": 0
+    }
+  ],
+  "defaults": {
+    "default_adv": null,
+    "default_spread_bps": null,
+    "spread_floor_multiplier": null
+  },
+  "note": "Coverage based on metadata CSV (if provided). Missing values imply default ADV/spread/borrow costs were used by the simulator."
+}

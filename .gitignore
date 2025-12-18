@@ -18,9 +18,15 @@ venv/
 
 # Artifacts (allow published png/md/json summaries)
 artifacts/**
+!artifacts/sample_flagship/
+!artifacts/sample_flagship/**/
+!artifacts/sample_wfv/
+!artifacts/sample_wfv/**/
 !artifacts/**/*.png
 !artifacts/**/*.md
 !artifacts/**/*.json
+!artifacts/**/cost_sensitivity.json
+!artifacts/**/metadata_coverage.json
 artifacts/**/*.log
 
 # Logs

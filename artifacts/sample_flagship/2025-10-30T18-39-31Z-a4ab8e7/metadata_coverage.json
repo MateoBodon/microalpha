@@ -1,0 +1,27 @@
+{
+  "meta_source": "/Users/mateobodon/Documents/Programming/Projects/microalpha/data/sample/meta_sample.csv",
+  "coverage": {
+    "pct_notional_with_adv": 1.0,
+    "pct_notional_with_spread": 1.0,
+    "pct_short_notional_with_borrow_fee": 1.0
+  },
+  "totals": {
+    "total_notional": 1211971.8447709999,
+    "short_notional": 538911.3079949999,
+    "trades": 4
+  },
+  "fallback_top": [
+    {
+      "symbol": "ALFA",
+      "missing_adv_trades": 0,
+      "missing_spread_trades": 0,
+      "missing_borrow_trades": 0
+    }
+  ],
+  "defaults": {
+    "default_adv": 2000000.0,
+    "default_spread_bps": 12.0,
+    "spread_floor_multiplier": null
+  },
+  "note": "Coverage based on metadata CSV (if provided). Missing values imply default ADV/spread/borrow costs were used by the simulator."
+}

@@ -1,0 +1,48 @@
+{
+  "method": "ex_post_cost_scaling",
+  "description": "Scales recorded commissions and slippage; borrow costs are not logged and are excluded. No re-simulation performed.",
+  "multipliers": [
+    0.5,
+    1.0,
+    2.0
+  ],
+  "baseline": {
+    "sharpe_ratio": -0.6630196824792773,
+    "max_drawdown": 0.172614849414395,
+    "cagr": -0.07061591046606319,
+    "mar": -0.4090952238792398
+  },
+  "grid": [
+    {
+      "multiplier": 0.5,
+      "sharpe_ratio": -0.6630058076155132,
+      "max_drawdown": 0.17261484941439528,
+      "cagr": -0.07061456800402877,
+      "mar": -0.40908744666865166,
+      "cost_drag_bps_per_year": -0.013424620344260063
+    },
+    {
+      "multiplier": 1.0,
+      "sharpe_ratio": -0.6630196824792773,
+      "max_drawdown": 0.172614849414395,
+      "cagr": -0.07061591046606319,
+      "mar": -0.4090952238792398,
+      "cost_drag_bps_per_year": 0.0
+    },
+    {
+      "multiplier": 2.0,
+      "sharpe_ratio": -0.6630474318171189,
+      "max_drawdown": 0.1726148494143949,
+      "cagr": -0.0706185953897619,
+      "mar": -0.40911077829827075,
+      "cost_drag_bps_per_year": 0.026849236987036562
+    }
+  ],
+  "cost_basis": {
+    "commission_total": 5.238,
+    "slippage_total": 0.0,
+    "borrow_total": null,
+    "total": 5.238,
+    "currency": "USD"
+  }
+}
