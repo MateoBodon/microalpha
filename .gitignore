@@ -18,10 +18,10 @@ venv/
 
 # Artifacts (allow published png/md/json summaries)
 artifacts/**
-!artifacts/sample_flagship/
-!artifacts/sample_flagship/**/
-!artifacts/sample_wfv/
-!artifacts/sample_wfv/**/
+!artifacts/sample_flagship/2025-10-30T18-39-31Z-a4ab8e7/
+!artifacts/sample_flagship/2025-10-30T18-39-31Z-a4ab8e7/**
+!artifacts/sample_wfv/2025-10-30T18-39-47Z-a4ab8e7/
+!artifacts/sample_wfv/2025-10-30T18-39-47Z-a4ab8e7/**
 !artifacts/**/*.png
 !artifacts/**/*.md
 !artifacts/**/*.json
