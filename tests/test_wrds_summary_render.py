@@ -8,7 +8,6 @@ import pytest
 
 from microalpha.reporting.wrds_summary import render_wrds_summary
 
-
 _PNG_BYTES = base64.b64decode(
     "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII="
 )

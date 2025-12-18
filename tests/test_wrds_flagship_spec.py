@@ -5,7 +5,6 @@ from pathlib import Path
 import pytest
 import yaml
 
-
 _BASE_CFG = Path("configs/wfv_flagship_wrds.yaml")
 _SMOKE_CFG = Path("configs/wfv_flagship_wrds_smoke.yaml")
 

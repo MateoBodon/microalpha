@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 from microalpha.reporting.spa import compute_spa, load_grid_returns, write_outputs
 

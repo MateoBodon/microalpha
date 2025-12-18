@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from microalpha.wrds import has_wrds_data, has_wrds_credentials
+from microalpha.wrds import has_wrds_credentials, has_wrds_data
 
 LOGGER = logging.getLogger("microalpha.pytest")
 
