@@ -20,7 +20,7 @@
 ## Reporting (`microalpha report`)
 - **Entry**: `microalpha report --artifact-dir <dir> [--summary-out ... --title ...]`.
 - **Steps**: read metrics/bootstraps/equity → render equity & drawdown PNG + bootstrap histogram (`tearsheet`) → generate Markdown summary (`summary`) with exposures table; auto‑inject FF3 factor table for sample WFV if factors present.
-- **Outputs**: `equity_curve.png`, `bootstrap_hist.png`, summary MD (default `reports/summaries/flagship_mom.md`).
+- **Outputs**: `equity_curve.png`, `bootstrap_hist.png`, summary MD (default `reports/summaries/flagship_mom.md`), plus robustness artifacts `cost_sensitivity.json` and `metadata_coverage.json` saved back into the run directory.
 
 ## WRDS Flagship (full pipeline via `make wrds-flagship`)
 - **Entry**: `make wfv-wrds` (requires `WRDS_DATA_ROOT`, updated `configs/wfv_flagship_wrds.yaml`), then `make report-wrds`.
@@ -48,4 +48,3 @@
 - **wfv_report.py**: plots per‑fold train/test Sharpes and best‑param scatter from `folds.json`.
 - **html_report.py**: Plotly interactive report from `equity_curve.csv` + optional trades.
 - **plot_mm_spread.py**: runs MM config variants (LOB vs TWAP) and plots realised spread vs inventory.
-

@@ -10,6 +10,7 @@ import sys
 import time
 from pathlib import Path
 
+from microalpha.reporting.robustness import write_robustness_artifacts
 from microalpha.reporting.summary import generate_summary
 from microalpha.reporting.tearsheet import (
     DEFAULT_BOOTSTRAP_NAME,
@@ -186,11 +187,15 @@ def main() -> None:
             factor_csv=factor_csv_arg,
         )
 
+        robustness = write_robustness_artifacts(artifact_dir)
+
         manifest = {
             "artifact_dir": str(artifact_dir),
             "summary_path": str(summary_path.resolve()),
             "equity_curve_path": str(outputs["equity_curve"]),
             "bootstrap_hist_path": str(outputs["bootstrap_hist"]),
+            "cost_sensitivity_path": str(robustness.cost_sensitivity),
+            "metadata_coverage_path": str(robustness.metadata_coverage),
         }
     else:
         raise SystemExit(f"Unknown command: {args.cmd}")

@@ -83,6 +83,8 @@ def generate_summary(
     metrics_path = artifact_dir / "metrics.json"
     bootstrap_path = artifact_dir / "bootstrap.json"
     exposures_path = artifact_dir / "exposures.csv"
+    cost_path = artifact_dir / "cost_sensitivity.json"
+    coverage_path = artifact_dir / "metadata_coverage.json"
 
     if not metrics_path.exists():
         raise FileNotFoundError(f"metrics.json not found under {artifact_dir}")
@@ -163,6 +165,20 @@ def generate_summary(
     )
     if factor_section:
         lines.append(factor_section)
+        lines.append("")
+
+    lines.append("## Cost & Metadata Robustness")
+    lines.append("")
+    cost_section = _render_cost_section(cost_path)
+    coverage_section = _render_coverage_section(coverage_path)
+    if cost_section:
+        lines.append(cost_section)
+        lines.append("")
+    if coverage_section:
+        lines.append(coverage_section)
+        lines.append("")
+    if not cost_section and not coverage_section:
+        lines.append("_Robustness artifacts unavailable._")
         lines.append("")
 
     output_path = Path(output_path).resolve()
@@ -274,4 +290,81 @@ def _render_factor_section(
     lines.append(
         "_Computed against `data/factors/ff3_sample.csv` using Newey-West standard errors._"
     )
+    return "\n".join(lines)
+
+
+def _render_cost_section(cost_path: Path) -> str | None:
+    if not cost_path.exists():
+        return None
+    payload = _load_json(cost_path)
+    grid = payload.get("grid") if isinstance(payload, Mapping) else None
+    if not grid:
+        return "_Cost sensitivity unavailable._"
+
+    lines = ["**Cost sensitivity (ex-post scaling of recorded costs)**", ""]
+    lines.append(
+        "| Multiplier | Sharpe | MaxDD | CAGR | MAR | Cost drag (bps/yr) |"
+    )
+    lines.append("| --- | ---:| ---:| ---:| ---:| ---:|")
+    for row in grid:
+        lines.append(
+            "| "
+            f"{float(row.get('multiplier', 0.0)):.2f} | "
+            f"{float(row.get('sharpe_ratio', 0.0)):.2f} | "
+            f"{_format_pct(row.get('max_drawdown'))} | "
+            f"{_format_pct(row.get('cagr'))} | "
+            f"{float(row.get('mar', 0.0)):.2f} | "
+            f"{float(row.get('cost_drag_bps_per_year', 0.0)):.1f} |"
+        )
+    note = payload.get("description")
+    if note:
+        lines.append("")
+        lines.append(f"_{note}_")
+    return "\n".join(lines)
+
+
+def _render_coverage_section(coverage_path: Path) -> str | None:
+    if not coverage_path.exists():
+        return None
+    payload = _load_json(coverage_path)
+    coverage = payload.get("coverage") if isinstance(payload, Mapping) else None
+
+    lines = ["**Metadata coverage (liquidity/borrow inputs)**", ""]
+    if not coverage:
+        lines.append("_Coverage unavailable._")
+        note = payload.get("note")
+        if note:
+            lines.append("")
+            lines.append(f"_{note}_")
+        return "\n".join(lines)
+
+    rows = [
+        ("Notional with ADV", coverage.get("pct_notional_with_adv")),
+        ("Notional with spread_bps", coverage.get("pct_notional_with_spread")),
+        (
+            "Short notional with borrow fee",
+            coverage.get("pct_short_notional_with_borrow_fee"),
+        ),
+    ]
+    lines.append("| Metric | Value |")
+    lines.append("| --- | ---:|")
+    for label, value in rows:
+        lines.append(f"| {label} | {_format_pct(value)} |")
+
+    top = payload.get("fallback_top") or []
+    if top:
+        lines.append("")
+        lines.append("Top fallback symbols (trade counts):")
+        for entry in top:
+            lines.append(
+                f"- {entry.get('symbol')}: "
+                f"adv_missing={entry.get('missing_adv_trades', 0)}, "
+                f"spread_missing={entry.get('missing_spread_trades', 0)}, "
+                f"borrow_missing={entry.get('missing_borrow_trades', 0)}"
+            )
+
+    note = payload.get("note")
+    if note:
+        lines.append("")
+        lines.append(f"_{note}_")
     return "\n".join(lines)
