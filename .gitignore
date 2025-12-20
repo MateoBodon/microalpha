@@ -39,8 +39,14 @@ docs/agent_runs/
 docs/gpt_bundles/
 
 # WRDS and large data exports
+/wrds/
+/wrds/**
 data/wrds/
 data/wrds/**
+data/wrds_exports/
+data/wrds_exports/**
+data/wrds_exports/**/*.parquet
+/wrds/**/*.parquet
 /data_sp500_enriched/
 /data/flagship_universe/
 metadata/sp500_enriched.csv

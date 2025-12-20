@@ -14,6 +14,8 @@ from typing import Any, Sequence
 import matplotlib.pyplot as plt
 import yaml
 
+from microalpha.reporting.robustness import write_robustness_artifacts
+from microalpha.wrds import guard_no_wrds_copy
 
 @dataclass(frozen=True)
 class HeadlineMetrics:
@@ -92,6 +94,70 @@ def _render_table(metrics: HeadlineMetrics) -> list[str]:
     ]
 
 
+def _to_float(value: object) -> float | None:
+    if value is None:
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _render_exposure_table(metrics_payload: dict) -> list[str] | None:
+    avg_net = _to_float(metrics_payload.get("avg_exposure"))
+    avg_gross = _to_float(metrics_payload.get("avg_gross_exposure"))
+    max_net = _to_float(metrics_payload.get("max_net_exposure"))
+    max_gross = _to_float(metrics_payload.get("max_gross_exposure"))
+    if all(value is None for value in (avg_net, avg_gross, max_net, max_gross)):
+        return None
+    return [
+        "| Metric | Value |",
+        "| --- | ---:|",
+        f"| Avg net exposure | {_format_pct(avg_net or 0.0) if avg_net is not None else 'n/a'} |",
+        f"| Avg gross exposure | {_format_pct(avg_gross or 0.0) if avg_gross is not None else 'n/a'} |",
+        f"| Max net exposure | {_format_pct(max_net or 0.0) if max_net is not None else 'n/a'} |",
+        f"| Max gross exposure | {_format_pct(max_gross or 0.0) if max_gross is not None else 'n/a'} |",
+    ]
+
+
+def _render_cost_breakdown(cost_payload: dict | None) -> list[str] | None:
+    if not cost_payload:
+        return None
+    cost_basis = cost_payload.get("cost_basis")
+    if not isinstance(cost_basis, dict):
+        return None
+    commission = _to_float(cost_basis.get("commission_total"))
+    slippage = _to_float(cost_basis.get("slippage_total"))
+    borrow = _to_float(cost_basis.get("borrow_total"))
+    total = _to_float(cost_basis.get("total"))
+    return [
+        "| Category | Total |",
+        "| --- | ---:|",
+        f"| Commission | {_format_currency(commission or 0.0) if commission is not None else 'n/a'} |",
+        f"| Slippage | {_format_currency(slippage or 0.0) if slippage is not None else 'n/a'} |",
+        f"| Borrow | {_format_currency(borrow or 0.0) if borrow is not None else 'n/a'} |",
+        f"| Total | {_format_currency(total or 0.0) if total is not None else 'n/a'} |",
+    ]
+
+
+def _has_trade_log(artifact_dir: Path) -> bool:
+    return any((artifact_dir / name).exists() for name in ("trades.jsonl", "trades.csv"))
+
+
+def _load_cost_payload(artifact_dir: Path) -> dict | None:
+    cost_path = artifact_dir / "cost_sensitivity.json"
+    if cost_path.exists():
+        return _load_json(cost_path)
+    if _has_trade_log(artifact_dir):
+        try:
+            write_robustness_artifacts(artifact_dir)
+        except (OSError, ValueError):
+            return None
+        if cost_path.exists():
+            return _load_json(cost_path)
+    return None
+
+
 def _extract_headline(metrics_payload: dict, spa_payload: dict) -> HeadlineMetrics:
     sharpe = float(metrics_payload.get("sharpe_ratio") or 0.0)
     mar = float(metrics_payload.get("calmar_ratio") or 0.0)
@@ -138,6 +204,7 @@ def _parse_factor_table(markdown: str) -> list[dict[str, float | str]]:
 
 def _copy_asset(source: Path, destination: Path) -> Path:
     destination.parent.mkdir(parents=True, exist_ok=True)
+    guard_no_wrds_copy(source, operation="copy")
     shutil.copy2(source, destination)
     return destination
 
@@ -224,6 +291,7 @@ def _write_docs_results(
     config_meta: dict[str, Any] | None,
     headline: HeadlineMetrics,
     metrics_payload: dict,
+    cost_payload: dict | None,
     spa_payload: dict,
     factor_table_md: str,
     image_map: dict[str, Path],
@@ -264,6 +332,20 @@ def _write_docs_results(
     lines.append("")
     lines.extend(perf_lines)
     lines.append("")
+    exposure_table = _render_exposure_table(metrics_payload)
+    if exposure_table:
+        lines.append("## Exposure Summary")
+        lines.append("")
+        lines.extend(exposure_table)
+        lines.append("")
+        lines.append("_Exposure time series is recorded in equity_curve.csv._")
+        lines.append("")
+    cost_breakdown = _render_cost_breakdown(cost_payload)
+    if cost_breakdown:
+        lines.append("## Cost Breakdown")
+        lines.append("")
+        lines.extend(cost_breakdown)
+        lines.append("")
     lines.append("## Key Visuals")
     lines.append("")
     for label, key in (
@@ -388,6 +470,7 @@ def render_wrds_summary(
     headline = _extract_headline(metrics_payload, spa_payload)
     factors_text = factors_path.read_text(encoding="utf-8")
     _parse_factor_table(factors_text)
+    cost_payload = _load_cost_payload(artifact_dir)
 
     manifest_payload = _load_json(manifest_path)
     run_id = manifest_payload.get("run_id") or artifact_dir.name or "wrds_run"
@@ -437,6 +520,20 @@ def render_wrds_summary(
     lines = ["# WRDS Flagship Walk-Forward", "", "## Headline Metrics", ""]
     lines.extend(_render_table(headline))
     lines.append("")
+    exposure_table = _render_exposure_table(metrics_payload)
+    if exposure_table:
+        lines.append("## Exposure Summary")
+        lines.append("")
+        lines.extend(exposure_table)
+        lines.append("")
+        lines.append("_Exposure time series is recorded in equity_curve.csv._")
+        lines.append("")
+    cost_breakdown = _render_cost_breakdown(cost_payload)
+    if cost_breakdown:
+        lines.append("## Cost Breakdown")
+        lines.append("")
+        lines.extend(cost_breakdown)
+        lines.append("")
 
     lines.append("## Visuals")
     lines.append("")
@@ -471,6 +568,7 @@ def render_wrds_summary(
             config_meta=config_meta,
             headline=headline,
             metrics_payload=metrics_payload,
+            cost_payload=cost_payload,
             spa_payload=spa_payload,
             factor_table_md=factors_text,
             image_map=doc_image_map,

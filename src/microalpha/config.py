@@ -113,6 +113,18 @@ class CapitalPolicyCfg(BaseModel):
     min_qty: int = 1
 
 
+class BorrowCfg(BaseModel):
+    annual_fee_bps: float | None = Field(
+        default=None, description="Fallback annualized borrow fee in bps if metadata is missing."
+    )
+    floor_bps: float | None = Field(
+        default=None, description="Minimum borrow fee in bps (applied after multiplier)."
+    )
+    multiplier: float = Field(
+        default=1.0, description="Multiplier applied to metadata borrow fees."
+    )
+
+
 class BacktestCfg(BaseModel):
     data_path: str
     symbol: str
@@ -125,16 +137,26 @@ class BacktestCfg(BaseModel):
     turnover_cap: float | None = None
     kelly_fraction: float | None = None
     # Optional risk sizing and constraints
+    max_gross_leverage: float | None = None
+    max_single_name_weight: float | None = None
     vol_target_annualized: float | None = None
     vol_lookback: int | None = None
     max_portfolio_heat: float | None = None
     max_positions_per_sector: int | None = None
     sectors: Dict[str, str] | None = None
     capital_policy: CapitalPolicyCfg | None = None
+    borrow: BorrowCfg | None = None
     start_date: str | None = None
     end_date: str | None = None
     metrics_hac_lags: int | None = None
     meta_path: str | None = None
+
+    @model_validator(mode="after")
+    def _sync_gross_leverage(self) -> "BacktestCfg":
+        # Treat max_gross_leverage as an explicit alias for max_portfolio_heat.
+        if self.max_portfolio_heat is None and self.max_gross_leverage is not None:
+            self.max_portfolio_heat = self.max_gross_leverage
+        return self
 
     @property
     def resolved_data_path(self) -> Path:

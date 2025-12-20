@@ -33,6 +33,7 @@ from .manifest import (
     build as build_manifest,
 )
 from .manifest import (
+    extract_config_summary,
     generate_run_id,
     resolve_git_sha,
 )
@@ -136,6 +137,10 @@ def load_wfv_cfg(path: str) -> WFVCfg:
             max_drawdown_stop=portfolio_cfg.get("max_drawdown_stop"),
             turnover_cap=portfolio_cfg.get("turnover_cap"),
             kelly_fraction=portfolio_cfg.get("kelly_fraction"),
+            max_portfolio_heat=portfolio_cfg.get("max_portfolio_heat"),
+            max_gross_leverage=portfolio_cfg.get("max_gross_leverage"),
+            max_single_name_weight=portfolio_cfg.get("max_single_name_weight"),
+            borrow=portfolio_cfg.get("borrow"),
         )
 
         reality_payload = raw.get("reality_check") or {}
@@ -183,6 +188,7 @@ def run_walk_forward(
         str(cfg_path),
         run_id,
         config_hash,
+        config_summary=extract_config_summary(raw_config),
         git_sha=full_sha,
     )
     write_manifest(manifest, str(artifacts_dir))
@@ -255,6 +261,9 @@ def run_walk_forward(
     fold_exposure_paths: List[str] = []
     fold_factor_paths: List[str] = []
     total_turnover = 0.0
+    total_commission = 0.0
+    total_slippage = 0.0
+    total_borrow_cost = 0.0
 
     current_date = start_date
     master_rng = np.random.default_rng(cfg.template.seed)
@@ -374,6 +383,16 @@ def run_walk_forward(
             if portfolio.equity_curve:
                 equity_records.extend(portfolio.equity_curve)
             total_turnover += float(portfolio.total_turnover)
+            total_borrow_cost += float(getattr(portfolio, "borrow_cost_total", 0.0))
+            trades_list = getattr(portfolio, "trades", None) or []
+            for trade in trades_list:
+                try:
+                    total_commission += float(trade.get("commission", 0.0) or 0.0)
+                    total_slippage += abs(
+                        float(trade.get("slippage", 0.0) or 0.0)
+                    ) * abs(float(trade.get("qty", 0.0) or 0.0))
+                except (TypeError, ValueError):
+                    continue
 
             fold_index = len(folds)
             exposure_path, factor_path = persist_exposures(
@@ -501,6 +520,9 @@ def run_walk_forward(
         extra_metrics={
             "reality_check_p_value": aggregated_p_value,
             "bootstrap_samples": len(bootstrap_samples),
+            "borrow_cost_total": float(total_borrow_cost),
+            "commission_total": float(total_commission),
+            "slippage_total": float(total_slippage),
         },
     )
 
@@ -643,10 +665,13 @@ def _build_portfolio(
         vol_target_annualized=cfg.vol_target_annualized,
         vol_lookback=cfg.vol_lookback,
         max_portfolio_heat=cfg.max_portfolio_heat,
+        max_gross_leverage=cfg.max_gross_leverage,
+        max_single_name_weight=cfg.max_single_name_weight,
         sectors=getattr(cfg, "sectors", None),
         max_positions_per_sector=cfg.max_positions_per_sector,
         capital_policy=resolve_capital_policy(cfg.capital_policy),
         symbol_meta=symbol_meta,
+        borrow_cfg=cfg.borrow,
     )
 
 

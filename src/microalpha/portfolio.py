@@ -32,10 +32,13 @@ class Portfolio:
         vol_target_annualized: float | None = None,
         vol_lookback: int | None = None,
         max_portfolio_heat: float | None = None,
+        max_gross_leverage: float | None = None,
+        max_single_name_weight: float | None = None,
         sectors: Dict[str, str] | None = None,
         max_positions_per_sector: int | None = None,
         capital_policy=None,
         symbol_meta: Mapping[str, SymbolMeta] | None = None,
+        borrow_cfg: Mapping[str, float | None] | object | None = None,
     ):
         self.data_handler = data_handler
         self.initial_cash = initial_cash
@@ -46,12 +49,15 @@ class Portfolio:
         self.total_turnover = 0.0
         self.default_order_qty = default_order_qty
         self.max_exposure = max_exposure
+        self.max_gross_leverage = max_gross_leverage
+        self.max_single_name_weight = max_single_name_weight
         self.max_drawdown_stop = max_drawdown_stop
         self.turnover_cap = turnover_cap
         self.kelly_fraction = kelly_fraction
         self.high_water_mark = initial_cash
         self.drawdown_halted = False
         self.market_value = 0.0
+        self.gross_market_value = 0.0
         self.last_equity = initial_cash
         self.trades: List[Dict[str, float | int | str | None]] = []
         self.trade_logger = trade_logger
@@ -69,16 +75,48 @@ class Portfolio:
             self._symbol_meta = {sym.upper(): meta for sym, meta in symbol_meta.items()}
         self.borrow_cost_total: float = 0.0
         self._last_borrow_day: Dict[str, int] = {}
+        self.borrow_fee_bps: float | None = None
+        self.borrow_fee_floor_bps: float | None = None
+        self.borrow_fee_multiplier: float = 1.0
+        if borrow_cfg is not None:
+            if isinstance(borrow_cfg, Mapping):
+                self.borrow_fee_bps = (
+                    float(borrow_cfg["annual_fee_bps"])
+                    if borrow_cfg.get("annual_fee_bps") is not None
+                    else None
+                )
+                self.borrow_fee_floor_bps = (
+                    float(borrow_cfg["floor_bps"])
+                    if borrow_cfg.get("floor_bps") is not None
+                    else None
+                )
+                if borrow_cfg.get("multiplier") is not None:
+                    self.borrow_fee_multiplier = float(borrow_cfg.get("multiplier", 1.0))
+            else:
+                self.borrow_fee_bps = (
+                    float(getattr(borrow_cfg, "annual_fee_bps"))
+                    if getattr(borrow_cfg, "annual_fee_bps", None) is not None
+                    else None
+                )
+                self.borrow_fee_floor_bps = (
+                    float(getattr(borrow_cfg, "floor_bps"))
+                    if getattr(borrow_cfg, "floor_bps", None) is not None
+                    else None
+                )
+                if getattr(borrow_cfg, "multiplier", None) is not None:
+                    self.borrow_fee_multiplier = float(getattr(borrow_cfg, "multiplier"))
 
     def on_market(self, event: MarketEvent) -> None:
         self.current_time = event.timestamp
         market_value = 0.0
+        gross_market_value = 0.0
         borrow_cost = 0.0
         for symbol, position in self.positions.items():
             price = self.data_handler.get_latest_price(symbol, event.timestamp)
             if price is None:
                 continue
             market_value += position.qty * price
+            gross_market_value += abs(position.qty * price)
             borrow_cost += self._borrow_cost_for(
                 symbol, position.qty, price, event.timestamp
             )
@@ -90,7 +128,9 @@ class Portfolio:
 
         total_equity = self.cash + market_value
         exposure = market_value / total_equity if total_equity else 0.0
+        gross_exposure = gross_market_value / total_equity if total_equity else 0.0
         self.market_value = market_value
+        self.gross_market_value = gross_market_value
         self.last_equity = total_equity
         self.high_water_mark = max(self.high_water_mark, total_equity)
 
@@ -107,6 +147,7 @@ class Portfolio:
                 "timestamp": event.timestamp,
                 "equity": total_equity,
                 "exposure": exposure,
+                "gross_exposure": gross_exposure,
             }
         )
 
@@ -152,6 +193,28 @@ class Portfolio:
 
         if self.max_exposure is not None and projected_exposure > self.max_exposure:
             return []
+
+        if self.max_single_name_weight is not None and projected_equity:
+            prev_qty = self.positions.get(signal.symbol, PortfolioPosition()).qty
+            new_qty = prev_qty + (qty if side == "BUY" else -qty)
+            projected_weight = abs(new_qty * price) / projected_equity
+            if projected_weight > self.max_single_name_weight:
+                return []
+
+        if self.max_gross_leverage is not None and projected_equity:
+            prev_qty = self.positions.get(signal.symbol, PortfolioPosition()).qty
+            prev_abs_value = abs(prev_qty * price)
+            new_qty = prev_qty + (qty if side == "BUY" else -qty)
+            new_abs_value = abs(new_qty * price)
+            current_gross = (
+                self.gross_market_value
+                if self.gross_market_value > 0.0
+                else self._estimate_gross_market_value()
+            )
+            projected_gross = max(current_gross - prev_abs_value + new_abs_value, 0.0)
+            projected_gross_exposure = projected_gross / projected_equity
+            if projected_gross_exposure > self.max_gross_leverage:
+                return []
 
         return [OrderEvent(signal.timestamp, signal.symbol, qty, side)]
 
@@ -245,9 +308,17 @@ class Portfolio:
             return 0.0
 
         meta = self._symbol_meta.get(key)
-        if meta is None or not meta.borrow_fee_annual_bps:
+        raw_bps = meta.borrow_fee_annual_bps if meta and meta.borrow_fee_annual_bps else None
+        if raw_bps is None and self.borrow_fee_bps is not None:
+            raw_bps = self.borrow_fee_bps
+        if raw_bps is None and self.borrow_fee_floor_bps is not None:
+            raw_bps = self.borrow_fee_floor_bps
+        if raw_bps is None or raw_bps <= 0:
             self._last_borrow_day.pop(key, None)
             return 0.0
+        effective_bps = float(raw_bps) * self.borrow_fee_multiplier
+        if self.borrow_fee_floor_bps is not None:
+            effective_bps = max(effective_bps, float(self.borrow_fee_floor_bps))
 
         current_day = int(timestamp // NS_PER_DAY)
         prev_day = self._last_borrow_day.get(key)
@@ -262,10 +333,25 @@ class Portfolio:
 
         self._last_borrow_day[key] = current_day
 
-        annual_rate = meta.borrow_fee_annual_bps / 10_000.0
+        annual_rate = effective_bps / 10_000.0
         daily_rate = annual_rate / TRADING_DAYS_PER_YEAR
         notional = abs(qty) * price
         return notional * daily_rate * days
+
+    def _estimate_gross_market_value(self) -> float:
+        gross_value = 0.0
+        if self.current_time is None:
+            return gross_value
+        for sym, pos in self.positions.items():
+            if pos.qty == 0:
+                continue
+            price = self.data_handler.get_latest_price(sym, self.current_time)
+            if price is None:
+                price = self.avg_cost.get(sym)
+            if price is None:
+                continue
+            gross_value += abs(pos.qty) * price
+        return gross_value
 
     def _signal_quantity(self, signal: SignalEvent) -> int:
         if signal.meta:

@@ -90,6 +90,17 @@ def compute_cost_sensitivity(
         slippage_total = float(trades_df["slippage_cost"].sum())
         cost_by_day = trades_df.groupby("date")[["commission", "slippage_cost"]].sum().sum(axis=1)
 
+    borrow_total = None
+    metrics_path = artifact_dir / "metrics.json"
+    if metrics_path.exists():
+        try:
+            metrics_payload = json.loads(metrics_path.read_text(encoding="utf-8"))
+            borrow_total = metrics_payload.get("borrow_cost_total") or metrics_payload.get("borrow_total")
+            if borrow_total is not None:
+                borrow_total = float(borrow_total)
+        except (OSError, ValueError, TypeError):
+            borrow_total = None
+
     per_day_cost = cost_by_day.reindex(dates).fillna(0.0).to_numpy()
     base_metrics = _metrics_from_returns(returns, periods_per_year=periods_per_year)
 
@@ -122,8 +133,8 @@ def compute_cost_sensitivity(
         "cost_basis": {
             "commission_total": float(commission_total),
             "slippage_total": float(slippage_total),
-            "borrow_total": None,
-            "total": float(commission_total + slippage_total),
+            "borrow_total": borrow_total,
+            "total": float(commission_total + slippage_total + (borrow_total or 0.0)),
             "currency": "USD",
         },
     }

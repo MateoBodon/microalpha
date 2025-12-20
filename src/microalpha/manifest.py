@@ -8,10 +8,10 @@ import platform
 import random
 import subprocess
 import sys
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from importlib import metadata as importlib_metadata
-from typing import Optional, Tuple
+from typing import Any, Mapping, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -29,6 +29,7 @@ class Manifest:
     seed: int
     config_path: str
     config_sha256: str
+    config_summary: dict[str, Any] = field(default_factory=dict)
 
 
 def resolve_git_sha() -> Tuple[str, str]:
@@ -79,6 +80,7 @@ def build(
     config_path: str,
     run_id: str,
     config_sha256: str,
+    config_summary: Mapping[str, Any] | None = None,
     git_sha: Optional[str] = None,
 ) -> Manifest:
     """Construct a manifest and synchronise global RNG state."""
@@ -102,7 +104,64 @@ def build(
         seed=norm_seed,
         config_path=os.path.abspath(config_path),
         config_sha256=config_sha256,
+        config_summary=dict(config_summary or {}),
     )
+
+
+def extract_config_summary(raw_config: Mapping[str, Any]) -> dict[str, Any]:
+    """Pull key risk/cost parameters from a config mapping for the manifest."""
+
+    def _as_mapping(value: Any) -> Mapping[str, Any]:
+        return value if isinstance(value, Mapping) else {}
+
+    template = _as_mapping(raw_config.get("template", raw_config))
+    if not template:
+        template = _as_mapping(raw_config)
+
+    exec_cfg = _as_mapping(template.get("exec"))
+    slippage_cfg = _as_mapping(exec_cfg.get("slippage"))
+    strategy_cfg = _as_mapping(template.get("strategy"))
+    params_cfg = _as_mapping(strategy_cfg.get("params"))
+    borrow_cfg = _as_mapping(template.get("borrow"))
+
+    risk_caps = {
+        "max_gross_leverage": template.get("max_gross_leverage")
+        if template.get("max_gross_leverage") is not None
+        else template.get("max_portfolio_heat"),
+        "max_portfolio_heat": template.get("max_portfolio_heat"),
+        "max_net_leverage": template.get("max_exposure"),
+        "max_single_name_weight": template.get("max_single_name_weight"),
+        "max_drawdown_stop": template.get("max_drawdown_stop"),
+        "max_positions_per_sector": template.get("max_positions_per_sector"),
+    }
+    turnover_caps = {
+        "turnover_cap": template.get("turnover_cap"),
+        "turnover_target_pct_adv": params_cfg.get("turnover_target_pct_adv"),
+        "min_adv": params_cfg.get("min_adv"),
+    }
+    borrow_model = {
+        "annual_fee_bps": borrow_cfg.get("annual_fee_bps"),
+        "floor_bps": borrow_cfg.get("floor_bps"),
+        "multiplier": borrow_cfg.get("multiplier"),
+    }
+    cost_model = {
+        "exec_type": exec_cfg.get("type"),
+        "commission": exec_cfg.get("commission") or exec_cfg.get("aln"),
+        "price_impact": exec_cfg.get("price_impact"),
+        "slippage_type": slippage_cfg.get("type"),
+        "k_lin": slippage_cfg.get("k_lin"),
+        "eta": slippage_cfg.get("eta"),
+        "default_adv": slippage_cfg.get("default_adv"),
+        "default_spread_bps": slippage_cfg.get("default_spread_bps"),
+        "spread_floor_multiplier": slippage_cfg.get("spread_floor_multiplier"),
+    }
+
+    return {
+        "risk_caps": risk_caps,
+        "turnover_caps": turnover_caps,
+        "borrow_model": borrow_model,
+        "cost_model": cost_model,
+    }
 
 
 def write(manifest: Manifest, outdir: str) -> None:

@@ -35,6 +35,7 @@ from .manifest import (
     build as build_manifest,
 )
 from .manifest import (
+    extract_config_summary,
     generate_run_id,
     resolve_git_sha,
 )
@@ -58,6 +59,7 @@ from .strategies.cs_momentum import CrossSectionalMomentum
 from .strategies.flagship_momentum import FlagshipMomentumStrategy
 from .strategies.meanrev import MeanReversionStrategy
 from .strategies.mm import NaiveMarketMakingStrategy
+from .wrds import guard_no_wrds_copy
 
 STRATEGY_MAPPING = {
     "MeanReversionStrategy": MeanReversionStrategy,
@@ -106,6 +108,7 @@ def run_from_config(
         str(cfg_path),
         run_id,
         config_hash,
+        config_summary=extract_config_summary(config),
         git_sha=full_sha,
     )
     root_rng = np.random.default_rng(manifest.seed)
@@ -190,10 +193,13 @@ def run_from_config(
         vol_target_annualized=cfg.vol_target_annualized,
         vol_lookback=cfg.vol_lookback,
         max_portfolio_heat=cfg.max_portfolio_heat,
+        max_gross_leverage=cfg.max_gross_leverage,
+        max_single_name_weight=cfg.max_single_name_weight,
         sectors=getattr(cfg, "sectors", None),
         max_positions_per_sector=cfg.max_positions_per_sector,
         capital_policy=capital_policy,
         symbol_meta=symbol_meta,
+        borrow_cfg=cfg.borrow,
     )
     exec_type = cfg.exec.type.lower() if cfg.exec.type else "instant"
     executor_cls = EXECUTION_MAPPING.get(exec_type, Executor)
@@ -284,14 +290,30 @@ def run_from_config(
         trades=getattr(portfolio, "trades", None),
         hac_lags=cfg.metrics_hac_lags,
     )
+    commission_total = 0.0
+    slippage_total = 0.0
+    trades_list = getattr(portfolio, "trades", None) or []
+    for trade in trades_list:
+        try:
+            commission_total += float(trade.get("commission", 0.0) or 0.0)
+            slippage_total += abs(float(trade.get("slippage", 0.0) or 0.0)) * abs(
+                float(trade.get("qty", 0.0) or 0.0)
+            )
+        except (TypeError, ValueError):
+            continue
     bootstrap_path, bootstrap_meta = _persist_bootstrap(metrics, artifacts_dir)
     metrics_paths = _persist_metrics(
         metrics,
         artifacts_dir,
         extra_metrics={
-            key: value
-            for key, value in bootstrap_meta.items()
-            if value is not None or key == "bootstrap_samples"
+            **{
+                key: value
+                for key, value in bootstrap_meta.items()
+                if value is not None or key == "bootstrap_samples"
+            },
+            "borrow_cost_total": float(getattr(portfolio, "borrow_cost_total", 0.0)),
+            "commission_total": float(commission_total),
+            "slippage_total": float(slippage_total),
         },
     )
     exposures_path, factor_path = persist_exposures(portfolio, artifacts_dir)
@@ -336,6 +358,7 @@ def prepare_artifacts_dir(
 
 def persist_config(cfg_path: Path, artifacts_dir: Path) -> None:
     destination = artifacts_dir / cfg_path.name
+    guard_no_wrds_copy(cfg_path, operation="copy")
     shutil.copy2(cfg_path, destination)
 
 

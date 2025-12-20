@@ -9,11 +9,17 @@ template:
   cash: 15000000.0
   seed: 20251010
   max_exposure: 1.25
+  max_gross_leverage: 1.5
+  max_single_name_weight: 0.02
   max_drawdown_stop: 0.20
   max_portfolio_heat: 1.5
   max_positions_per_sector: 8
   turnover_cap: 180000000.0
   metrics_hac_lags: 10
+  borrow:
+    annual_fee_bps: null
+    floor_bps: 8.0
+    multiplier: 1.0
   exec:
     type: "twap"
     commission: 0.0005

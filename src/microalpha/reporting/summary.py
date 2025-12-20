@@ -48,6 +48,12 @@ def _format_pct(value: float | None) -> str:
     return f"{value * 100:.2f}%"
 
 
+def _format_currency(value: float | None) -> str:
+    if value is None:
+        return "n/a"
+    return f"${value:,.0f}"
+
+
 def _render_exposures(exposures_path: Path | None, top_n: int) -> str:
     if exposures_path is None or not exposures_path.exists():
         return "_Exposures unavailable._"
@@ -113,6 +119,13 @@ def generate_summary(
     lines.extend(_render_metric_table(metrics))
     lines.append("")
 
+    exposure_section = _render_exposure_summary(metrics)
+    if exposure_section:
+        lines.append("## Exposure Summary")
+        lines.append("")
+        lines.append(exposure_section)
+        lines.append("")
+
     lines.append("## Visuals")
     lines.append("")
     visuals_rendered = False
@@ -170,14 +183,18 @@ def generate_summary(
     lines.append("## Cost & Metadata Robustness")
     lines.append("")
     cost_section = _render_cost_section(cost_path)
+    cost_breakdown = _render_cost_breakdown(cost_path)
     coverage_section = _render_coverage_section(coverage_path)
     if cost_section:
         lines.append(cost_section)
         lines.append("")
+    if cost_breakdown:
+        lines.append(cost_breakdown)
+        lines.append("")
     if coverage_section:
         lines.append(coverage_section)
         lines.append("")
-    if not cost_section and not coverage_section:
+    if not cost_section and not cost_breakdown and not coverage_section:
         lines.append("_Robustness artifacts unavailable._")
         lines.append("")
 
@@ -249,6 +266,53 @@ def _format_metric(label: str, value: object) -> str:
     if label == "RealityCheck_p_value":
         return f"{numeric:.3f}"
     return f"{numeric:.2f}"
+
+
+def _render_exposure_summary(metrics: Mapping[str, object]) -> str | None:
+    avg_net = metrics.get("avg_exposure")
+    avg_gross = metrics.get("avg_gross_exposure")
+    max_gross = metrics.get("max_gross_exposure")
+    max_net = metrics.get("max_net_exposure")
+    if all(val is None for val in (avg_net, avg_gross, max_gross, max_net)):
+        return None
+    lines = ["| Metric | Value |", "| --- | ---:|"]
+    lines.append(f"| Avg net exposure | {_format_pct(_to_float(avg_net))} |")
+    lines.append(f"| Avg gross exposure | {_format_pct(_to_float(avg_gross))} |")
+    lines.append(f"| Max gross exposure | {_format_pct(_to_float(max_gross))} |")
+    lines.append(f"| Max net exposure | {_format_pct(_to_float(max_net))} |")
+    lines.append("")
+    lines.append("_Exposure time series is recorded in equity_curve.csv._")
+    return "\n".join(lines)
+
+
+def _render_cost_breakdown(cost_path: Path) -> str | None:
+    if not cost_path.exists():
+        return None
+    payload = _load_json(cost_path)
+    cost_basis = payload.get("cost_basis") if isinstance(payload, Mapping) else None
+    if not cost_basis:
+        return None
+    commission = _to_float(cost_basis.get("commission_total"))
+    slippage = _to_float(cost_basis.get("slippage_total"))
+    borrow = _to_float(cost_basis.get("borrow_total"))
+    total = _to_float(cost_basis.get("total"))
+    lines = ["**Cost breakdown (totals)**", ""]
+    lines.append("| Category | Total |")
+    lines.append("| --- | ---:|")
+    lines.append(f"| Commission | {_format_currency(commission)} |")
+    lines.append(f"| Slippage | {_format_currency(slippage)} |")
+    lines.append(f"| Borrow | {_format_currency(borrow)} |")
+    lines.append(f"| Total | {_format_currency(total)} |")
+    return "\n".join(lines)
+
+
+def _to_float(value: object) -> float | None:
+    if value is None:
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
 
 
 def _relpath(path: Path, output_path: Path) -> str:

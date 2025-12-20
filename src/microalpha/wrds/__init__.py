@@ -89,14 +89,41 @@ def wrds_status() -> dict[str, bool]:
     }
 
 
+def is_wrds_path(path: Path) -> bool:
+    """Return True if ``path`` resolves under WRDS_DATA_ROOT."""
+
+    root = get_wrds_data_root()
+    if root is None:
+        return False
+    try:
+        resolved = path.expanduser().resolve()
+    except FileNotFoundError:
+        resolved = path.expanduser().resolve(strict=False)
+    try:
+        return root == resolved or root in resolved.parents
+    except RuntimeError:
+        return False
+
+
+def guard_no_wrds_copy(path: Path, *, operation: str = "copy") -> None:
+    """Raise if attempting to copy data directly from WRDS_DATA_ROOT."""
+
+    if is_wrds_path(path):
+        raise ValueError(
+            f"Refusing to {operation} file from WRDS_DATA_ROOT: {path}"
+        )
+
+
 __all__ = [
     "WRDS_DB",
     "WRDS_HOST",
     "WRDS_PORT",
+    "guard_no_wrds_copy",
     "get_wrds_data_root",
     "has_pgpass_credentials",
     "has_wrds_credentials",
     "has_wrds_data",
+    "is_wrds_path",
     "pgpass_path",
     "wrds_status",
 ]
