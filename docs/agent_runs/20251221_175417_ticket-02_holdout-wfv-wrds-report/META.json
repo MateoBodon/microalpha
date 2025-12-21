@@ -2,7 +2,7 @@
   "run_name": "20251221_175417_ticket-02_holdout-wfv-wrds-report",
   "ticket_id": "ticket-02",
   "git_sha_before": "ad792fa041335b9c3edbbc84c088c9e8c768b31c",
-  "git_sha_after": "308ed3c9e6a51ded3814e8b5c46726aabea1586c",
+  "git_sha_after": "1c1ab47ac2b14e0138bcda5163d5dc84295d986f",
   "branch": "feat/ticket-02-holdout-wfv",
   "timestamp_local": "2025-12-21T17:54:17",
   "env": {
