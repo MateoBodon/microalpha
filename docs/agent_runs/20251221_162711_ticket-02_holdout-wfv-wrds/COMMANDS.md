@@ -127,4 +127,7 @@ Path("docs/agent_runs/20251221_162711_ticket-02_holdout-wfv-wrds/META.json").wri
     json.dumps(meta, indent=2), encoding="utf-8"
 )
 PY
+git add PROGRESS.md docs/results_wrds_smoke.md reports/summaries/wrds_flagship_smoke.md reports/summaries/wrds_flagship_smoke_factors.md reports/summaries/wrds_flagship_smoke_metrics.json docs/img/wrds_flagship_smoke/2025-12-21T21-28-14Z-33c9c2a project_state docs/agent_runs/20251221_162711_ticket-02_holdout-wfv-wrds
+git commit -m "ticket-02: run WRDS holdout smoke" -m "Tests: WRDS_DATA_ROOT=/Volumes/Storage/Data/wrds make wfv-wrds-smoke; WRDS_DATA_ROOT=/Volumes/Storage/Data/wrds make report-wrds-smoke" -m "Artifacts: artifacts/wrds_flagship_smoke/2025-12-21T21-28-14Z-33c9c2a/ (local only)" -m "Docs: PROGRESS.md, docs/results_wrds_smoke.md, reports/summaries/wrds_flagship_smoke*, docs/img/wrds_flagship_smoke/2025-12-21T21-28-14Z-33c9c2a/, docs/agent_runs/20251221_162711_ticket-02_holdout-wfv-wrds/"
+git status -sb
 ```
