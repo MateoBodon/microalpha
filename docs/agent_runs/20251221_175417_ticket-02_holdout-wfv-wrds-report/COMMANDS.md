@@ -178,4 +178,10 @@ cat <<'EOF_META' > docs/agent_runs/20251221_175417_ticket-02_holdout-wfv-wrds-re
 EOF_META
 git add docs/agent_runs/20251221_175417_ticket-02_holdout-wfv-wrds-report/COMMANDS.md docs/agent_runs/20251221_175417_ticket-02_holdout-wfv-wrds-report/META.json
 git commit -m "chore: update run metadata" -m "Tests: not run (metadata update)" -m "Artifacts: none" -m "Docs: docs/agent_runs/20251221_175417_ticket-02_holdout-wfv-wrds-report/META.json, docs/agent_runs/20251221_175417_ticket-02_holdout-wfv-wrds-report/COMMANDS.md"
+git fetch origin
+git checkout main
+git status -sb
+git merge feat/ticket-02-holdout-wfv
+git status -sb
+git push origin main
 ```
