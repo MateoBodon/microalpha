@@ -548,6 +548,7 @@ def render_known_issues() -> str:
 - Some large data directories (`data/`, `data_sp500/`) are present; avoid deep parsing in automation.
 - WRDS smoke universe is seeded from 2019 liquidity ranks (survivorship/lookahead) to keep it small; it is **not** valid for performance claims.
 - WRDS smoke run produced zero trades and flat SPA comparator t-stats; smoke reports use `--allow-zero-spa` to render despite empty activity.
+- Full WRDS holdout WFV run `2025-12-21T22-32-44Z-2b48ef7` produced zero trades/flat metrics; investigate data coverage, universe filters, and signal generation before claiming results.
 """
 
 

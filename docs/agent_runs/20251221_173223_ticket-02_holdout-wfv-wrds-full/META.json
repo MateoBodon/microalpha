@@ -1,0 +1,38 @@
+{
+  "run_name": "20251221_173223_ticket-02_holdout-wfv-wrds-full",
+  "ticket_id": "ticket-02",
+  "git_sha_before": "2b48ef75f24acdb206db20d9f5a2681366ac5afa",
+  "git_sha_after": "HEAD",
+  "branch": "feat/ticket-02-holdout-wfv",
+  "timestamp_local": "2025-12-21T17:32:23",
+  "env": {
+    "os": "macOS-26.0.1-arm64-arm-64bit",
+    "python": "3.12.2",
+    "pip_freeze_hash": "e1004c9cb50ca71830ff9d30a92c9b0a7fe73ca211cbb6a3d0b820218b69c662",
+    "notes": "Full WRDS holdout WFV run; zero trades observed."
+  },
+  "data": {
+    "mode": "wrds",
+    "dataset_id": "wrds_full",
+    "wrds_data_root": "/Volumes/Storage/Data/wrds",
+    "license_notes": "No raw WRDS data committed."
+  },
+  "config": {
+    "config_paths": [
+      "configs/wfv_flagship_wrds.yaml"
+    ],
+    "config_hashes": {
+      "configs/wfv_flagship_wrds.yaml": "1d6a855bd753c60ac8319862841c389e1d7e6f0230f4b372d4c12b8be642c7b1"
+    }
+  },
+  "artifacts": {
+    "artifact_dirs": [
+      "artifacts/wrds_flagship/2025-12-21T22-32-44Z-2b48ef7"
+    ],
+    "reports": []
+  },
+  "web_research": {
+    "enabled": false,
+    "sources": []
+  }
+}

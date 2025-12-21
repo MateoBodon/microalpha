@@ -12,3 +12,4 @@ Ticket-01: WRDS smoke run completed with local exports at `$WRDS_DATA_ROOT` (Sta
 Ticket-06: Bundle commit-consistency enforced and living-doc updates backfilled (Status: Done). Run log: `docs/agent_runs/20251221_190000_ticket-06_bundle-commit-consistency/`.
 Ticket-02: Holdout evaluation mode added for walk-forward validation (Status: Done). Run log: `docs/agent_runs/20251221_154039_ticket-02_holdout-wfv/`.
 Ticket-02: WRDS holdout smoke run completed with exports at `/Volumes/Storage/Data/wrds` (Status: Done). Run log: `docs/agent_runs/20251221_162711_ticket-02_holdout-wfv-wrds/`.
+Ticket-02: Full WRDS holdout WFV run completed (Status: Done; zero-trade output flagged). Run log: `docs/agent_runs/20251221_173223_ticket-02_holdout-wfv-wrds-full/`.

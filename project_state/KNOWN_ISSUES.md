@@ -1,6 +1,6 @@
 <!--
-generated_at: 2025-12-21T21:29:21Z
-git_sha: 33c9c2a0bab056c4296a66ee652af49cc646f7df
+generated_at: 2025-12-21T22:42:31Z
+git_sha: 2b48ef75f24acdb206db20d9f5a2681366ac5afa
 branch: feat/ticket-02-holdout-wfv
 commands:
   - python3 tools/build_project_state.py
@@ -15,3 +15,4 @@ commands:
 - Some large data directories (`data/`, `data_sp500/`) are present; avoid deep parsing in automation.
 - WRDS smoke universe is seeded from 2019 liquidity ranks (survivorship/lookahead) to keep it small; it is **not** valid for performance claims.
 - WRDS smoke run produced zero trades and flat SPA comparator t-stats; smoke reports use `--allow-zero-spa` to render despite empty activity.
+- Full WRDS holdout WFV run `2025-12-21T22-32-44Z-2b48ef7` produced zero trades/flat metrics; investigate data coverage, universe filters, and signal generation before claiming results.
