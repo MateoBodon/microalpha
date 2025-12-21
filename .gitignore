@@ -34,8 +34,6 @@ artifacts/logs/
 artifacts/logs/**
 
 # Local-only agent/state outputs
-project_state/
-docs/agent_runs/
 docs/gpt_bundles/
 
 # WRDS and large data exports

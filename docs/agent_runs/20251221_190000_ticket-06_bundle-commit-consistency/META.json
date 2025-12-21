@@ -1,0 +1,32 @@
+{
+  "run_name": "20251221_190000_ticket-06_bundle-commit-consistency",
+  "ticket_id": "ticket-06",
+  "git_sha_before": "bf7e8ea58e82c009404eb0e5fa2ccde8a62a72a2",
+  "git_sha_after": "HEAD",
+  "branch": "feat/ticket-06-bundle-commit-consistency",
+  "timestamp_local": "2025-12-21T14:43:30-0500",
+  "env": {
+    "os": "macOS 26.0.1 (Build 25A362)",
+    "python": "3.12.2",
+    "pip_freeze_hash": "",
+    "notes": "pip freeze not captured"
+  },
+  "data": {
+    "mode": "docs",
+    "dataset_id": "",
+    "wrds_data_root": "",
+    "license_notes": "No raw WRDS data committed."
+  },
+  "config": {
+    "config_paths": [],
+    "config_hashes": {}
+  },
+  "artifacts": {
+    "artifact_dirs": [],
+    "reports": []
+  },
+  "web_research": {
+    "enabled": false,
+    "sources": []
+  }
+}

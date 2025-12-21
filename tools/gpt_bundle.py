@@ -41,9 +41,26 @@ def _load_meta_shas(meta_path: Path) -> tuple[str | None, str | None]:
     return payload.get("git_sha_before"), payload.get("git_sha_after")
 
 
+def _require_clean_worktree() -> None:
+    try:
+        status = subprocess.check_output(
+            ["git", "status", "--porcelain"], text=True, stderr=subprocess.STDOUT
+        )
+    except subprocess.CalledProcessError as exc:
+        raise SystemExit(f"Failed to read git status: {exc.output}") from exc
+    if status.strip():
+        raise SystemExit(
+            "Refusing to bundle: git worktree is dirty.\n"
+            "Commit, stash, or clean changes before running gpt-bundle.\n"
+            "git status --porcelain output:\n"
+            f"{status}"
+        )
+
+
 def main() -> None:
     ticket = _env("TICKET")
     run_name = _env("RUN_NAME")
+    _require_clean_worktree()
 
     timestamp = time.strftime("%Y-%m-%dT%H-%M-%SZ", time.gmtime())
     bundle_dir = Path("docs/gpt_bundles")

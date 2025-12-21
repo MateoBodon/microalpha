@@ -1,0 +1,53 @@
+{
+  "run_name": "20251220_223500_ticket-01_wrds-tighten-caps",
+  "ticket_id": "ticket-01",
+  "git_sha_before": "f8b316fe22aa42242bd7a2c7a7971fefb2d58a3f",
+  "git_sha_after": "bf7e8ea58e82c009404eb0e5fa2ccde8a62a72a2",
+  "branch": "feat/ticket-01-wrds-tighten-caps",
+  "timestamp_local": "2025-12-20T18:32:13-05:00",
+  "env": {
+    "os": "macOS 26.0.1 (Build 25A362); Darwin Kernel Version 25.0.0",
+    "python": "3.12.2",
+    "pip_freeze_hash": "768551f21cc890045cdcc2f165adcdd00573b69e95a2841037d3024b32c57efd",
+    "notes": "python not found; used python3"
+  },
+  "data": {
+    "mode": "wrds_smoke",
+    "dataset_id": "2025-12-21T06-06-35Z-0dbb291",
+    "wrds_data_root": "$WRDS_DATA_ROOT",
+    "license_notes": "No raw WRDS data committed; derived smoke exports stored outside repo."
+  },
+  "config": {
+    "config_paths": [
+      "configs/wfv_flagship_wrds.yaml",
+      "configs/wfv_flagship_wrds_smoke.yaml",
+      "configs/flagship_wrds_single.yaml",
+      "configs/flagship_sample.yaml"
+    ],
+    "config_hashes": {
+      "configs/wfv_flagship_wrds.yaml": "7d9136ff80675adf2c26a2b6f53cd59232533aba3deca084e44494e568fb8604",
+      "configs/wfv_flagship_wrds_smoke.yaml": "9da4ca9d574371bf043cb84d757f12993c92dcde4d3cb9e1da2dc761b3bfce7b",
+      "configs/flagship_wrds_single.yaml": "25b79cd5d25aa0baf6dcdb90b67037619b4d9f59d8dbfb93694a9a123c902356",
+      "configs/flagship_sample.yaml": "4aa74a687173e923ecafbf3795654bdffae88ac6c51404513b188b607ec82194"
+    }
+  },
+  "artifacts": {
+    "artifact_dirs": [
+      "artifacts/sample_flagship/2025-12-20T23-30-48Z-f8b316f",
+      "artifacts/wrds_flagship_smoke/2025-12-21T06-06-35Z-0dbb291"
+    ],
+    "reports": [
+      "docs/results_wrds_smoke.md",
+      "reports/summaries/flagship_mom.md",
+      "reports/summaries/wrds_flagship_smoke.md",
+      "reports/summaries/wrds_flagship_smoke_factors.md",
+      "reports/summaries/wrds_flagship_smoke_metrics.json",
+      "reports/summaries/wrds_flagship_smoke_spa.json",
+      "reports/summaries/wrds_flagship_smoke_spa.md"
+    ]
+  },
+  "web_research": {
+    "enabled": false,
+    "sources": []
+  }
+}

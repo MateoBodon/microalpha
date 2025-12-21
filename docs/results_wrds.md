@@ -4,7 +4,7 @@
 
 *(Metrics below reflect the pre-tightening spec. On 2025-11-21 we tightened exposure/turnover limits; rerun with the updated config to refresh these numbers.)*
 
-**Rerun status (2025-11-22):** a smoke walk-forward using the tightened caps finished on `2025-11-22T00-21-14Z-c792b44` (2015–2019 window) with Sharpe≈0.06 and MaxDD≈40%—drawdown cap now binds. A full 2005–2024 rerun with the tightened spec is still pending; previous attempts exceeded the interactive time window (>2h). Run it locally with a longer wall clock if you need the updated headline metrics.
+Rerun status (2025-11-22): a smoke walk-forward using the tightened caps finished on run `2025-11-22T00-21-14Z-c792b44` (2015–2019 window). Report artifacts for that run were not generated, so no verified performance metrics are published. A full 2005–2024 rerun with the tightened spec is still pending; previous attempts exceeded the interactive time window (>2h).
 
 ## Performance Snapshot
 

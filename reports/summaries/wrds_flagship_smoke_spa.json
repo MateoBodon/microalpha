@@ -1,0 +1,14 @@
+{
+  "best_model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=12|skip_months=1|top_frac=0.2000",
+  "p_value": 1.0,
+  "observed_stat": 0.0,
+  "num_bootstrap": 500,
+  "avg_block": 63,
+  "candidate_stats": [
+    {
+      "model": "allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=12|skip_months=1|top_frac=0.2000",
+      "mean_diff": 0.0,
+      "t_stat": 0.0
+    }
+  ]
+}

@@ -1,0 +1,1851 @@
+{
+  "src/microalpha/__init__.py": {
+    "classes": [],
+    "functions": [],
+    "module_doc": ""
+  },
+  "src/microalpha/allocators.py": {
+    "classes": [],
+    "functions": [
+      {
+        "async": false,
+        "doc": "Compute long-only risk parity weights for a covariance matrix.",
+        "name": "risk_parity",
+        "signature": "(cov: pd.DataFrame | np.ndarray, *, tol: float=1e-08, max_iter: int=10000, ridge: float=1e-08, initial: Sequence[float] | None=None)"
+      },
+      {
+        "async": false,
+        "doc": "Ledoit\u2013Wolf shrinkage min-variance allocator.",
+        "name": "lw_min_var",
+        "signature": "(returns: pd.DataFrame | np.ndarray, *, allow_short: bool=False, epsilon: float=1e-06, return_cov: bool=False)"
+      },
+      {
+        "async": false,
+        "doc": "Allocate capital across long/short sleeves using risk parity within each bucket.",
+        "name": "budgeted_allocator",
+        "signature": "(signals: Mapping[str, float] | pd.Series, cov: pd.DataFrame | np.ndarray, *, total_budget: float=1.0, ridge: float=1e-08, risk_model: str='risk_parity', returns: pd.DataFrame | None=None, allow_short: bool=False)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_as_dataframe",
+        "signature": "(data: pd.DataFrame | np.ndarray | Mapping[str, Mapping[str, float]], *, columns_first: bool=False)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_as_series",
+        "signature": "(data: Mapping[str, float] | pd.Series)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_ledoit_wolf_cov",
+        "signature": "(returns: np.ndarray)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_min_var_weights",
+        "signature": "(cov: np.ndarray, *, allow_short: bool, epsilon: float)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_bucket_weights",
+        "signature": "(cov: pd.DataFrame, *, ridge: float, risk_model: str, returns: pd.DataFrame | None, allow_short: bool)"
+      }
+    ],
+    "module_doc": "Portfolio allocators using covariance information."
+  },
+  "src/microalpha/broker.py": {
+    "classes": [
+      {
+        "bases": [],
+        "doc": "",
+        "name": "SimulatedBroker"
+      }
+    ],
+    "functions": [],
+    "module_doc": "Broker wrapper delegating to execution models."
+  },
+  "src/microalpha/capital.py": {
+    "classes": [
+      {
+        "bases": [
+          "Protocol"
+        ],
+        "doc": "",
+        "name": "DataHandlerLike"
+      },
+      {
+        "bases": [
+          "Protocol"
+        ],
+        "doc": "",
+        "name": "PortfolioLike"
+      },
+      {
+        "bases": [
+          "Protocol"
+        ],
+        "doc": "",
+        "name": "CapitalPolicy"
+      },
+      {
+        "bases": [],
+        "doc": "Scale base order size inversely to recent volatility.",
+        "name": "VolatilityScaledPolicy"
+      }
+    ],
+    "functions": [],
+    "module_doc": "Capital allocation policies for multi-asset sizing."
+  },
+  "src/microalpha/cli.py": {
+    "classes": [],
+    "functions": [
+      {
+        "async": false,
+        "doc": "",
+        "name": "main",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_build_info",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_resolve_version",
+        "signature": "()"
+      }
+    ],
+    "module_doc": "Command line entrypoints for microalpha."
+  },
+  "src/microalpha/config.py": {
+    "classes": [
+      {
+        "bases": [
+          "BaseModel"
+        ],
+        "doc": "",
+        "name": "SlippageCfg"
+      },
+      {
+        "bases": [
+          "BaseModel"
+        ],
+        "doc": "",
+        "name": "ExecModelCfg"
+      },
+      {
+        "bases": [
+          "BaseModel"
+        ],
+        "doc": "",
+        "name": "StrategyCfg"
+      },
+      {
+        "bases": [
+          "BaseModel"
+        ],
+        "doc": "",
+        "name": "CapitalPolicyCfg"
+      },
+      {
+        "bases": [
+          "BaseModel"
+        ],
+        "doc": "",
+        "name": "BorrowCfg"
+      },
+      {
+        "bases": [
+          "BaseModel"
+        ],
+        "doc": "",
+        "name": "BacktestCfg"
+      }
+    ],
+    "functions": [
+      {
+        "async": false,
+        "doc": "",
+        "name": "parse_config",
+        "signature": "(raw: Any)"
+      }
+    ],
+    "module_doc": "Configuration schemas for microalpha backtests."
+  },
+  "src/microalpha/config_wfv.py": {
+    "classes": [
+      {
+        "bases": [
+          "BaseModel"
+        ],
+        "doc": "",
+        "name": "WalkForwardWindow"
+      },
+      {
+        "bases": [
+          "BaseModel"
+        ],
+        "doc": "",
+        "name": "RealityCheckCfg"
+      },
+      {
+        "bases": [
+          "BaseModel"
+        ],
+        "doc": "",
+        "name": "WFVCfg"
+      }
+    ],
+    "functions": [],
+    "module_doc": "Walk-forward validation configuration schemas."
+  },
+  "src/microalpha/data.py": {
+    "classes": [
+      {
+        "bases": [],
+        "doc": "Base class for data handlers.",
+        "name": "DataHandler"
+      },
+      {
+        "bases": [
+          "DataHandler"
+        ],
+        "doc": "",
+        "name": "CsvDataHandler"
+      },
+      {
+        "bases": [
+          "DataHandler"
+        ],
+        "doc": "Multi-asset CSV handler that synchronises events across symbols.",
+        "name": "MultiCsvDataHandler"
+      },
+      {
+        "bases": [],
+        "doc": "",
+        "name": "_SymbolState"
+      }
+    ],
+    "functions": [],
+    "module_doc": ""
+  },
+  "src/microalpha/engine.py": {
+    "classes": [
+      {
+        "bases": [],
+        "doc": "",
+        "name": "Engine"
+      }
+    ],
+    "functions": [],
+    "module_doc": "Event-driven backtest engine enforcing strict time ordering."
+  },
+  "src/microalpha/events.py": {
+    "classes": [
+      {
+        "bases": [],
+        "doc": "",
+        "name": "MarketEvent"
+      },
+      {
+        "bases": [],
+        "doc": "",
+        "name": "SignalEvent"
+      },
+      {
+        "bases": [],
+        "doc": "",
+        "name": "OrderEvent"
+      },
+      {
+        "bases": [],
+        "doc": "",
+        "name": "FillEvent"
+      },
+      {
+        "bases": [
+          "Exception"
+        ],
+        "doc": "Raised when an operation would violate temporal ordering.",
+        "name": "LookaheadError"
+      }
+    ],
+    "functions": [],
+    "module_doc": "Core event types exchanged between components."
+  },
+  "src/microalpha/execution.py": {
+    "classes": [
+      {
+        "bases": [
+          "Protocol"
+        ],
+        "doc": "",
+        "name": "DataHandlerProtocol"
+      },
+      {
+        "bases": [],
+        "doc": "",
+        "name": "Executor"
+      },
+      {
+        "bases": [
+          "Executor"
+        ],
+        "doc": "",
+        "name": "TWAP"
+      },
+      {
+        "bases": [
+          "Executor"
+        ],
+        "doc": "Volume-weighted execution across future timestamps.",
+        "name": "VWAP"
+      },
+      {
+        "bases": [
+          "Executor"
+        ],
+        "doc": "Front-loaded schedule approximating IS minimisation.",
+        "name": "ImplementationShortfall"
+      },
+      {
+        "bases": [
+          "Executor"
+        ],
+        "doc": "",
+        "name": "SquareRootImpact"
+      },
+      {
+        "bases": [
+          "Executor"
+        ],
+        "doc": "",
+        "name": "KyleLambda"
+      },
+      {
+        "bases": [
+          "Executor"
+        ],
+        "doc": "Execution wrapper backed by the internal limit order book.",
+        "name": "LOBExecution"
+      }
+    ],
+    "functions": [],
+    "module_doc": "Execution models responsible for producing fills."
+  },
+  "src/microalpha/lob.py": {
+    "classes": [
+      {
+        "bases": [],
+        "doc": "",
+        "name": "LatencyModel"
+      },
+      {
+        "bases": [],
+        "doc": "",
+        "name": "LimitOrder"
+      },
+      {
+        "bases": [],
+        "doc": "",
+        "name": "BookSide"
+      },
+      {
+        "bases": [],
+        "doc": "",
+        "name": "LimitOrderBook"
+      }
+    ],
+    "functions": [],
+    "module_doc": "Simplified limit order book with FIFO price levels and latency model."
+  },
+  "src/microalpha/logging.py": {
+    "classes": [
+      {
+        "bases": [],
+        "doc": "Append-only JSON Lines writer.",
+        "name": "JsonlWriter"
+      }
+    ],
+    "functions": [],
+    "module_doc": "Lightweight logging utilities for structured artifacts."
+  },
+  "src/microalpha/manifest.py": {
+    "classes": [
+      {
+        "bases": [],
+        "doc": "",
+        "name": "Manifest"
+      }
+    ],
+    "functions": [
+      {
+        "async": false,
+        "doc": "Return ``(full_sha, short_sha)`` for the current Git HEAD.",
+        "name": "resolve_git_sha",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "Create a run identifier using a UTC timestamp and short SHA.",
+        "name": "generate_run_id",
+        "signature": "(short_sha: str, timestamp: Optional[datetime]=None)"
+      },
+      {
+        "async": false,
+        "doc": "Resolve the installed distribution version for microalpha.",
+        "name": "_resolve_distribution_version",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "Construct a manifest and synchronise global RNG state.",
+        "name": "build",
+        "signature": "(seed: Optional[int], config_path: str, run_id: str, config_sha256: str, config_summary: Mapping[str, Any] | None=None, git_sha: Optional[str]=None)"
+      },
+      {
+        "async": false,
+        "doc": "Pull key risk/cost parameters from a config mapping for the manifest.",
+        "name": "extract_config_summary",
+        "signature": "(raw_config: Mapping[str, Any])"
+      },
+      {
+        "async": false,
+        "doc": "Write the manifest to ``outdir/manifest.json``.",
+        "name": "write",
+        "signature": "(manifest: Manifest, outdir: str)"
+      }
+    ],
+    "module_doc": "Utilities for recording reproducibility manifests."
+  },
+  "src/microalpha/market_metadata.py": {
+    "classes": [
+      {
+        "bases": [],
+        "doc": "Snapshot of per-symbol liquidity and financing characteristics.",
+        "name": "SymbolMeta"
+      }
+    ],
+    "functions": [
+      {
+        "async": false,
+        "doc": "Load symbol metadata from a CSV file.",
+        "name": "load_symbol_meta",
+        "signature": "(path: str | Path)"
+      },
+      {
+        "async": false,
+        "doc": "Merge multiple symbol metadata mappings.",
+        "name": "merge_symbol_meta",
+        "signature": "(*collections: Mapping[str, SymbolMeta] | Iterable[tuple[str, SymbolMeta]])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_coerce_float_or_none",
+        "signature": "(value: object)"
+      }
+    ],
+    "module_doc": "Utility helpers for symbol-level market metadata."
+  },
+  "src/microalpha/metrics.py": {
+    "classes": [],
+    "functions": [
+      {
+        "async": false,
+        "doc": "",
+        "name": "compute_metrics",
+        "signature": "(equity_records: Sequence[Mapping[str, float | int]], turnover: float, periods: int=252, trades: Optional[List[Mapping[str, Any]]]=None, benchmark_equity: Optional[Sequence[Mapping[str, float | int]]]=None, rf: float=0.0, hac_lags: int | None=None)"
+      }
+    ],
+    "module_doc": "Utility functions for computing portfolio performance metrics."
+  },
+  "src/microalpha/portfolio.py": {
+    "classes": [
+      {
+        "bases": [],
+        "doc": "",
+        "name": "PortfolioPosition"
+      },
+      {
+        "bases": [],
+        "doc": "",
+        "name": "Portfolio"
+      }
+    ],
+    "functions": [],
+    "module_doc": "Portfolio management reacting to fills and signals."
+  },
+  "src/microalpha/reporting/__init__.py": {
+    "classes": [],
+    "functions": [],
+    "module_doc": "Reporting utilities for tearsheets and markdown summaries."
+  },
+  "src/microalpha/reporting/analytics.py": {
+    "classes": [
+      {
+        "bases": [],
+        "doc": "",
+        "name": "AnalyticsArtifacts"
+      }
+    ],
+    "functions": [
+      {
+        "async": false,
+        "doc": "",
+        "name": "_resolve_plot_path",
+        "signature": "(artifact_dir: Path, plots_dir: Path, stem: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_pearson",
+        "signature": "(x: pd.Series, y: pd.Series)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "load_signals",
+        "signature": "(signals_path: Path, *, date_col: str='as_of', score_col: str='score', forward_col: str='forward_return')"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "compute_ic_series",
+        "signature": "(signals: pd.DataFrame, method: str='spearman')"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "compute_rolling_ir",
+        "signature": "(ic_series: pd.Series, window: int=63)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "compute_decile_table",
+        "signature": "(signals: pd.DataFrame, deciles: int=10)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "load_equity_returns",
+        "signature": "(equity_csv: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "load_factor_frame",
+        "signature": "(factor_csv: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "compute_rolling_betas",
+        "signature": "(returns: pd.Series, factors: pd.DataFrame, *, factor_cols: Sequence[str] | None=None, window: int=63)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "plot_ic_series",
+        "signature": "(ic_series: pd.Series, ir_series: pd.Series, output: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "plot_deciles",
+        "signature": "(table: pd.DataFrame, output: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "plot_rolling_betas",
+        "signature": "(betas: pd.DataFrame, output: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "generate_analytics",
+        "signature": "(artifact_dir: Path, *, signals_path: Path | None=None, equity_path: Path | None=None, factor_path: Path | None=None, plots_dir: Path=PLOTS_DIR, analytics_dir: Path=ANALYTICS_DIR, ic_method: str='spearman', window: int=63, deciles: int=10)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_build_arg_parser",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "main",
+        "signature": "(argv: Sequence[str] | None=None)"
+      }
+    ],
+    "module_doc": "Analytics helpers for IC/IR curves, deciles, and rolling betas."
+  },
+  "src/microalpha/reporting/factors.py": {
+    "classes": [
+      {
+        "bases": [],
+        "doc": "",
+        "name": "FactorResult"
+      }
+    ],
+    "functions": [
+      {
+        "async": false,
+        "doc": "",
+        "name": "_prepare_returns",
+        "signature": "(equity_csv: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_prepare_factors",
+        "signature": "(factor_csv: Path, required: Sequence[str])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_design_matrix",
+        "signature": "(factors: pd.DataFrame, factor_names: Sequence[str], excess_returns: pd.Series)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_newey_west_se",
+        "signature": "(X: np.ndarray, residuals: np.ndarray, lag: int)"
+      },
+      {
+        "async": false,
+        "doc": "Run Carhart/FF5(+MOM) regressions with Newey-West errors.",
+        "name": "compute_factor_regression",
+        "signature": "(equity_csv: Path, factor_csv: Path, model: str='ff3', hac_lags: int=5)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_format_markdown_table",
+        "signature": "(results: Iterable[FactorResult])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "main",
+        "signature": "()"
+      }
+    ],
+    "module_doc": "Factor regression utilities for Microalpha summaries."
+  },
+  "src/microalpha/reporting/robustness.py": {
+    "classes": [
+      {
+        "bases": [],
+        "doc": "Paths to generated robustness artifacts.",
+        "name": "RobustnessArtifacts"
+      }
+    ],
+    "functions": [
+      {
+        "async": false,
+        "doc": "Compute and persist robustness artifacts under ``artifact_dir``.",
+        "name": "write_robustness_artifacts",
+        "signature": "(artifact_dir: Path | str, multipliers: Sequence[float]=DEFAULT_MULTIPLIERS)"
+      },
+      {
+        "async": false,
+        "doc": "Ex\u2011post cost scaling over an existing equity curve and trade log.",
+        "name": "compute_cost_sensitivity",
+        "signature": "(artifact_dir: Path | str, *, multipliers: Sequence[float]=DEFAULT_MULTIPLIERS, periods_per_year: int=252)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_metrics_from_returns",
+        "signature": "(returns: pd.Series, *, periods_per_year: int=252)"
+      },
+      {
+        "async": false,
+        "doc": "Compute liquidity/financing metadata coverage for executed trades.",
+        "name": "compute_metadata_coverage",
+        "signature": "(artifact_dir: Path | str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_load_trades",
+        "signature": "(trades_path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_resolve_trades_path",
+        "signature": "(artifact_dir: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_resolve_config_path",
+        "signature": "(artifact_dir: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_load_config",
+        "signature": "(config_path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_resolve_meta_path",
+        "signature": "(config_path: Path | None, config: Mapping[str, object])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_extract_defaults",
+        "signature": "(config: Mapping[str, object])"
+      }
+    ],
+    "module_doc": "Reporting helpers for cost sensitivity and metadata coverage."
+  },
+  "src/microalpha/reporting/spa.py": {
+    "classes": [
+      {
+        "bases": [],
+        "doc": "",
+        "name": "SpaSummary"
+      }
+    ],
+    "functions": [
+      {
+        "async": false,
+        "doc": "",
+        "name": "load_grid_returns",
+        "signature": "(grid_path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_stationary_bootstrap_indices",
+        "signature": "(n: int, avg_block: int, rng: np.random.Generator)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_spa_stat",
+        "signature": "(diff_matrix: np.ndarray)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "compute_spa",
+        "signature": "(pivot: pd.DataFrame, *, avg_block: int=63, num_bootstrap: int=2000, seed: int=0)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "write_outputs",
+        "signature": "(summary: SpaSummary, json_path: Path, markdown_path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_build_parser",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "main",
+        "signature": "(argv: Sequence[str] | None=None)"
+      }
+    ],
+    "module_doc": "Hansen SPA test utilities for Microalpha parameter grids."
+  },
+  "src/microalpha/reporting/summary.py": {
+    "classes": [],
+    "functions": [
+      {
+        "async": false,
+        "doc": "",
+        "name": "_load_json",
+        "signature": "(path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_flatten_bootstrap",
+        "signature": "(path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_format_pct",
+        "signature": "(value: float | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_format_currency",
+        "signature": "(value: float | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_render_exposures",
+        "signature": "(exposures_path: Path | None, top_n: int)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "generate_summary",
+        "signature": "(artifact_dir: str | Path, output_path: str | Path=DEFAULT_OUTPUT, *, title: str | None=None, top_exposures: int=8, equity_image: str | Path | None=None, bootstrap_image: str | Path | None=None, factor_csv: str | Path | None=Path('data/factors/ff3_sample.csv'))"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_parse_args",
+        "signature": "(argv: Sequence[str] | None=None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "main",
+        "signature": "(argv: Sequence[str] | None=None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_render_metric_table",
+        "signature": "(metrics: Mapping[str, object])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_format_metric",
+        "signature": "(label: str, value: object)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_render_exposure_summary",
+        "signature": "(metrics: Mapping[str, object])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_render_cost_breakdown",
+        "signature": "(cost_path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_to_float",
+        "signature": "(value: object)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_relpath",
+        "signature": "(path: Path, output_path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_render_factor_section",
+        "signature": "(*, artifact_dir: Path | str, factor_csv: Path | None, hac_lags: int=5)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_render_cost_section",
+        "signature": "(cost_path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_render_coverage_section",
+        "signature": "(coverage_path: Path)"
+      }
+    ],
+    "module_doc": "Markdown summary generator for Microalpha artifacts."
+  },
+  "src/microalpha/reporting/tearsheet.py": {
+    "classes": [],
+    "functions": [
+      {
+        "async": false,
+        "doc": "",
+        "name": "_ensure_path",
+        "signature": "(path: str | Path | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_load_metrics",
+        "signature": "(path: Path | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_load_bootstrap",
+        "signature": "(path: Path | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_compute_drawdown",
+        "signature": "(equity: pd.Series)"
+      },
+      {
+        "async": false,
+        "doc": "Render equity and bootstrap plots.",
+        "name": "render_tearsheet",
+        "signature": "(equity_csv: str | Path, bootstrap_json: str | Path | None, output_path: str | Path, *, bootstrap_output: str | Path | None=None, metrics_path: str | Path | None=None, title: str | None=None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_parse_args",
+        "signature": "(argv: Sequence[str] | None=None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "main",
+        "signature": "(argv: Sequence[str] | None=None)"
+      }
+    ],
+    "module_doc": "Render separate equity and bootstrap plots for Microalpha runs."
+  },
+  "src/microalpha/reporting/wrds_summary.py": {
+    "classes": [
+      {
+        "bases": [],
+        "doc": "",
+        "name": "HeadlineMetrics"
+      }
+    ],
+    "functions": [
+      {
+        "async": false,
+        "doc": "",
+        "name": "_require_file",
+        "signature": "(path: Path, label: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_load_json",
+        "signature": "(path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_format_currency",
+        "signature": "(value: float)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_format_human_currency",
+        "signature": "(value: float | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_format_ratio",
+        "signature": "(value: float)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_format_pct",
+        "signature": "(value: float)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_relpath",
+        "signature": "(target: Path, output_path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_normalise_section",
+        "signature": "(text: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_render_table",
+        "signature": "(metrics: HeadlineMetrics)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_to_float",
+        "signature": "(value: object)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_render_exposure_table",
+        "signature": "(metrics_payload: dict)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_render_cost_breakdown",
+        "signature": "(cost_payload: dict | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_has_trade_log",
+        "signature": "(artifact_dir: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_load_cost_payload",
+        "signature": "(artifact_dir: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_extract_headline",
+        "signature": "(metrics_payload: dict, spa_payload: dict)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_parse_factor_table",
+        "signature": "(markdown: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_copy_asset",
+        "signature": "(source: Path, destination: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_load_folds_metadata",
+        "signature": "(folds_path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_load_config_metadata",
+        "signature": "(config_path: Path | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_relative_to_repo",
+        "signature": "(path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_render_spa_plot",
+        "signature": "(spa_payload: dict, destination: Path, *, allow_zero: bool=False)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_write_docs_results",
+        "signature": "(docs_path: Path, *, run_id: str, config_label: str, train_start: str, test_end: str, fold_count: int, testing_days: int | None, config_meta: dict[str, Any] | None, headline: HeadlineMetrics, metrics_payload: dict, cost_payload: dict | None, spa_payload: dict, factor_table_md: str, image_map: dict[str, Path], spa_md_copy: Path | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "render_wrds_summary",
+        "signature": "(artifact_dir: Path, output_path: Path, *, factors_md: Path | None=None, spa_json: Path | None=None, spa_md: Path | None=None, equity_image: Path | None=None, bootstrap_image: Path | None=None, docs_results: Path | None=None, docs_image_root: Path | None=None, analytics_plots: Path | None=None, metrics_json_out: Path | None=None, spa_json_out: Path | None=None, spa_md_out: Path | None=None, allow_zero_spa: bool=False)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_build_parser",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "main",
+        "signature": "(argv: Sequence[str] | None=None)"
+      }
+    ],
+    "module_doc": "WRDS-specific markdown and docs summary renderer."
+  },
+  "src/microalpha/risk.py": {
+    "classes": [],
+    "functions": [
+      {
+        "async": false,
+        "doc": "Calculates the annualized Sharpe ratio of a returns stream.",
+        "name": "create_sharpe_ratio",
+        "signature": "(returns, periods: int=252, *, rf: float=0.0, ddof: int=0, hac_lags: Optional[int]=None)"
+      },
+      {
+        "async": false,
+        "doc": "Calculates the maximum drawdown and the drawdown series.",
+        "name": "create_drawdowns",
+        "signature": "(equity_curve)"
+      },
+      {
+        "async": false,
+        "doc": "Performs a bootstrap analysis on a returns stream to determine the",
+        "name": "bootstrap_sharpe_ratio",
+        "signature": "(returns, num_simulations: int=5000, periods: int=252, *, rf: float=0.0, ddof: int=0, hac_lags: Optional[int]=None, method: str='stationary', block_len: Optional[int]=None, rng: Optional[np.random.Generator]=None)"
+      }
+    ],
+    "module_doc": ""
+  },
+  "src/microalpha/risk_stats.py": {
+    "classes": [],
+    "functions": [
+      {
+        "async": false,
+        "doc": "",
+        "name": "_as_series",
+        "signature": "(returns: Iterable[float])"
+      },
+      {
+        "async": false,
+        "doc": "Estimate the long-run variance using Newey-West weights.",
+        "name": "_newey_west_lrv",
+        "signature": "(values: np.ndarray, max_lag: int)"
+      },
+      {
+        "async": false,
+        "doc": "Compute Sharpe ratio statistics with optional HAC standard errors.",
+        "name": "sharpe_stats",
+        "signature": "(returns: pd.Series, rf: float=0.0, periods: int=252, ddof: int=0, hac_lags: Optional[int]=None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_default_block_len",
+        "signature": "(n: int)"
+      },
+      {
+        "async": false,
+        "doc": "Yield bootstrap samples that preserve serial dependence via block resampling.",
+        "name": "block_bootstrap",
+        "signature": "(returns: np.ndarray, B: int=5000, method: Literal['stationary', 'circular']='stationary', block_len: Optional[int]=None, rng: Optional[np.random.Generator]=None)"
+      }
+    ],
+    "module_doc": "Statistical helpers for risk analytics."
+  },
+  "src/microalpha/runner.py": {
+    "classes": [],
+    "functions": [
+      {
+        "async": false,
+        "doc": "Execute a backtest described by ``config_path``.",
+        "name": "run_from_config",
+        "signature": "(config_path: str, override_artifacts_dir: str | None=None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "prepare_artifacts_dir",
+        "signature": "(cfg_path: Path, config: Dict[str, Any], base_run_id: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "persist_config",
+        "signature": "(cfg_path: Path, artifacts_dir: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_persist_metrics",
+        "signature": "(metrics: Dict[str, Any], artifacts_dir: Path, *, extra_metrics: Mapping[str, Any] | None=None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "persist_exposures",
+        "signature": "(portfolio: Portfolio, artifacts_dir: Path, filename: str='exposures.csv', factor_filename: str='factor_exposure.csv')"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_persist_bootstrap",
+        "signature": "(metrics: Dict[str, Any], artifacts_dir: Path, *, periods: int=252, simulations: int=1024)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_stable_metrics",
+        "signature": "(metrics: Dict[str, Any])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_persist_trades",
+        "signature": "(portfolio: Portfolio, artifacts_dir: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "resolve_path",
+        "signature": "(value: str, cfg_path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "resolve_capital_policy",
+        "signature": "(cfg: CapitalPolicyCfg | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "resolve_slippage_model",
+        "signature": "(cfg: SlippageCfg | None, symbol_meta: Mapping[str, Any] | None=None)"
+      }
+    ],
+    "module_doc": "High-level execution helpers for single backtests."
+  },
+  "src/microalpha/slippage.py": {
+    "classes": [
+      {
+        "bases": [],
+        "doc": "Base class for slippage models with optional symbol metadata support.",
+        "name": "SlippageModel"
+      },
+      {
+        "bases": [
+          "SlippageModel"
+        ],
+        "doc": "Legacy quadratic volume model retained for backward compatibility.",
+        "name": "VolumeSlippageModel"
+      },
+      {
+        "bases": [
+          "SlippageModel"
+        ],
+        "doc": "",
+        "name": "_ImpactBase"
+      },
+      {
+        "bases": [
+          "_ImpactBase"
+        ],
+        "doc": "Linear impact respecting a spread floor.",
+        "name": "LinearImpact"
+      },
+      {
+        "bases": [
+          "_ImpactBase"
+        ],
+        "doc": "Square-root impact with spread floor.",
+        "name": "SquareRootImpact"
+      },
+      {
+        "bases": [
+          "_ImpactBase"
+        ],
+        "doc": "Hybrid linear + square-root impact with spread floor.",
+        "name": "LinearPlusSqrtImpact"
+      }
+    ],
+    "functions": [],
+    "module_doc": "Slippage and market impact models."
+  },
+  "src/microalpha/strategies/breakout.py": {
+    "classes": [
+      {
+        "bases": [],
+        "doc": "Breakout momentum strategy with simple exits.",
+        "name": "BreakoutStrategy"
+      }
+    ],
+    "functions": [],
+    "module_doc": ""
+  },
+  "src/microalpha/strategies/cs_momentum.py": {
+    "classes": [
+      {
+        "bases": [],
+        "doc": "12-1 style cross-sectional momentum with monthly rebalance.",
+        "name": "CrossSectionalMomentum"
+      }
+    ],
+    "functions": [],
+    "module_doc": ""
+  },
+  "src/microalpha/strategies/flagship_mom.py": {
+    "classes": [
+      {
+        "bases": [],
+        "doc": "",
+        "name": "SleeveSelection"
+      },
+      {
+        "bases": [],
+        "doc": "Cross-sectional momentum with sector normalisation and sleeve controls.",
+        "name": "FlagshipMomentumStrategy"
+      }
+    ],
+    "functions": [],
+    "module_doc": "Flagship cross-sectional momentum strategy."
+  },
+  "src/microalpha/strategies/flagship_momentum.py": {
+    "classes": [],
+    "functions": [],
+    "module_doc": "Compatibility shim for flagship strategy."
+  },
+  "src/microalpha/strategies/meanrev.py": {
+    "classes": [
+      {
+        "bases": [],
+        "doc": "A simple mean-reversion strategy based on z-scores.",
+        "name": "MeanReversionStrategy"
+      }
+    ],
+    "functions": [],
+    "module_doc": ""
+  },
+  "src/microalpha/strategies/mm.py": {
+    "classes": [
+      {
+        "bases": [],
+        "doc": "Toy market-making strategy that oscillates inventory.",
+        "name": "NaiveMarketMakingStrategy"
+      }
+    ],
+    "functions": [],
+    "module_doc": ""
+  },
+  "src/microalpha/walkforward.py": {
+    "classes": [],
+    "functions": [
+      {
+        "async": false,
+        "doc": "Load a walk-forward validation configuration.",
+        "name": "load_wfv_cfg",
+        "signature": "(path: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "run_walk_forward",
+        "signature": "(config_path: str, override_artifacts_dir: str | None=None, reality_check_method: str | None=None, reality_check_block_len: int | None=None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_optimise_parameters",
+        "signature": "(data_handler: DataHandler, train_start: pd.Timestamp, train_end: pd.Timestamp, strategy_class, param_grid: Mapping[str, Sequence[Any]], base_params: Dict[str, Any], cfg: BacktestCfg, rng: np.random.Generator, reality_cfg: RealityCheckCfg, symbol_meta: Mapping[str, Any] | None=None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_build_portfolio",
+        "signature": "(data_handler, cfg: BacktestCfg, trade_logger: JsonlWriter | None=None, symbol_meta: Mapping[str, Any] | None=None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_build_executor",
+        "signature": "(data_handler, exec_cfg: ExecModelCfg, rng: np.random.Generator, symbol_meta: Mapping[str, Any] | None=None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_spawn_rng",
+        "signature": "(parent: np.random.Generator)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_collect_warmup_prices",
+        "signature": "(data_handler: CsvDataHandler, train_end: pd.Timestamp, lookback: int)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_collect_cs_warmup_history",
+        "signature": "(data_handler: MultiCsvDataHandler, train_start: pd.Timestamp, train_end: pd.Timestamp, symbols: Sequence[str])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_summarise_walkforward",
+        "signature": "(equity_records: List[Dict[str, Any]], artifacts_dir: Path, total_turnover: float, hac_lags: int | None=None, extra_metrics: Mapping[str, Any] | None=None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_stable_metrics",
+        "signature": "(metrics: Dict[str, Any])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_build_grid_payload",
+        "signature": "(entries: List[Dict[str, Any]])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_grid_summary_from_payload",
+        "signature": "(payload: List[Dict[str, Any]])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_grid_rows_for_fold",
+        "signature": "(payload: List[Dict[str, Any]], fold_index: int, phase: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_format_param_label",
+        "signature": "(params: Mapping[str, Any])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_metrics_summary",
+        "signature": "(metrics: Dict[str, Any])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_format_ts",
+        "signature": "(value: Any)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_annualised_sharpe",
+        "signature": "(returns: np.ndarray, periods: int=252)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "bootstrap_reality_check",
+        "signature": "(results: List[Dict[str, Any]], seed: int, n_bootstrap: int=200, method: str='stationary', block_len: int | None=None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_strategy_params",
+        "signature": "(strategy_cfg)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_strategy_kwargs",
+        "signature": "(params: Dict[str, Any], warmup_prices=None)"
+      }
+    ],
+    "module_doc": "Walk-forward validation orchestration."
+  },
+  "src/microalpha/wrds/__init__.py": {
+    "classes": [],
+    "functions": [
+      {
+        "async": false,
+        "doc": "Return the expected ~/.pgpass location.",
+        "name": "pgpass_path",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "Check whether ~/.pgpass contains a WRDS entry without leaking contents.",
+        "name": "has_pgpass_credentials",
+        "signature": "(host: str=WRDS_HOST)"
+      },
+      {
+        "async": false,
+        "doc": "True when ~/.pgpass or WRDS_USERNAME provides credentials.",
+        "name": "has_wrds_credentials",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "Resolve WRDS data root from WRDS_DATA_ROOT without printing it.",
+        "name": "get_wrds_data_root",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "Return True if WRDS_DATA_ROOT exists and looks non-empty.",
+        "name": "has_wrds_data",
+        "signature": "(min_entries: int=1)"
+      },
+      {
+        "async": false,
+        "doc": "Structured status for debugging/logging (no secrets).",
+        "name": "wrds_status",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "Return True if ``path`` resolves under WRDS_DATA_ROOT.",
+        "name": "is_wrds_path",
+        "signature": "(path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "Raise if attempting to copy data directly from WRDS_DATA_ROOT.",
+        "name": "guard_no_wrds_copy",
+        "signature": "(path: Path, *, operation: str='copy')"
+      }
+    ],
+    "module_doc": "Lightweight helpers for detecting local WRDS credentials and exports."
+  },
+  "tools/build_project_state.py": {
+    "classes": [],
+    "functions": [
+      {
+        "async": false,
+        "doc": "",
+        "name": "rg_files",
+        "signature": "(root: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "add_explicit_dirs",
+        "signature": "(files: list[str], root: Path, extra_dirs: list[Path])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "classify_role",
+        "signature": "(path: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "is_binary_extension",
+        "signature": "(path: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "repo_inventory",
+        "signature": "(files: list[str])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "module_name_for_file",
+        "signature": "(path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "unparse",
+        "signature": "(node: ast.AST | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "format_args",
+        "signature": "(args: ast.arguments)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "first_line",
+        "signature": "(doc: str | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "symbol_index",
+        "signature": "(py_files: list[Path])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "import_graph",
+        "signature": "(py_files: list[Path])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "make_targets",
+        "signature": "(makefile: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "main",
+        "signature": "()"
+      }
+    ],
+    "module_doc": "Generate machine-derived indices for project_state."
+  },
+  "tools/gpt_bundle.py": {
+    "classes": [],
+    "functions": [
+      {
+        "async": false,
+        "doc": "",
+        "name": "_env",
+        "signature": "(name: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_copy_path",
+        "signature": "(src: Path, dest_root: Path, missing: list[str])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_load_meta_shas",
+        "signature": "(meta_path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_require_clean_worktree",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "main",
+        "signature": "()"
+      }
+    ],
+    "module_doc": "Create a Prompt-3 bundle for Codex audit artifacts."
+  },
+  "tools/render_project_state_docs.py": {
+    "classes": [],
+    "functions": [
+      {
+        "async": false,
+        "doc": "",
+        "name": "read_text",
+        "signature": "(path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "read_json",
+        "signature": "(path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "utc_now",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "git_sha",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "git_branch",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "header",
+        "signature": "(generated_at: str, sha: str, branch: str, commands: list[str])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "write_doc",
+        "signature": "(path: Path, content: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "summarize_module_symbols",
+        "signature": "(symbol_index: dict[str, Any])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "format_symbol_list",
+        "signature": "(items: Iterable[dict[str, Any]], kind: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "load_make_targets",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "load_repo_inventory",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "list_by_role",
+        "signature": "(inventory: list[dict[str, Any]], role: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "summarize_directory",
+        "signature": "(inventory: list[dict[str, Any]], prefix: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "top_level_keys_from_yaml",
+        "signature": "(path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "parse_readme_sample_artifacts",
+        "signature": "(readme_text: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "parse_wrds_results",
+        "signature": "(results_text: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "render_architecture",
+        "signature": "(symbol_index: dict[str, Any], inventory: list[dict[str, Any]])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "render_module_summaries",
+        "signature": "(symbol_index: dict[str, Any])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "render_function_index",
+        "signature": "(symbol_index: dict[str, Any])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "render_dependency_graph",
+        "signature": "(import_graph: dict[str, list[str]])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "render_pipeline_flow",
+        "signature": "(make_targets: list[str])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "render_dataflow",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "render_experiments",
+        "signature": "(inventory: list[dict[str, Any]])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "render_current_results",
+        "signature": "(readme_text: str, wrds_text: str, wrds_smoke_text: str, sample_metrics: dict[str, Any], wfv_metrics: dict[str, Any])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "render_research_notes",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "render_open_questions",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "render_known_issues",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "render_roadmap",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "render_config_reference",
+        "signature": "(config_paths: list[Path])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "render_server_environment",
+        "signature": "(py_version: str, deps: list[str])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "render_test_coverage",
+        "signature": "(test_files: list[str])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "render_style_guide",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "render_changelog",
+        "signature": "(changelog_text: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "render_index",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "main",
+        "signature": "()"
+      }
+    ],
+    "module_doc": "Render project_state Markdown docs from generated indices and repo files."
+  }
+}

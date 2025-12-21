@@ -394,9 +394,16 @@ Notes: Experiments and outputs are intentionally kept out of the repo; see `repo
     )
 
 
-def render_current_results(readme_text: str, wrds_text: str, sample_metrics: dict[str, Any], wfv_metrics: dict[str, Any]) -> str:
+def render_current_results(
+    readme_text: str,
+    wrds_text: str,
+    wrds_smoke_text: str,
+    sample_metrics: dict[str, Any],
+    wfv_metrics: dict[str, Any],
+) -> str:
     sample_artifacts = parse_readme_sample_artifacts(readme_text)
     wrds_info = parse_wrds_results(wrds_text)
+    wrds_smoke_info = parse_wrds_results(wrds_smoke_text) if wrds_smoke_text else {}
 
     def fmt_metric(metrics: dict[str, Any], key: str, fmt: str = "{:.2f}") -> str:
         value = metrics.get(key)
@@ -446,8 +453,25 @@ def render_current_results(readme_text: str, wrds_text: str, sample_metrics: dic
         wrds_block += "- Snapshot:\n"
         for key, value in metrics.items():
             wrds_block += f"  - {key}: {value}\n"
+    if metrics:
+        wrds_block += "- Report: `reports/summaries/wrds_flagship.md`\n"
     if wrds_info.get("rerun_status"):
         wrds_block += f"- {wrds_info['rerun_status']}\n"
+
+    smoke_block = ""
+    if wrds_smoke_info.get("latest") or wrds_smoke_info.get("metrics"):
+        smoke_block = "## WRDS smoke (docs/results_wrds_smoke.md)\n\n"
+        if wrds_smoke_info.get("latest"):
+            smoke_block += f"- Latest run: {wrds_smoke_info['latest']}\n"
+        smoke_metrics = wrds_smoke_info.get("metrics", {})
+        if smoke_metrics:
+            smoke_block += "- Snapshot:\n"
+            for key, value in smoke_metrics.items():
+                smoke_block += f"  - {key}: {value}\n"
+            smoke_block += "- Report: `reports/summaries/wrds_flagship_smoke.md`\n"
+        smoke_block += (
+            "- Note: Smoke run validates WRDS pipeline wiring; metrics are not interpretable for performance.\n"
+        )
 
     return f"""
 # Current Results
@@ -455,6 +479,8 @@ def render_current_results(readme_text: str, wrds_text: str, sample_metrics: dic
 {sample_block}
 
 {wrds_block}
+
+{smoke_block}
 
 Sources: `README.md`, `docs/results_wrds.md`, sample metrics under `artifacts/sample_flagship/` and `artifacts/sample_wfv/`.
 """
@@ -491,6 +517,8 @@ def render_known_issues() -> str:
 - WRDS runs require local exports and are blocked without `WRDS_DATA_ROOT` (see `docs/wrds.md`).
 - `docs/results_wrds.md` explicitly notes metrics are from a pre-tightening config and need a rerun.
 - Some large data directories (`data/`, `data_sp500/`) are present; avoid deep parsing in automation.
+- WRDS smoke universe is seeded from 2019 liquidity ranks (survivorship/lookahead) to keep it small; it is **not** valid for performance claims.
+- WRDS smoke run produced zero trades and flat SPA comparator t-stats; smoke reports use `--allow-zero-spa` to render despite empty activity.
 """
 
 
@@ -519,8 +547,9 @@ def render_config_reference(config_paths: list[Path]) -> str:
             note = "Public mini-panel"
         elif "wfv" in path.name:
             note = "Walk-forward"
+        rel_path = path.relative_to(ROOT).as_posix()
         lines.append(
-            f"| `{path.as_posix()}` | {', '.join(keys) if keys else 'n/a'} | {note} |"
+            f"| `{rel_path}` | {', '.join(keys) if keys else 'n/a'} | {note} |"
         )
     return "\n".join(lines) + "\n"
 
@@ -539,7 +568,7 @@ Notes:
 """.format(
         py_version=py_version,
         platform=platform.platform(),
-        root=str(ROOT),
+        root=ROOT.name,
         deps=", ".join(deps),
     )
 
@@ -636,6 +665,8 @@ def main() -> None:
 
     readme_text = read_text(ROOT / "README.md")
     wrds_text = read_text(ROOT / "docs" / "results_wrds.md")
+    wrds_smoke_path = ROOT / "docs" / "results_wrds_smoke.md"
+    wrds_smoke_text = read_text(wrds_smoke_path) if wrds_smoke_path.exists() else ""
 
     sample_metrics_path = ROOT / "artifacts" / "sample_flagship" / "2025-10-30T18-39-31Z-a4ab8e7" / "metrics.json"
     wfv_metrics_path = ROOT / "artifacts" / "sample_wfv" / "2025-10-30T18-39-47Z-a4ab8e7" / "metrics.json"
@@ -662,7 +693,9 @@ def main() -> None:
         "PIPELINE_FLOW.md": render_pipeline_flow(make_targets),
         "DATAFLOW.md": render_dataflow(),
         "EXPERIMENTS.md": render_experiments(inventory),
-        "CURRENT_RESULTS.md": render_current_results(readme_text, wrds_text, sample_metrics, wfv_metrics),
+        "CURRENT_RESULTS.md": render_current_results(
+            readme_text, wrds_text, wrds_smoke_text, sample_metrics, wfv_metrics
+        ),
         "RESEARCH_NOTES.md": render_research_notes(),
         "OPEN_QUESTIONS.md": render_open_questions(),
         "KNOWN_ISSUES.md": render_known_issues(),
