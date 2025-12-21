@@ -32,3 +32,6 @@ Blocked:
 
 Notes:
 - Selection is aggregated from training-only grid summaries (mean Sharpe), with holdout evaluated once on the chosen params.
+
+Bundle:
+- `docs/gpt_bundles/2025-12-21T21-11-23Z_ticket-02_20251221_154039_ticket-02_holdout-wfv.zip`

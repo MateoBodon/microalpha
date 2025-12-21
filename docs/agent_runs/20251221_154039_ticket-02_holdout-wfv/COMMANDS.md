@@ -433,4 +433,5 @@ git status -sb | head -n 40
 git status -sb -uall | head -n 80
 git status -sb -uall | rg -n "artifacts/sample_wfv_holdout" | head
 git status -sb
+make gpt-bundle TICKET=ticket-02 RUN_NAME=20251221_154039_ticket-02_holdout-wfv
 ```
