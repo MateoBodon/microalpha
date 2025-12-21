@@ -7,7 +7,7 @@ WRDS_ARTIFACT_DIR ?= artifacts/wrds_flagship
 WRDS_SMOKE_CONFIG ?= configs/wfv_flagship_wrds_smoke.yaml
 WRDS_SMOKE_ARTIFACT_DIR ?= artifacts/wrds_flagship_smoke
 
-.PHONY: dev test test-wrds sample wfv wfv-wrds wfv-wrds-smoke wrds wrds-flagship report report-wrds report-wrds-smoke docs clean export-wrds report-wfv
+.PHONY: dev test test-wrds sample wfv wfv-wrds wfv-wrds-smoke wrds wrds-flagship report report-wrds report-wrds-smoke docs clean export-wrds report-wfv gpt-bundle
 
 dev:
 	pip install -e '.[dev]'
@@ -88,6 +88,101 @@ report-wrds-smoke:
 	PYTHONPATH=src:$$PYTHONPATH python3 reports/tearsheet.py $$latest/equity_curve.csv --bootstrap $$latest/bootstrap.json --metrics $$latest/metrics.json --output $$latest/equity_curve.png --bootstrap-output $$latest/bootstrap_hist.png --title "WRDS Flagship Walk-Forward (Smoke)"; \
 	PYTHONPATH=src:$$PYTHONPATH python3 reports/spa.py --grid $$latest/grid_returns.csv --output-json $$latest/spa.json --output-md $$latest/spa.md --bootstrap 500 --avg-block 63; \
 	PYTHONPATH=src:$$PYTHONPATH python3 reports/render_wrds_flagship.py $$latest --output reports/summaries/wrds_flagship_smoke.md --factors-md $$latest/factors_ff5_mom.md --docs-results docs/results_wrds_smoke.md --docs-image-root $$img_root --analytics-plots artifacts/plots --metrics-json-out reports/summaries/wrds_flagship_smoke_metrics.json --spa-json-out reports/summaries/wrds_flagship_smoke_spa.json --spa-md-out reports/summaries/wrds_flagship_smoke_spa.md --allow-zero-spa
+
+gpt-bundle:
+	@if [ -z "$(TICKET)" ] || [ -z "$(RUN_NAME)" ]; then echo "Set TICKET and RUN_NAME (e.g., make gpt-bundle TICKET=ticket-01 RUN_NAME=20251220_223500_ticket-01_wrds-tighten-caps)"; exit 1; fi
+	@python3 - <<'PY'
+import json
+import os
+import shutil
+import subprocess
+import time
+import zipfile
+from pathlib import Path
+
+ticket = os.environ.get("TICKET")
+run_name = os.environ.get("RUN_NAME")
+if not ticket or not run_name:
+    raise SystemExit("TICKET and RUN_NAME must be set.")
+
+timestamp = time.strftime("%Y-%m-%dT%H-%M-%SZ", time.gmtime())
+bundle_dir = Path("docs/gpt_bundles")
+bundle_dir.mkdir(parents=True, exist_ok=True)
+stage = bundle_dir / f".staging_{timestamp}_{ticket}_{run_name}"
+if stage.exists():
+    shutil.rmtree(stage)
+stage.mkdir(parents=True, exist_ok=True)
+
+missing = []
+
+def copy_path(src: str) -> None:
+    path = Path(src)
+    if not path.exists():
+        missing.append(src)
+        return
+    dest = stage / path
+    if path.is_dir():
+        shutil.copytree(path, dest)
+    else:
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(path, dest)
+
+required = [
+    "AGENTS.md",
+    "docs/PLAN_OF_RECORD.md",
+    "docs/DOCS_AND_LOGGING_SYSTEM.md",
+    "docs/CODEX_SPRINT_TICKETS.md",
+    "PROGRESS.md",
+    "project_state/CURRENT_RESULTS.md",
+    "project_state/KNOWN_ISSUES.md",
+    "project_state/CONFIG_REFERENCE.md",
+    f"docs/agent_runs/{run_name}",
+]
+
+for item in required:
+    copy_path(item)
+
+diff_path = stage / "DIFF.patch"
+last_commit_path = stage / "LAST_COMMIT.txt"
+
+meta_path = Path(f"docs/agent_runs/{run_name}/META.json")
+sha_before = None
+sha_after = None
+if meta_path.exists():
+    try:
+        meta = json.loads(meta_path.read_text(encoding="utf-8"))
+        sha_before = meta.get("git_sha_before")
+        sha_after = meta.get("git_sha_after")
+    except json.JSONDecodeError:
+        pass
+
+diff_cmd = ["git", "diff"]
+if sha_before and sha_after:
+    diff_cmd += [f"{sha_before}..{sha_after}"]
+else:
+    diff_cmd += ["HEAD~1..HEAD"]
+
+diff_text = subprocess.check_output(diff_cmd, text=True, stderr=subprocess.STDOUT)
+diff_path.write_text(diff_text, encoding="utf-8")
+
+last_commit = subprocess.check_output(
+    ["git", "log", "-1", "--pretty=format:%H%n%an%n%ad%n%s"],
+    text=True,
+)
+last_commit_path.write_text(last_commit + "\n", encoding="utf-8")
+
+bundle_path = bundle_dir / f"{timestamp}_{ticket}_{run_name}.zip"
+with zipfile.ZipFile(bundle_path, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+    for file in stage.rglob("*"):
+        if file.is_file():
+            zf.write(file, file.relative_to(stage))
+
+shutil.rmtree(stage)
+
+print(bundle_path)
+if missing:
+    print("Missing bundle items:", ", ".join(missing))
+PY
 
 docs:
 	mkdocs build
