@@ -15,8 +15,8 @@
 
 | Metric | Value |
 | --- | ---:|
-| Avg net exposure | -0.04% |
-| Avg gross exposure | 0.08% |
+| Avg net exposure | -0.06% |
+| Avg gross exposure | 0.11% |
 | Max net exposure | 0.70% |
 | Max gross exposure | 1.54% |
 
@@ -33,11 +33,11 @@ _Exposure time series is recorded in equity_curve.csv._
 
 ## Visuals
 
-![Equity Curve](../../docs/img/wrds_flagship_smoke/2025-12-21T06-06-35Z-0dbb291/equity_curve.png)
+![Equity Curve](../../docs/img/wrds_flagship_smoke/2025-12-21T21-28-14Z-33c9c2a/equity_curve.png)
 
-![Bootstrap Sharpe Histogram](../../docs/img/wrds_flagship_smoke/2025-12-21T06-06-35Z-0dbb291/bootstrap_hist.png)
+![Bootstrap Sharpe Histogram](../../docs/img/wrds_flagship_smoke/2025-12-21T21-28-14Z-33c9c2a/bootstrap_hist.png)
 
-![SPA Comparator t-stats](../../docs/img/wrds_flagship_smoke/2025-12-21T06-06-35Z-0dbb291/spa_tstats.png)
+![SPA Comparator t-stats](../../docs/img/wrds_flagship_smoke/2025-12-21T21-28-14Z-33c9c2a/spa_tstats.png)
 
 ## Hansen SPA Summary
 
@@ -54,10 +54,10 @@ _Exposure time series is recorded in equity_curve.csv._
 
 | Factor | Beta | t-stat |
 | --- | ---:| ---:|
-| Alpha | -0.0001 | -12.78 |
-| Mkt_RF | -0.0000 | -0.22 |
-| SMB | 0.0002 | 0.58 |
-| HML | 0.0007 | 1.37 |
-| RMW | 0.0004 | 0.73 |
-| CMA | -0.0014 | -1.83 |
-| MOM | 0.0001 | 0.15 |
+| Alpha | -0.0000 | -7.10 |
+| Mkt_RF | 0.0001 | 0.42 |
+| SMB | 0.0000 | 0.11 |
+| HML | 0.0009 | 1.48 |
+| RMW | 0.0008 | 1.10 |
+| CMA | -0.0019 | -2.00 |
+| MOM | -0.0003 | -0.77 |

@@ -1,6 +1,6 @@
 <!--
-generated_at: 2025-12-21T20:56:43Z
-git_sha: 4457b33773c24c5e7179bc4df0346c150e8d5876
+generated_at: 2025-12-21T21:29:21Z
+git_sha: 33c9c2a0bab056c4296a66ee652af49cc646f7df
 branch: feat/ticket-02-holdout-wfv
 commands:
   - python3 tools/build_project_state.py
@@ -46,7 +46,7 @@ DataHandler -> Engine -> Strategy -> Portfolio -> Broker -> Execution -> Artifac
 ## Artifact layout (sampled)
 
 - `artifacts/sample_flagship`: 12 files, 258780 bytes
-- `artifacts/sample_wfv`: 30 files, 328433 bytes
+- `artifacts/sample_wfv`: 58 files, 662821 bytes
 
 ## Supporting subsystems
 

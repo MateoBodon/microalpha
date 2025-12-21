@@ -1,0 +1,43 @@
+{
+  "run_name": "20251221_162711_ticket-02_holdout-wfv-wrds",
+  "ticket_id": "ticket-02",
+  "git_sha_before": "33c9c2a0bab056c4296a66ee652af49cc646f7df",
+  "git_sha_after": "HEAD",
+  "branch": "feat/ticket-02-holdout-wfv",
+  "timestamp_local": "2025-12-21T16:27:11",
+  "env": {
+    "os": "macOS-26.0.1-arm64-arm-64bit",
+    "python": "3.12.2",
+    "pip_freeze_hash": "d155c3d7c2b41ef4ce242bfec462edd0db5be747333f4495a1e96c8a0252e525",
+    "notes": "WRDS exports located under /Volumes/Storage/Data/wrds"
+  },
+  "data": {
+    "mode": "wrds",
+    "dataset_id": "wrds_smoke",
+    "wrds_data_root": "/Volumes/Storage/Data/wrds",
+    "license_notes": "No raw WRDS data committed."
+  },
+  "config": {
+    "config_paths": [
+      "configs/wfv_flagship_wrds_smoke.yaml"
+    ],
+    "config_hashes": {
+      "configs/wfv_flagship_wrds_smoke.yaml": "3544c267fb31387d4f24f0d4034b9d97a69cdde4e32a73c68e95cd4edee445b3"
+    }
+  },
+  "artifacts": {
+    "artifact_dirs": [
+      "artifacts/wrds_flagship_smoke/2025-12-21T21-28-14Z-33c9c2a"
+    ],
+    "reports": [
+      "reports/summaries/wrds_flagship_smoke.md",
+      "reports/summaries/wrds_flagship_smoke_factors.md",
+      "reports/summaries/wrds_flagship_smoke_metrics.json",
+      "docs/results_wrds_smoke.md"
+    ]
+  },
+  "web_research": {
+    "enabled": false,
+    "sources": []
+  }
+}
