@@ -62,7 +62,9 @@ def main() -> None:
     run_name = _env("RUN_NAME")
     _require_clean_worktree()
 
-    timestamp = time.strftime("%Y-%m-%dT%H-%M-%SZ", time.gmtime())
+    timestamp = os.environ.get("BUNDLE_TIMESTAMP") or time.strftime(
+        "%Y-%m-%dT%H-%M-%SZ", time.gmtime()
+    )
     bundle_dir = Path("docs/gpt_bundles")
     bundle_dir.mkdir(parents=True, exist_ok=True)
     stage = bundle_dir / f".staging_{timestamp}_{ticket}_{run_name}"
