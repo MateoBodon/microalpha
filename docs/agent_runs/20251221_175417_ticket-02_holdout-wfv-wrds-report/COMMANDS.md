@@ -130,4 +130,7 @@ cat <<'EOF_META_UPDATE' > docs/agent_runs/20251221_175417_ticket-02_holdout-wfv-
 EOF_META_UPDATE
 git add docs/agent_runs/20251221_175417_ticket-02_holdout-wfv-wrds-report/META.json docs/agent_runs/20251221_175417_ticket-02_holdout-wfv-wrds-report/COMMANDS.md
 git commit -m "chore: update run metadata" -m "Tests: not run (metadata update)" -m "Artifacts: none" -m "Docs: docs/agent_runs/20251221_175417_ticket-02_holdout-wfv-wrds-report/META.json, docs/agent_runs/20251221_175417_ticket-02_holdout-wfv-wrds-report/COMMANDS.md"
+make gpt-bundle TICKET=ticket-02 RUN_NAME=20251221_175417_ticket-02_holdout-wfv-wrds-report
+git status -sb
+ls -t docs/gpt_bundles | head -5
 ```

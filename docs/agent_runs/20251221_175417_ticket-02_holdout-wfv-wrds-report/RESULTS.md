@@ -8,3 +8,6 @@ Summary:
 
 Notes:
 - Full report outputs (e.g., `reports/summaries/wrds_flagship.md`) were not generated in this run due to the SPA failure.
+
+Bundle:
+- `docs/gpt_bundles/2025-12-21T23-10-32Z_ticket-02_20251221_175417_ticket-02_holdout-wfv-wrds-report.zip`
