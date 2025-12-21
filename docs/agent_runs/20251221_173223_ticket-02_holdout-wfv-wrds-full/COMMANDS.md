@@ -42,4 +42,6 @@ tail -n 40 PROGRESS.md
 rg -n "zero trades|zero-trade|wrds" project_state/KNOWN_ISSUES.md
 git add PROGRESS.md project_state tools/render_project_state_docs.py docs/agent_runs/20251221_173223_ticket-02_holdout-wfv-wrds-full
 git status -sb
+git commit -m "ticket-02: run full WRDS holdout WFV" -m "Tests: WRDS_DATA_ROOT=/Volumes/Storage/Data/wrds make wfv-wrds; pytest -q" -m "Artifacts: artifacts/wrds_flagship/2025-12-21T22-32-44Z-2b48ef7 (local only)" -m "Docs: PROGRESS.md, project_state/*, docs/agent_runs/20251221_173223_ticket-02_holdout-wfv-wrds-full/, tools/render_project_state_docs.py"
+git rev-parse HEAD
 ```
