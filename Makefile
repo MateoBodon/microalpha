@@ -87,7 +87,7 @@ report-wrds-smoke:
 	cp $$latest/factors_ff5_mom.md reports/summaries/wrds_flagship_smoke_factors.md; \
 	PYTHONPATH=src:$$PYTHONPATH python3 reports/tearsheet.py $$latest/equity_curve.csv --bootstrap $$latest/bootstrap.json --metrics $$latest/metrics.json --output $$latest/equity_curve.png --bootstrap-output $$latest/bootstrap_hist.png --title "WRDS Flagship Walk-Forward (Smoke)"; \
 	PYTHONPATH=src:$$PYTHONPATH python3 reports/spa.py --grid $$latest/grid_returns.csv --output-json $$latest/spa.json --output-md $$latest/spa.md --bootstrap 500 --avg-block 63; \
-	PYTHONPATH=src:$$PYTHONPATH python3 reports/render_wrds_flagship.py $$latest --output reports/summaries/wrds_flagship_smoke.md --factors-md $$latest/factors_ff5_mom.md --docs-results docs/results_wrds_smoke.md --docs-image-root $$img_root --analytics-plots artifacts/plots --metrics-json-out reports/summaries/wrds_flagship_smoke_metrics.json --spa-json-out reports/summaries/wrds_flagship_smoke_spa.json --spa-md-out reports/summaries/wrds_flagship_smoke_spa.md
+	PYTHONPATH=src:$$PYTHONPATH python3 reports/render_wrds_flagship.py $$latest --output reports/summaries/wrds_flagship_smoke.md --factors-md $$latest/factors_ff5_mom.md --docs-results docs/results_wrds_smoke.md --docs-image-root $$img_root --analytics-plots artifacts/plots --metrics-json-out reports/summaries/wrds_flagship_smoke_metrics.json --spa-json-out reports/summaries/wrds_flagship_smoke_spa.json --spa-md-out reports/summaries/wrds_flagship_smoke_spa.md --allow-zero-spa
 
 docs:
 	mkdocs build

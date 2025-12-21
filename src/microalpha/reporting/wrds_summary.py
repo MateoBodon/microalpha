@@ -256,14 +256,32 @@ def _relative_to_repo(path: Path) -> str:
         return str(path)
 
 
-def _render_spa_plot(spa_payload: dict, destination: Path) -> Path:
+def _render_spa_plot(
+    spa_payload: dict, destination: Path, *, allow_zero: bool = False
+) -> Path:
     candidates = spa_payload.get("candidate_stats") or []
     if not candidates:
         raise SystemExit("SPA payload missing candidate comparator statistics.")
     labels = [str(row.get("model")) for row in candidates]
     t_stats = [float(row.get("t_stat") or 0.0) for row in candidates]
     if not any(abs(val) > 1e-9 for val in t_stats):
-        raise SystemExit("SPA comparator t-stats are all zero; rerun SPA generation.")
+        if not allow_zero:
+            raise SystemExit("SPA comparator t-stats are all zero; rerun SPA generation.")
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        fig, ax = plt.subplots(figsize=(8, 3.5))
+        ax.axis("off")
+        ax.text(
+            0.5,
+            0.5,
+            "SPA comparator t-stats are all zero.",
+            ha="center",
+            va="center",
+            fontsize=12,
+        )
+        fig.tight_layout()
+        fig.savefig(destination, dpi=200)
+        plt.close(fig)
+        return destination
     destination.parent.mkdir(parents=True, exist_ok=True)
     order = sorted(range(len(labels)), key=lambda idx: t_stats[idx], reverse=True)
     ordered_labels = [labels[idx] for idx in order]
@@ -421,9 +439,15 @@ def _write_docs_results(
     lines.append("- Execution assumes TWAP slicing with linear+sqrt impact, 5 bps commissions, and borrow spread floor of 8 bps.")
     lines.append("")
 
+    docs_artifacts_root = None
+    if image_map:
+        sample_path = next(iter(image_map.values()))
+        docs_artifacts_root = _relative_to_repo(Path(sample_path).parent)
+    if not docs_artifacts_root:
+        docs_artifacts_root = f"docs/img/wrds_flagship/{run_id}"
     lines.append(
         "Published artifacts (PNG/MD/JSON summaries) live under "
-        + f"`docs/img/wrds_flagship/{run_id}` and reports/summaries for reproducibility."
+        + f"`{docs_artifacts_root}` and reports/summaries for reproducibility."
     )
 
     docs_path.write_text("\n".join(lines).strip() + "\n", encoding="utf-8")
@@ -444,6 +468,7 @@ def render_wrds_summary(
     metrics_json_out: Path | None = None,
     spa_json_out: Path | None = None,
     spa_md_out: Path | None = None,
+    allow_zero_spa: bool = False,
 ) -> Path:
     artifact_dir = artifact_dir.resolve()
     output_path = output_path.resolve()
@@ -484,7 +509,9 @@ def render_wrds_summary(
     ic_plot = _require_file(analytics_dir / f"{run_id}_ic_ir.png", "IC/IR plot")
     decile_plot = _require_file(analytics_dir / f"{run_id}_deciles.png", "deciles plot")
     beta_plot = _require_file(analytics_dir / f"{run_id}_rolling_betas.png", "rolling betas plot")
-    spa_plot = _render_spa_plot(spa_payload, artifact_dir / "spa_tstats.png")
+    spa_plot = _render_spa_plot(
+        spa_payload, artifact_dir / "spa_tstats.png", allow_zero=allow_zero_spa
+    )
 
     if metrics_json_out:
         metrics_json_out = metrics_json_out.expanduser().resolve()
@@ -624,6 +651,11 @@ def _build_parser() -> argparse.ArgumentParser:
         default=Path("reports/summaries/wrds_flagship_spa.md"),
         help="Where to copy the SPA markdown summary",
     )
+    parser.add_argument(
+        "--allow-zero-spa",
+        action="store_true",
+        help="Allow SPA rendering when comparator t-stats are all zero",
+    )
     return parser
 
 
@@ -640,6 +672,7 @@ def main(argv: Sequence[str] | None = None) -> None:
         metrics_json_out=args.metrics_json_out,
         spa_json_out=args.spa_json_out,
         spa_md_out=args.spa_md_out,
+        allow_zero_spa=args.allow_zero_spa,
     )
 
 
