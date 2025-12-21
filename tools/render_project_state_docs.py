@@ -27,6 +27,15 @@ def read_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def latest_run_dir(root: Path) -> Path | None:
+    if not root.exists():
+        return None
+    candidates = [path for path in root.iterdir() if path.is_dir()]
+    if not candidates:
+        return None
+    return sorted(candidates)[-1]
+
+
 def utc_now() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
@@ -400,6 +409,8 @@ def render_current_results(
     wrds_smoke_text: str,
     sample_metrics: dict[str, Any],
     wfv_metrics: dict[str, Any],
+    holdout_run: str | None,
+    holdout_metrics: dict[str, Any],
 ) -> str:
     sample_artifacts = parse_readme_sample_artifacts(readme_text)
     wrds_info = parse_wrds_results(wrds_text)
@@ -413,6 +424,22 @@ def render_current_results(
             return fmt.format(value)
         except Exception:
             return str(value)
+
+    holdout_block = ""
+    if holdout_metrics:
+        holdout_block = """
+- Holdout WFV: `artifacts/sample_wfv_holdout/{holdout_run}`
+- Holdout Sharpe (HAC): {holdout_sharpe}
+- Holdout MAR (Calmar): {holdout_calmar}
+- Holdout Max DD: {holdout_dd}
+- Holdout Turnover: {holdout_turnover}
+""".format(
+            holdout_run=holdout_run or "unknown",
+            holdout_sharpe=fmt_metric(holdout_metrics, "sharpe_ratio", "{:.2f}"),
+            holdout_calmar=fmt_metric(holdout_metrics, "calmar_ratio", "{:.2f}"),
+            holdout_dd=fmt_metric(holdout_metrics, "max_drawdown", "{:.2%}"),
+            holdout_turnover=fmt_metric(holdout_metrics, "total_turnover", "${:,.2f}"),
+        )
 
     sample_block = """
 ## Sample bundle (README + artifacts)
@@ -430,6 +457,7 @@ def render_current_results(
 - Max DD: {wfv_dd}
 - RealityCheck p-value: {wfv_p}
 - Turnover: {wfv_turnover}
+{holdout_block}
 """.format(
         sample_run=sample_artifacts.get("sample_flagship", "unknown"),
         sample_sharpe=fmt_metric(sample_metrics, "sharpe_ratio", "{:.2f}"),
@@ -443,6 +471,7 @@ def render_current_results(
         wfv_dd=fmt_metric(wfv_metrics, "max_drawdown", "{:.2%}"),
         wfv_p=fmt_metric(wfv_metrics, "reality_check_p_value", "{:.3f}"),
         wfv_turnover=fmt_metric(wfv_metrics, "total_turnover", "${:,.2f}"),
+        holdout_block=holdout_block,
     )
 
     wrds_block = "## WRDS results (docs/results_wrds.md)\n\n"
@@ -482,7 +511,7 @@ def render_current_results(
 
 {smoke_block}
 
-Sources: `README.md`, `docs/results_wrds.md`, sample metrics under `artifacts/sample_flagship/` and `artifacts/sample_wfv/`.
+Sources: `README.md`, `docs/results_wrds.md`, sample metrics under `artifacts/sample_flagship/`, `artifacts/sample_wfv/`, and `artifacts/sample_wfv_holdout/`.
 """
 
 
@@ -668,10 +697,33 @@ def main() -> None:
     wrds_smoke_path = ROOT / "docs" / "results_wrds_smoke.md"
     wrds_smoke_text = read_text(wrds_smoke_path) if wrds_smoke_path.exists() else ""
 
-    sample_metrics_path = ROOT / "artifacts" / "sample_flagship" / "2025-10-30T18-39-31Z-a4ab8e7" / "metrics.json"
-    wfv_metrics_path = ROOT / "artifacts" / "sample_wfv" / "2025-10-30T18-39-47Z-a4ab8e7" / "metrics.json"
+    sample_metrics_path = (
+        ROOT
+        / "artifacts"
+        / "sample_flagship"
+        / "2025-10-30T18-39-31Z-a4ab8e7"
+        / "metrics.json"
+    )
+    wfv_metrics_path = (
+        ROOT
+        / "artifacts"
+        / "sample_wfv"
+        / "2025-10-30T18-39-47Z-a4ab8e7"
+        / "metrics.json"
+    )
     sample_metrics = read_json(sample_metrics_path) if sample_metrics_path.exists() else {}
     wfv_metrics = read_json(wfv_metrics_path) if wfv_metrics_path.exists() else {}
+    holdout_root = ROOT / "artifacts" / "sample_wfv_holdout"
+    holdout_dir = latest_run_dir(holdout_root)
+    holdout_run = holdout_dir.name if holdout_dir else None
+    holdout_metrics_path = (
+        holdout_dir / "holdout_metrics.json" if holdout_dir else None
+    )
+    holdout_metrics = (
+        read_json(holdout_metrics_path)
+        if holdout_metrics_path and holdout_metrics_path.exists()
+        else {}
+    )
 
     config_paths = sorted((ROOT / "configs").glob("*.yaml"))
 
@@ -694,7 +746,13 @@ def main() -> None:
         "DATAFLOW.md": render_dataflow(),
         "EXPERIMENTS.md": render_experiments(inventory),
         "CURRENT_RESULTS.md": render_current_results(
-            readme_text, wrds_text, wrds_smoke_text, sample_metrics, wfv_metrics
+            readme_text,
+            wrds_text,
+            wrds_smoke_text,
+            sample_metrics,
+            wfv_metrics,
+            holdout_run,
+            holdout_metrics,
         ),
         "RESEARCH_NOTES.md": render_research_notes(),
         "OPEN_QUESTIONS.md": render_open_questions(),

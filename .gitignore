@@ -22,6 +22,9 @@ artifacts/**
 !artifacts/sample_flagship/2025-10-30T18-39-31Z-a4ab8e7/**
 !artifacts/sample_wfv/2025-10-30T18-39-47Z-a4ab8e7/
 !artifacts/sample_wfv/2025-10-30T18-39-47Z-a4ab8e7/**
+!artifacts/sample_wfv_holdout/
+!artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/
+!artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/**
 !artifacts/**/*.png
 !artifacts/**/*.md
 !artifacts/**/*.json

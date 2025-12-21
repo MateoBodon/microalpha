@@ -1,0 +1,7 @@
+{"timestamp": 1628035200000000000, "order_id": null, "symbol": "ALFA", "side": "BUY", "qty": 6084.0, "price": 98.64097718343197, "commission": 3.042, "slippage": 0.0, "inventory": 6084.0, "cash": 399865.2528159999}
+{"timestamp": 1628035200000000000, "order_id": null, "symbol": "ZETA", "side": "BUY", "qty": 37997.0, "price": 25.182539237808246, "commission": 18.9985, "slippage": 0.0, "inventory": 37997.0, "cash": -557014.689103}
+{"timestamp": 1628035200000000000, "order_id": null, "symbol": "GAMM", "side": "SELL", "qty": -18818.0, "price": 35.28641996094165, "commission": 9.408999999999999, "slippage": 0.0, "inventory": -18818.0, "cash": 106995.75272199999}
+{"timestamp": 1630627200000000000, "order_id": null, "symbol": "ALFA", "side": "SELL", "qty": -5861.0, "price": 89.53039466780413, "commission": 2.9305000000000003, "slippage": 0.0, "inventory": 223.0, "cash": 628497.7810507885}
+{"timestamp": 1630627200000000000, "order_id": null, "symbol": "ZETA", "side": "SELL", "qty": -36369.0, "price": 28.021921127443704, "commission": 18.1845, "slippage": 0.0, "inventory": 1628.0, "cash": 1647608.8460347885}
+{"timestamp": 1630627200000000000, "order_id": null, "symbol": "ALFA", "side": "SELL", "qty": -7509.0, "price": 89.47815338567052, "commission": 3.7545, "slippage": 0.0, "inventory": -7286.0, "cash": 2319496.5453077885}
+{"timestamp": 1635897600000000000, "order_id": null, "symbol": "ZETA", "side": "BUY", "qty": 36466.0, "price": 26.905403740580265, "commission": 18.233, "slippage": 0.0, "inventory": 38094.0, "cash": 1332119.2387104896}

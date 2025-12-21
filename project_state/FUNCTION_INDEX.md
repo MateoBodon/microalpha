@@ -1,7 +1,7 @@
 <!--
-generated_at: 2025-12-21T19:48:07Z
-git_sha: 631272f7041bff01de865fa5139a4a9e4004c3b2
-branch: feat/ticket-06-bundle-commit-consistency
+generated_at: 2025-12-21T20:56:43Z
+git_sha: 4457b33773c24c5e7179bc4df0346c150e8d5876
+branch: feat/ticket-02-holdout-wfv
 commands:
   - python3 tools/build_project_state.py
   - python3 tools/render_project_state_docs.py
@@ -91,6 +91,7 @@ commands:
 ### Classes
 
 - WalkForwardWindow(BaseModel)
+- HoldoutWindow(BaseModel)
 - RealityCheckCfg(BaseModel)
 - WFVCfg(BaseModel)
 
@@ -526,6 +527,7 @@ commands:
 - _stable_metrics(metrics: Dict[str, Any])
 - _build_grid_payload(entries: List[Dict[str, Any]])
 - _grid_summary_from_payload(payload: List[Dict[str, Any]])
+- _aggregate_selection_summary(grid_summaries: Sequence[List[Dict[str, Any]]])
 - _grid_rows_for_fold(payload: List[Dict[str, Any]], fold_index: int, phase: str)
 - _format_param_label(params: Mapping[str, Any])
 - _metrics_summary(metrics: Dict[str, Any])
@@ -598,6 +600,7 @@ commands:
 
 - read_text(path: Path)
 - read_json(path: Path)
+- latest_run_dir(root: Path)
 - utc_now()
 - git_sha()
 - git_branch()
@@ -619,7 +622,7 @@ commands:
 - render_pipeline_flow(make_targets: list[str])
 - render_dataflow()
 - render_experiments(inventory: list[dict[str, Any]])
-- render_current_results(readme_text: str, wrds_text: str, wrds_smoke_text: str, sample_metrics: dict[str, Any], wfv_metrics: dict[str, Any])
+- render_current_results(readme_text: str, wrds_text: str, wrds_smoke_text: str, sample_metrics: dict[str, Any], wfv_metrics: dict[str, Any], holdout_run: str | None, holdout_metrics: dict[str, Any])
 - render_research_notes()
 - render_open_questions()
 - render_known_issues()

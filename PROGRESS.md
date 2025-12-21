@@ -10,3 +10,4 @@ Ticket-01: Tightened WRDS caps + smoke targets + report upgrades (Status: Partia
 
 Ticket-01: WRDS smoke run completed with local exports at `$WRDS_DATA_ROOT` (Status: Done). Run log: `docs/agent_runs/20251220_223500_ticket-01_wrds-tighten-caps/`.
 Ticket-06: Bundle commit-consistency enforced and living-doc updates backfilled (Status: Done). Run log: `docs/agent_runs/20251221_190000_ticket-06_bundle-commit-consistency/`.
+Ticket-02: Holdout evaluation mode added for walk-forward validation (Status: Done). Run log: `docs/agent_runs/20251221_154039_ticket-02_holdout-wfv/`.

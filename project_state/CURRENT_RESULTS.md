@@ -1,7 +1,7 @@
 <!--
-generated_at: 2025-12-21T19:48:07Z
-git_sha: 631272f7041bff01de865fa5139a4a9e4004c3b2
-branch: feat/ticket-06-bundle-commit-consistency
+generated_at: 2025-12-21T20:56:43Z
+git_sha: 4457b33773c24c5e7179bc4df0346c150e8d5876
+branch: feat/ticket-02-holdout-wfv
 commands:
   - python3 tools/build_project_state.py
   - python3 tools/render_project_state_docs.py
@@ -26,6 +26,13 @@ commands:
 - Max DD: 34.79%
 - RealityCheck p-value: 1.000
 - Turnover: $28,525,695.10
+
+- Holdout WFV: `artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33`
+- Holdout Sharpe (HAC): 1.29
+- Holdout MAR (Calmar): 4.03
+- Holdout Max DD: 9.36%
+- Holdout Turnover: $5,417,903.30
+
 
 
 ## WRDS results (docs/results_wrds.md)
@@ -56,4 +63,4 @@ commands:
 - Note: Smoke run validates WRDS pipeline wiring; metrics are not interpretable for performance.
 
 
-Sources: `README.md`, `docs/results_wrds.md`, sample metrics under `artifacts/sample_flagship/` and `artifacts/sample_wfv/`.
+Sources: `README.md`, `docs/results_wrds.md`, sample metrics under `artifacts/sample_flagship/`, `artifacts/sample_wfv/`, and `artifacts/sample_wfv_holdout/`.

@@ -1,7 +1,7 @@
 <!--
-generated_at: 2025-12-21T19:48:07Z
-git_sha: 631272f7041bff01de865fa5139a4a9e4004c3b2
-branch: feat/ticket-06-bundle-commit-consistency
+generated_at: 2025-12-21T20:56:43Z
+git_sha: 4457b33773c24c5e7179bc4df0346c150e8d5876
+branch: feat/ticket-02-holdout-wfv
 commands:
   - python3 tools/build_project_state.py
   - python3 tools/render_project_state_docs.py
@@ -20,7 +20,7 @@ commands:
 | `src/microalpha/capital.py` | Capital allocation policies for multi-asset sizing. | 4 | 0 |
 | `src/microalpha/cli.py` | Command line entrypoints for microalpha. | 0 | 3 |
 | `src/microalpha/config.py` | Configuration schemas for microalpha backtests. | 6 | 1 |
-| `src/microalpha/config_wfv.py` | Walk-forward validation configuration schemas. | 3 | 0 |
+| `src/microalpha/config_wfv.py` | Walk-forward validation configuration schemas. | 4 | 0 |
 | `src/microalpha/data.py` |  | 4 | 0 |
 | `src/microalpha/engine.py` | Event-driven backtest engine enforcing strict time ordering. | 1 | 0 |
 | `src/microalpha/events.py` | Core event types exchanged between components. | 5 | 0 |
@@ -49,11 +49,11 @@ commands:
 | `src/microalpha/strategies/flagship_momentum.py` | Compatibility shim for flagship strategy. | 0 | 0 |
 | `src/microalpha/strategies/meanrev.py` |  | 1 | 0 |
 | `src/microalpha/strategies/mm.py` |  | 1 | 0 |
-| `src/microalpha/walkforward.py` | Walk-forward validation orchestration. | 0 | 20 |
+| `src/microalpha/walkforward.py` | Walk-forward validation orchestration. | 0 | 21 |
 | `src/microalpha/wrds/__init__.py` | Lightweight helpers for detecting local WRDS credentials and exports. | 0 | 8 |
 | `tools/build_project_state.py` | Generate machine-derived indices for project_state. | 0 | 13 |
 | `tools/gpt_bundle.py` | Create a Prompt-3 bundle for Codex audit artifacts. | 0 | 5 |
-| `tools/render_project_state_docs.py` | Render project_state Markdown docs from generated indices and repo files. | 0 | 35 |
+| `tools/render_project_state_docs.py` | Render project_state Markdown docs from generated indices and repo files. | 0 | 36 |
 
 ## Notes
 

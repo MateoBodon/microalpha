@@ -1,0 +1,77 @@
+{
+  "run_id": "2025-12-21T20-53-05Z-4457b33",
+  "git_sha": "4457b33773c24c5e7179bc4df0346c150e8d5876",
+  "microalpha_version": "0.1.0",
+  "python": "3.12.2 (v3.12.2:6abddd9f6a, Feb  6 2024, 17:02:06) [Clang 13.0.0 (clang-1300.0.29.30)]",
+  "platform": "macOS-26.0.1-arm64-arm-64bit",
+  "numpy_version": "2.2.6",
+  "pandas_version": "2.2.3",
+  "seed": 321,
+  "config_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/configs/wfv_flagship_sample_holdout.yaml",
+  "config_sha256": "d07891662ad83d8447eabd803a80f6616b101f3fc4334bd7c43052cb1552ed6a",
+  "config_summary": {
+    "risk_caps": {
+      "max_gross_leverage": 3.0,
+      "max_portfolio_heat": 3.0,
+      "max_net_leverage": 1.5,
+      "max_single_name_weight": null,
+      "max_drawdown_stop": 0.3,
+      "max_positions_per_sector": null
+    },
+    "turnover_caps": {
+      "turnover_cap": null,
+      "turnover_target_pct_adv": 0.12,
+      "min_adv": 1500000.0
+    },
+    "borrow_model": {
+      "annual_fee_bps": null,
+      "floor_bps": null,
+      "multiplier": null
+    },
+    "cost_model": {
+      "exec_type": "twap",
+      "commission": 0.0005,
+      "price_impact": null,
+      "slippage_type": "linear_sqrt",
+      "k_lin": 35.0,
+      "eta": 95.0,
+      "default_adv": 1800000.0,
+      "default_spread_bps": 10.0,
+      "spread_floor_multiplier": null
+    }
+  },
+  "walkforward": {
+    "selection_window_start": "2020-01-02",
+    "selection_window_end": "2021-06-30",
+    "holdout_start": "2021-07-01",
+    "holdout_end": "2021-12-31",
+    "selected_model": "skip_months=1|top_frac=0.3500",
+    "selected_params": {
+      "top_frac": 0.35,
+      "skip_months": 1
+    },
+    "selected_params_full": {
+      "universe_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/data/sample/universe_sample.csv",
+      "lookback_months": 6,
+      "skip_months": 1,
+      "top_frac": 0.35,
+      "bottom_frac": 0.35,
+      "max_positions_per_sector": 2,
+      "turnover_target_pct_adv": 0.12,
+      "min_adv": 1500000.0,
+      "min_price": 10.0,
+      "total_risk_budget": 1.0,
+      "symbols": [
+        "ALFA",
+        "BETA",
+        "DELT",
+        "EPSI",
+        "GAMM",
+        "ZETA"
+      ]
+    },
+    "selection_summary_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/selection_summary.json",
+    "holdout_metrics_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/holdout_metrics.json",
+    "holdout_manifest_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/holdout_manifest.json"
+  }
+}

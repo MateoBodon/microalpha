@@ -194,6 +194,13 @@
           "BaseModel"
         ],
         "doc": "",
+        "name": "HoldoutWindow"
+      },
+      {
+        "bases": [
+          "BaseModel"
+        ],
+        "doc": "",
         "name": "RealityCheckCfg"
       },
       {
@@ -1410,6 +1417,12 @@
       {
         "async": false,
         "doc": "",
+        "name": "_aggregate_selection_summary",
+        "signature": "(grid_summaries: Sequence[List[Dict[str, Any]]])"
+      },
+      {
+        "async": false,
+        "doc": "",
         "name": "_grid_rows_for_fold",
         "signature": "(payload: List[Dict[str, Any]], fold_index: int, phase: str)"
       },
@@ -1650,6 +1663,12 @@
       {
         "async": false,
         "doc": "",
+        "name": "latest_run_dir",
+        "signature": "(root: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
         "name": "utc_now",
         "signature": "()"
       },
@@ -1777,7 +1796,7 @@
         "async": false,
         "doc": "",
         "name": "render_current_results",
-        "signature": "(readme_text: str, wrds_text: str, wrds_smoke_text: str, sample_metrics: dict[str, Any], wfv_metrics: dict[str, Any])"
+        "signature": "(readme_text: str, wrds_text: str, wrds_smoke_text: str, sample_metrics: dict[str, Any], wfv_metrics: dict[str, Any], holdout_run: str | None, holdout_metrics: dict[str, Any])"
       },
       {
         "async": false,

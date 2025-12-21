@@ -64,9 +64,13 @@ template:
 
 walkforward:
   start: "2015-01-05"
-  end: "2019-12-31"
+  end: "2018-12-31"
   training_days: 504   # ~24-month training window
   testing_days: 126    # ~6-month forward test
+
+holdout:
+  start: "2019-01-02"
+  end: "2019-12-31"
 
 grid:
   lookback_months: [12]

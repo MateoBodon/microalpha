@@ -4,7 +4,7 @@
     "ext": ".json",
     "path": "project_state/_generated/repo_inventory.json",
     "role": "project_state",
-    "size_bytes": 169656
+    "size_bytes": 170561
   },
   {
     "binary_ext": false,
@@ -25,133 +25,133 @@
     "ext": ".json",
     "path": "project_state/_generated/symbol_index.json",
     "role": "project_state",
-    "size_bytes": 49593
+    "size_bytes": 49893
   },
   {
     "binary_ext": false,
     "ext": ".md",
     "path": "project_state/DEPENDENCY_GRAPH.md",
     "role": "project_state",
-    "size_bytes": 4657
+    "size_bytes": 4643
   },
   {
     "binary_ext": false,
     "ext": ".md",
     "path": "project_state/RESEARCH_NOTES.md",
     "role": "project_state",
-    "size_bytes": 812
+    "size_bytes": 798
   },
   {
     "binary_ext": false,
     "ext": ".md",
     "path": "project_state/FUNCTION_INDEX.md",
     "role": "project_state",
-    "size_bytes": 21109
+    "size_bytes": 21201
   },
   {
     "binary_ext": false,
     "ext": ".md",
     "path": "project_state/MODULE_SUMMARIES.md",
     "role": "project_state",
-    "size_bytes": 4134
+    "size_bytes": 4120
   },
   {
     "binary_ext": false,
     "ext": ".md",
     "path": "project_state/KNOWN_ISSUES.md",
     "role": "project_state",
-    "size_bytes": 846
+    "size_bytes": 832
   },
   {
     "binary_ext": false,
     "ext": ".md",
     "path": "project_state/INDEX.md",
     "role": "project_state",
-    "size_bytes": 1549
+    "size_bytes": 1535
   },
   {
     "binary_ext": false,
     "ext": ".md",
     "path": "project_state/ROADMAP.md",
     "role": "project_state",
-    "size_bytes": 532
+    "size_bytes": 518
   },
   {
     "binary_ext": false,
     "ext": ".md",
     "path": "project_state/PIPELINE_FLOW.md",
     "role": "project_state",
-    "size_bytes": 1262
+    "size_bytes": 1248
   },
   {
     "binary_ext": false,
     "ext": ".md",
     "path": "project_state/TEST_COVERAGE.md",
     "role": "project_state",
-    "size_bytes": 2320
+    "size_bytes": 2306
   },
   {
     "binary_ext": false,
     "ext": ".md",
     "path": "project_state/DATAFLOW.md",
     "role": "project_state",
-    "size_bytes": 1371
+    "size_bytes": 1357
   },
   {
     "binary_ext": false,
     "ext": ".md",
     "path": "project_state/CURRENT_RESULTS.md",
     "role": "project_state",
-    "size_bytes": 1838
+    "size_bytes": 1824
   },
   {
     "binary_ext": false,
     "ext": ".md",
     "path": "project_state/STYLE_GUIDE.md",
     "role": "project_state",
-    "size_bytes": 584
+    "size_bytes": 570
   },
   {
     "binary_ext": false,
     "ext": ".md",
     "path": "project_state/SERVER_ENVIRONMENT.md",
     "role": "project_state",
-    "size_bytes": 555
+    "size_bytes": 541
   },
   {
     "binary_ext": false,
     "ext": ".md",
     "path": "project_state/CONFIG_REFERENCE.md",
     "role": "project_state",
-    "size_bytes": 2721
+    "size_bytes": 2863
   },
   {
     "binary_ext": false,
     "ext": ".md",
     "path": "project_state/EXPERIMENTS.md",
     "role": "project_state",
-    "size_bytes": 870
+    "size_bytes": 856
   },
   {
     "binary_ext": false,
     "ext": ".md",
     "path": "project_state/CHANGELOG.md",
     "role": "project_state",
-    "size_bytes": 2186
+    "size_bytes": 2254
   },
   {
     "binary_ext": false,
     "ext": ".md",
     "path": "project_state/ARCHITECTURE.md",
     "role": "project_state",
-    "size_bytes": 2460
+    "size_bytes": 2446
   },
   {
     "binary_ext": false,
     "ext": ".md",
     "path": "project_state/OPEN_QUESTIONS.md",
     "role": "project_state",
-    "size_bytes": 647
+    "size_bytes": 633
   },
   {
     "binary_ext": false,
@@ -228,7 +228,7 @@
     "ext": ".py",
     "path": "src/microalpha/config_wfv.py",
     "role": "source",
-    "size_bytes": 804
+    "size_bytes": 907
   },
   {
     "binary_ext": false,
@@ -242,7 +242,7 @@
     "ext": ".py",
     "path": "src/microalpha/walkforward.py",
     "role": "source",
-    "size_bytes": 37150
+    "size_bytes": 48670
   },
   {
     "binary_ext": false,
@@ -841,6 +841,48 @@
   },
   {
     "binary_ext": false,
+    "ext": ".toml",
+    "path": "pyproject.toml",
+    "role": "root",
+    "size_bytes": 1208
+  },
+  {
+    "binary_ext": false,
+    "ext": "",
+    "path": "Makefile",
+    "role": "root",
+    "size_bytes": 7126
+  },
+  {
+    "binary_ext": false,
+    "ext": ".md",
+    "path": "CHANGELOG.md",
+    "role": "root",
+    "size_bytes": 1975
+  },
+  {
+    "binary_ext": false,
+    "ext": "",
+    "path": "LICENSE",
+    "role": "root",
+    "size_bytes": 0
+  },
+  {
+    "binary_ext": false,
+    "ext": ".ini",
+    "path": "pytest.ini",
+    "role": "root",
+    "size_bytes": 158
+  },
+  {
+    "binary_ext": false,
+    "ext": ".yml",
+    "path": "mkdocs.yml",
+    "role": "root",
+    "size_bytes": 592
+  },
+  {
+    "binary_ext": false,
     "ext": ".py",
     "path": "scripts/export_wrds_flagship.py",
     "role": "script",
@@ -897,10 +939,101 @@
   },
   {
     "binary_ext": false,
+    "ext": ".md",
+    "path": "README.md",
+    "role": "root",
+    "size_bytes": 9160
+  },
+  {
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "tools/render_project_state_docs.py",
+    "role": "tool",
+    "size_bytes": 26656
+  },
+  {
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "tools/build_project_state.py",
+    "role": "tool",
+    "size_bytes": 10590
+  },
+  {
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "tools/gpt_bundle.py",
+    "role": "tool",
+    "size_bytes": 3755
+  },
+  {
+    "binary_ext": false,
+    "ext": ".md",
+    "path": "docs/reproducibility.md",
+    "role": "doc",
+    "size_bytes": 3706
+  },
+  {
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "run.py",
+    "role": "root",
+    "size_bytes": 727
+  },
+  {
+    "binary_ext": false,
+    "ext": ".md",
+    "path": "docs/prompts/20251220_223500_ticket-01_wrds-tighten-caps.md",
+    "role": "doc",
+    "size_bytes": 4798
+  },
+  {
+    "binary_ext": false,
+    "ext": ".md",
+    "path": "docs/flagship_momentum_wrds.md",
+    "role": "doc",
+    "size_bytes": 3391
+  },
+  {
+    "binary_ext": false,
+    "ext": ".md",
+    "path": "docs/wrds.md",
+    "role": "doc",
+    "size_bytes": 4591
+  },
+  {
+    "binary_ext": false,
+    "ext": ".md",
+    "path": "docs/index.md",
+    "role": "doc",
+    "size_bytes": 1509
+  },
+  {
+    "binary_ext": false,
+    "ext": ".md",
+    "path": "docs/factors.md",
+    "role": "doc",
+    "size_bytes": 1089
+  },
+  {
+    "binary_ext": false,
+    "ext": ".md",
+    "path": "docs/flagship_strategy.md",
+    "role": "doc",
+    "size_bytes": 3137
+  },
+  {
+    "binary_ext": false,
     "ext": ".yaml",
     "path": "configs/breakout.yaml",
     "role": "config",
     "size_bytes": 271
+  },
+  {
+    "binary_ext": false,
+    "ext": ".yaml",
+    "path": "configs/wfv_flagship_sample_holdout.yaml",
+    "role": "config",
+    "size_bytes": 1497
   },
   {
     "binary_ext": false,
@@ -914,7 +1047,7 @@
     "ext": ".yaml",
     "path": "configs/wfv_flagship_wrds_smoke.yaml",
     "role": "config",
-    "size_bytes": 2028
+    "size_bytes": 2080
   },
   {
     "binary_ext": false,
@@ -963,7 +1096,7 @@
     "ext": ".yaml",
     "path": "configs/wfv_flagship_wrds.yaml",
     "role": "config",
-    "size_bytes": 2031
+    "size_bytes": 2083
   },
   {
     "binary_ext": false,
@@ -1023,6 +1156,83 @@
   },
   {
     "binary_ext": false,
+    "ext": ".md",
+    "path": "docs/gpt_outputs/20251221_wrds_data_root.md",
+    "role": "doc",
+    "size_bytes": 1233
+  },
+  {
+    "binary_ext": false,
+    "ext": ".md",
+    "path": "docs/gpt_outputs/12-20-25prompt1-diagnosis.md",
+    "role": "doc",
+    "size_bytes": 34098
+  },
+  {
+    "binary_ext": false,
+    "ext": ".md",
+    "path": "docs/results_wrds.md",
+    "role": "doc",
+    "size_bytes": 3744
+  },
+  {
+    "binary_ext": false,
+    "ext": ".md",
+    "path": "docs/api.md",
+    "role": "doc",
+    "size_bytes": 4161
+  },
+  {
+    "binary_ext": false,
+    "ext": ".md",
+    "path": "docs/PLAN_OF_RECORD.md",
+    "role": "doc",
+    "size_bytes": 8039
+  },
+  {
+    "binary_ext": false,
+    "ext": ".md",
+    "path": "docs/DOCS_AND_LOGGING_SYSTEM.md",
+    "role": "doc",
+    "size_bytes": 5604
+  },
+  {
+    "binary_ext": false,
+    "ext": ".md",
+    "path": "docs/leakage-safety.md",
+    "role": "doc",
+    "size_bytes": 3065
+  },
+  {
+    "binary_ext": false,
+    "ext": ".md",
+    "path": "docs/results_wrds_smoke.md",
+    "role": "doc",
+    "size_bytes": 2702
+  },
+  {
+    "binary_ext": false,
+    "ext": ".md",
+    "path": "docs/CODEX_SPRINT_TICKETS.md",
+    "role": "doc",
+    "size_bytes": 9161
+  },
+  {
+    "binary_ext": false,
+    "ext": ".md",
+    "path": "docs/examples.md",
+    "role": "doc",
+    "size_bytes": 1693
+  },
+  {
+    "binary_ext": false,
+    "ext": ".md",
+    "path": "PROGRESS.md",
+    "role": "root",
+    "size_bytes": 795
+  },
+  {
+    "binary_ext": false,
     "ext": ".py",
     "path": "benchmarks/bench_engine.py",
     "role": "benchmark",
@@ -1043,585 +1253,67 @@
     "size_bytes": 795
   },
   {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/BUD.csv",
-    "role": "data",
-    "size_bytes": 26298
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/PRGO.csv",
-    "role": "data",
-    "size_bytes": 134404
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/NVR.csv",
-    "role": "data",
-    "size_bytes": 142798
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/ISRG.csv",
-    "role": "data",
-    "size_bytes": 145154
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/TROW.csv",
-    "role": "data",
-    "size_bytes": 136234
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/UAL.csv",
-    "role": "data",
-    "size_bytes": 128704
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/SITC.csv",
-    "role": "data",
-    "size_bytes": 133629
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/AIRC.csv",
-    "role": "data",
-    "size_bytes": 23313
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CSCO.csv",
-    "role": "data",
-    "size_bytes": 140760
+    "binary_ext": false,
+    "ext": ".md",
+    "path": "docs/data_sp500.md",
+    "role": "doc",
+    "size_bytes": 3080
   },
   {
     "binary_ext": false,
     "ext": ".md",
-    "path": "README.md",
-    "role": "root",
-    "size_bytes": 9160
+    "path": "docs/benchmarks.md",
+    "role": "doc",
+    "size_bytes": 1280
   },
   {
-    "binary_ext": false,
-    "ext": ".md",
-    "path": "PROGRESS.md",
-    "role": "root",
-    "size_bytes": 795
+    "binary_ext": true,
+    "ext": ".png",
+    "path": "docs/img/wrds_flagship_smoke/2025-12-21T06-06-35Z-0dbb291/bootstrap_hist.png",
+    "role": "doc",
+    "size_bytes": 54693
   },
   {
-    "binary_ext": false,
-    "ext": ".ini",
-    "path": "pytest.ini",
-    "role": "root",
-    "size_bytes": 158
+    "binary_ext": true,
+    "ext": ".png",
+    "path": "docs/img/wrds_flagship_smoke/2025-12-21T06-06-35Z-0dbb291/2025-12-21T06-06-35Z-0dbb291_deciles.png",
+    "role": "doc",
+    "size_bytes": 73599
   },
   {
-    "binary_ext": false,
-    "ext": ".yml",
-    "path": "mkdocs.yml",
-    "role": "root",
-    "size_bytes": 592
+    "binary_ext": true,
+    "ext": ".png",
+    "path": "docs/img/wrds_flagship_smoke/2025-12-21T06-06-35Z-0dbb291/2025-12-21T06-06-35Z-0dbb291_ic_ir.png",
+    "role": "doc",
+    "size_bytes": 161244
+  },
+  {
+    "binary_ext": true,
+    "ext": ".png",
+    "path": "docs/img/wrds_flagship_smoke/2025-12-21T06-06-35Z-0dbb291/2025-12-21T06-06-35Z-0dbb291_rolling_betas.png",
+    "role": "doc",
+    "size_bytes": 189856
+  },
+  {
+    "binary_ext": true,
+    "ext": ".png",
+    "path": "docs/img/wrds_flagship_smoke/2025-12-21T06-06-35Z-0dbb291/spa_tstats.png",
+    "role": "doc",
+    "size_bytes": 17324
   },
   {
     "binary_ext": false,
     "ext": ".py",
-    "path": "run.py",
-    "role": "root",
-    "size_bytes": 727
-  },
-  {
-    "binary_ext": false,
-    "ext": ".md",
-    "path": "CHANGELOG.md",
-    "role": "root",
-    "size_bytes": 1975
-  },
-  {
-    "binary_ext": false,
-    "ext": "",
-    "path": "Makefile",
-    "role": "root",
-    "size_bytes": 7126
-  },
-  {
-    "binary_ext": false,
-    "ext": "",
-    "path": "LICENSE",
-    "role": "root",
-    "size_bytes": 0
-  },
-  {
-    "binary_ext": false,
-    "ext": ".toml",
-    "path": "pyproject.toml",
-    "role": "root",
-    "size_bytes": 1208
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/SOV.csv",
-    "role": "data",
-    "size_bytes": 27456
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/SLM.csv",
-    "role": "data",
-    "size_bytes": 134324
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/BXLT.csv",
-    "role": "data",
-    "size_bytes": 6327
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/GILD.csv",
-    "role": "data",
-    "size_bytes": 137033
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/TER.csv",
-    "role": "data",
-    "size_bytes": 135858
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/VRTX.csv",
-    "role": "data",
-    "size_bytes": 139464
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/QLGC.csv",
-    "role": "data",
-    "size_bytes": 77721
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/BA.csv",
-    "role": "data",
-    "size_bytes": 142022
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/EQIX.csv",
-    "role": "data",
-    "size_bytes": 140734
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/MRO.csv",
-    "role": "data",
-    "size_bytes": 136434
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/THC.csv",
-    "role": "data",
-    "size_bytes": 133526
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CE.csv",
-    "role": "data",
-    "size_bytes": 134598
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/NLSN.csv",
-    "role": "data",
-    "size_bytes": 78911
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/DVN.csv",
-    "role": "data",
-    "size_bytes": 136006
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/TPR.csv",
-    "role": "data",
-    "size_bytes": 135451
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/KRI.csv",
-    "role": "data",
-    "size_bytes": 9740
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/MDT.csv",
-    "role": "data",
-    "size_bytes": 136273
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/TIF.csv",
-    "role": "data",
-    "size_bytes": 108414
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/PODD.csv",
-    "role": "data",
-    "size_bytes": 118238
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/DCN.csv",
-    "role": "data",
-    "size_bytes": 7695
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/FTR.csv",
-    "role": "data",
-    "size_bytes": 102206
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/ATGE.csv",
-    "role": "data",
-    "size_bytes": 130950
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CHX.csv",
-    "role": "data",
-    "size_bytes": 44296
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CIEN.csv",
-    "role": "data",
-    "size_bytes": 134966
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/V.csv",
-    "role": "data",
-    "size_bytes": 119712
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/QRVO.csv",
-    "role": "data",
-    "size_bytes": 134233
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/FOX.csv",
-    "role": "data",
-    "size_bytes": 38670
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/A.csv",
-    "role": "data",
-    "size_bytes": 136915
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/MO.csv",
-    "role": "data",
-    "size_bytes": 137097
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/STJ.csv",
-    "role": "data",
-    "size_bytes": 81175
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/SVU.csv",
-    "role": "data",
-    "size_bytes": 91500
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/SUN.csv",
-    "role": "data",
-    "size_bytes": 52590
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/WCG.csv",
-    "role": "data",
-    "size_bytes": 100622
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CTRA.csv",
-    "role": "data",
-    "size_bytes": 134868
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/SWKS.csv",
-    "role": "data",
-    "size_bytes": 135995
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/ENPH.csv",
-    "role": "data",
-    "size_bytes": 85204
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/MCHP.csv",
-    "role": "data",
-    "size_bytes": 135957
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CDNS.csv",
-    "role": "data",
-    "size_bytes": 136760
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/BMC.csv",
-    "role": "data",
-    "size_bytes": 58618
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/MSCI.csv",
-    "role": "data",
-    "size_bytes": 117068
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CHTR.csv",
-    "role": "data",
-    "size_bytes": 102859
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/EIX.csv",
-    "role": "data",
-    "size_bytes": 135101
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/KDP.csv",
-    "role": "data",
-    "size_bytes": 44044
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/BBY.csv",
-    "role": "data",
-    "size_bytes": 136102
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/ESV.csv",
-    "role": "data",
-    "size_bytes": 33699
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/SNDK.csv",
-    "role": "data",
-    "size_bytes": 77615
-  },
-  {
-    "binary_ext": false,
-    "ext": ".md",
-    "path": "docs/examples.md",
-    "role": "doc",
-    "size_bytes": 1693
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/GEN.csv",
-    "role": "data",
-    "size_bytes": 137141
-  },
-  {
-    "binary_ext": false,
-    "ext": ".md",
-    "path": "docs/CODEX_SPRINT_TICKETS.md",
-    "role": "doc",
-    "size_bytes": 9161
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/WBA.csv",
-    "role": "data",
-    "size_bytes": 136001
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/LVS.csv",
-    "role": "data",
-    "size_bytes": 136103
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/SPLS.csv",
-    "role": "data",
-    "size_bytes": 86594
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/HCA.csv",
-    "role": "data",
-    "size_bytes": 12764
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_determinism.py",
+    "path": "tests/test_walkforward.py",
     "role": "test",
-    "size_bytes": 1635
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/AJG.csv",
-    "role": "data",
-    "size_bytes": 133625
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/DTE.csv",
-    "role": "data",
-    "size_bytes": 134847
-  },
-  {
-    "binary_ext": false,
-    "ext": ".md",
-    "path": "docs/leakage-safety.md",
-    "role": "doc",
-    "size_bytes": 3065
+    "size_bytes": 5302
   },
   {
     "binary_ext": false,
     "ext": ".py",
-    "path": "tests/test_limit_order_execution.py",
+    "path": "tests/test_vwap_is.py",
     "role": "test",
-    "size_bytes": 2426
-  },
-  {
-    "binary_ext": false,
-    "ext": ".md",
-    "path": "docs/results_wrds_smoke.md",
-    "role": "doc",
-    "size_bytes": 2702
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/AN.csv",
-    "role": "data",
-    "size_bytes": 133759
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_multiasset_data_handler.py",
-    "role": "test",
-    "size_bytes": 4516
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/C.csv",
-    "role": "data",
-    "size_bytes": 140345
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_factor_regression.py",
-    "role": "test",
-    "size_bytes": 591
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/T.csv",
-    "role": "data",
-    "size_bytes": 140285
-  },
-  {
-    "binary_ext": false,
-    "ext": ".md",
-    "path": "docs/PLAN_OF_RECORD.md",
-    "role": "doc",
-    "size_bytes": 8039
+    "size_bytes": 1629
   },
   {
     "binary_ext": false,
@@ -1632,80 +1324,206 @@
   },
   {
     "binary_ext": false,
-    "ext": ".md",
-    "path": "docs/DOCS_AND_LOGGING_SYSTEM.md",
-    "role": "doc",
-    "size_bytes": 5604
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/DISH.csv",
-    "role": "data",
-    "size_bytes": 128353
+    "ext": ".py",
+    "path": "tests/test_factor_regression.py",
+    "role": "test",
+    "size_bytes": 591
   },
   {
     "binary_ext": false,
     "ext": ".py",
-    "path": "tests/test_vwap_is.py",
+    "path": "tests/test_multiasset_data_handler.py",
     "role": "test",
-    "size_bytes": 1629
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CF.csv",
-    "role": "data",
-    "size_bytes": 133028
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/MEE.csv",
-    "role": "data",
-    "size_bytes": 43394
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/MGM.csv",
-    "role": "data",
-    "size_bytes": 136347
+    "size_bytes": 4516
   },
   {
     "binary_ext": false,
-    "ext": ".md",
-    "path": "docs/results_wrds.md",
-    "role": "doc",
-    "size_bytes": 3744
+    "ext": ".py",
+    "path": "tests/test_limit_order_execution.py",
+    "role": "test",
+    "size_bytes": 2426
   },
   {
     "binary_ext": false,
-    "ext": ".md",
-    "path": "docs/api.md",
+    "ext": ".py",
+    "path": "tests/test_determinism.py",
+    "role": "test",
+    "size_bytes": 1635
+  },
+  {
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "tests/test_flagship_momentum.py",
+    "role": "test",
+    "size_bytes": 5070
+  },
+  {
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "tests/test_price_lookup.py",
+    "role": "test",
+    "size_bytes": 1300
+  },
+  {
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "tests/test_artifacts_schema.py",
+    "role": "test",
+    "size_bytes": 2013
+  },
+  {
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "tests/conftest.py",
+    "role": "test",
+    "size_bytes": 2261
+  },
+  {
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "tests/test_cli_info.py",
+    "role": "test",
+    "size_bytes": 1597
+  },
+  {
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "tests/test_wrds_markers.py",
+    "role": "test",
+    "size_bytes": 1108
+  },
+  {
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "tests/test_borrow_costs.py",
+    "role": "test",
+    "size_bytes": 1765
+  },
+  {
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "tests/test_risk_stats.py",
+    "role": "test",
+    "size_bytes": 1650
+  },
+  {
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "tests/test_benchmarks.py",
+    "role": "test",
+    "size_bytes": 1121
+  },
+  {
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "tests/test_cli_help.py",
+    "role": "test",
+    "size_bytes": 429
+  },
+  {
+    "binary_ext": true,
+    "ext": ".png",
+    "path": "docs/img/wrds_flagship_smoke/2025-12-21T06-06-35Z-0dbb291/equity_curve.png",
     "role": "doc",
+    "size_bytes": 131744
+  },
+  {
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "tests/test_wrds_flagship_spec.py",
+    "role": "test",
+    "size_bytes": 1862
+  },
+  {
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "tests/test_reporting_robustness.py",
+    "role": "test",
     "size_bytes": 4161
   },
   {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/MER.csv",
-    "role": "data",
-    "size_bytes": 27458
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "tests/test_execution_models.py",
+    "role": "test",
+    "size_bytes": 900
   },
   {
     "binary_ext": false,
-    "ext": ".md",
-    "path": "docs/benchmarks.md",
-    "role": "doc",
-    "size_bytes": 1280
+    "ext": ".py",
+    "path": "tests/test_multiasset_cs_momentum.py",
+    "role": "test",
+    "size_bytes": 1660
   },
   {
     "binary_ext": false,
-    "ext": ".md",
-    "path": "docs/reproducibility.md",
-    "role": "doc",
-    "size_bytes": 3706
+    "ext": ".py",
+    "path": "tests/test_slippage_models.py",
+    "role": "test",
+    "size_bytes": 2168
+  },
+  {
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "tests/__init__.py",
+    "role": "test",
+    "size_bytes": 0
+  },
+  {
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "tests/test_trades_jsonl.py",
+    "role": "test",
+    "size_bytes": 1657
+  },
+  {
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "tests/test_lob_cancel_latency.py",
+    "role": "test",
+    "size_bytes": 1651
+  },
+  {
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "tests/test_lob.py",
+    "role": "test",
+    "size_bytes": 1134
+  },
+  {
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "tests/test_build_wrds_signals.py",
+    "role": "test",
+    "size_bytes": 1990
+  },
+  {
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "tests/test_risk_and_slippage.py",
+    "role": "test",
+    "size_bytes": 1459
+  },
+  {
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "tests/test_docs_links.py",
+    "role": "test",
+    "size_bytes": 400
+  },
+  {
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "tests/test_execution.py",
+    "role": "test",
+    "size_bytes": 2981
+  },
+  {
+    "binary_ext": false,
+    "ext": ".py",
+    "path": "tests/test_capital_and_slippage_integration.py",
+    "role": "test",
+    "size_bytes": 1529
   },
   {
     "binary_ext": false,
@@ -1849,13 +1667,6 @@
   },
   {
     "binary_ext": false,
-    "ext": ".md",
-    "path": "docs/prompts/20251220_223500_ticket-01_wrds-tighten-caps.md",
-    "role": "doc",
-    "size_bytes": 4798
-  },
-  {
-    "binary_ext": false,
     "ext": ".py",
     "path": "tests/test_time_ordering.py",
     "role": "test",
@@ -1883,333 +1694,571 @@
     "size_bytes": 533
   },
   {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_capital_and_slippage_integration.py",
-    "role": "test",
-    "size_bytes": 1529
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/BXLT.csv",
+    "role": "data",
+    "size_bytes": 6327
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/GILD.csv",
+    "role": "data",
+    "size_bytes": 137033
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/VRTX.csv",
+    "role": "data",
+    "size_bytes": 139464
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/BA.csv",
+    "role": "data",
+    "size_bytes": 142022
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/MRO.csv",
+    "role": "data",
+    "size_bytes": 136434
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CE.csv",
+    "role": "data",
+    "size_bytes": 134598
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/DVN.csv",
+    "role": "data",
+    "size_bytes": 136006
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/TPR.csv",
+    "role": "data",
+    "size_bytes": 135451
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/KRI.csv",
+    "role": "data",
+    "size_bytes": 9740
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/BUD.csv",
+    "role": "data",
+    "size_bytes": 26298
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/PRGO.csv",
+    "role": "data",
+    "size_bytes": 134404
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/NVR.csv",
+    "role": "data",
+    "size_bytes": 142798
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/ISRG.csv",
+    "role": "data",
+    "size_bytes": 145154
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/TROW.csv",
+    "role": "data",
+    "size_bytes": 136234
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/UAL.csv",
+    "role": "data",
+    "size_bytes": 128704
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/SITC.csv",
+    "role": "data",
+    "size_bytes": 133629
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/AIRC.csv",
+    "role": "data",
+    "size_bytes": 23313
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CSCO.csv",
+    "role": "data",
+    "size_bytes": 140760
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/PODD.csv",
+    "role": "data",
+    "size_bytes": 118238
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/DCN.csv",
+    "role": "data",
+    "size_bytes": 7695
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/TER.csv",
+    "role": "data",
+    "size_bytes": 135858
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/QLGC.csv",
+    "role": "data",
+    "size_bytes": 77721
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/EQIX.csv",
+    "role": "data",
+    "size_bytes": 140734
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/THC.csv",
+    "role": "data",
+    "size_bytes": 133526
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/NLSN.csv",
+    "role": "data",
+    "size_bytes": 78911
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/SOV.csv",
+    "role": "data",
+    "size_bytes": 27456
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/SLM.csv",
+    "role": "data",
+    "size_bytes": 134324
   },
   {
     "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_execution.py",
-    "role": "test",
-    "size_bytes": 2981
+    "ext": ".svg",
+    "path": "docs/diagrams/architecture.svg",
+    "role": "doc",
+    "size_bytes": 1681
   },
   {
     "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_risk_and_slippage.py",
-    "role": "test",
-    "size_bytes": 1459
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_docs_links.py",
-    "role": "test",
-    "size_bytes": 400
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/__init__.py",
-    "role": "test",
-    "size_bytes": 0
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_trades_jsonl.py",
-    "role": "test",
-    "size_bytes": 1657
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_lob_cancel_latency.py",
-    "role": "test",
-    "size_bytes": 1651
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_build_wrds_signals.py",
-    "role": "test",
-    "size_bytes": 1990
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_lob.py",
-    "role": "test",
-    "size_bytes": 1134
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_wrds_flagship_spec.py",
-    "role": "test",
-    "size_bytes": 1862
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_reporting_robustness.py",
-    "role": "test",
-    "size_bytes": 4161
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_execution_models.py",
-    "role": "test",
-    "size_bytes": 900
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_multiasset_cs_momentum.py",
-    "role": "test",
-    "size_bytes": 1660
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_slippage_models.py",
-    "role": "test",
-    "size_bytes": 2168
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_cli_help.py",
-    "role": "test",
-    "size_bytes": 429
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_benchmarks.py",
-    "role": "test",
-    "size_bytes": 1121
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_risk_stats.py",
-    "role": "test",
-    "size_bytes": 1650
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_cli_info.py",
-    "role": "test",
-    "size_bytes": 1597
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_wrds_markers.py",
-    "role": "test",
-    "size_bytes": 1108
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_borrow_costs.py",
-    "role": "test",
-    "size_bytes": 1765
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_flagship_momentum.py",
-    "role": "test",
-    "size_bytes": 5070
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_price_lookup.py",
-    "role": "test",
-    "size_bytes": 1300
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_artifacts_schema.py",
-    "role": "test",
-    "size_bytes": 2013
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/conftest.py",
-    "role": "test",
-    "size_bytes": 2261
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tests/test_walkforward.py",
-    "role": "test",
-    "size_bytes": 2052
+    "ext": ".json",
+    "path": "docs/agent_runs/2025-12-20T21-31-14Z_project_state_rebuild/META.json",
+    "role": "doc",
+    "size_bytes": 258
   },
   {
     "binary_ext": false,
     "ext": ".md",
-    "path": "docs/flagship_momentum_wrds.md",
+    "path": "docs/agent_runs/2025-12-20T21-31-14Z_project_state_rebuild/RESULTS.md",
     "role": "doc",
-    "size_bytes": 3391
+    "size_bytes": 449
   },
   {
     "binary_ext": false,
     "ext": ".md",
-    "path": "docs/wrds.md",
+    "path": "docs/agent_runs/2025-12-20T21-31-14Z_project_state_rebuild/TESTS.md",
     "role": "doc",
-    "size_bytes": 4591
+    "size_bytes": 137
   },
   {
     "binary_ext": false,
     "ext": ".md",
-    "path": "docs/index.md",
+    "path": "docs/agent_runs/2025-12-20T21-31-14Z_project_state_rebuild/PROMPT.md",
     "role": "doc",
-    "size_bytes": 1509
+    "size_bytes": 888
   },
   {
     "binary_ext": false,
     "ext": ".md",
-    "path": "docs/factors.md",
+    "path": "docs/agent_runs/2025-12-20T21-31-14Z_project_state_rebuild/COMMANDS.md",
     "role": "doc",
-    "size_bytes": 1089
-  },
-  {
-    "binary_ext": false,
-    "ext": ".md",
-    "path": "docs/flagship_strategy.md",
-    "role": "doc",
-    "size_bytes": 3137
+    "size_bytes": 650
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/HUBB.csv",
+    "path": "data_sp500/WBA.csv",
     "role": "data",
-    "size_bytes": 134538
+    "size_bytes": 136001
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/GPN.csv",
+    "path": "data_sp500/GEN.csv",
     "role": "data",
-    "size_bytes": 135303
+    "size_bytes": 137141
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/BLS.csv",
+    "path": "data_sp500/SNDK.csv",
     "role": "data",
-    "size_bytes": 13589
+    "size_bytes": 77615
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/PSX.csv",
+    "path": "data_sp500/ESV.csv",
     "role": "data",
-    "size_bytes": 86793
+    "size_bytes": 33699
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/LNC.csv",
+    "path": "data_sp500/BBY.csv",
     "role": "data",
-    "size_bytes": 134815
+    "size_bytes": 136102
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/BAC.csv",
+    "path": "data_sp500/KDP.csv",
     "role": "data",
-    "size_bytes": 141350
+    "size_bytes": 44044
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/LNT.csv",
+    "path": "data_sp500/EIX.csv",
     "role": "data",
-    "size_bytes": 132280
+    "size_bytes": 135101
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/BTU.csv",
+    "path": "data_sp500/CHTR.csv",
     "role": "data",
-    "size_bytes": 76354
+    "size_bytes": 102859
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/ALTR.csv",
+    "path": "data_sp500/MSCI.csv",
     "role": "data",
-    "size_bytes": 74786
+    "size_bytes": 117068
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/BLDR.csv",
+    "path": "data_sp500/BMC.csv",
     "role": "data",
-    "size_bytes": 127380
+    "size_bytes": 58618
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/STI.csv",
+    "path": "data_sp500/CDNS.csv",
     "role": "data",
-    "size_bytes": 101151
+    "size_bytes": 136760
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/SOLV.csv",
+    "path": "data_sp500/MCHP.csv",
     "role": "data",
-    "size_bytes": 5086
+    "size_bytes": 135957
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/LH.csv",
+    "path": "data_sp500/ENPH.csv",
     "role": "data",
-    "size_bytes": 136830
+    "size_bytes": 85204
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/OGN.csv",
+    "path": "data_sp500/SWKS.csv",
     "role": "data",
-    "size_bytes": 24244
+    "size_bytes": 135995
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/ADM.csv",
+    "path": "data_sp500/CTRA.csv",
     "role": "data",
-    "size_bytes": 135465
+    "size_bytes": 134868
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/FCX.csv",
+    "path": "data_sp500/WCG.csv",
     "role": "data",
-    "size_bytes": 139104
+    "size_bytes": 100622
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/BC.csv",
+    "path": "data_sp500/SUN.csv",
     "role": "data",
-    "size_bytes": 132088
+    "size_bytes": 52590
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/SVU.csv",
+    "role": "data",
+    "size_bytes": 91500
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/MO.csv",
+    "role": "data",
+    "size_bytes": 137097
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/STJ.csv",
+    "role": "data",
+    "size_bytes": 81175
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/FOX.csv",
+    "role": "data",
+    "size_bytes": 38670
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/A.csv",
+    "role": "data",
+    "size_bytes": 136915
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CIEN.csv",
+    "role": "data",
+    "size_bytes": 134966
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/QRVO.csv",
+    "role": "data",
+    "size_bytes": 134233
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/V.csv",
+    "role": "data",
+    "size_bytes": 119712
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/FTR.csv",
+    "role": "data",
+    "size_bytes": 102206
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CHX.csv",
+    "role": "data",
+    "size_bytes": 44296
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/ATGE.csv",
+    "role": "data",
+    "size_bytes": 130950
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/MDT.csv",
+    "role": "data",
+    "size_bytes": 136273
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/TIF.csv",
+    "role": "data",
+    "size_bytes": 108414
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/TDC.csv",
+    "role": "data",
+    "size_bytes": 115293
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/TEG.csv",
+    "role": "data",
+    "size_bytes": 68403
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/JNS.csv",
+    "role": "data",
+    "size_bytes": 82996
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/XL.csv",
+    "role": "data",
+    "size_bytes": 92125
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/ADNT.csv",
+    "role": "data",
+    "size_bytes": 54124
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/MER.csv",
+    "role": "data",
+    "size_bytes": 27458
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/MGM.csv",
+    "role": "data",
+    "size_bytes": 136347
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/MEE.csv",
+    "role": "data",
+    "size_bytes": 43394
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/DISH.csv",
+    "role": "data",
+    "size_bytes": 128353
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CF.csv",
+    "role": "data",
+    "size_bytes": 133028
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/T.csv",
+    "role": "data",
+    "size_bytes": 140285
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/C.csv",
+    "role": "data",
+    "size_bytes": 140345
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/AN.csv",
+    "role": "data",
+    "size_bytes": 133759
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/DTE.csv",
+    "role": "data",
+    "size_bytes": 134847
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/AJG.csv",
+    "role": "data",
+    "size_bytes": 133625
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/HCA.csv",
+    "role": "data",
+    "size_bytes": 12764
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/LVS.csv",
+    "role": "data",
+    "size_bytes": 136103
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/SPLS.csv",
+    "role": "data",
+    "size_bytes": 86594
   },
   {
     "binary_ext": true,
@@ -2284,37 +2333,149 @@
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/TDC.csv",
+    "path": "data_sp500/LH.csv",
     "role": "data",
-    "size_bytes": 115293
+    "size_bytes": 136830
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/TEG.csv",
+    "path": "data_sp500/OGN.csv",
     "role": "data",
-    "size_bytes": 68403
+    "size_bytes": 24244
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/JNS.csv",
+    "path": "data_sp500/ADM.csv",
     "role": "data",
-    "size_bytes": 82996
+    "size_bytes": 135465
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/XL.csv",
+    "path": "data_sp500/FCX.csv",
     "role": "data",
-    "size_bytes": 92125
+    "size_bytes": 139104
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/ADNT.csv",
+    "path": "data_sp500/BC.csv",
     "role": "data",
-    "size_bytes": 54124
+    "size_bytes": 132088
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/BLDR.csv",
+    "role": "data",
+    "size_bytes": 127380
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/STI.csv",
+    "role": "data",
+    "size_bytes": 101151
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/SOLV.csv",
+    "role": "data",
+    "size_bytes": 5086
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/BTU.csv",
+    "role": "data",
+    "size_bytes": 76354
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/ALTR.csv",
+    "role": "data",
+    "size_bytes": 74786
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/LNT.csv",
+    "role": "data",
+    "size_bytes": 132280
+  },
+  {
+    "binary_ext": false,
+    "ext": ".json",
+    "path": "docs/agent_runs/20251220_223500_ticket-01_wrds-tighten-caps/META.json",
+    "role": "doc",
+    "size_bytes": 2101
+  },
+  {
+    "binary_ext": false,
+    "ext": ".md",
+    "path": "docs/agent_runs/20251220_223500_ticket-01_wrds-tighten-caps/RESULTS.md",
+    "role": "doc",
+    "size_bytes": 2927
+  },
+  {
+    "binary_ext": false,
+    "ext": ".md",
+    "path": "docs/agent_runs/20251220_223500_ticket-01_wrds-tighten-caps/TESTS.md",
+    "role": "doc",
+    "size_bytes": 596
+  },
+  {
+    "binary_ext": false,
+    "ext": ".md",
+    "path": "docs/agent_runs/20251220_223500_ticket-01_wrds-tighten-caps/PROMPT.md",
+    "role": "doc",
+    "size_bytes": 4798
+  },
+  {
+    "binary_ext": false,
+    "ext": ".md",
+    "path": "docs/agent_runs/20251220_223500_ticket-01_wrds-tighten-caps/COMMANDS.md",
+    "role": "doc",
+    "size_bytes": 17102
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/F.csv",
+    "role": "data",
+    "size_bytes": 138920
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/ADI.csv",
+    "role": "data",
+    "size_bytes": 137831
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CC.csv",
+    "role": "data",
+    "size_bytes": 25865
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/PARA.csv",
+    "role": "data",
+    "size_bytes": 136334
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/Q.csv",
+    "role": "data",
+    "size_bytes": 42034
   },
   {
     "binary_ext": true,
@@ -2466,79 +2627,177 @@
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/SMCI.csv",
+    "path": "data_sp500/HUBB.csv",
     "role": "data",
-    "size_bytes": 111764
+    "size_bytes": 134538
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/STLD.csv",
+    "path": "data_sp500/GPN.csv",
     "role": "data",
-    "size_bytes": 135856
+    "size_bytes": 135303
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/CFC.csv",
+    "path": "data_sp500/BLS.csv",
     "role": "data",
-    "size_bytes": 23782
+    "size_bytes": 13589
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/VSM.csv",
+    "path": "data_sp500/PSX.csv",
     "role": "data",
-    "size_bytes": 19757
+    "size_bytes": 86793
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/ADBE.csv",
+    "path": "data_sp500/LNC.csv",
     "role": "data",
-    "size_bytes": 141498
+    "size_bytes": 134815
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/HOG.csv",
+    "path": "data_sp500/BAC.csv",
     "role": "data",
-    "size_bytes": 134917
+    "size_bytes": 141350
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/F.csv",
+    "path": "data_sp500/ODP.csv",
     "role": "data",
-    "size_bytes": 138920
+    "size_bytes": 131850
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/ADI.csv",
+    "path": "data_sp500/NE.csv",
     "role": "data",
-    "size_bytes": 137831
+    "size_bytes": 104970
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/CC.csv",
+    "path": "data_sp500/HCR.csv",
     "role": "data",
-    "size_bytes": 25865
+    "size_bytes": 19591
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/PARA.csv",
+    "path": "data_sp500/MI.csv",
     "role": "data",
-    "size_bytes": 136334
+    "size_bytes": 43198
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/Q.csv",
+    "path": "data_sp500/FLR.csv",
     "role": "data",
-    "size_bytes": 42034
+    "size_bytes": 134709
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/DTV.csv",
+    "role": "data",
+    "size_bytes": 71926
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/FNM.csv",
+    "role": "data",
+    "size_bytes": 37520
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/GNRC.csv",
+    "role": "data",
+    "size_bytes": 99890
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/TSN.csv",
+    "role": "data",
+    "size_bytes": 135199
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/LM.csv",
+    "role": "data",
+    "size_bytes": 104397
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/BF.csv",
+    "role": "data",
+    "size_bytes": 131562
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CB.csv",
+    "role": "data",
+    "size_bytes": 139488
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/QCP.csv",
+    "role": "data",
+    "size_bytes": 11388
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/KVUE.csv",
+    "role": "data",
+    "size_bytes": 11605
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/SYK.csv",
+    "role": "data",
+    "size_bytes": 139003
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/G.csv",
+    "role": "data",
+    "size_bytes": 5099
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/VC.csv",
+    "role": "data",
+    "size_bytes": 126061
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/ARE.csv",
+    "role": "data",
+    "size_bytes": 134237
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/YHOO.csv",
+    "role": "data",
+    "size_bytes": 87392
   },
   {
     "binary_ext": true,
@@ -2585,163 +2844,44 @@
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/VC.csv",
+    "path": "data_sp500/SMCI.csv",
     "role": "data",
-    "size_bytes": 126061
+    "size_bytes": 111764
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/ARE.csv",
+    "path": "data_sp500/STLD.csv",
     "role": "data",
-    "size_bytes": 134237
+    "size_bytes": 135856
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/YHOO.csv",
+    "path": "data_sp500/CFC.csv",
     "role": "data",
-    "size_bytes": 87392
+    "size_bytes": 23782
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/QCP.csv",
+    "path": "data_sp500/VSM.csv",
     "role": "data",
-    "size_bytes": 11388
+    "size_bytes": 19757
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/KVUE.csv",
+    "path": "data_sp500/ADBE.csv",
     "role": "data",
-    "size_bytes": 11605
+    "size_bytes": 141498
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/SYK.csv",
+    "path": "data_sp500/HOG.csv",
     "role": "data",
-    "size_bytes": 139003
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/G.csv",
-    "role": "data",
-    "size_bytes": 5099
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/BF.csv",
-    "role": "data",
-    "size_bytes": 131562
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CB.csv",
-    "role": "data",
-    "size_bytes": 139488
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/LM.csv",
-    "role": "data",
-    "size_bytes": 104397
-  },
-  {
-    "binary_ext": false,
-    "ext": ".md",
-    "path": "docs/data_sp500.md",
-    "role": "doc",
-    "size_bytes": 3080
-  },
-  {
-    "binary_ext": false,
-    "ext": ".svg",
-    "path": "docs/diagrams/architecture.svg",
-    "role": "doc",
-    "size_bytes": 1681
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tools/gpt_bundle.py",
-    "role": "tool",
-    "size_bytes": 3755
-  },
-  {
-    "binary_ext": false,
-    "ext": ".md",
-    "path": "docs/gpt_outputs/12-20-25prompt1-diagnosis.md",
-    "role": "doc",
-    "size_bytes": 34098
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tools/build_project_state.py",
-    "role": "tool",
-    "size_bytes": 10590
-  },
-  {
-    "binary_ext": false,
-    "ext": ".md",
-    "path": "docs/gpt_outputs/20251221_wrds_data_root.md",
-    "role": "doc",
-    "size_bytes": 1233
-  },
-  {
-    "binary_ext": false,
-    "ext": ".py",
-    "path": "tools/render_project_state_docs.py",
-    "role": "tool",
-    "size_bytes": 24949
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/XEL.csv",
-    "role": "data",
-    "size_bytes": 135184
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/FMC.csv",
-    "role": "data",
-    "size_bytes": 132818
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/ZBRA.csv",
-    "role": "data",
-    "size_bytes": 135132
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/YUMC.csv",
-    "role": "data",
-    "size_bytes": 55158
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/BKNG.csv",
-    "role": "data",
-    "size_bytes": 148121
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/NBR.csv",
-    "role": "data",
-    "size_bytes": 134572
+    "size_bytes": 134917
   },
   {
     "binary_ext": true,
@@ -2865,65 +3005,191 @@
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/ODP.csv",
+    "path": "data_sp500/LO.csv",
     "role": "data",
-    "size_bytes": 131850
+    "size_bytes": 47699
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/NE.csv",
+    "path": "data_sp500/PDCO.csv",
     "role": "data",
-    "size_bytes": 104970
+    "size_bytes": 132340
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/HCR.csv",
+    "path": "data_sp500/AIZ.csv",
     "role": "data",
-    "size_bytes": 19591
+    "size_bytes": 134085
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/MI.csv",
+    "path": "data_sp500/XEL.csv",
     "role": "data",
-    "size_bytes": 43198
+    "size_bytes": 135184
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/FLR.csv",
+    "path": "data_sp500/FMC.csv",
     "role": "data",
-    "size_bytes": 134709
+    "size_bytes": 132818
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/DTV.csv",
+    "path": "data_sp500/ZBRA.csv",
     "role": "data",
-    "size_bytes": 71926
+    "size_bytes": 135132
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/FNM.csv",
+    "path": "data_sp500/YUMC.csv",
     "role": "data",
-    "size_bytes": 37520
+    "size_bytes": 55158
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/GNRC.csv",
+    "path": "data_sp500/BKNG.csv",
     "role": "data",
-    "size_bytes": 99890
+    "size_bytes": 148121
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/TSN.csv",
+    "path": "data_sp500/NBR.csv",
     "role": "data",
-    "size_bytes": 135199
+    "size_bytes": 134572
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/MDP.csv",
+    "role": "data",
+    "size_bytes": 110222
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/ARG.csv",
+    "role": "data",
+    "size_bytes": 75408
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/MET.csv",
+    "role": "data",
+    "size_bytes": 135903
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CERN.csv",
+    "role": "data",
+    "size_bytes": 116510
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/R.csv",
+    "role": "data",
+    "size_bytes": 131520
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/WDAY.csv",
+    "role": "data",
+    "size_bytes": 85846
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/FTV.csv",
+    "role": "data",
+    "size_bytes": 57307
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CHK.csv",
+    "role": "data",
+    "size_bytes": 106542
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/APO.csv",
+    "role": "data",
+    "size_bytes": 91799
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/ACGL.csv",
+    "role": "data",
+    "size_bytes": 131865
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/DLR.csv",
+    "role": "data",
+    "size_bytes": 136079
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/XRAY.csv",
+    "role": "data",
+    "size_bytes": 133376
+  },
+  {
+    "binary_ext": true,
+    "ext": ".png",
+    "path": "docs/img/wrds_flagship/2025-11-21T00-28-22Z-54912a8/equity_curve.png",
+    "role": "doc",
+    "size_bytes": 221326
+  },
+  {
+    "binary_ext": true,
+    "ext": ".png",
+    "path": "docs/img/wrds_flagship/2025-11-21T00-28-22Z-54912a8/2025-11-21T00-28-22Z-54912a8_deciles.png",
+    "role": "doc",
+    "size_bytes": 64689
+  },
+  {
+    "binary_ext": true,
+    "ext": ".png",
+    "path": "docs/img/wrds_flagship/2025-11-21T00-28-22Z-54912a8/spa_tstats.png",
+    "role": "doc",
+    "size_bytes": 532966
+  },
+  {
+    "binary_ext": true,
+    "ext": ".png",
+    "path": "docs/img/wrds_flagship/2025-11-21T00-28-22Z-54912a8/2025-11-21T00-28-22Z-54912a8_rolling_betas.png",
+    "role": "doc",
+    "size_bytes": 299485
+  },
+  {
+    "binary_ext": true,
+    "ext": ".png",
+    "path": "docs/img/wrds_flagship/2025-11-21T00-28-22Z-54912a8/2025-11-21T00-28-22Z-54912a8_ic_ir.png",
+    "role": "doc",
+    "size_bytes": 216187
+  },
+  {
+    "binary_ext": true,
+    "ext": ".png",
+    "path": "docs/img/wrds_flagship/2025-11-21T00-28-22Z-54912a8/bootstrap_hist.png",
+    "role": "doc",
+    "size_bytes": 62322
   },
   {
     "binary_ext": true,
@@ -3019,160 +3285,6 @@
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/XRAY.csv",
-    "role": "data",
-    "size_bytes": 133376
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/ACGL.csv",
-    "role": "data",
-    "size_bytes": 131865
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/DLR.csv",
-    "role": "data",
-    "size_bytes": 136079
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/FTV.csv",
-    "role": "data",
-    "size_bytes": 57307
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CHK.csv",
-    "role": "data",
-    "size_bytes": 106542
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/APO.csv",
-    "role": "data",
-    "size_bytes": 91799
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/MDP.csv",
-    "role": "data",
-    "size_bytes": 110222
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/ARG.csv",
-    "role": "data",
-    "size_bytes": 75408
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/MET.csv",
-    "role": "data",
-    "size_bytes": 135903
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CERN.csv",
-    "role": "data",
-    "size_bytes": 116510
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/R.csv",
-    "role": "data",
-    "size_bytes": 131520
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/WDAY.csv",
-    "role": "data",
-    "size_bytes": 85846
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/LO.csv",
-    "role": "data",
-    "size_bytes": 47699
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/PDCO.csv",
-    "role": "data",
-    "size_bytes": 132340
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/AIZ.csv",
-    "role": "data",
-    "size_bytes": 134085
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/UIS.csv",
-    "role": "data",
-    "size_bytes": 129626
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/ABBV.csv",
-    "role": "data",
-    "size_bytes": 83571
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/ALLE.csv",
-    "role": "data",
-    "size_bytes": 74256
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/UNP.csv",
-    "role": "data",
-    "size_bytes": 140591
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/ABNB.csv",
-    "role": "data",
-    "size_bytes": 29122
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/IPG.csv",
-    "role": "data",
-    "size_bytes": 134554
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/KHC.csv",
-    "role": "data",
-    "size_bytes": 64563
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
     "path": "data_sp500/BXP.csv",
     "role": "data",
     "size_bytes": 135945
@@ -3222,44 +3334,51 @@
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/GME.csv",
+    "path": "data_sp500/UNP.csv",
     "role": "data",
-    "size_bytes": 135521
+    "size_bytes": 140591
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/EBAY.csv",
+    "path": "data_sp500/ABNB.csv",
     "role": "data",
-    "size_bytes": 138153
+    "size_bytes": 29122
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/ETR.csv",
+    "path": "data_sp500/IPG.csv",
     "role": "data",
-    "size_bytes": 135586
+    "size_bytes": 134554
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/PLL.csv",
+    "path": "data_sp500/KHC.csv",
     "role": "data",
-    "size_bytes": 70220
+    "size_bytes": 64563
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/RAI.csv",
+    "path": "data_sp500/ABBV.csv",
     "role": "data",
-    "size_bytes": 84571
+    "size_bytes": 83571
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/ECL.csv",
+    "path": "data_sp500/ALLE.csv",
     "role": "data",
-    "size_bytes": 137823
+    "size_bytes": 74256
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/UIS.csv",
+    "role": "data",
+    "size_bytes": 129626
   },
   {
     "binary_ext": true,
@@ -3271,156 +3390,9 @@
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/PBG.csv",
+    "path": "data_sp500/ECL.csv",
     "role": "data",
-    "size_bytes": 34498
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/PENN.csv",
-    "role": "data",
-    "size_bytes": 133206
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/SBUX.csv",
-    "role": "data",
-    "size_bytes": 137181
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/IR.csv",
-    "role": "data",
-    "size_bytes": 51395
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/FHI.csv",
-    "role": "data",
-    "size_bytes": 131832
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/AMT.csv",
-    "role": "data",
-    "size_bytes": 139696
-  },
-  {
-    "binary_ext": false,
-    "ext": ".json",
-    "path": "docs/agent_runs/2025-12-20T21-31-14Z_project_state_rebuild/META.json",
-    "role": "doc",
-    "size_bytes": 258
-  },
-  {
-    "binary_ext": false,
-    "ext": ".md",
-    "path": "docs/agent_runs/2025-12-20T21-31-14Z_project_state_rebuild/RESULTS.md",
-    "role": "doc",
-    "size_bytes": 449
-  },
-  {
-    "binary_ext": false,
-    "ext": ".md",
-    "path": "docs/agent_runs/2025-12-20T21-31-14Z_project_state_rebuild/TESTS.md",
-    "role": "doc",
-    "size_bytes": 137
-  },
-  {
-    "binary_ext": false,
-    "ext": ".md",
-    "path": "docs/agent_runs/2025-12-20T21-31-14Z_project_state_rebuild/PROMPT.md",
-    "role": "doc",
-    "size_bytes": 888
-  },
-  {
-    "binary_ext": false,
-    "ext": ".md",
-    "path": "docs/agent_runs/2025-12-20T21-31-14Z_project_state_rebuild/COMMANDS.md",
-    "role": "doc",
-    "size_bytes": 650
-  },
-  {
-    "binary_ext": true,
-    "ext": ".png",
-    "path": "docs/img/wrds_flagship_smoke/2025-12-21T06-06-35Z-0dbb291/2025-12-21T06-06-35Z-0dbb291_rolling_betas.png",
-    "role": "doc",
-    "size_bytes": 189856
-  },
-  {
-    "binary_ext": true,
-    "ext": ".png",
-    "path": "docs/img/wrds_flagship_smoke/2025-12-21T06-06-35Z-0dbb291/bootstrap_hist.png",
-    "role": "doc",
-    "size_bytes": 54693
-  },
-  {
-    "binary_ext": true,
-    "ext": ".png",
-    "path": "docs/img/wrds_flagship_smoke/2025-12-21T06-06-35Z-0dbb291/2025-12-21T06-06-35Z-0dbb291_deciles.png",
-    "role": "doc",
-    "size_bytes": 73599
-  },
-  {
-    "binary_ext": true,
-    "ext": ".png",
-    "path": "docs/img/wrds_flagship_smoke/2025-12-21T06-06-35Z-0dbb291/spa_tstats.png",
-    "role": "doc",
-    "size_bytes": 17324
-  },
-  {
-    "binary_ext": true,
-    "ext": ".png",
-    "path": "docs/img/wrds_flagship_smoke/2025-12-21T06-06-35Z-0dbb291/2025-12-21T06-06-35Z-0dbb291_ic_ir.png",
-    "role": "doc",
-    "size_bytes": 161244
-  },
-  {
-    "binary_ext": true,
-    "ext": ".png",
-    "path": "docs/img/wrds_flagship_smoke/2025-12-21T06-06-35Z-0dbb291/equity_curve.png",
-    "role": "doc",
-    "size_bytes": 131744
-  },
-  {
-    "binary_ext": false,
-    "ext": ".json",
-    "path": "docs/agent_runs/20251220_223500_ticket-01_wrds-tighten-caps/META.json",
-    "role": "doc",
-    "size_bytes": 2101
-  },
-  {
-    "binary_ext": false,
-    "ext": ".md",
-    "path": "docs/agent_runs/20251220_223500_ticket-01_wrds-tighten-caps/RESULTS.md",
-    "role": "doc",
-    "size_bytes": 2927
-  },
-  {
-    "binary_ext": false,
-    "ext": ".md",
-    "path": "docs/agent_runs/20251220_223500_ticket-01_wrds-tighten-caps/TESTS.md",
-    "role": "doc",
-    "size_bytes": 596
-  },
-  {
-    "binary_ext": false,
-    "ext": ".md",
-    "path": "docs/agent_runs/20251220_223500_ticket-01_wrds-tighten-caps/PROMPT.md",
-    "role": "doc",
-    "size_bytes": 4798
-  },
-  {
-    "binary_ext": false,
-    "ext": ".md",
-    "path": "docs/agent_runs/20251220_223500_ticket-01_wrds-tighten-caps/COMMANDS.md",
-    "role": "doc",
-    "size_bytes": 17102
+    "size_bytes": 137823
   },
   {
     "binary_ext": true,
@@ -3465,48 +3437,6 @@
     "size_bytes": 59076
   },
   {
-    "binary_ext": true,
-    "ext": ".png",
-    "path": "docs/img/wrds_flagship/2025-11-21T00-28-22Z-54912a8/equity_curve.png",
-    "role": "doc",
-    "size_bytes": 221326
-  },
-  {
-    "binary_ext": true,
-    "ext": ".png",
-    "path": "docs/img/wrds_flagship/2025-11-21T00-28-22Z-54912a8/2025-11-21T00-28-22Z-54912a8_deciles.png",
-    "role": "doc",
-    "size_bytes": 64689
-  },
-  {
-    "binary_ext": true,
-    "ext": ".png",
-    "path": "docs/img/wrds_flagship/2025-11-21T00-28-22Z-54912a8/spa_tstats.png",
-    "role": "doc",
-    "size_bytes": 532966
-  },
-  {
-    "binary_ext": true,
-    "ext": ".png",
-    "path": "docs/img/wrds_flagship/2025-11-21T00-28-22Z-54912a8/2025-11-21T00-28-22Z-54912a8_rolling_betas.png",
-    "role": "doc",
-    "size_bytes": 299485
-  },
-  {
-    "binary_ext": true,
-    "ext": ".png",
-    "path": "docs/img/wrds_flagship/2025-11-21T00-28-22Z-54912a8/2025-11-21T00-28-22Z-54912a8_ic_ir.png",
-    "role": "doc",
-    "size_bytes": 216187
-  },
-  {
-    "binary_ext": true,
-    "ext": ".png",
-    "path": "docs/img/wrds_flagship/2025-11-21T00-28-22Z-54912a8/bootstrap_hist.png",
-    "role": "doc",
-    "size_bytes": 62322
-  },
-  {
     "binary_ext": false,
     "ext": ".md",
     "path": "docs/agent_runs/20251221_190000_ticket-06_bundle-commit-consistency/PROMPT.md",
@@ -3518,966 +3448,105 @@
     "ext": ".md",
     "path": "docs/agent_runs/20251221_190000_ticket-06_bundle-commit-consistency/COMMANDS.md",
     "role": "doc",
-    "size_bytes": 86
+    "size_bytes": 6510
   },
   {
     "binary_ext": false,
     "ext": ".md",
     "path": "docs/agent_runs/20251221_190000_ticket-06_bundle-commit-consistency/TESTS.md",
     "role": "doc",
-    "size_bytes": 174
+    "size_bytes": 433
   },
   {
     "binary_ext": false,
     "ext": ".md",
     "path": "docs/agent_runs/20251221_190000_ticket-06_bundle-commit-consistency/RESULTS.md",
     "role": "doc",
-    "size_bytes": 42
+    "size_bytes": 1123
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/BJS.csv",
+    "path": "data_sp500/SBUX.csv",
     "role": "data",
-    "size_bytes": 36090
+    "size_bytes": 137181
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/KMI.csv",
+    "path": "data_sp500/GME.csv",
     "role": "data",
-    "size_bytes": 15975
+    "size_bytes": 135521
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/BDX.csv",
+    "path": "data_sp500/EBAY.csv",
     "role": "data",
-    "size_bytes": 139131
+    "size_bytes": 138153
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/GLW.csv",
+    "path": "data_sp500/ETR.csv",
     "role": "data",
-    "size_bytes": 137408
+    "size_bytes": 135586
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/PNR.csv",
+    "path": "data_sp500/PLL.csv",
     "role": "data",
-    "size_bytes": 81907
+    "size_bytes": 70220
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/GAP.csv",
+    "path": "data_sp500/RAI.csv",
     "role": "data",
-    "size_bytes": 135984
+    "size_bytes": 84571
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/LSI.csv",
+    "path": "data_sp500/FHI.csv",
     "role": "data",
-    "size_bytes": 61820
+    "size_bytes": 131832
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/VNT.csv",
+    "path": "data_sp500/PBG.csv",
     "role": "data",
-    "size_bytes": 28069
+    "size_bytes": 34498
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/CTB.csv",
+    "path": "data_sp500/PENN.csv",
     "role": "data",
-    "size_bytes": 107616
+    "size_bytes": 133206
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/TWC.csv",
+    "path": "data_sp500/IR.csv",
     "role": "data",
-    "size_bytes": 63559
+    "size_bytes": 51395
   },
   {
     "binary_ext": true,
     "ext": ".csv",
-    "path": "data_sp500/INTC.csv",
+    "path": "data_sp500/AMT.csv",
     "role": "data",
-    "size_bytes": 140865
+    "size_bytes": 139696
   },
   {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/VAL.csv",
-    "role": "data",
-    "size_bytes": 55514
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/EP.csv",
-    "role": "data",
-    "size_bytes": 50267
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/EG.csv",
-    "role": "data",
-    "size_bytes": 137640
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/GEHC.csv",
-    "role": "data",
-    "size_bytes": 13498
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/AMZN.csv",
-    "role": "data",
-    "size_bytes": 148117
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/HCBK.csv",
-    "role": "data",
-    "size_bytes": 72556
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/MNST.csv",
-    "role": "data",
-    "size_bytes": 135498
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/MCD.csv",
-    "role": "data",
-    "size_bytes": 140782
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/ODFL.csv",
-    "role": "data",
-    "size_bytes": 135165
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/SDS.csv",
-    "role": "data",
-    "size_bytes": 4120
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CAT.csv",
-    "role": "data",
-    "size_bytes": 139936
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/PG.csv",
-    "role": "data",
-    "size_bytes": 139507
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/IPGP.csv",
-    "role": "data",
-    "size_bytes": 120030
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CMA.csv",
-    "role": "data",
-    "size_bytes": 134605
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/RX.csv",
-    "role": "data",
-    "size_bytes": 34438
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/MWW.csv",
-    "role": "data",
-    "size_bytes": 78267
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/EQ.csv",
-    "role": "data",
-    "size_bytes": 20871
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/DRE.csv",
-    "role": "data",
-    "size_bytes": 119306
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/PAYC.csv",
-    "role": "data",
-    "size_bytes": 74190
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/DPZ.csv",
-    "role": "data",
-    "size_bytes": 136882
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/INTU.csv",
-    "role": "data",
-    "size_bytes": 140742
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/JNPR.csv",
-    "role": "data",
-    "size_bytes": 136245
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/HSY.csv",
-    "role": "data",
-    "size_bytes": 136606
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/FTNT.csv",
-    "role": "data",
-    "size_bytes": 103020
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/MOS.csv",
-    "role": "data",
-    "size_bytes": 135389
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/AYE.csv",
-    "role": "data",
-    "size_bytes": 41178
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/MMM.csv",
-    "role": "data",
-    "size_bytes": 140454
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/HPC.csv",
-    "role": "data",
-    "size_bytes": 25687
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CCI.csv",
-    "role": "data",
-    "size_bytes": 137579
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CLF.csv",
-    "role": "data",
-    "size_bytes": 135182
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/DECK.csv",
-    "role": "data",
-    "size_bytes": 136333
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/PD.csv",
-    "role": "data",
-    "size_bytes": 15277
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/RL.csv",
-    "role": "data",
-    "size_bytes": 136575
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/OXY.csv",
-    "role": "data",
-    "size_bytes": 136707
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/TMO.csv",
-    "role": "data",
-    "size_bytes": 141690
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/SJM.csv",
-    "role": "data",
-    "size_bytes": 135196
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/MAY.csv",
-    "role": "data",
-    "size_bytes": 4474
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/FI.csv",
-    "role": "data",
-    "size_bytes": 136060
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/VRSK.csv",
-    "role": "data",
-    "size_bytes": 103457
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/TXN.csv",
-    "role": "data",
-    "size_bytes": 140084
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/GM.csv",
-    "role": "data",
-    "size_bytes": 98102
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/BMET.csv",
-    "role": "data",
-    "size_bytes": 18410
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/OMX.csv",
-    "role": "data",
-    "size_bytes": 58674
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/EXPD.csv",
-    "role": "data",
-    "size_bytes": 134873
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/HOLX.csv",
-    "role": "data",
-    "size_bytes": 134837
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CVH.csv",
-    "role": "data",
-    "size_bytes": 55798
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/WELL.csv",
-    "role": "data",
-    "size_bytes": 134587
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/EXR.csv",
-    "role": "data",
-    "size_bytes": 133611
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/DXCM.csv",
-    "role": "data",
-    "size_bytes": 131691
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/BBWI.csv",
-    "role": "data",
-    "size_bytes": 135287
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/APTV.csv",
-    "role": "data",
-    "size_bytes": 89358
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/PWR.csv",
-    "role": "data",
-    "size_bytes": 135525
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CSGP.csv",
-    "role": "data",
-    "size_bytes": 135432
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/FBIN.csv",
-    "role": "data",
-    "size_bytes": 88393
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/BIO.csv",
-    "role": "data",
-    "size_bytes": 135612
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CTAS.csv",
-    "role": "data",
-    "size_bytes": 136970
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/ANSS.csv",
-    "role": "data",
-    "size_bytes": 135576
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/MSFT.csv",
-    "role": "data",
-    "size_bytes": 144785
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/EMR.csv",
-    "role": "data",
-    "size_bytes": 135545
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/LEG.csv",
-    "role": "data",
-    "size_bytes": 133108
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/FLIR.csv",
-    "role": "data",
-    "size_bytes": 108602
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/ELV.csv",
-    "role": "data",
-    "size_bytes": 141435
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/UPS.csv",
-    "role": "data",
-    "size_bytes": 138895
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/NEE.csv",
-    "role": "data",
-    "size_bytes": 138016
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/PYPL.csv",
-    "role": "data",
-    "size_bytes": 66369
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/LUMN.csv",
-    "role": "data",
-    "size_bytes": 135461
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/GAS.csv",
-    "role": "data",
-    "size_bytes": 45388
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/WDC.csv",
-    "role": "data",
-    "size_bytes": 135628
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/RVTY.csv",
-    "role": "data",
-    "size_bytes": 133501
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/PCAR.csv",
-    "role": "data",
-    "size_bytes": 135244
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/KO.csv",
-    "role": "data",
-    "size_bytes": 138444
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/EXPE.csv",
-    "role": "data",
-    "size_bytes": 134027
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/IP.csv",
-    "role": "data",
-    "size_bytes": 135448
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/INVH.csv",
-    "role": "data",
-    "size_bytes": 53517
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/SHLD.csv",
-    "role": "data",
-    "size_bytes": 93192
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/HET.csv",
-    "role": "data",
-    "size_bytes": 20577
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/URBN.csv",
-    "role": "data",
-    "size_bytes": 135243
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/GL.csv",
-    "role": "data",
-    "size_bytes": 131637
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/ADSK.csv",
-    "role": "data",
-    "size_bytes": 139163
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/ES.csv",
-    "role": "data",
-    "size_bytes": 134214
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/ED.csv",
-    "role": "data",
-    "size_bytes": 135002
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/MBC.csv",
-    "role": "data",
-    "size_bytes": 13396
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/DHI.csv",
-    "role": "data",
-    "size_bytes": 136341
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/FRE.csv",
-    "role": "data",
-    "size_bytes": 37257
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CNX.csv",
-    "role": "data",
-    "size_bytes": 134918
-  },
-  {
-    "binary_ext": true,
-    "ext": ".png",
-    "path": "docs/img/wrds_flagship/2025-11-12T08-51-11Z-65187e4/bootstrap_hist.png",
+    "binary_ext": false,
+    "ext": ".json",
+    "path": "docs/agent_runs/20251221_190000_ticket-06_bundle-commit-consistency/META.json",
     "role": "doc",
-    "size_bytes": 51769
-  },
-  {
-    "binary_ext": true,
-    "ext": ".png",
-    "path": "docs/img/wrds_flagship/2025-11-12T08-51-11Z-65187e4/2025-11-12T08-51-11Z-65187e4_deciles.png",
-    "role": "doc",
-    "size_bytes": 60079
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/SHW.csv",
-    "role": "data",
-    "size_bytes": 141088
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/COO.csv",
-    "role": "data",
-    "size_bytes": 137380
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/AWK.csv",
-    "role": "data",
-    "size_bytes": 112666
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CMG.csv",
-    "role": "data",
-    "size_bytes": 136892
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/FL.csv",
-    "role": "data",
-    "size_bytes": 134831
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/EW.csv",
-    "role": "data",
-    "size_bytes": 135301
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/VRSN.csv",
-    "role": "data",
-    "size_bytes": 136677
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/ACN.csv",
-    "role": "data",
-    "size_bytes": 140420
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/DD.csv",
-    "role": "data",
-    "size_bytes": 49857
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/IT.csv",
-    "role": "data",
-    "size_bytes": 134972
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/HP.csv",
-    "role": "data",
-    "size_bytes": 134240
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/AME.csv",
-    "role": "data",
-    "size_bytes": 134111
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/UBER.csv",
-    "role": "data",
-    "size_bytes": 39548
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/WEC.csv",
-    "role": "data",
-    "size_bytes": 133785
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/RTN.csv",
-    "role": "data",
-    "size_bytes": 105393
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CTLT.csv",
-    "role": "data",
-    "size_bytes": 69331
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/UDR.csv",
-    "role": "data",
-    "size_bytes": 134458
-  },
-  {
-    "binary_ext": true,
-    "ext": ".png",
-    "path": "docs/img/wrds_flagship/2025-11-12T08-51-11Z-65187e4/2025-11-12T08-51-11Z-65187e4_ic_ir.png",
-    "role": "doc",
-    "size_bytes": 202546
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/AVY.csv",
-    "role": "data",
-    "size_bytes": 134284
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/REZI.csv",
-    "role": "data",
-    "size_bytes": 40584
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/MMI.csv",
-    "role": "data",
-    "size_bytes": 9401
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/MLM.csv",
-    "role": "data",
-    "size_bytes": 138188
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CAR.csv",
-    "role": "data",
-    "size_bytes": 135107
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CBH.csv",
-    "role": "data",
-    "size_bytes": 21788
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CCL.csv",
-    "role": "data",
-    "size_bytes": 136543
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/AMAT.csv",
-    "role": "data",
-    "size_bytes": 140195
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/HPQ.csv",
-    "role": "data",
-    "size_bytes": 138557
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/EA.csv",
-    "role": "data",
-    "size_bytes": 138217
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/EVRG.csv",
-    "role": "data",
-    "size_bytes": 132735
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/ATVI.csv",
-    "role": "data",
-    "size_bytes": 128246
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/AAP.csv",
-    "role": "data",
-    "size_bytes": 136734
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/ABK.csv",
-    "role": "data",
-    "size_bytes": 39043
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/FHN.csv",
-    "role": "data",
-    "size_bytes": 134399
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/DE.csv",
-    "role": "data",
-    "size_bytes": 140336
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/VLTO.csv",
-    "role": "data",
-    "size_bytes": 8557
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/SPG.csv",
-    "role": "data",
-    "size_bytes": 140651
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/AMD.csv",
-    "role": "data",
-    "size_bytes": 138899
+    "size_bytes": 776
   },
   {
     "binary_ext": true,
@@ -4495,353 +3564,24 @@
   },
   {
     "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/NDAQ.csv",
-    "role": "data",
-    "size_bytes": 134045
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/KLAC.csv",
-    "role": "data",
-    "size_bytes": 138893
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/MYL.csv",
-    "role": "data",
-    "size_bytes": 107775
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/WHR.csv",
-    "role": "data",
-    "size_bytes": 137972
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/URI.csv",
-    "role": "data",
-    "size_bytes": 137835
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/RTX.csv",
-    "role": "data",
-    "size_bytes": 137733
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/KRFT.csv",
-    "role": "data",
-    "size_bytes": 18661
-  },
-  {
-    "binary_ext": false,
-    "ext": ".json",
-    "path": "docs/agent_runs/20251221_190000_ticket-06_bundle-commit-consistency/META.json",
+    "ext": ".png",
+    "path": "docs/img/wrds_flagship/2025-11-12T08-51-11Z-65187e4/2025-11-12T08-51-11Z-65187e4_ic_ir.png",
     "role": "doc",
-    "size_bytes": 776
+    "size_bytes": 202546
   },
   {
     "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/HES.csv",
-    "role": "data",
-    "size_bytes": 136877
+    "ext": ".png",
+    "path": "docs/img/wrds_flagship/2025-11-12T08-51-11Z-65187e4/2025-11-12T08-51-11Z-65187e4_deciles.png",
+    "role": "doc",
+    "size_bytes": 60079
   },
   {
     "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/EXC.csv",
-    "role": "data",
-    "size_bytes": 135655
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/BBBY.csv",
-    "role": "data",
-    "size_bytes": 124292
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/BDK.csv",
-    "role": "data",
-    "size_bytes": 34362
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/IDXX.csv",
-    "role": "data",
-    "size_bytes": 136689
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/PWER.csv",
-    "role": "data",
-    "size_bytes": 54723
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/ROP.csv",
-    "role": "data",
-    "size_bytes": 138317
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CHRW.csv",
-    "role": "data",
-    "size_bytes": 134211
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/NVDA.csv",
-    "role": "data",
-    "size_bytes": 143523
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/BIIB.csv",
-    "role": "data",
-    "size_bytes": 142960
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/MTCH.csv",
-    "role": "data",
-    "size_bytes": 62116
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/GTW.csv",
-    "role": "data",
-    "size_bytes": 18231
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/WRK.csv",
-    "role": "data",
-    "size_bytes": 130873
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/SEDG.csv",
-    "role": "data",
-    "size_bytes": 66928
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/NSM.csv",
-    "role": "data",
-    "size_bytes": 45721
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/KMX.csv",
-    "role": "data",
-    "size_bytes": 134873
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/PNC.csv",
-    "role": "data",
-    "size_bytes": 138645
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/NXPI.csv",
-    "role": "data",
-    "size_bytes": 100301
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/ABI.csv",
-    "role": "data",
-    "size_bytes": 26088
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/TYL.csv",
-    "role": "data",
-    "size_bytes": 135904
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/DG.csv",
-    "role": "data",
-    "size_bytes": 104808
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/FDX.csv",
-    "role": "data",
-    "size_bytes": 141677
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/ZTS.csv",
-    "role": "data",
-    "size_bytes": 83318
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/EC.csv",
-    "role": "data",
-    "size_bytes": 9453
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/AON.csv",
-    "role": "data",
-    "size_bytes": 138788
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/VLO.csv",
-    "role": "data",
-    "size_bytes": 137727
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/DPH.csv",
-    "role": "data",
-    "size_bytes": 5103
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/ALB.csv",
-    "role": "data",
-    "size_bytes": 134873
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/HD.csv",
-    "role": "data",
-    "size_bytes": 142658
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/COL.csv",
-    "role": "data",
-    "size_bytes": 92789
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CMS.csv",
-    "role": "data",
-    "size_bytes": 135181
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/JEF.csv",
-    "role": "data",
-    "size_bytes": 133450
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/SIG.csv",
-    "role": "data",
-    "size_bytes": 108522
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/HIG.csv",
-    "role": "data",
-    "size_bytes": 135583
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/FDO.csv",
-    "role": "data",
-    "size_bytes": 70523
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/INCY.csv",
-    "role": "data",
-    "size_bytes": 133201
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/CAG.csv",
-    "role": "data",
-    "size_bytes": 135434
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/ASIX.csv",
-    "role": "data",
-    "size_bytes": 53529
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/HSIC.csv",
-    "role": "data",
-    "size_bytes": 133379
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/SCHW.csv",
-    "role": "data",
-    "size_bytes": 137079
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/AZO.csv",
-    "role": "data",
-    "size_bytes": 145542
-  },
-  {
-    "binary_ext": true,
-    "ext": ".csv",
-    "path": "data_sp500/AXP.csv",
-    "role": "data",
-    "size_bytes": 138685
+    "ext": ".png",
+    "path": "docs/img/wrds_flagship/2025-11-12T08-51-11Z-65187e4/bootstrap_hist.png",
+    "role": "doc",
+    "size_bytes": 51769
   },
   {
     "binary_ext": true,
@@ -8468,6 +7208,1273 @@
     "path": "data_sp500/HPE.csv",
     "role": "data",
     "size_bytes": 63147
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/AXP.csv",
+    "role": "data",
+    "size_bytes": 138685
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/AZO.csv",
+    "role": "data",
+    "size_bytes": 145542
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/HSIC.csv",
+    "role": "data",
+    "size_bytes": 133379
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/SCHW.csv",
+    "role": "data",
+    "size_bytes": 137079
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/INCY.csv",
+    "role": "data",
+    "size_bytes": 133201
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CAG.csv",
+    "role": "data",
+    "size_bytes": 135434
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/ASIX.csv",
+    "role": "data",
+    "size_bytes": 53529
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/COL.csv",
+    "role": "data",
+    "size_bytes": 92789
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CMS.csv",
+    "role": "data",
+    "size_bytes": 135181
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/JEF.csv",
+    "role": "data",
+    "size_bytes": 133450
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/SIG.csv",
+    "role": "data",
+    "size_bytes": 108522
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/HIG.csv",
+    "role": "data",
+    "size_bytes": 135583
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/FDO.csv",
+    "role": "data",
+    "size_bytes": 70523
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/ABI.csv",
+    "role": "data",
+    "size_bytes": 26088
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/TYL.csv",
+    "role": "data",
+    "size_bytes": 135904
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/DG.csv",
+    "role": "data",
+    "size_bytes": 104808
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/FDX.csv",
+    "role": "data",
+    "size_bytes": 141677
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/ZTS.csv",
+    "role": "data",
+    "size_bytes": 83318
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/EC.csv",
+    "role": "data",
+    "size_bytes": 9453
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/AON.csv",
+    "role": "data",
+    "size_bytes": 138788
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/VLO.csv",
+    "role": "data",
+    "size_bytes": 137727
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/DPH.csv",
+    "role": "data",
+    "size_bytes": 5103
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/ALB.csv",
+    "role": "data",
+    "size_bytes": 134873
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/HD.csv",
+    "role": "data",
+    "size_bytes": 142658
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/HES.csv",
+    "role": "data",
+    "size_bytes": 136877
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/EXC.csv",
+    "role": "data",
+    "size_bytes": 135655
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/BBBY.csv",
+    "role": "data",
+    "size_bytes": 124292
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/BDK.csv",
+    "role": "data",
+    "size_bytes": 34362
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/IDXX.csv",
+    "role": "data",
+    "size_bytes": 136689
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/PWER.csv",
+    "role": "data",
+    "size_bytes": 54723
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/ROP.csv",
+    "role": "data",
+    "size_bytes": 138317
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CHRW.csv",
+    "role": "data",
+    "size_bytes": 134211
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/NVDA.csv",
+    "role": "data",
+    "size_bytes": 143523
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/BIIB.csv",
+    "role": "data",
+    "size_bytes": 142960
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/MTCH.csv",
+    "role": "data",
+    "size_bytes": 62116
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/GTW.csv",
+    "role": "data",
+    "size_bytes": 18231
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/WRK.csv",
+    "role": "data",
+    "size_bytes": 130873
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/SEDG.csv",
+    "role": "data",
+    "size_bytes": 66928
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/NSM.csv",
+    "role": "data",
+    "size_bytes": 45721
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/KMX.csv",
+    "role": "data",
+    "size_bytes": 134873
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/PNC.csv",
+    "role": "data",
+    "size_bytes": 138645
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/NXPI.csv",
+    "role": "data",
+    "size_bytes": 100301
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/KRFT.csv",
+    "role": "data",
+    "size_bytes": 18661
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/RTX.csv",
+    "role": "data",
+    "size_bytes": 137733
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/WHR.csv",
+    "role": "data",
+    "size_bytes": 137972
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/URI.csv",
+    "role": "data",
+    "size_bytes": 137835
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/NDAQ.csv",
+    "role": "data",
+    "size_bytes": 134045
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/KLAC.csv",
+    "role": "data",
+    "size_bytes": 138893
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/MYL.csv",
+    "role": "data",
+    "size_bytes": 107775
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/AMD.csv",
+    "role": "data",
+    "size_bytes": 138899
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/SPG.csv",
+    "role": "data",
+    "size_bytes": 140651
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/VLTO.csv",
+    "role": "data",
+    "size_bytes": 8557
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/FHN.csv",
+    "role": "data",
+    "size_bytes": 134399
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/DE.csv",
+    "role": "data",
+    "size_bytes": 140336
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/EA.csv",
+    "role": "data",
+    "size_bytes": 138217
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/EVRG.csv",
+    "role": "data",
+    "size_bytes": 132735
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/ATVI.csv",
+    "role": "data",
+    "size_bytes": 128246
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/AAP.csv",
+    "role": "data",
+    "size_bytes": 136734
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/ABK.csv",
+    "role": "data",
+    "size_bytes": 39043
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/AVY.csv",
+    "role": "data",
+    "size_bytes": 134284
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/REZI.csv",
+    "role": "data",
+    "size_bytes": 40584
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/MMI.csv",
+    "role": "data",
+    "size_bytes": 9401
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/MLM.csv",
+    "role": "data",
+    "size_bytes": 138188
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CAR.csv",
+    "role": "data",
+    "size_bytes": 135107
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CBH.csv",
+    "role": "data",
+    "size_bytes": 21788
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CCL.csv",
+    "role": "data",
+    "size_bytes": 136543
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/AMAT.csv",
+    "role": "data",
+    "size_bytes": 140195
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/HPQ.csv",
+    "role": "data",
+    "size_bytes": 138557
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/SHW.csv",
+    "role": "data",
+    "size_bytes": 141088
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/COO.csv",
+    "role": "data",
+    "size_bytes": 137380
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/AWK.csv",
+    "role": "data",
+    "size_bytes": 112666
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CMG.csv",
+    "role": "data",
+    "size_bytes": 136892
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/FL.csv",
+    "role": "data",
+    "size_bytes": 134831
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/EW.csv",
+    "role": "data",
+    "size_bytes": 135301
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/VRSN.csv",
+    "role": "data",
+    "size_bytes": 136677
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/ACN.csv",
+    "role": "data",
+    "size_bytes": 140420
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/DD.csv",
+    "role": "data",
+    "size_bytes": 49857
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/IT.csv",
+    "role": "data",
+    "size_bytes": 134972
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/HP.csv",
+    "role": "data",
+    "size_bytes": 134240
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/AME.csv",
+    "role": "data",
+    "size_bytes": 134111
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/UBER.csv",
+    "role": "data",
+    "size_bytes": 39548
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/WEC.csv",
+    "role": "data",
+    "size_bytes": 133785
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/RTN.csv",
+    "role": "data",
+    "size_bytes": 105393
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CTLT.csv",
+    "role": "data",
+    "size_bytes": 69331
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/UDR.csv",
+    "role": "data",
+    "size_bytes": 134458
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/FBIN.csv",
+    "role": "data",
+    "size_bytes": 88393
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/BIO.csv",
+    "role": "data",
+    "size_bytes": 135612
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CTAS.csv",
+    "role": "data",
+    "size_bytes": 136970
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/ANSS.csv",
+    "role": "data",
+    "size_bytes": 135576
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/MSFT.csv",
+    "role": "data",
+    "size_bytes": 144785
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/EMR.csv",
+    "role": "data",
+    "size_bytes": 135545
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/LEG.csv",
+    "role": "data",
+    "size_bytes": 133108
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/FLIR.csv",
+    "role": "data",
+    "size_bytes": 108602
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/ELV.csv",
+    "role": "data",
+    "size_bytes": 141435
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/UPS.csv",
+    "role": "data",
+    "size_bytes": 138895
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/NEE.csv",
+    "role": "data",
+    "size_bytes": 138016
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/PYPL.csv",
+    "role": "data",
+    "size_bytes": 66369
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/LUMN.csv",
+    "role": "data",
+    "size_bytes": 135461
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/GAS.csv",
+    "role": "data",
+    "size_bytes": 45388
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/WDC.csv",
+    "role": "data",
+    "size_bytes": 135628
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/RVTY.csv",
+    "role": "data",
+    "size_bytes": 133501
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/PCAR.csv",
+    "role": "data",
+    "size_bytes": 135244
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/KO.csv",
+    "role": "data",
+    "size_bytes": 138444
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/EXPE.csv",
+    "role": "data",
+    "size_bytes": 134027
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/IP.csv",
+    "role": "data",
+    "size_bytes": 135448
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/INVH.csv",
+    "role": "data",
+    "size_bytes": 53517
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/SHLD.csv",
+    "role": "data",
+    "size_bytes": 93192
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/HET.csv",
+    "role": "data",
+    "size_bytes": 20577
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/URBN.csv",
+    "role": "data",
+    "size_bytes": 135243
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/GL.csv",
+    "role": "data",
+    "size_bytes": 131637
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/ADSK.csv",
+    "role": "data",
+    "size_bytes": 139163
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/ES.csv",
+    "role": "data",
+    "size_bytes": 134214
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/ED.csv",
+    "role": "data",
+    "size_bytes": 135002
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/MBC.csv",
+    "role": "data",
+    "size_bytes": 13396
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/DHI.csv",
+    "role": "data",
+    "size_bytes": 136341
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/FRE.csv",
+    "role": "data",
+    "size_bytes": 37257
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CNX.csv",
+    "role": "data",
+    "size_bytes": 134918
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/JNPR.csv",
+    "role": "data",
+    "size_bytes": 136245
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/HSY.csv",
+    "role": "data",
+    "size_bytes": 136606
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/FTNT.csv",
+    "role": "data",
+    "size_bytes": 103020
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/MOS.csv",
+    "role": "data",
+    "size_bytes": 135389
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/AYE.csv",
+    "role": "data",
+    "size_bytes": 41178
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/MMM.csv",
+    "role": "data",
+    "size_bytes": 140454
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/HPC.csv",
+    "role": "data",
+    "size_bytes": 25687
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CCI.csv",
+    "role": "data",
+    "size_bytes": 137579
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CLF.csv",
+    "role": "data",
+    "size_bytes": 135182
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/DECK.csv",
+    "role": "data",
+    "size_bytes": 136333
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/PD.csv",
+    "role": "data",
+    "size_bytes": 15277
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/RL.csv",
+    "role": "data",
+    "size_bytes": 136575
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/OXY.csv",
+    "role": "data",
+    "size_bytes": 136707
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/TMO.csv",
+    "role": "data",
+    "size_bytes": 141690
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/SJM.csv",
+    "role": "data",
+    "size_bytes": 135196
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/MAY.csv",
+    "role": "data",
+    "size_bytes": 4474
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/FI.csv",
+    "role": "data",
+    "size_bytes": 136060
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/VRSK.csv",
+    "role": "data",
+    "size_bytes": 103457
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/TXN.csv",
+    "role": "data",
+    "size_bytes": 140084
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/GM.csv",
+    "role": "data",
+    "size_bytes": 98102
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/BMET.csv",
+    "role": "data",
+    "size_bytes": 18410
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/OMX.csv",
+    "role": "data",
+    "size_bytes": 58674
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/EXPD.csv",
+    "role": "data",
+    "size_bytes": 134873
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/HOLX.csv",
+    "role": "data",
+    "size_bytes": 134837
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CVH.csv",
+    "role": "data",
+    "size_bytes": 55798
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/WELL.csv",
+    "role": "data",
+    "size_bytes": 134587
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/EXR.csv",
+    "role": "data",
+    "size_bytes": 133611
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/DXCM.csv",
+    "role": "data",
+    "size_bytes": 131691
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/BBWI.csv",
+    "role": "data",
+    "size_bytes": 135287
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/APTV.csv",
+    "role": "data",
+    "size_bytes": 89358
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/PWR.csv",
+    "role": "data",
+    "size_bytes": 135525
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CSGP.csv",
+    "role": "data",
+    "size_bytes": 135432
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/BJS.csv",
+    "role": "data",
+    "size_bytes": 36090
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/KMI.csv",
+    "role": "data",
+    "size_bytes": 15975
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/BDX.csv",
+    "role": "data",
+    "size_bytes": 139131
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/GLW.csv",
+    "role": "data",
+    "size_bytes": 137408
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/PNR.csv",
+    "role": "data",
+    "size_bytes": 81907
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/GAP.csv",
+    "role": "data",
+    "size_bytes": 135984
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/LSI.csv",
+    "role": "data",
+    "size_bytes": 61820
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/VNT.csv",
+    "role": "data",
+    "size_bytes": 28069
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CTB.csv",
+    "role": "data",
+    "size_bytes": 107616
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/TWC.csv",
+    "role": "data",
+    "size_bytes": 63559
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/INTC.csv",
+    "role": "data",
+    "size_bytes": 140865
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/VAL.csv",
+    "role": "data",
+    "size_bytes": 55514
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/EP.csv",
+    "role": "data",
+    "size_bytes": 50267
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/EG.csv",
+    "role": "data",
+    "size_bytes": 137640
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/GEHC.csv",
+    "role": "data",
+    "size_bytes": 13498
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/AMZN.csv",
+    "role": "data",
+    "size_bytes": 148117
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/HCBK.csv",
+    "role": "data",
+    "size_bytes": 72556
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/MNST.csv",
+    "role": "data",
+    "size_bytes": 135498
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/MCD.csv",
+    "role": "data",
+    "size_bytes": 140782
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/ODFL.csv",
+    "role": "data",
+    "size_bytes": 135165
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/SDS.csv",
+    "role": "data",
+    "size_bytes": 4120
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CAT.csv",
+    "role": "data",
+    "size_bytes": 139936
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/PG.csv",
+    "role": "data",
+    "size_bytes": 139507
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/IPGP.csv",
+    "role": "data",
+    "size_bytes": 120030
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/CMA.csv",
+    "role": "data",
+    "size_bytes": 134605
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/RX.csv",
+    "role": "data",
+    "size_bytes": 34438
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/MWW.csv",
+    "role": "data",
+    "size_bytes": 78267
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/EQ.csv",
+    "role": "data",
+    "size_bytes": 20871
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/DRE.csv",
+    "role": "data",
+    "size_bytes": 119306
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/PAYC.csv",
+    "role": "data",
+    "size_bytes": 74190
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/DPZ.csv",
+    "role": "data",
+    "size_bytes": 136882
+  },
+  {
+    "binary_ext": true,
+    "ext": ".csv",
+    "path": "data_sp500/INTU.csv",
+    "role": "data",
+    "size_bytes": 140742
   },
   {
     "binary_ext": true,

@@ -16,6 +16,11 @@ class WalkForwardWindow(BaseModel):
     testing_days: int = Field(gt=0)
 
 
+class HoldoutWindow(BaseModel):
+    start: str
+    end: str
+
+
 class RealityCheckCfg(BaseModel):
     method: Literal["stationary", "circular", "iid"] = "stationary"
     block_length: Optional[int] = None
@@ -25,6 +30,7 @@ class RealityCheckCfg(BaseModel):
 class WFVCfg(BaseModel):
     template: BacktestCfg
     walkforward: WalkForwardWindow
+    holdout: HoldoutWindow | None = None
     grid: Dict[str, List[Any]] = Field(default_factory=dict)
     artifacts_dir: str | None = None
     reality_check: RealityCheckCfg = Field(default_factory=RealityCheckCfg)

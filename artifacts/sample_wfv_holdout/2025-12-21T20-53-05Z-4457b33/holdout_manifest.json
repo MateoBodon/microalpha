@@ -1,0 +1,39 @@
+{
+  "run_id": "2025-12-21T20-53-05Z-4457b33",
+  "config_sha256": "d07891662ad83d8447eabd803a80f6616b101f3fc4334bd7c43052cb1552ed6a",
+  "git_sha": "4457b33773c24c5e7179bc4df0346c150e8d5876",
+  "selection_window_end": "2021-06-30",
+  "holdout_start": "2021-07-01",
+  "holdout_end": "2021-12-31",
+  "selected_model": "skip_months=1|top_frac=0.3500",
+  "selected_params": {
+    "top_frac": 0.35,
+    "skip_months": 1
+  },
+  "selected_params_full": {
+    "universe_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/data/sample/universe_sample.csv",
+    "lookback_months": 6,
+    "skip_months": 1,
+    "top_frac": 0.35,
+    "bottom_frac": 0.35,
+    "max_positions_per_sector": 2,
+    "turnover_target_pct_adv": 0.12,
+    "min_adv": 1500000.0,
+    "min_price": 10.0,
+    "total_risk_budget": 1.0,
+    "symbols": [
+      "ALFA",
+      "BETA",
+      "DELT",
+      "EPSI",
+      "GAMM",
+      "ZETA"
+    ]
+  },
+  "selection_metric": 0.0,
+  "selection_summary_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/selection_summary.json",
+  "holdout_metrics_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/holdout_metrics.json",
+  "holdout_equity_curve_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/holdout_equity_curve.csv",
+  "holdout_returns_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/holdout_returns.csv",
+  "holdout_trades_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/holdout_trades.jsonl"
+}

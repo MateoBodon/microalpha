@@ -1,0 +1,74 @@
+[
+  {
+    "model": "skip_months=1|top_frac=0.3500",
+    "params": {
+      "top_frac": 0.35,
+      "skip_months": 1
+    },
+    "mean_sharpe": 0.0,
+    "mean_cagr": 0.0,
+    "mean_ann_vol": 0.0,
+    "num_folds": 5,
+    "folds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  {
+    "model": "skip_months=1|top_frac=0.4500",
+    "params": {
+      "top_frac": 0.45,
+      "skip_months": 1
+    },
+    "mean_sharpe": 0.0,
+    "mean_cagr": 0.0,
+    "mean_ann_vol": 0.0,
+    "num_folds": 5,
+    "folds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  {
+    "model": "skip_months=2|top_frac=0.3500",
+    "params": {
+      "top_frac": 0.35,
+      "skip_months": 2
+    },
+    "mean_sharpe": 0.0,
+    "mean_cagr": 0.0,
+    "mean_ann_vol": 0.0,
+    "num_folds": 5,
+    "folds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  {
+    "model": "skip_months=2|top_frac=0.4500",
+    "params": {
+      "top_frac": 0.45,
+      "skip_months": 2
+    },
+    "mean_sharpe": 0.0,
+    "mean_cagr": 0.0,
+    "mean_ann_vol": 0.0,
+    "num_folds": 5,
+    "folds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ]
+  }
+]

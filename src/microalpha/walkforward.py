@@ -147,6 +147,7 @@ def load_wfv_cfg(path: str) -> WFVCfg:
         return WFVCfg(
             template=template,
             walkforward=raw["walkforward"],
+            holdout=raw.get("holdout"),
             grid=grid,
             artifacts_dir=raw.get("artifacts_dir"),
             reality_check=reality_payload,
@@ -210,6 +211,18 @@ def run_walk_forward(
     start_date = pd.Timestamp(cfg.walkforward.start)
     end_date = pd.Timestamp(cfg.walkforward.end)
 
+    holdout_start: pd.Timestamp | None = None
+    holdout_end: pd.Timestamp | None = None
+    selection_end = end_date
+    if cfg.holdout is not None:
+        holdout_start = pd.Timestamp(cfg.holdout.start)
+        holdout_end = pd.Timestamp(cfg.holdout.end)
+        if holdout_end < holdout_start:
+            raise ValueError("Holdout end date must be on or after holdout start date")
+        selection_end = min(end_date, holdout_start - pd.Timedelta(days=1))
+        if selection_end < start_date:
+            raise ValueError("Holdout start date leaves no selection window")
+
     strategy_name = cfg.template.strategy.name
     data_handler: DataHandler
     cs_symbols: List[str] = []
@@ -255,6 +268,7 @@ def run_walk_forward(
     equity_records: List[Dict[str, Any]] = []
     folds: List[Dict[str, Any]] = []
     grid_rows: List[Dict[str, Any]] = []
+    selection_grid_summaries: List[List[Dict[str, Any]]] = []
     bootstrap_samples: List[float] = []
     reality_metadata: Dict[str, Any] | None = None
     reality_pvalues: List[float] = []
@@ -273,7 +287,9 @@ def run_walk_forward(
 
     try:
         while (
-            current_date + pd.Timedelta(days=training_days + testing_days) <= end_date
+            current_date
+            + pd.Timedelta(days=training_days + testing_days + 1)
+            <= selection_end
         ):
             train_start = current_date
             train_end = train_start + pd.Timedelta(days=training_days)
@@ -461,12 +477,180 @@ def run_walk_forward(
                         phase="train",
                     )
                 )
+            if grid_summary:
+                selection_grid_summaries.append(grid_summary)
 
             folds.append(fold_entry)
 
             current_date += pd.Timedelta(days=testing_days)
     finally:
         trade_logger.close()
+
+    selection_summary = _aggregate_selection_summary(selection_grid_summaries)
+    selection_summary_path: str | None = None
+    if selection_summary:
+        selection_path = artifacts_dir / "selection_summary.json"
+        with selection_path.open("w", encoding="utf-8") as handle:
+            json.dump(selection_summary, handle, indent=2)
+        selection_summary_path = str(selection_path)
+
+    selected_entry = selection_summary[0] if selection_summary else None
+    selected_model = selected_entry["model"] if selected_entry else None
+    selected_params = (
+        dict(selected_entry.get("params") or {}) if selected_entry else None
+    )
+    selected_params_full: Dict[str, Any] | None = None
+    if selected_entry:
+        selected_params_full = dict(base_params)
+        selected_params_full.update(selected_params or {})
+
+    holdout_metrics: Dict[str, Any] | None = None
+    holdout_metrics_path: str | None = None
+    holdout_manifest_path: str | None = None
+    holdout_equity_path: str | None = None
+    holdout_returns_path: str | None = None
+    holdout_trades_path: str | None = None
+    if holdout_start is not None and holdout_end is not None:
+        if selected_params_full is None:
+            raise ValueError("Holdout configured but no selection results found")
+
+        warmup_end = holdout_start - pd.Timedelta(days=1)
+        warmup_prices = None
+        warmup_history = None
+        if strategy_name in {"CrossSectionalMomentum", "FlagshipMomentumStrategy"}:
+            assert isinstance(data_handler, MultiCsvDataHandler)
+            warmup_start = warmup_end - pd.Timedelta(days=training_days)
+            warmup_history = _collect_cs_warmup_history(
+                data_handler,
+                warmup_start,
+                warmup_end,
+                cs_symbols,
+            )
+        else:
+            assert isinstance(data_handler, CsvDataHandler)
+            warmup_prices = _collect_warmup_prices(
+                data_handler, warmup_end, selected_params_full.get("lookback", 0)
+            )
+
+        data_handler.set_date_range(holdout_start, holdout_end)
+        if strategy_name in {"CrossSectionalMomentum", "FlagshipMomentumStrategy"}:
+            assert isinstance(data_handler, MultiCsvDataHandler)
+            kwargs = _strategy_kwargs(selected_params_full)
+            kwargs.pop("warmup_prices", None)
+            if warmup_history:
+                kwargs["warmup_history"] = warmup_history
+            holdout_strategy = strategy_class(**kwargs)
+        else:
+            holdout_strategy = strategy_class(
+                symbol=symbol,
+                **_strategy_kwargs(selected_params_full, warmup_prices),
+            )
+
+        holdout_trade_logger = JsonlWriter(
+            str(artifacts_dir / "holdout_trades.jsonl")
+        )
+        holdout_portfolio = _build_portfolio(
+            data_handler,
+            cfg.template,
+            trade_logger=holdout_trade_logger,
+            symbol_meta=symbol_meta,
+        )
+        if hasattr(holdout_strategy, "sector_map") and holdout_strategy.sector_map:
+            holdout_portfolio.sector_of.update(holdout_strategy.sector_map)
+
+        holdout_rng = _spawn_rng(master_rng)
+        exec_rng = _spawn_rng(holdout_rng)
+        holdout_executor = _build_executor(
+            data_handler,
+            cfg.template.exec,
+            exec_rng,
+            symbol_meta=symbol_meta,
+        )
+        holdout_broker = SimulatedBroker(holdout_executor)
+        import os as _os
+
+        _os.environ["MICROALPHA_ARTIFACTS_DIR"] = str(artifacts_dir)
+
+        holdout_engine = Engine(
+            data_handler,
+            holdout_strategy,
+            holdout_portfolio,
+            holdout_broker,
+            rng=_spawn_rng(holdout_rng),
+        )
+        holdout_engine.run()
+        holdout_trade_logger.close()
+        holdout_trades_path = holdout_trade_logger.path
+
+        holdout_metrics_raw = compute_metrics(
+            holdout_portfolio.equity_curve,
+            holdout_portfolio.total_turnover,
+            hac_lags=cfg.template.metrics_hac_lags,
+        )
+        holdout_metrics_copy = dict(holdout_metrics_raw)
+        holdout_df = cast(
+            pd.DataFrame, holdout_metrics_copy.pop("equity_df", pd.DataFrame())
+        )
+        holdout_metrics = _stable_metrics(holdout_metrics_copy)
+
+        holdout_total_commission = 0.0
+        holdout_total_slippage = 0.0
+        holdout_trades = getattr(holdout_portfolio, "trades", None) or []
+        for trade in holdout_trades:
+            try:
+                holdout_total_commission += float(trade.get("commission", 0.0) or 0.0)
+                holdout_total_slippage += abs(
+                    float(trade.get("slippage", 0.0) or 0.0)
+                ) * abs(float(trade.get("qty", 0.0) or 0.0))
+            except (TypeError, ValueError):
+                continue
+        holdout_metrics.update(
+            {
+                "borrow_cost_total": float(
+                    getattr(holdout_portfolio, "borrow_cost_total", 0.0)
+                ),
+                "commission_total": float(holdout_total_commission),
+                "slippage_total": float(holdout_total_slippage),
+            }
+        )
+
+        if holdout_df is not None and not holdout_df.empty:
+            holdout_equity_path = str(artifacts_dir / "holdout_equity_curve.csv")
+            holdout_df.to_csv(holdout_equity_path, index=False)
+            if "returns" in holdout_df.columns:
+                holdout_returns_path = str(artifacts_dir / "holdout_returns.csv")
+                holdout_df[["timestamp", "returns"]].to_csv(
+                    holdout_returns_path, index=False
+                )
+
+        holdout_metrics_path = str(artifacts_dir / "holdout_metrics.json")
+        with Path(holdout_metrics_path).open("w", encoding="utf-8") as handle:
+            json.dump(holdout_metrics, handle, indent=2)
+
+        holdout_manifest_payload = {
+            "run_id": run_id,
+            "config_sha256": config_hash,
+            "git_sha": full_sha,
+            "selection_window_end": str(selection_end.date()),
+            "holdout_start": str(holdout_start.date()),
+            "holdout_end": str(holdout_end.date()),
+            "selected_model": selected_model,
+            "selected_params": selected_params,
+            "selected_params_full": selected_params_full,
+            "selection_metric": (
+                None
+                if selected_entry is None
+                else float(selected_entry.get("mean_sharpe", 0.0) or 0.0)
+            ),
+            "selection_summary_path": selection_summary_path,
+            "holdout_metrics_path": holdout_metrics_path,
+            "holdout_equity_curve_path": holdout_equity_path,
+            "holdout_returns_path": holdout_returns_path,
+            "holdout_trades_path": holdout_trades_path,
+        }
+        holdout_manifest_path = str(artifacts_dir / "holdout_manifest.json")
+        with Path(holdout_manifest_path).open("w", encoding="utf-8") as handle:
+            json.dump(holdout_manifest_payload, handle, indent=2)
 
     exposures_path: str | None = None
     factor_exposure_path: str | None = None
@@ -526,7 +710,24 @@ def run_walk_forward(
         },
     )
 
-    result: Dict[str, Any] = asdict(manifest)
+    manifest_payload = asdict(manifest)
+    manifest_payload["walkforward"] = {
+        "selection_window_start": str(start_date.date()),
+        "selection_window_end": str(selection_end.date()),
+        "holdout_start": None if holdout_start is None else str(holdout_start.date()),
+        "holdout_end": None if holdout_end is None else str(holdout_end.date()),
+        "selected_model": selected_model,
+        "selected_params": selected_params,
+        "selected_params_full": selected_params_full,
+        "selection_summary_path": selection_summary_path,
+        "holdout_metrics_path": holdout_metrics_path,
+        "holdout_manifest_path": holdout_manifest_path,
+    }
+    manifest_path = artifacts_dir / "manifest.json"
+    with manifest_path.open("w", encoding="utf-8") as handle:
+        json.dump(manifest_payload, handle, indent=2)
+
+    result: Dict[str, Any] = dict(manifest_payload)
     result.update(
         {
             "artifacts_dir": str(artifacts_dir),
@@ -537,7 +738,14 @@ def run_walk_forward(
             "exposures_path": exposures_path,
             "factor_exposure_path": factor_exposure_path,
             "grid_returns_path": grid_returns_path,
+            "selection_summary_path": selection_summary_path,
+            "holdout_metrics_path": holdout_metrics_path,
+            "holdout_manifest_path": holdout_manifest_path,
+            "holdout_equity_path": holdout_equity_path,
+            "holdout_returns_path": holdout_returns_path,
+            "holdout_trades_path": holdout_trades_path,
             "metrics": metrics,
+            "holdout_metrics": holdout_metrics,
             "folds": folds,
             "trades_path": str(artifacts_dir / "trades.jsonl"),
         }
@@ -793,10 +1001,15 @@ def _summarise_walkforward(
                 metrics_copy[key] = value
 
     equity_path: str | None = None
+    oos_returns_path: str | None = None
     if not df.empty:
         path = artifacts_dir / "equity_curve.csv"
         df.to_csv(path, index=False)
         equity_path = str(path)
+        if "returns" in df.columns:
+            returns_path = artifacts_dir / "oos_returns.csv"
+            df[["timestamp", "returns"]].to_csv(returns_path, index=False)
+            oos_returns_path = str(returns_path)
 
     metrics_path = artifacts_dir / "metrics.json"
     stable_metrics = _stable_metrics(metrics_copy)
@@ -805,6 +1018,7 @@ def _summarise_walkforward(
 
     manifest_metrics = stable_metrics.copy()
     manifest_metrics["equity_curve_path"] = equity_path
+    manifest_metrics["oos_returns_path"] = oos_returns_path
     manifest_metrics["metrics_path"] = str(metrics_path)
     return manifest_metrics
 
@@ -858,6 +1072,64 @@ def _grid_summary_from_payload(payload: List[Dict[str, Any]]) -> List[Dict[str, 
                 "ann_vol": entry.get("ann_vol", 0.0),
             }
         )
+    return summary
+
+
+def _aggregate_selection_summary(
+    grid_summaries: Sequence[List[Dict[str, Any]]],
+) -> List[Dict[str, Any]]:
+    aggregated: Dict[str, Dict[str, Any]] = {}
+    for fold_index, summary in enumerate(grid_summaries):
+        for entry in summary:
+            model = entry.get("model") or _format_param_label(
+                entry.get("params", {})
+            )
+            params = dict(entry.get("params") or {})
+            sharpe = float(entry.get("sharpe_ratio", 0.0) or 0.0)
+            cagr = float(entry.get("cagr", 0.0) or 0.0)
+            ann_vol = float(entry.get("ann_vol", 0.0) or 0.0)
+            record = aggregated.setdefault(
+                model,
+                {
+                    "model": model,
+                    "params": params,
+                    "sharpes": [],
+                    "cagrs": [],
+                    "ann_vols": [],
+                    "folds": [],
+                },
+            )
+            record["sharpes"].append(sharpe)
+            record["cagrs"].append(cagr)
+            record["ann_vols"].append(ann_vol)
+            record["folds"].append(fold_index)
+
+    summary: List[Dict[str, Any]] = []
+    for model, record in aggregated.items():
+        sharpe_vals = record["sharpes"]
+        cagr_vals = record["cagrs"]
+        ann_vol_vals = record["ann_vols"]
+        summary.append(
+            {
+                "model": model,
+                "params": record.get("params") or {},
+                "mean_sharpe": float(np.mean(sharpe_vals))
+                if sharpe_vals
+                else float("-inf"),
+                "mean_cagr": float(np.mean(cagr_vals)) if cagr_vals else 0.0,
+                "mean_ann_vol": float(np.mean(ann_vol_vals)) if ann_vol_vals else 0.0,
+                "num_folds": int(len(sharpe_vals)),
+                "folds": record.get("folds") or [],
+            }
+        )
+
+    summary.sort(
+        key=lambda item: (
+            -float(item.get("mean_sharpe", float("-inf"))),
+            -int(item.get("num_folds", 0)),
+            str(item.get("model") or ""),
+        )
+    )
     return summary
 
 
