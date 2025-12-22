@@ -92,3 +92,206 @@ Create docs/agent_runs/<RUN_NAME>/ with:
 Suggested Codex invocation (safe):
 - codex --profile safe --sandbox workspace-write --ask-for-approval on-request
 (Do NOT use full-autonomy unless explicitly requested.)
+EOF
+pytest -q
+python3 -m compileall tools
+cat <<'EOF' > docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/TESTS.md
+pytest -q
+- Result: 102 passed, 1 skipped in 21.74s
+- Warnings:
+  - DeprecationWarning: ExecModelCfg.aln is deprecated; use 'commission' instead.
+  - FutureWarning: Series.fillna with 'method' is deprecated; use ffill()/bfill().
+
+python3 -m compileall tools
+- Listing 'tools'...
+- Compiling 'tools/gpt_bundle.py'...
+- Compiling 'tools/render_project_state_docs.py'...
+EOF
+cat <<'EOF' > docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/RESULTS.md
+Summary:
+- Backfilled ticket-08 in sprint tickets with goals, rationale, acceptance criteria, tests, and status.
+- Enforced sprint ticket id presence in gpt-bundle: META.json ticket_id must match a sprint ticket header.
+- Logged ticket-08 review failure and ticket-09 remediation in PROGRESS, and updated CHANGELOG.
+
+Files touched:
+- docs/CODEX_SPRINT_TICKETS.md
+- tools/gpt_bundle.py
+- PROGRESS.md
+- CHANGELOG.md
+- docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/*
+
+Notes:
+- META.json git_sha_after is set to HEAD (self-referential commit); gpt-bundle resolves HEAD to an immutable SHA.
+
+Bundle:
+- PENDING
+EOF
+sw_vers
+python3 --version
+date -Iseconds
+git status -sb
+git checkout -b feat/ticket-09-ticket-id-enforcement
+cat <<'EOF' > docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/META.json
+{
+  "run_name": "20251222_034500_ticket-09_ticket-id-enforcement",
+  "ticket_id": "ticket-09",
+  "git_sha_before": "05261d0e2d1d0a233ee635062ab0de01c54b4d0f",
+  "git_sha_after": "HEAD",
+  "branch": "feat/ticket-09-ticket-id-enforcement",
+  "timestamp_local": "2025-12-21T23:09:47-05:00",
+  "env": {
+    "os": "macOS 26.0.1 (Build 25A362)",
+    "python": "3.12.2",
+    "pip_freeze_hash": "",
+    "notes": "pip freeze not captured"
+  },
+  "data": {
+    "mode": "docs-only",
+    "dataset_id": "",
+    "wrds_data_root": "",
+    "license_notes": "No raw WRDS data committed."
+  },
+  "config": {
+    "config_paths": [],
+    "config_hashes": {}
+  },
+  "artifacts": {
+    "artifact_dirs": [],
+    "reports": []
+  },
+  "web_research": {
+    "enabled": false,
+    "sources": []
+  }
+}
+EOF
+cat <<'EOF' > docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/RESULTS.md
+Summary:
+- Backfilled ticket-08 in sprint tickets with goals, rationale, acceptance criteria, tests, and status.
+- Added ticket-09 to sprint tickets to match this run and prevent future mismatches.
+- Enforced sprint ticket id presence in gpt-bundle: META.json ticket_id must match a sprint ticket header.
+- Logged ticket-08 review failure and ticket-09 remediation in PROGRESS, and updated CHANGELOG.
+
+Files touched:
+- docs/CODEX_SPRINT_TICKETS.md
+- tools/gpt_bundle.py
+- PROGRESS.md
+- CHANGELOG.md
+- docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/*
+
+Notes:
+- META.json git_sha_after is set to HEAD (self-referential commit); gpt-bundle resolves HEAD to an immutable SHA.
+
+Bundle:
+- PENDING
+EOF
+date -u +"%Y-%m-%dT%H-%M-%SZ"
+cat <<'EOF' > docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/RESULTS.md
+Summary:
+- Backfilled ticket-08 in sprint tickets with goals, rationale, acceptance criteria, tests, and status.
+- Added ticket-09 to sprint tickets to match this run and prevent future mismatches.
+- Enforced sprint ticket id presence in gpt-bundle: META.json ticket_id must match a sprint ticket header.
+- Logged ticket-08 review failure and ticket-09 remediation in PROGRESS, and updated CHANGELOG.
+
+Files touched:
+- docs/CODEX_SPRINT_TICKETS.md
+- tools/gpt_bundle.py
+- PROGRESS.md
+- CHANGELOG.md
+- docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/*
+
+Notes:
+- META.json git_sha_after is set to HEAD (self-referential commit); gpt-bundle resolves HEAD to an immutable SHA.
+
+Bundle:
+- docs/gpt_bundles/2025-12-22T04-12-16Z_ticket-09_20251222_034500_ticket-09_ticket-id-enforcement.zip
+EOF
+git status -sb
+cat <<'EOF' > docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/COMMANDS.md
+[truncated heredoc; nested EOF terminated early, commands below executed]
+EOF
+pytest -q
+python3 -m compileall tools
+cat <<'EOF' > docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/TESTS.md
+pytest -q
+- Result: 102 passed, 1 skipped in 21.74s
+- Warnings:
+  - DeprecationWarning: ExecModelCfg.aln is deprecated; use 'commission' instead.
+  - FutureWarning: Series.fillna with 'method' is deprecated; use ffill()/bfill().
+
+python3 -m compileall tools
+- Listing 'tools'...
+- Compiling 'tools/gpt_bundle.py'...
+- Compiling 'tools/render_project_state_docs.py'...
+EOF
+cat <<'EOF' > docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/RESULTS.md
+Summary:
+- Backfilled ticket-08 in sprint tickets with goals, rationale, acceptance criteria, tests, and status.
+- Enforced sprint ticket id presence in gpt-bundle: META.json ticket_id must match a sprint ticket header.
+- Logged ticket-08 review failure and ticket-09 remediation in PROGRESS, and updated CHANGELOG.
+
+Files touched:
+- docs/CODEX_SPRINT_TICKETS.md
+- tools/gpt_bundle.py
+- PROGRESS.md
+- CHANGELOG.md
+- docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/*
+
+Notes:
+- META.json git_sha_after is set to HEAD (self-referential commit); gpt-bundle resolves HEAD to an immutable SHA.
+
+Bundle:
+- PENDING
+EOF
+sw_vers
+python3 --version
+date -Iseconds
+git status -sb
+git checkout -b feat/ticket-09-ticket-id-enforcement
+date -u +"%Y-%m-%dT%H-%M-%SZ"
+git status -sb
+git add -A
+git commit -m "ticket-09: enforce ticket ids + backfill ticket-08 definition" -m "Tests: pytest -q; python3 -m compileall tools" -m "Artifacts/logs: docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/" -m "Documentation updates: docs/CODEX_SPRINT_TICKETS.md, PROGRESS.md, CHANGELOG.md"
+BUNDLE_TIMESTAMP=2025-12-22T04-12-16Z make gpt-bundle TICKET=ticket-09 RUN_NAME=20251222_034500_ticket-09_ticket-id-enforcement
+git status -sb
+cat docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/COMMANDS.md
+rg -n "ticket-09" -n docs/CODEX_SPRINT_TICKETS.md
+cat docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/META.json
+git show HEAD:docs/CODEX_SPRINT_TICKETS.md | rg -n "ticket-09"
+cat <<'__TESTS__' > docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/TESTS.md
+pytest -q
+- Run 1: 102 passed, 1 skipped in 21.74s
+- Run 2: 102 passed, 1 skipped in 24.73s (rerun triggered by command-log write error)
+- Warnings:
+  - DeprecationWarning: ExecModelCfg.aln is deprecated; use 'commission' instead.
+  - FutureWarning: Series.fillna with 'method' is deprecated; use ffill()/bfill().
+
+python3 -m compileall tools
+- Run 1: Listing 'tools'... Compiling 'tools/gpt_bundle.py'... Compiling 'tools/render_project_state_docs.py'...
+- Run 2: Listing 'tools'... (no additional compiler output captured)
+__TESTS__
+cat <<'__RESULTS__' > docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/RESULTS.md
+Summary:
+- Backfilled ticket-08 in sprint tickets with goals, rationale, acceptance criteria, tests, and status.
+- Added ticket-09 to sprint tickets to match this run and prevent future mismatches.
+- Enforced sprint ticket id presence in gpt-bundle: META.json ticket_id must match a sprint ticket header.
+- Logged ticket-08 review failure and ticket-09 remediation in PROGRESS, and updated CHANGELOG.
+
+Files touched:
+- docs/CODEX_SPRINT_TICKETS.md
+- tools/gpt_bundle.py
+- PROGRESS.md
+- CHANGELOG.md
+- docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/*
+
+Notes:
+- META.json git_sha_after is set to HEAD (self-referential commit); gpt-bundle resolves HEAD to an immutable SHA.
+- Initial gpt-bundle attempt failed with "Ticket 'ticket-09' not found"; rerun after log fix.
+
+Bundle:
+- docs/gpt_bundles/2025-12-22T04-12-16Z_ticket-09_20251222_034500_ticket-09_ticket-id-enforcement.zip
+__RESULTS__
+# Next commands run after this log entry:
+git add -A
+git commit -m "chore: fix ticket-09 run logs" -m "Tests: not run (log fix only)" -m "Artifacts/logs: docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/" -m "Documentation updates: docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/COMMANDS.md, docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/TESTS.md, docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/RESULTS.md"
+BUNDLE_TIMESTAMP=2025-12-22T04-12-16Z make gpt-bundle TICKET=ticket-09 RUN_NAME=20251222_034500_ticket-09_ticket-id-enforcement

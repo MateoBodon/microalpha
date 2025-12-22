@@ -13,6 +13,7 @@ Files touched:
 
 Notes:
 - META.json git_sha_after is set to HEAD (self-referential commit); gpt-bundle resolves HEAD to an immutable SHA.
+- Initial gpt-bundle attempt failed with "Ticket 'ticket-09' not found"; rerun after log fix.
 
 Bundle:
 - docs/gpt_bundles/2025-12-22T04-12-16Z_ticket-09_20251222_034500_ticket-09_ticket-id-enforcement.zip
