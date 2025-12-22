@@ -1,7 +1,7 @@
 <!--
-generated_at: 2025-12-21T22:42:31Z
-git_sha: 2b48ef75f24acdb206db20d9f5a2681366ac5afa
-branch: feat/ticket-02-holdout-wfv
+generated_at: 2025-12-22T19:29:50Z
+git_sha: e08b720b29a8d96342e12e8fb1fc0beaf009f221
+branch: chore/project_state_refresh
 commands:
   - python3 tools/build_project_state.py
   - python3 tools/render_project_state_docs.py
@@ -36,9 +36,9 @@ commands:
 | `src/microalpha/reporting/factors.py` | Factor regression utilities for Microalpha summaries. | 1 | 7 |
 | `src/microalpha/reporting/robustness.py` | Reporting helpers for cost sensitivity and metadata coverage. | 1 | 10 |
 | `src/microalpha/reporting/spa.py` | Hansen SPA test utilities for Microalpha parameter grids. | 1 | 7 |
-| `src/microalpha/reporting/summary.py` | Markdown summary generator for Microalpha artifacts. | 0 | 17 |
+| `src/microalpha/reporting/summary.py` | Markdown summary generator for Microalpha artifacts. | 0 | 21 |
 | `src/microalpha/reporting/tearsheet.py` | Render separate equity and bootstrap plots for Microalpha runs. | 0 | 7 |
-| `src/microalpha/reporting/wrds_summary.py` | WRDS-specific markdown and docs summary renderer. | 1 | 25 |
+| `src/microalpha/reporting/wrds_summary.py` | WRDS-specific markdown and docs summary renderer. | 2 | 33 |
 | `src/microalpha/risk.py` |  | 0 | 3 |
 | `src/microalpha/risk_stats.py` | Statistical helpers for risk analytics. | 0 | 5 |
 | `src/microalpha/runner.py` | High-level execution helpers for single backtests. | 0 | 11 |
@@ -52,8 +52,8 @@ commands:
 | `src/microalpha/walkforward.py` | Walk-forward validation orchestration. | 0 | 21 |
 | `src/microalpha/wrds/__init__.py` | Lightweight helpers for detecting local WRDS credentials and exports. | 0 | 8 |
 | `tools/build_project_state.py` | Generate machine-derived indices for project_state. | 0 | 13 |
-| `tools/gpt_bundle.py` | Create a Prompt-3 bundle for Codex audit artifacts. | 0 | 5 |
-| `tools/render_project_state_docs.py` | Render project_state Markdown docs from generated indices and repo files. | 0 | 36 |
+| `tools/gpt_bundle.py` | Create a Prompt-3 bundle for Codex audit artifacts. | 0 | 14 |
+| `tools/render_project_state_docs.py` | Render project_state Markdown docs from generated indices and repo files. | 0 | 41 |
 
 ## Notes
 

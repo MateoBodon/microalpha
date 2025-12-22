@@ -1,7 +1,7 @@
 <!--
-generated_at: 2025-12-21T22:42:31Z
-git_sha: 2b48ef75f24acdb206db20d9f5a2681366ac5afa
-branch: feat/ticket-02-holdout-wfv
+generated_at: 2025-12-22T19:29:50Z
+git_sha: e08b720b29a8d96342e12e8fb1fc0beaf009f221
+branch: chore/project_state_refresh
 commands:
   - python3 tools/build_project_state.py
   - python3 tools/render_project_state_docs.py
@@ -25,6 +25,7 @@ All notable changes to this project will be documented in this file. The format 
 - Dedicated WRDS summary renderer + docs integration, Hansen SPA/FF factors wiring, and regression tests for summaries/markers.
 - Daily FF5+MOM factor bundle from Ken French data plus WRDS image assets under `docs/img/wrds_flagship/`.
 - ticket-01: WRDS smoke Makefile targets and smoke report outputs.
+- ticket-11: data policy checker script + allowlist, Make target, and pytest enforcement.
 
 ### Changed
 - Walk-forward WRDS config aligned to universe coverage (2012–2024) and report pipeline now emits WRDS signals before analytics.
@@ -32,7 +33,10 @@ All notable changes to this project will be documented in this file. The format 
 - ticket-01: WRDS configs now surface gross leverage/single-name caps and borrow model; reporting now includes net/gross exposure + cost breakdown.
 - WRDS smoke report tolerates zero SPA comparator t-stats (smoke-only) to keep validation runs unblocked.
 - WRDS summary now reports the actual docs image root used for the run.
+- ticket-08: reporting now skips invalid SPA inputs with explicit reasons and flags degenerate runs (zero trades/flat returns).
 - ticket-06: gpt-bundle now refuses dirty worktrees to keep bundles commit-consistent.
 - ticket-06: stop ignoring `project_state/` and `docs/agent_runs/` so audit artifacts are tracked.
 - ticket-06: gpt-bundle honors `BUNDLE_TIMESTAMP` for deterministic bundle paths.
 - ticket-02: Walk-forward runs now support explicit holdout ranges with separate holdout artifacts, selection summaries, and OOS returns; WRDS/sample configs updated for holdout evaluation.
+- ticket-07: gpt-bundle now records commit ranges and verifies DIFF.patch against bundled files; holdout test now proves selection excludes holdout data.
+- ticket-09: gpt-bundle now validates META.json ticket ids against sprint tickets before bundling.

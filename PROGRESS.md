@@ -23,3 +23,4 @@ Ticket-08: Review FAIL (missing sprint ticket entry in `docs/CODEX_SPRINT_TICKET
 Ticket-09: Enforced sprint ticket id checks in bundling + backfilled ticket-08 definition (Status: Done). Run log: `docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/`.
 Ticket-10: Block placeholder run logs in gpt-bundle + fix ticket-09 RESULTS (Status: Done). Run log: `docs/agent_runs/20251222_051500_ticket-10_block-placeholder-runlogs/`.
 Ticket-11: Data policy scan + automated guardrails (Status: Done). Run log: `docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/`.
+Project-state rebuild: regenerated `project_state/` docs + indices with PROGRESS and recent run summaries, updated generation script, and recorded run log at `docs/agent_runs/20251222_191759_ticket-00_project_state_rebuild/`. Bundle: `docs/gpt_bundles/project_state_2025-12-22T19-27-41Z_e08b720b.zip`.

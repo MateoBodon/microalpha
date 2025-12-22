@@ -1,7 +1,7 @@
 <!--
-generated_at: 2025-12-21T22:42:31Z
-git_sha: 2b48ef75f24acdb206db20d9f5a2681366ac5afa
-branch: feat/ticket-02-holdout-wfv
+generated_at: 2025-12-22T19:29:50Z
+git_sha: e08b720b29a8d96342e12e8fb1fc0beaf009f221
+branch: chore/project_state_refresh
 commands:
   - python3 tools/build_project_state.py
   - python3 tools/render_project_state_docs.py
@@ -330,6 +330,10 @@ commands:
 - _render_exposure_summary(metrics: Mapping[str, object])
 - _render_cost_breakdown(cost_path: Path)
 - _to_float(value: object)
+- _resolve_trades_path(artifact_dir: Path)
+- _count_trades(path: Path)
+- _load_returns(artifact_dir: Path)
+- _detect_degenerate_reasons(metrics: Mapping[str, object], artifact_dir: Path)
 - _relpath(path: Path, output_path: Path)
 - _render_factor_section(*, artifact_dir: Path | str, factor_csv: Path | None, hac_lags: int=5)
 - _render_cost_section(cost_path: Path)
@@ -356,6 +360,7 @@ commands:
 ### Classes
 
 - HeadlineMetrics
+- SpaRenderResult
 
 ### Functions
 
@@ -363,7 +368,8 @@ commands:
 - _load_json(path: Path)
 - _format_currency(value: float)
 - _format_human_currency(value: float | None)
-- _format_ratio(value: float)
+- _format_ratio(value: float | None)
+- _format_p_value(value: float | None)
 - _format_pct(value: float)
 - _relpath(target: Path, output_path: Path)
 - _normalise_section(text: str)
@@ -373,14 +379,21 @@ commands:
 - _render_cost_breakdown(cost_payload: dict | None)
 - _has_trade_log(artifact_dir: Path)
 - _load_cost_payload(artifact_dir: Path)
-- _extract_headline(metrics_payload: dict, spa_payload: dict)
+- _extract_headline(metrics_payload: dict, spa_payload: dict, *, spa_status: str)
 - _parse_factor_table(markdown: str)
 - _copy_asset(source: Path, destination: Path)
 - _load_folds_metadata(folds_path: Path)
 - _load_config_metadata(config_path: Path | None)
 - _relative_to_repo(path: Path)
+- _coerce_float(value: object)
+- _spa_skip_reason(spa_payload: dict)
+- _render_spa_placeholder(destination: Path, message: str)
 - _render_spa_plot(spa_payload: dict, destination: Path, *, allow_zero: bool=False)
-- _write_docs_results(docs_path: Path, *, run_id: str, config_label: str, train_start: str, test_end: str, fold_count: int, testing_days: int | None, config_meta: dict[str, Any] | None, headline: HeadlineMetrics, metrics_payload: dict, cost_payload: dict | None, spa_payload: dict, factor_table_md: str, image_map: dict[str, Path], spa_md_copy: Path | None)
+- _resolve_trades_path(artifact_dir: Path)
+- _count_trades(path: Path)
+- _load_returns(artifact_dir: Path)
+- _detect_degenerate_reasons(metrics_payload: dict, artifact_dir: Path)
+- _write_docs_results(docs_path: Path, *, run_id: str, config_label: str, train_start: str, test_end: str, fold_count: int, testing_days: int | None, config_meta: dict[str, Any] | None, headline: HeadlineMetrics, metrics_payload: dict, cost_payload: dict | None, spa_payload: dict, spa_status: str, spa_skip_reason: str | None, factor_status: str, factor_skip_reason: str | None, factor_table_md: str, image_map: dict[str, Path], spa_md_copy: Path | None, degenerate_reasons: list[str])
 - render_wrds_summary(artifact_dir: Path, output_path: Path, *, factors_md: Path | None=None, spa_json: Path | None=None, spa_md: Path | None=None, equity_image: Path | None=None, bootstrap_image: Path | None=None, docs_results: Path | None=None, docs_image_root: Path | None=None, analytics_plots: Path | None=None, metrics_json_out: Path | None=None, spa_json_out: Path | None=None, spa_md_out: Path | None=None, allow_zero_spa: bool=False)
 - _build_parser()
 - main(argv: Sequence[str] | None=None)
@@ -587,7 +600,16 @@ commands:
 - _env(name: str)
 - _copy_path(src: Path, dest_root: Path, missing: list[str])
 - _load_meta_shas(meta_path: Path)
+- _load_meta(meta_path: Path)
+- _require_ticket_defined(meta_path: Path, sprint_path: Path, expected_ticket: str | None=None)
+- _require_results_ready(results_path: Path)
+- _resolve_ref(ref: str)
+- _derive_diff_range(meta_path: Path)
+- _write_commits(stage: Path, base: str, head: str, source: str)
 - _require_clean_worktree()
+- _collect_check_files(stage: Path, run_name: str)
+- _hydrate_base_file(base: str, rel_path: Path, dest_root: Path)
+- _verify_patch_matches(diff_path: Path, stage: Path, base: str, head: str, run_name: str)
 - main()
 
 ## `tools/render_project_state_docs.py`
@@ -615,6 +637,11 @@ commands:
 - top_level_keys_from_yaml(path: Path)
 - parse_readme_sample_artifacts(readme_text: str)
 - parse_wrds_results(results_text: str)
+- latest_progress_section(progress_text: str)
+- summarize_results(text: str)
+- recent_run_summaries(root: Path, limit: int=3)
+- extract_progress_issues(progress_text: str)
+- wrds_caveat(results_text: str)
 - render_architecture(symbol_index: dict[str, Any], inventory: list[dict[str, Any]])
 - render_module_summaries(symbol_index: dict[str, Any])
 - render_function_index(symbol_index: dict[str, Any])
@@ -622,10 +649,10 @@ commands:
 - render_pipeline_flow(make_targets: list[str])
 - render_dataflow()
 - render_experiments(inventory: list[dict[str, Any]])
-- render_current_results(readme_text: str, wrds_text: str, wrds_smoke_text: str, sample_metrics: dict[str, Any], wfv_metrics: dict[str, Any], holdout_run: str | None, holdout_metrics: dict[str, Any])
+- render_current_results(readme_text: str, wrds_text: str, wrds_smoke_text: str, sample_metrics: dict[str, Any], wfv_metrics: dict[str, Any], holdout_run: str | None, holdout_metrics: dict[str, Any], progress_text: str, recent_runs: list[dict[str, str]])
 - render_research_notes()
 - render_open_questions()
-- render_known_issues()
+- render_known_issues(progress_text: str, wrds_text: str)
 - render_roadmap()
 - render_config_reference(config_paths: list[Path])
 - render_server_environment(py_version: str, deps: list[str])

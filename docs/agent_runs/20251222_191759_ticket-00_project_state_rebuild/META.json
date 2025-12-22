@@ -1,0 +1,34 @@
+{
+  "run_name": "20251222_191759_ticket-00_project_state_rebuild",
+  "ticket_id": "ticket-00",
+  "git_sha_before": "e08b720b29a8d96342e12e8fb1fc0beaf009f221",
+  "git_sha_after": "HEAD",
+  "branch": "chore/project_state_refresh",
+  "timestamp_local": "2025-12-22T14:24:41-0500",
+  "env": {
+    "os": "macOS-26.0.1-arm64-arm-64bit",
+    "python": "3.12.2",
+    "pip_freeze_hash": "53182ad50af657ea8192823de201e020a85e66f3c1d75816f35ce756f40ccb2b",
+    "notes": "Run name uses UTC timestamp; no web research used."
+  },
+  "data": {
+    "mode": "none",
+    "dataset_id": "",
+    "wrds_data_root": "",
+    "license_notes": "No raw WRDS data committed."
+  },
+  "config": {
+    "config_paths": [],
+    "config_hashes": {}
+  },
+  "artifacts": {
+    "artifact_dirs": [],
+    "reports": [
+      "docs/gpt_bundles/project_state_2025-12-22T19-27-41Z_e08b720b.zip"
+    ]
+  },
+  "web_research": {
+    "enabled": false,
+    "sources": []
+  }
+}

@@ -1,3 +1,4 @@
+check-data-policy
 clean
 dev
 docs

@@ -179,6 +179,94 @@ def parse_wrds_results(results_text: str) -> dict[str, Any]:
     return info
 
 
+def latest_progress_section(progress_text: str) -> tuple[str, list[str]]:
+    lines = progress_text.splitlines()
+    header_indices = [idx for idx, line in enumerate(lines) if line.startswith("## ")]
+    if not header_indices:
+        return "", []
+    start = header_indices[-1]
+    date = lines[start].lstrip("#").strip()
+    entries: list[str] = []
+    for line in lines[start + 1 :]:
+        if line.startswith("## "):
+            break
+        if line.strip():
+            entries.append(line.strip())
+    return date, entries
+
+
+def summarize_results(text: str) -> str:
+    lines = text.splitlines()
+    in_summary = False
+    for line in lines:
+        stripped = line.strip()
+        if stripped.lower().startswith("## summary"):
+            in_summary = True
+            continue
+        if in_summary and stripped.startswith("## "):
+            in_summary = False
+        if in_summary and stripped.startswith("- "):
+            return stripped[2:].strip()
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith("- "):
+            return stripped[2:].strip()
+    for line in lines:
+        stripped = line.strip()
+        if stripped and not stripped.startswith("#"):
+            return stripped
+    return ""
+
+
+def recent_run_summaries(root: Path, limit: int = 3) -> list[dict[str, str]]:
+    if not root.exists():
+        return []
+    run_dirs = sorted([path for path in root.iterdir() if path.is_dir()])
+    if not run_dirs:
+        return []
+    selected = run_dirs[-limit:]
+    summaries: list[dict[str, str]] = []
+    for run_dir in selected:
+        results_path = run_dir / "RESULTS.md"
+        summary = ""
+        if results_path.exists():
+            summary = summarize_results(results_path.read_text(encoding="utf-8"))
+        summaries.append(
+            {
+                "run": run_dir.name,
+                "summary": summary,
+                "results_path": results_path.relative_to(ROOT).as_posix()
+                if results_path.exists()
+                else "",
+            }
+        )
+    return summaries
+
+
+def extract_progress_issues(progress_text: str) -> list[str]:
+    issues: list[str] = []
+    for line in progress_text.splitlines():
+        lower = line.lower()
+        if "status:" in lower and ("fail" in lower or "blocked" in lower):
+            issues.append(line.strip())
+            continue
+        if "zero-trade" in lower or "zero trade" in lower:
+            issues.append(line.strip())
+    return issues
+
+
+def wrds_caveat(results_text: str) -> str:
+    lower = results_text.lower()
+    if "pre-tightening" in lower and "rerun" in lower:
+        return (
+            "docs/results_wrds.md notes the published WRDS metrics are pre-tightening "
+            "and a full rerun is pending."
+        )
+    if "rerun" in lower:
+        return "docs/results_wrds.md indicates a WRDS rerun is pending."
+    return ""
+
+
 def render_architecture(symbol_index: dict[str, Any], inventory: list[dict[str, Any]]) -> str:
     core_modules = [
         "src/microalpha/engine.py",
@@ -411,6 +499,8 @@ def render_current_results(
     wfv_metrics: dict[str, Any],
     holdout_run: str | None,
     holdout_metrics: dict[str, Any],
+    progress_text: str,
+    recent_runs: list[dict[str, str]],
 ) -> str:
     sample_artifacts = parse_readme_sample_artifacts(readme_text)
     wrds_info = parse_wrds_results(wrds_text)
@@ -502,6 +592,23 @@ def render_current_results(
             "- Note: Smoke run validates WRDS pipeline wiring; metrics are not interpretable for performance.\n"
         )
 
+    progress_date, progress_entries = latest_progress_section(progress_text)
+    progress_block = ""
+    if progress_entries:
+        progress_block = "## Latest progress (PROGRESS.md)\n\n"
+        if progress_date:
+            progress_block += f"- Date: {progress_date}\n"
+        for entry in progress_entries:
+            progress_block += f"- {entry}\n"
+
+    recent_block = ""
+    if recent_runs:
+        recent_block = "## Recent run logs (docs/agent_runs, last 3)\n\n"
+        for run in recent_runs:
+            summary = run.get("summary") or "Summary unavailable."
+            results_path = run.get("results_path") or "RESULTS.md missing"
+            recent_block += f"- `{run['run']}` — {summary} ({results_path})\n"
+
     return f"""
 # Current Results
 
@@ -511,7 +618,11 @@ def render_current_results(
 
 {smoke_block}
 
-Sources: `README.md`, `docs/results_wrds.md`, sample metrics under `artifacts/sample_flagship/`, `artifacts/sample_wfv/`, and `artifacts/sample_wfv_holdout/`.
+{progress_block}
+
+{recent_block}
+
+Sources: `README.md`, `PROGRESS.md`, `docs/results_wrds.md`, `docs/results_wrds_smoke.md`, sample metrics under `artifacts/sample_flagship/`, `artifacts/sample_wfv/`, `artifacts/sample_wfv_holdout/`, and recent `docs/agent_runs/*/RESULTS.md`.
 """
 
 
@@ -539,17 +650,28 @@ def render_open_questions() -> str:
 """
 
 
-def render_known_issues() -> str:
-    return """
-# Known Issues
+def render_known_issues(progress_text: str, wrds_text: str) -> str:
+    issues: list[str] = []
+    issues.append(
+        "WRDS runs require local exports and are blocked without `WRDS_DATA_ROOT` "
+        "(see `docs/wrds.md`)."
+    )
+    wrds_note = wrds_caveat(wrds_text)
+    if wrds_note:
+        issues.append(wrds_note)
+    issues.append(
+        "Large data directories (`data/`, `data_sp500/`, `data_sp500_enriched/`) are present; "
+        "avoid deep parsing in automation."
+    )
 
-- WRDS runs require local exports and are blocked without `WRDS_DATA_ROOT` (see `docs/wrds.md`).
-- `docs/results_wrds.md` explicitly notes metrics are from a pre-tightening config and need a rerun.
-- Some large data directories (`data/`, `data_sp500/`) are present; avoid deep parsing in automation.
-- WRDS smoke universe is seeded from 2019 liquidity ranks (survivorship/lookahead) to keep it small; it is **not** valid for performance claims.
-- WRDS smoke run produced zero trades and flat SPA comparator t-stats; smoke reports use `--allow-zero-spa` to render despite empty activity.
-- Full WRDS holdout WFV run `2025-12-21T22-32-44Z-2b48ef7` produced zero trades/flat metrics; investigate data coverage, universe filters, and signal generation before claiming results.
-"""
+    progress_issues = extract_progress_issues(progress_text)
+    for entry in progress_issues[-5:]:
+        issues.append(f"From `PROGRESS.md`: {entry}")
+
+    if not issues:
+        issues.append("No known issues recorded in `PROGRESS.md` or `docs/results_wrds.md`.")
+
+    return "\n".join(["# Known Issues", ""] + [f"- {issue}" for issue in issues]) + "\n"
 
 
 def render_roadmap() -> str:
@@ -697,6 +819,8 @@ def main() -> None:
     wrds_text = read_text(ROOT / "docs" / "results_wrds.md")
     wrds_smoke_path = ROOT / "docs" / "results_wrds_smoke.md"
     wrds_smoke_text = read_text(wrds_smoke_path) if wrds_smoke_path.exists() else ""
+    progress_text = read_text(ROOT / "PROGRESS.md")
+    recent_runs = recent_run_summaries(ROOT / "docs" / "agent_runs", 3)
 
     sample_metrics_path = (
         ROOT
@@ -754,10 +878,12 @@ def main() -> None:
             wfv_metrics,
             holdout_run,
             holdout_metrics,
+            progress_text,
+            recent_runs,
         ),
         "RESEARCH_NOTES.md": render_research_notes(),
         "OPEN_QUESTIONS.md": render_open_questions(),
-        "KNOWN_ISSUES.md": render_known_issues(),
+        "KNOWN_ISSUES.md": render_known_issues(progress_text, wrds_text),
         "ROADMAP.md": render_roadmap(),
         "CONFIG_REFERENCE.md": render_config_reference(config_paths),
         "SERVER_ENVIRONMENT.md": render_server_environment(platform.python_version(), deps),

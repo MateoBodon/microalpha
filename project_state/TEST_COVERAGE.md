@@ -1,7 +1,7 @@
 <!--
-generated_at: 2025-12-21T22:42:31Z
-git_sha: 2b48ef75f24acdb206db20d9f5a2681366ac5afa
-branch: feat/ticket-02-holdout-wfv
+generated_at: 2025-12-22T19:29:50Z
+git_sha: e08b720b29a8d96342e12e8fb1fc0beaf009f221
+branch: chore/project_state_refresh
 commands:
   - python3 tools/build_project_state.py
   - python3 tools/render_project_state_docs.py
@@ -10,7 +10,7 @@ commands:
 
 # Test Coverage
 
-- Test modules: 55
+- Test modules: 56
 - Marker config: `pytest.ini` defines `wrds` marker.
 - Primary commands: `pytest -q` or `make test`; WRDS tests via `make test-wrds`.
 
@@ -28,6 +28,7 @@ commands:
 - `tests/test_cli_help.py`
 - `tests/test_cli_info.py`
 - `tests/test_data.py`
+- `tests/test_data_policy.py`
 - `tests/test_determinism.py`
 - `tests/test_docs_links.py`
 - `tests/test_execution.py`

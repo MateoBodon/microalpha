@@ -862,6 +862,30 @@
       {
         "async": false,
         "doc": "",
+        "name": "_resolve_trades_path",
+        "signature": "(artifact_dir: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_count_trades",
+        "signature": "(path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_load_returns",
+        "signature": "(artifact_dir: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_detect_degenerate_reasons",
+        "signature": "(metrics: Mapping[str, object], artifact_dir: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
         "name": "_relpath",
         "signature": "(path: Path, output_path: Path)"
       },
@@ -940,6 +964,11 @@
         "bases": [],
         "doc": "",
         "name": "HeadlineMetrics"
+      },
+      {
+        "bases": [],
+        "doc": "",
+        "name": "SpaRenderResult"
       }
     ],
     "functions": [
@@ -971,7 +1000,13 @@
         "async": false,
         "doc": "",
         "name": "_format_ratio",
-        "signature": "(value: float)"
+        "signature": "(value: float | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_format_p_value",
+        "signature": "(value: float | None)"
       },
       {
         "async": false,
@@ -1031,7 +1066,7 @@
         "async": false,
         "doc": "",
         "name": "_extract_headline",
-        "signature": "(metrics_payload: dict, spa_payload: dict)"
+        "signature": "(metrics_payload: dict, spa_payload: dict, *, spa_status: str)"
       },
       {
         "async": false,
@@ -1066,14 +1101,56 @@
       {
         "async": false,
         "doc": "",
+        "name": "_coerce_float",
+        "signature": "(value: object)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_spa_skip_reason",
+        "signature": "(spa_payload: dict)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_render_spa_placeholder",
+        "signature": "(destination: Path, message: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
         "name": "_render_spa_plot",
         "signature": "(spa_payload: dict, destination: Path, *, allow_zero: bool=False)"
       },
       {
         "async": false,
         "doc": "",
+        "name": "_resolve_trades_path",
+        "signature": "(artifact_dir: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_count_trades",
+        "signature": "(path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_load_returns",
+        "signature": "(artifact_dir: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_detect_degenerate_reasons",
+        "signature": "(metrics_payload: dict, artifact_dir: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
         "name": "_write_docs_results",
-        "signature": "(docs_path: Path, *, run_id: str, config_label: str, train_start: str, test_end: str, fold_count: int, testing_days: int | None, config_meta: dict[str, Any] | None, headline: HeadlineMetrics, metrics_payload: dict, cost_payload: dict | None, spa_payload: dict, factor_table_md: str, image_map: dict[str, Path], spa_md_copy: Path | None)"
+        "signature": "(docs_path: Path, *, run_id: str, config_label: str, train_start: str, test_end: str, fold_count: int, testing_days: int | None, config_meta: dict[str, Any] | None, headline: HeadlineMetrics, metrics_payload: dict, cost_payload: dict | None, spa_payload: dict, spa_status: str, spa_skip_reason: str | None, factor_status: str, factor_skip_reason: str | None, factor_table_md: str, image_map: dict[str, Path], spa_md_copy: Path | None, degenerate_reasons: list[str])"
       },
       {
         "async": false,
@@ -1633,8 +1710,62 @@
       {
         "async": false,
         "doc": "",
+        "name": "_load_meta",
+        "signature": "(meta_path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_require_ticket_defined",
+        "signature": "(meta_path: Path, sprint_path: Path, expected_ticket: str | None=None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_require_results_ready",
+        "signature": "(results_path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_resolve_ref",
+        "signature": "(ref: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_derive_diff_range",
+        "signature": "(meta_path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_write_commits",
+        "signature": "(stage: Path, base: str, head: str, source: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
         "name": "_require_clean_worktree",
         "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_collect_check_files",
+        "signature": "(stage: Path, run_name: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_hydrate_base_file",
+        "signature": "(base: str, rel_path: Path, dest_root: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_verify_patch_matches",
+        "signature": "(diff_path: Path, stage: Path, base: str, head: str, run_name: str)"
       },
       {
         "async": false,
@@ -1753,6 +1884,36 @@
       {
         "async": false,
         "doc": "",
+        "name": "latest_progress_section",
+        "signature": "(progress_text: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "summarize_results",
+        "signature": "(text: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "recent_run_summaries",
+        "signature": "(root: Path, limit: int=3)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "extract_progress_issues",
+        "signature": "(progress_text: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "wrds_caveat",
+        "signature": "(results_text: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
         "name": "render_architecture",
         "signature": "(symbol_index: dict[str, Any], inventory: list[dict[str, Any]])"
       },
@@ -1796,7 +1957,7 @@
         "async": false,
         "doc": "",
         "name": "render_current_results",
-        "signature": "(readme_text: str, wrds_text: str, wrds_smoke_text: str, sample_metrics: dict[str, Any], wfv_metrics: dict[str, Any], holdout_run: str | None, holdout_metrics: dict[str, Any])"
+        "signature": "(readme_text: str, wrds_text: str, wrds_smoke_text: str, sample_metrics: dict[str, Any], wfv_metrics: dict[str, Any], holdout_run: str | None, holdout_metrics: dict[str, Any], progress_text: str, recent_runs: list[dict[str, str]])"
       },
       {
         "async": false,
@@ -1814,7 +1975,7 @@
         "async": false,
         "doc": "",
         "name": "render_known_issues",
-        "signature": "()"
+        "signature": "(progress_text: str, wrds_text: str)"
       },
       {
         "async": false,
