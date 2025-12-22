@@ -258,7 +258,9 @@ def main() -> None:
     shutil.rmtree(stage)
     print(bundle_path)
     if missing:
-        print("Missing bundle items:", ", ".join(missing))
+        message = "Missing bundle items: " + ", ".join(missing)
+        print(message)
+        raise SystemExit(message)
 
 
 if __name__ == "__main__":
