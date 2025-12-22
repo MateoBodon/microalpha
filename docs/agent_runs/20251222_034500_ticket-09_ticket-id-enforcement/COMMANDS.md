@@ -372,3 +372,10 @@ date -u +"%Y-%m-%dT%H-%M-%SZ"  # 2025-12-22T04-34-15Z (from failed heredoc attem
 git add -A
 git commit -m "chore: finalize ticket-09 logs and bundle" -m "Tests: not run (log update only)" -m "Artifacts/logs: docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/" -m "Documentation updates: docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/COMMANDS.md, docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/RESULTS.md"
 BUNDLE_TIMESTAMP=2025-12-22T04-33-45Z make gpt-bundle TICKET=ticket-09 RUN_NAME=20251222_034500_ticket-09_ticket-id-enforcement
+# Post-bundle status check (ran after bundle creation):
+git status -sb
+# Next commands run after this log entry:
+git add -A
+git commit -m "chore: log final status + re-bundle" -m "Tests: not run (log update only)" -m "Artifacts/logs: docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/" -m "Documentation updates: docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/COMMANDS.md"
+BUNDLE_TIMESTAMP=2025-12-22T04-33-45Z make gpt-bundle TICKET=ticket-09 RUN_NAME=20251222_034500_ticket-09_ticket-id-enforcement
+git push origin main
