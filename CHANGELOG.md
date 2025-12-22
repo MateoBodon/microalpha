@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file. The format 
 - Dedicated WRDS summary renderer + docs integration, Hansen SPA/FF factors wiring, and regression tests for summaries/markers.
 - Daily FF5+MOM factor bundle from Ken French data plus WRDS image assets under `docs/img/wrds_flagship/`.
 - ticket-01: WRDS smoke Makefile targets and smoke report outputs.
+- ticket-11: data policy checker script + allowlist, Make target, and pytest enforcement.
 
 ### Changed
 - Walk-forward WRDS config aligned to universe coverage (2012–2024) and report pipeline now emits WRDS signals before analytics.

@@ -22,3 +22,4 @@ Ticket-08: WRDS report SPA/degenerate-case robustness (Status: Done). Run log: `
 Ticket-08: Review FAIL (missing sprint ticket entry in `docs/CODEX_SPRINT_TICKETS.md`).
 Ticket-09: Enforced sprint ticket id checks in bundling + backfilled ticket-08 definition (Status: Done). Run log: `docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/`.
 Ticket-10: Block placeholder run logs in gpt-bundle + fix ticket-09 RESULTS (Status: Done). Run log: `docs/agent_runs/20251222_051500_ticket-10_block-placeholder-runlogs/`.
+Ticket-11: Data policy scan + automated guardrails (Status: Done). Run log: `docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/`.
