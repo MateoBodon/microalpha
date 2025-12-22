@@ -3,6 +3,7 @@
 ## Summary
 - Formalized ticket-11 in `docs/CODEX_SPRINT_TICKETS.md` and set ticket-09 status to DONE.
 - Added data policy guardrails (`scripts/check_data_policy.py`, allowlist, Make target, pytest enforcement).
+- Ignored `docs/prompts/` in `.gitignore` per user request (existing tracked prompt remains).
 - Updated `PROGRESS.md`, `project_state/KNOWN_ISSUES.md`, and `CHANGELOG.md`.
 
 ## Data policy scan (tracked files)
@@ -24,6 +25,7 @@
 
 ## Notes
 - No restricted exports or credential material found in tracked files during this scan.
+- Negative test confirmed `scripts/check_data_policy.py` fails on a staged `secid` violation.
 
 ## Bundle
 - `docs/gpt_bundles/2025-12-22T18-02-40Z_ticket-11_20251222_123806_ticket-11_data-policy-guardrails.zip`

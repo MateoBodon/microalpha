@@ -172,6 +172,21 @@ apply_patch <<'PATCH'
 +- `project_state/KNOWN_ISSUES.md` updated to reflect resolution (or narrowed scope with provenance).
 *** End Patch
 PATCH
+apply_patch <<'PATCH'
+*** Begin Patch
+*** Update File: docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/RESULTS.md
+@@
+ ## Summary
+ - Formalized ticket-11 in `docs/CODEX_SPRINT_TICKETS.md` and set ticket-09 status to DONE.
+ - Added data policy guardrails (`scripts/check_data_policy.py`, allowlist, Make target, pytest enforcement).
++- Ignored `docs/prompts/` in `.gitignore` per user request (existing tracked prompt remains).
+ - Updated `PROGRESS.md`, `project_state/KNOWN_ISSUES.md`, and `CHANGELOG.md`.
+@@
+ ## Notes
+ - No restricted exports or credential material found in tracked files during this scan.
++- Negative test confirmed `scripts/check_data_policy.py` fails on a staged `secid` violation.
+*** End Patch
+PATCH
 git ls-files > /tmp/tracked_files.txt
 rg -n --hidden --no-ignore-vcs "(\bsecid\b|\bmarket_iv\b|\bbest_bid\b|\bbest_ask\b|\bstrike\b|optionmetrics|taq|wrds)" $(cat /tmp/tracked_files.txt) || true
 git ls-files | rg -n "\.(csv|parquet|jsonl|json|feather)$"
@@ -607,5 +622,36 @@ apply_patch <<'PATCH'
 +git add docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/TESTS.md docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/COMMANDS.md
 +git commit -m "ticket-11: update run log tests" -m "Tests: not run (log update)" -m "Artifacts: none" -m "Docs: docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/TESTS.md; docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/COMMANDS.md"
 +BUNDLE_TIMESTAMP=2025-12-22T18-02-40Z make gpt-bundle TICKET=ticket-11 RUN_NAME=20251222_123806_ticket-11_data-policy-guardrails
+*** End Patch
+PATCH
+cat .gitignore
+git ls-files docs/prompts | head
+apply_patch <<'PATCH'
+*** Begin Patch
+*** Update File: .gitignore
+@@
+ # Local-only agent/state outputs
+ docs/gpt_bundles/
++docs/prompts/
+*** End Patch
+PATCH
+git status -sb
+printf "secid,price\n1,100\n" > tmp_policy_violation.csv
+git add tmp_policy_violation.csv
+python3 scripts/check_data_policy.py || true
+git rm --cached tmp_policy_violation.csv
+rm tmp_policy_violation.csv
+git status -sb
+rg -n "ticket-11" docs/CODEX_SPRINT_TICKETS.md
+rg -n "license-risk artifacts" docs/CODEX_SPRINT_TICKETS.md
+rg -n "ticket-09" docs/CODEX_SPRINT_TICKETS.md
+apply_patch <<'PATCH'
+*** Begin Patch
+*** Update File: docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/TESTS.md
+@@
+ - `python3 scripts/check_data_policy.py`
+   - Result: Data policy check passed. Scanned 1072 files; allowlisted 14.
++- Negative check (expected failure):
++  - `python3 scripts/check_data_policy.py` after staging `tmp_policy_violation.csv` with `secid` header failed and reported the file (exit non-zero).
 *** End Patch
 PATCH

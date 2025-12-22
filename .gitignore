@@ -38,6 +38,7 @@ artifacts/logs/**
 
 # Local-only agent/state outputs
 docs/gpt_bundles/
+docs/prompts/
 
 # WRDS and large data exports
 /wrds/

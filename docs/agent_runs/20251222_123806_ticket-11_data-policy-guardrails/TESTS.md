@@ -13,3 +13,5 @@
   - Result: failed (`python` not found: `zsh: command not found: python`).
 - `python3 scripts/check_data_policy.py`
   - Result: Data policy check passed. Scanned 1072 files; allowlisted 14.
+- Negative check (expected failure):
+  - `python3 scripts/check_data_policy.py` after staging `tmp_policy_violation.csv` with `secid` header failed and reported the file (exit non-zero).
