@@ -18,3 +18,9 @@ Notes:
 
 Bundle:
 - `docs/gpt_bundles/2025-12-22T02-56-09Z_ticket-08_20251222_013000_ticket-08_unblock-wrds-report-spa.zip`
+
+Additional checklist updates:
+- `tools/gpt_bundle.py` now exits non-zero when required bundle items are missing (prints missing paths).
+- Negative bundler tests executed (missing TICKET, missing run dir) with non-zero exit codes; outputs logged in TESTS.md.
+- Bundle listing check confirms required members in the ticket-08 bundle.
+- Secret scan and quote-surface scan completed; only expected WRDS env references found, no quote-surface matches.

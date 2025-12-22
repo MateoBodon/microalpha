@@ -75,3 +75,27 @@ Web research: disabled
 73. git add docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/COMMANDS.md docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/RESULTS.md
 74. git commit -m "ticket-08: update run logs" -m "Tests: not run (log update only)" -m "Artifacts: docs/gpt_bundles/2025-12-22T02-56-09Z_ticket-08_20251222_013000_ticket-08_unblock-wrds-report-spa.zip" -m "Docs: docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/COMMANDS.md, docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/RESULTS.md"
 75. git status -sb
+76. sed -n '1,240p' scripts/gpt_bundle.py
+77. sed -n '1,260p' tools/gpt_bundle.py
+78. sed -n '260,520p' tools/gpt_bundle.py
+79. apply_patch (tools/gpt_bundle.py) [raise on missing bundle items]
+80. rg -n "gpt_bundle" -S
+81. rg -n "Missing bundle items" -n tools/gpt_bundle.py
+82. sed -n '250,280p' tools/gpt_bundle.py
+83. rg -n "WRDS_PASSWORD|WRDS_USERNAME|password|token|secret" -S .
+84. rg -n "strike,.*market_iv|\\bsecid\\b|best_bid|best_ask|best_offer" -S .
+85. git status -sb
+86. git stash push -m "stash unrelated ticket-08 working tree" -- docs/CODEX_SPRINT_TICKETS.md reports/summaries/flagship_mom.md
+87. git add tools/gpt_bundle.py
+88. git commit -m "ticket-08: fail bundler on missing inputs" -m "Tests: not run (logic change only)" -m "Artifacts: none" -m "Bundle: none" -m "Docs: docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/"
+89. RUN_NAME=20251222_013000_ticket-08_unblock-wrds-report-spa python3 tools/gpt_bundle.py
+90. TICKET=ticket-08 RUN_NAME=missing_run_zzz python3 tools/gpt_bundle.py
+91. git status -sb
+92. git diff --stat reports/summaries/flagship_mom.md
+93. git stash show --stat stash@{0}
+94. git stash push -m "stash report summary before bundler test" -- reports/summaries/flagship_mom.md
+95. git status -sb
+96. TICKET=ticket-08 RUN_NAME=missing_run_zzz python3 tools/gpt_bundle.py
+97. rm docs/gpt_bundles/2025-12-22T03-12-45Z_ticket-08_missing_run_zzz.zip
+98. unzip -l docs/gpt_bundles/2025-12-22T02-56-09Z_ticket-08_20251222_013000_ticket-08_unblock-wrds-report-spa.zip | rg -n "AGENTS.md|docs/PLAN_OF_RECORD.md|docs/DOCS_AND_LOGGING_SYSTEM.md|docs/CODEX_SPRINT_TICKETS.md|PROGRESS.md|project_state/CURRENT_RESULTS.md|project_state/KNOWN_ISSUES.md|project_state/CONFIG_REFERENCE.md|docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa"
+99. make report
