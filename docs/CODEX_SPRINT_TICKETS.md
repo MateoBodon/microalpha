@@ -261,3 +261,45 @@
 - **Tests run:** …
 - **Artifacts/logs:** …
 - **Documentation updates:** …
+
+---
+
+## ticket-08 — Unblock WRDS reporting: SPA edge cases + zero-activity invariants
+
+**Goal (1 sentence):** Make reporting resilient to SPA edge cases and degenerate runs so WRDS reports never crash on zero-activity or invalid comparator stats.
+
+**Status:** Implemented (review pending). Run log: `docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/`.
+
+**Why (ties to PROGRESS + KNOWN_ISSUES):**
+- `PROGRESS.md` (2025-12-21) notes the WRDS report failed at the SPA step.
+- `project_state/KNOWN_ISSUES.md` flags zero-trade/flat SPA comparator t-stats as a report-blocking degenerate case.
+
+**Acceptance criteria (objective):**
+- Report must not crash on invalid/all-zero SPA comparator stats; must surface “SPA skipped: <reason>”.
+- Report must surface “Run is degenerate” for zero trades / flat equity (explicit reasons).
+- Invariant: if total_turnover > 0 then num_trades > 0 (or clearly distinguish desired vs executed).
+- Tests cover SPA-skip + degenerate warning + turnover/trade invariant.
+
+**Minimal tests/commands:**
+- `pytest -q`
+- `microalpha report --artifact-dir artifacts/sample_wfv_holdout/<RUN_ID>`
+- `microalpha report --artifact-dir artifacts/wrds_flagship/<RUN_ID>`  *(report-only; no WRDS exports)*
+
+---
+
+## ticket-09 — Enforce sprint ticket ids in gpt-bundle
+
+**Goal (1 sentence):** Prevent bundling when a run’s ticket id is missing from the sprint tickets file.
+
+**Status:** Done. Run log: `docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/`.
+
+**Why (ties to process failure):**
+- Ticket-08 failed review because it was not defined in `docs/CODEX_SPRINT_TICKETS.md` even though a run log existed.
+
+**Acceptance criteria:**
+- `tools/gpt_bundle.py` reads `docs/agent_runs/<RUN_NAME>/META.json` and fails fast if `ticket_id` is missing from the sprint tickets headers.
+- Error message clearly explains how to fix the issue (add the missing ticket section).
+
+**Minimal tests/commands:**
+- `pytest -q`
+- `python3 -m compileall tools`

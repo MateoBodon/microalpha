@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import shutil
 import subprocess
 import time
@@ -39,6 +40,32 @@ def _load_meta_shas(meta_path: Path) -> tuple[str | None, str | None]:
     except json.JSONDecodeError:
         return None, None
     return payload.get("git_sha_before"), payload.get("git_sha_after")
+
+
+def _load_meta(meta_path: Path) -> dict:
+    if not meta_path.exists():
+        raise SystemExit(f"Missing META.json at {meta_path}")
+    try:
+        return json.loads(meta_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise SystemExit(f"Invalid META.json at {meta_path}: {exc}") from exc
+
+
+def _require_ticket_defined(meta_path: Path, sprint_path: Path) -> str:
+    meta = _load_meta(meta_path)
+    ticket_id = meta.get("ticket_id")
+    if not ticket_id:
+        raise SystemExit(f"Missing ticket_id in {meta_path}")
+    if not sprint_path.exists():
+        raise SystemExit(f"Missing sprint ticket file at {sprint_path}")
+    sprint_text = sprint_path.read_text(encoding="utf-8")
+    pattern = re.compile(rf"^##\s+{re.escape(ticket_id)}\\b", re.MULTILINE)
+    if not pattern.search(sprint_text):
+        raise SystemExit(
+            f"Ticket '{ticket_id}' not found in {sprint_path}.\n"
+            f"Add a section header like '## {ticket_id} — ...' before bundling."
+        )
+    return ticket_id
 
 
 def _resolve_ref(ref: str) -> str:
@@ -203,6 +230,8 @@ def _verify_patch_matches(
 def main() -> None:
     ticket = _env("TICKET")
     run_name = _env("RUN_NAME")
+    meta_path = Path(f"docs/agent_runs/{run_name}/META.json")
+    _require_ticket_defined(meta_path, Path("docs/CODEX_SPRINT_TICKETS.md"))
     _require_clean_worktree()
 
     timestamp = os.environ.get("BUNDLE_TIMESTAMP") or time.strftime(
@@ -234,9 +263,7 @@ def main() -> None:
     diff_path = stage / "DIFF.patch"
     last_commit_path = stage / "LAST_COMMIT.txt"
 
-    base, head, source = _derive_diff_range(
-        Path(f"docs/agent_runs/{run_name}/META.json")
-    )
+    base, head, source = _derive_diff_range(meta_path)
     _write_commits(stage, base, head, source)
     diff_cmd = ["git", "diff", f"{base}..{head}"]
     diff_text = subprocess.check_output(diff_cmd, text=True, stderr=subprocess.STDOUT)

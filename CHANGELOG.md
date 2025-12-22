@@ -24,3 +24,4 @@ All notable changes to this project will be documented in this file. The format 
 - ticket-06: gpt-bundle honors `BUNDLE_TIMESTAMP` for deterministic bundle paths.
 - ticket-02: Walk-forward runs now support explicit holdout ranges with separate holdout artifacts, selection summaries, and OOS returns; WRDS/sample configs updated for holdout evaluation.
 - ticket-07: gpt-bundle now records commit ranges and verifies DIFF.patch against bundled files; holdout test now proves selection excludes holdout data.
+- ticket-09: gpt-bundle now validates META.json ticket ids against sprint tickets before bundling.

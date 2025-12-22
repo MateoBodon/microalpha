@@ -1,0 +1,32 @@
+{
+  "run_name": "20251222_034500_ticket-09_ticket-id-enforcement",
+  "ticket_id": "ticket-09",
+  "git_sha_before": "05261d0e2d1d0a233ee635062ab0de01c54b4d0f",
+  "git_sha_after": "HEAD",
+  "branch": "feat/ticket-09-ticket-id-enforcement",
+  "timestamp_local": "2025-12-21T23:09:47-05:00",
+  "env": {
+    "os": "macOS 26.0.1 (Build 25A362)",
+    "python": "3.12.2",
+    "pip_freeze_hash": "",
+    "notes": "pip freeze not captured"
+  },
+  "data": {
+    "mode": "docs-only",
+    "dataset_id": "",
+    "wrds_data_root": "",
+    "license_notes": "No raw WRDS data committed."
+  },
+  "config": {
+    "config_paths": [],
+    "config_hashes": {}
+  },
+  "artifacts": {
+    "artifact_dirs": [],
+    "reports": []
+  },
+  "web_research": {
+    "enabled": false,
+    "sources": []
+  }
+}
