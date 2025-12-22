@@ -25,14 +25,15 @@
 
 ## Notes
 - No restricted exports or credential material found in tracked files during this scan.
-- Negative test confirmed `scripts/check_data_policy.py` fails on a staged `secid` violation.
+- Negative test confirmed `scripts/check_data_policy.py` fails on a staged `secid` violation (`tmp_policy_violation.csv`).
+- `META.json` retains `git_sha_after = HEAD` per `docs/DOCS_AND_LOGGING_SYSTEM.md` to avoid a self-referential hash; `gpt-bundle` resolves `HEAD`.
 - Bundle DIFF.patch verified: no `.csv`, `.parquet`, or `.jsonl` paths and no `wrds`/`optionmetrics`/`taq` exports.
 
 ## Bundle
-- Latest bundle: `docs/gpt_bundles/2025-12-22T18-46-48Z_ticket-11_20251222_123806_ticket-11_data-policy-guardrails.zip`
+- Latest bundle: `docs/gpt_bundles/2025-12-22T19-00-50Z_ticket-11_20251222_123806_ticket-11_data-policy-guardrails.zip`
 
 ## Human merge checklist
-- [ ] No restricted data tracked in git (HEAD).
-- [ ] `scripts/check_data_policy.py` works and is enforced by tests/make target.
-- [ ] `PROGRESS.md` + `project_state/KNOWN_ISSUES.md` updated.
-- [ ] Bundle generated and path recorded.
+- [x] No restricted data tracked in git (HEAD).
+- [x] `scripts/check_data_policy.py` works and is enforced by tests/make target.
+- [x] `PROGRESS.md` + `project_state/KNOWN_ISSUES.md` updated.
+- [x] Bundle generated and path recorded.
