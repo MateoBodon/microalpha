@@ -1,5 +1,7 @@
 # Tests
 
+- `make test-fast`
+  - Result: SKIPPED (target not defined in `Makefile`).
 - `pytest -q`
   - Result: 103 passed, 1 skipped in 28.80s.
   - Warnings:
