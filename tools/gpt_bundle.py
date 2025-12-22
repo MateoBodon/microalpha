@@ -59,7 +59,7 @@ def _require_ticket_defined(meta_path: Path, sprint_path: Path) -> str:
     if not sprint_path.exists():
         raise SystemExit(f"Missing sprint ticket file at {sprint_path}")
     sprint_text = sprint_path.read_text(encoding="utf-8")
-    pattern = re.compile(rf"^##\s+{re.escape(ticket_id)}\\b", re.MULTILINE)
+    pattern = re.compile(rf"^##\s+{re.escape(ticket_id)}\b", re.MULTILINE)
     if not pattern.search(sprint_text):
         raise SystemExit(
             f"Ticket '{ticket_id}' not found in {sprint_path}.\n"

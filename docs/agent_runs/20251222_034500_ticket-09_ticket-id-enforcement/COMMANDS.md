@@ -295,3 +295,58 @@ __RESULTS__
 git add -A
 git commit -m "chore: fix ticket-09 run logs" -m "Tests: not run (log fix only)" -m "Artifacts/logs: docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/" -m "Documentation updates: docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/COMMANDS.md, docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/TESTS.md, docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/RESULTS.md"
 BUNDLE_TIMESTAMP=2025-12-22T04-12-16Z make gpt-bundle TICKET=ticket-09 RUN_NAME=20251222_034500_ticket-09_ticket-id-enforcement
+# Executed after the prior log section (gpt-bundle still failed; regex bug identified):
+python3 - <<'PY'
+import re
+from pathlib import Path
+text = Path('docs/CODEX_SPRINT_TICKETS.md').read_text(encoding='utf-8')
+ticket_id = 'ticket-09'
+pattern = re.compile(rf"^##\s+{re.escape(ticket_id)}\\b", re.MULTILINE)
+print(pattern.search(text))
+PY
+python3 - <<'PY'
+from pathlib import Path
+for line in Path('docs/CODEX_SPRINT_TICKETS.md').read_text(encoding='utf-8').splitlines():
+    if 'ticket-09' in line:
+        print(repr(line))
+PY
+python3 -m compileall tools
+cat <<'__TESTS__' > docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/TESTS.md
+pytest -q
+- Run 1: 102 passed, 1 skipped in 21.74s
+- Run 2: 102 passed, 1 skipped in 24.73s (rerun triggered by command-log write error)
+- Not rerun after regex fix in tools/gpt_bundle.py.
+- Warnings:
+  - DeprecationWarning: ExecModelCfg.aln is deprecated; use 'commission' instead.
+  - FutureWarning: Series.fillna with 'method' is deprecated; use ffill()/bfill().
+
+python3 -m compileall tools
+- Run 1: Listing 'tools'... Compiling 'tools/gpt_bundle.py'... Compiling 'tools/render_project_state_docs.py'...
+- Run 2: Listing 'tools'... (no additional compiler output captured)
+- Run 3: Listing 'tools'... Compiling 'tools/gpt_bundle.py'...
+__TESTS__
+cat <<'__RESULTS__' > docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/RESULTS.md
+Summary:
+- Backfilled ticket-08 in sprint tickets with goals, rationale, acceptance criteria, tests, and status.
+- Added ticket-09 to sprint tickets to match this run and prevent future mismatches.
+- Enforced sprint ticket id presence in gpt-bundle and fixed the header match regex to use a real word boundary.
+- Logged ticket-08 review failure and ticket-09 remediation in PROGRESS, and updated CHANGELOG.
+
+Files touched:
+- docs/CODEX_SPRINT_TICKETS.md
+- tools/gpt_bundle.py
+- PROGRESS.md
+- CHANGELOG.md
+- docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/*
+
+Notes:
+- META.json git_sha_after is set to HEAD (self-referential commit); gpt-bundle resolves HEAD to an immutable SHA.
+- Initial gpt-bundle attempt failed with "Ticket 'ticket-09' not found" due to a literal `\\b` regex; fixed and reran.
+
+Bundle:
+- docs/gpt_bundles/2025-12-22T04-12-16Z_ticket-09_20251222_034500_ticket-09_ticket-id-enforcement.zip
+__RESULTS__
+# Next commands run after this log entry:
+git add -A
+git commit -m "fix: gpt-bundle ticket regex" -m "Tests: python3 -m compileall tools" -m "Artifacts/logs: docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/" -m "Documentation updates: tools/gpt_bundle.py, docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/COMMANDS.md, docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/TESTS.md, docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/RESULTS.md"
+BUNDLE_TIMESTAMP=2025-12-22T04-12-16Z make gpt-bundle TICKET=ticket-09 RUN_NAME=20251222_034500_ticket-09_ticket-id-enforcement
