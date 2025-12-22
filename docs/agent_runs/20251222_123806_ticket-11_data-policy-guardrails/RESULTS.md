@@ -28,7 +28,8 @@
 - Negative test confirmed `scripts/check_data_policy.py` fails on a staged `secid` violation.
 
 ## Bundle
-- `docs/gpt_bundles/2025-12-22T18-02-40Z_ticket-11_20251222_123806_ticket-11_data-policy-guardrails.zip`
+- Previous bundle (before latest run-log/meta updates): `docs/gpt_bundles/2025-12-22T18-02-40Z_ticket-11_20251222_123806_ticket-11_data-policy-guardrails.zip`
+- Latest bundle attempt failed: `DIFF.patch` mismatch because `META.json` uses a concrete `git_sha_after` that does not include the final run-log commit.
 
 ## Human merge checklist
 - [ ] No restricted data tracked in git (HEAD).

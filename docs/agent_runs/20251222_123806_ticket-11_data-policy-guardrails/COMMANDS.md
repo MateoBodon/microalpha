@@ -176,6 +176,27 @@ git status -sb
 git add docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/COMMANDS.md docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/META.json
 git commit -m "ticket-11: finalize run log metadata" -m "Tests: not run (log update)" -m "Artifacts: none" -m "Docs: docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/COMMANDS.md; docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/META.json"
 git status -sb
+date -u +%Y-%m-%dT%H-%M-%SZ
+BUNDLE_TIMESTAMP=2025-12-22T18-29-36Z make gpt-bundle TICKET=ticket-11 RUN_NAME=20251222_123806_ticket-11_data-policy-guardrails
+sed -n '200,340p' tools/gpt_bundle.py
+rg -n "def _derive_diff_range" -n tools/gpt_bundle.py
+sed -n '90,130p' tools/gpt_bundle.py
+sed -n '130,210p' tools/gpt_bundle.py
+apply_patch <<'PATCH'
+*** Begin Patch
+*** Update File: docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/RESULTS.md
+@@
+ ## Bundle
+- Previous bundle (before latest run-log/meta updates): `docs/gpt_bundles/2025-12-22T18-02-40Z_ticket-11_20251222_123806_ticket-11_data-policy-guardrails.zip`
+- Latest bundle attempt failed: `DIFF.patch` mismatch because `META.json` uses a concrete `git_sha_after` that does not include the final run-log commit.
++- Previous bundle (before latest run-log/meta updates): `docs/gpt_bundles/2025-12-22T18-02-40Z_ticket-11_20251222_123806_ticket-11_data-policy-guardrails.zip`
++- Latest bundle attempt failed: `DIFF.patch` mismatch because `META.json` uses a concrete `git_sha_after` that does not include the final run-log commit.
+*** End Patch
+PATCH
+git status -sb
+git add docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/COMMANDS.md docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/META.json
+git commit -m "ticket-11: finalize run log metadata" -m "Tests: not run (log update)" -m "Artifacts: none" -m "Docs: docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/COMMANDS.md; docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/META.json"
+git status -sb
 git add .gitignore docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/COMMANDS.md docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/RESULTS.md docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/TESTS.md
 git commit -m "ticket-11: ignore local prompts and update run log" -m "Tests: not run (log update)" -m "Artifacts: none" -m "Docs: .gitignore; docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/COMMANDS.md; docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/RESULTS.md; docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/TESTS.md"
 git rev-parse HEAD
