@@ -698,3 +698,18 @@ apply_patch <<'PATCH'
 +  - `python3 scripts/check_data_policy.py` after staging `tmp_policy_violation.csv` with `secid` header failed and reported the file (exit non-zero).
 *** End Patch
 PATCH
+date -Iseconds
+apply_patch <<'PATCH'
+*** Begin Patch
+*** Update File: docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/META.json
+@@
+-  "git_sha_after": "151f168ff361bdcc0f99cb26ee553cda1355c238",
++  "git_sha_after": "HEAD",
+@@
+-  "timestamp_local": "2025-12-22T13:26:16-05:00",
++  "timestamp_local": "2025-12-22T13:46:24-05:00",
+@@
+-    "notes": "git_sha_after recorded as concrete SHA; run log updated after final ticket commits."
++    "notes": "git_sha_after recorded as HEAD because the run log is committed in the same commit; gpt-bundle resolves HEAD."
+*** End Patch
+PATCH
