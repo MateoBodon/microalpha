@@ -24,3 +24,4 @@ Additional checklist updates:
 - Negative bundler tests executed (missing TICKET, missing run dir) with non-zero exit codes; outputs logged in TESTS.md.
 - Bundle listing check confirms required members in the ticket-08 bundle.
 - Secret scan and quote-surface scan completed; only expected WRDS env references found, no quote-surface matches.
+- `git diff --name-only main..HEAD | rg "^(artifacts/|heston/)"` returned no matches (no unrelated artifact churn).

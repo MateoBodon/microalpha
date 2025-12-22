@@ -99,3 +99,8 @@ Web research: disabled
 97. rm docs/gpt_bundles/2025-12-22T03-12-45Z_ticket-08_missing_run_zzz.zip
 98. unzip -l docs/gpt_bundles/2025-12-22T02-56-09Z_ticket-08_20251222_013000_ticket-08_unblock-wrds-report-spa.zip | rg -n "AGENTS.md|docs/PLAN_OF_RECORD.md|docs/DOCS_AND_LOGGING_SYSTEM.md|docs/CODEX_SPRINT_TICKETS.md|PROGRESS.md|project_state/CURRENT_RESULTS.md|project_state/KNOWN_ISSUES.md|project_state/CONFIG_REFERENCE.md|docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa"
 99. make report
+100. git rev-parse HEAD
+101. apply_patch (docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/META.json)
+102. git add docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/META.json
+103. git commit -m "ticket-08: log bundler checks and scans" -m "Tests: make report; RUN_NAME=... gpt_bundle missing ticket (exit 1); TICKET=ticket-08 RUN_NAME=missing_run_zzz gpt_bundle missing run (exit 1); rg secret/quote scans; bundle listing check" -m "Artifacts: artifacts/sample_flagship/2025-12-20T23-30-48Z-f8b316f (report-only)" -m "Bundle: docs/gpt_bundles/2025-12-22T02-56-09Z_ticket-08_20251222_013000_ticket-08_unblock-wrds-report-spa.zip" -m "Docs: docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/"
+104. git diff --name-only main..HEAD | rg -n "^(artifacts/|heston/)"
