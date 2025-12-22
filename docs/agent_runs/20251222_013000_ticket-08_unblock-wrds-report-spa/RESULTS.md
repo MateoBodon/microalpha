@@ -15,3 +15,6 @@ Report-only runs (no WRDS exports required):
 Notes:
 - The prior WRDS SPA failure did not reproduce on report-only runs; SPA skip handling is enforced via unit tests.
 - `make report-wrds` was not run (requires `WRDS_DATA_ROOT`).
+
+Bundle:
+- `docs/gpt_bundles/2025-12-22T02-56-09Z_ticket-08_20251222_013000_ticket-08_unblock-wrds-report-spa.zip`

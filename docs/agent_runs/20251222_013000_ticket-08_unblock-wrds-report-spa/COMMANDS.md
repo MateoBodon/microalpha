@@ -66,3 +66,8 @@ Web research: disabled
 64. cat <<'EOF' > docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/TESTS.md
 65. cat <<'EOF' > docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/RESULTS.md
 66. cat <<'EOF' > docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/META.json
+67. git commit -m "ticket-08: make reporting robust to SPA/degenerate cases" -m "Tests: pytest -q" -m "Artifacts: artifacts/sample_wfv_holdout/2025-12-22T00-40-53Z-99a072e (report-only), artifacts/wrds_flagship/2025-12-21T22-32-44Z-2b48ef7 (report-only)" -m "Docs: PROGRESS.md, project_state/KNOWN_ISSUES.md, CHANGELOG.md, docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/"
+68. make gpt-bundle TICKET=ticket-08 RUN_NAME=20251222_013000_ticket-08_unblock-wrds-report-spa
+69. git stash push -m "temp stash before gpt-bundle" -- docs/CODEX_SPRINT_TICKETS.md reports/summaries/flagship_mom.md
+70. make gpt-bundle TICKET=ticket-08 RUN_NAME=20251222_013000_ticket-08_unblock-wrds-report-spa
+71. git stash pop
