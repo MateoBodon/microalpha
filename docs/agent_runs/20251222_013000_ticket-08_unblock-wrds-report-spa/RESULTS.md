@@ -25,3 +25,6 @@ Additional checklist updates:
 - Bundle listing check confirms required members in the ticket-08 bundle.
 - Secret scan and quote-surface scan completed; only expected WRDS env references found, no quote-surface matches.
 - `git diff --name-only main..HEAD | rg "^(artifacts/|heston/)"` returned no matches (no unrelated artifact churn).
+
+Note on META.json git_sha_after:
+- Set to "HEAD" per docs/PLAN_OF_RECORD.md guidance to avoid self-referential commit hashes; resolves to the current HEAD when bundling.

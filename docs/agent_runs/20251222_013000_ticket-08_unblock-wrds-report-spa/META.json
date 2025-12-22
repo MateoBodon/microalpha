@@ -2,7 +2,7 @@
   "run_name": "20251222_013000_ticket-08_unblock-wrds-report-spa",
   "ticket_id": "ticket-08",
   "git_sha_before": "0b4ff5aa526fa6c5e904950ab8c2b78c12e3e82c",
-  "git_sha_after": "7ecd8ac14b29b09af410d94541a46ea73f9af6f3",
+  "git_sha_after": "HEAD",
   "branch": "feat/ticket-08-unblock-wrds-report",
   "timestamp_local": "2025-12-21T21:50:27-0500",
   "env": {

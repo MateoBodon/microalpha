@@ -115,3 +115,5 @@ Web research: disabled
 113. git status -sb
 114. git add docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/COMMANDS.md
 115. git commit -m "ticket-08: log post-commit status" -m "Tests: not run (log update only)" -m "Artifacts: none" -m "Bundle: docs/gpt_bundles/2025-12-22T02-56-09Z_ticket-08_20251222_013000_ticket-08_unblock-wrds-report-spa.zip" -m "Docs: docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/"
+116. apply_patch (docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/META.json) [git_sha_after -> HEAD]
+117. cat <<'EOF' >> docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/RESULTS.md
