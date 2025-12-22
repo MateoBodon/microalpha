@@ -350,3 +350,25 @@ __RESULTS__
 git add -A
 git commit -m "fix: gpt-bundle ticket regex" -m "Tests: python3 -m compileall tools" -m "Artifacts/logs: docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/" -m "Documentation updates: tools/gpt_bundle.py, docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/COMMANDS.md, docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/TESTS.md, docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/RESULTS.md"
 BUNDLE_TIMESTAMP=2025-12-22T04-12-16Z make gpt-bundle TICKET=ticket-09 RUN_NAME=20251222_034500_ticket-09_ticket-id-enforcement
+# Post-bundle workflow (merge/push to main):
+git checkout main
+git pull --ff-only
+git merge feat/ticket-09-ticket-id-enforcement
+git push origin main
+git status -sb
+# Log update + bundle regeneration prep:
+# (Heredoc append attempt failed; corrected logging continues below.)
+# Corrected log (after heredoc failure):
+# NOTE: attempted nested heredoc append produced "command not found: __CMDAPPEND__".
+cat <<'__RESULTS__' > docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/RESULTS.md
+[updated RESULTS with merge/push notes; bundle set to PENDING]
+__RESULTS__
+date -u +"%Y-%m-%dT%H-%M-%SZ"  # 2025-12-22T04-33-45Z
+cat <<'__RESULTS__' > docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/RESULTS.md
+[updated RESULTS with new bundle path]
+__RESULTS__
+date -u +"%Y-%m-%dT%H-%M-%SZ"  # 2025-12-22T04-34-15Z (from failed heredoc attempt)
+# Next commands run after this log entry:
+git add -A
+git commit -m "chore: finalize ticket-09 logs and bundle" -m "Tests: not run (log update only)" -m "Artifacts/logs: docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/" -m "Documentation updates: docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/COMMANDS.md, docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/RESULTS.md"
+BUNDLE_TIMESTAMP=2025-12-22T04-33-45Z make gpt-bundle TICKET=ticket-09 RUN_NAME=20251222_034500_ticket-09_ticket-id-enforcement
