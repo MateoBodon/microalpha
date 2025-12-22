@@ -104,3 +104,11 @@ Web research: disabled
 102. git add docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/META.json
 103. git commit -m "ticket-08: log bundler checks and scans" -m "Tests: make report; RUN_NAME=... gpt_bundle missing ticket (exit 1); TICKET=ticket-08 RUN_NAME=missing_run_zzz gpt_bundle missing run (exit 1); rg secret/quote scans; bundle listing check" -m "Artifacts: artifacts/sample_flagship/2025-12-20T23-30-48Z-f8b316f (report-only)" -m "Bundle: docs/gpt_bundles/2025-12-22T02-56-09Z_ticket-08_20251222_013000_ticket-08_unblock-wrds-report-spa.zip" -m "Docs: docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/"
 104. git diff --name-only main..HEAD | rg -n "^(artifacts/|heston/)"
+105. git status -sb
+106. git add docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/COMMANDS.md docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/RESULTS.md
+107. git commit -m "ticket-08: record diff check" -m "Tests: not run (log update only)" -m "Artifacts: none" -m "Bundle: docs/gpt_bundles/2025-12-22T02-56-09Z_ticket-08_20251222_013000_ticket-08_unblock-wrds-report-spa.zip" -m "Docs: docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/"
+108. git add docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/COMMANDS.md
+109. git commit -m "ticket-08: finalize run log" -m "Tests: not run (log update only)" -m "Artifacts: none" -m "Bundle: docs/gpt_bundles/2025-12-22T02-56-09Z_ticket-08_20251222_013000_ticket-08_unblock-wrds-report-spa.zip" -m "Docs: docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/"
+110. git checkout main
+111. git merge feat/ticket-08-unblock-wrds-report
+112. git push origin main
