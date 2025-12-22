@@ -112,3 +112,6 @@ Web research: disabled
 110. git checkout main
 111. git merge feat/ticket-08-unblock-wrds-report
 112. git push origin main
+113. git status -sb
+114. git add docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/COMMANDS.md
+115. git commit -m "ticket-08: log post-commit status" -m "Tests: not run (log update only)" -m "Artifacts: none" -m "Bundle: docs/gpt_bundles/2025-12-22T02-56-09Z_ticket-08_20251222_013000_ticket-08_unblock-wrds-report-spa.zip" -m "Docs: docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/"
