@@ -27,7 +27,7 @@ commands:
 - RealityCheck p-value: 1.000
 - Turnover: $28,525,695.10
 
-- Holdout WFV: `artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33`
+- Holdout WFV: `artifacts/sample_wfv_holdout/2025-12-22T00-40-53Z-99a072e`
 - Holdout Sharpe (HAC): 1.29
 - Holdout MAR (Calmar): 4.03
 - Holdout Max DD: 9.36%

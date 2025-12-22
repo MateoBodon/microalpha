@@ -84,10 +84,12 @@ class HoldoutDirectionalStrategy:
         return [SignalEvent(event.timestamp, self.symbol, side)]
 
 
-def _write_holdout_fixture(tmp_path: Path) -> Path:
+def _write_holdout_fixture(tmp_path: Path, include_holdout: bool = True) -> Path:
     data_dir = tmp_path / "data"
     data_dir.mkdir(parents=True, exist_ok=True)
-    prices = [100 + i for i in range(10)] + [110 - 3 * i for i in range(10)]
+    up_prices = [100 + i for i in range(7)]
+    down_prices = [up_prices[-1] - 7 * i for i in range(1, 14)]
+    prices = up_prices + down_prices
     dates = pd.date_range("2020-01-01", periods=len(prices), freq="D")
     df = pd.DataFrame({"close": prices, "volume": 1_000}, index=dates)
     df.to_csv(data_dir / "TEST.csv")
@@ -106,14 +108,16 @@ def _write_holdout_fixture(tmp_path: Path) -> Path:
         },
         "walkforward": {
             "start": "2020-01-01",
-            "end": "2020-01-10",
-            "training_days": 3,
-            "testing_days": 2,
+            "end": "2020-01-20",
+            "training_days": 2,
+            "testing_days": 1,
         },
-        "holdout": {"start": "2020-01-11", "end": "2020-01-20"},
         "grid": {"direction": ["long", "short"]},
     }
-    cfg_path = tmp_path / "holdout_cfg.yaml"
+    if include_holdout:
+        config["holdout"] = {"start": "2020-01-08", "end": "2020-01-20"}
+    cfg_name = "holdout_cfg.yaml" if include_holdout else "no_holdout_cfg.yaml"
+    cfg_path = tmp_path / cfg_name
     cfg_path.write_text(yaml.safe_dump(config), encoding="utf-8")
     return cfg_path
 
@@ -124,18 +128,32 @@ def test_holdout_selection_excludes_holdout_data(tmp_path: Path, monkeypatch) ->
         "HoldoutDirectionalStrategy",
         HoldoutDirectionalStrategy,
     )
-    cfg_path = _write_holdout_fixture(tmp_path)
+    cfg_path = _write_holdout_fixture(tmp_path, include_holdout=True)
+    no_holdout_cfg_path = _write_holdout_fixture(
+        tmp_path, include_holdout=False
+    )
 
     artifacts_dir = tmp_path / "artifacts"
     result = run_walk_forward(
         str(cfg_path), override_artifacts_dir=str(artifacts_dir)
     )
+    no_holdout_dir = tmp_path / "artifacts_no_holdout"
+    no_holdout_result = run_walk_forward(
+        str(no_holdout_cfg_path),
+        override_artifacts_dir=str(no_holdout_dir),
+    )
+
+    holdout_selected = result["walkforward"]["selected_params"]
+    no_holdout_selected = no_holdout_result["walkforward"]["selected_params"]
 
     holdout_manifest = Path(result["holdout_manifest_path"])
     assert holdout_manifest.exists()
     payload = json.loads(holdout_manifest.read_text())
     assert payload["selected_params"] == {"direction": "long"}
     assert payload["selected_model"] == "direction=long"
+    assert holdout_selected == {"direction": "long"}
+    assert no_holdout_selected == {"direction": "short"}
+    assert holdout_selected != no_holdout_selected
     assert Path(payload["holdout_metrics_path"]).exists()
 
 
@@ -145,7 +163,7 @@ def test_holdout_window_does_not_overlap_selection(tmp_path: Path, monkeypatch) 
         "HoldoutDirectionalStrategy",
         HoldoutDirectionalStrategy,
     )
-    cfg_path = _write_holdout_fixture(tmp_path)
+    cfg_path = _write_holdout_fixture(tmp_path, include_holdout=True)
 
     artifacts_dir = tmp_path / "artifacts"
     result = run_walk_forward(

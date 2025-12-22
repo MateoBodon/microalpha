@@ -41,6 +41,52 @@ def _load_meta_shas(meta_path: Path) -> tuple[str | None, str | None]:
     return payload.get("git_sha_before"), payload.get("git_sha_after")
 
 
+def _resolve_ref(ref: str) -> str:
+    try:
+        resolved = subprocess.check_output(
+            ["git", "rev-parse", ref], text=True, stderr=subprocess.STDOUT
+        ).strip()
+    except subprocess.CalledProcessError as exc:
+        raise SystemExit(f"Failed to resolve git ref '{ref}': {exc.output}") from exc
+    if not resolved:
+        raise SystemExit(f"Failed to resolve git ref '{ref}'")
+    return resolved
+
+
+def _derive_diff_range(meta_path: Path) -> tuple[str, str, str]:
+    sha_before, sha_after = _load_meta_shas(meta_path)
+    if sha_before and sha_after:
+        base = _resolve_ref(sha_before)
+        head = _resolve_ref(sha_after)
+        source = f"META.json ({sha_before}..{sha_after})"
+        return base, head, source
+
+    base = _resolve_ref("HEAD~1")
+    head = _resolve_ref("HEAD")
+    source = "default HEAD~1..HEAD"
+    return base, head, source
+
+
+def _write_commits(stage: Path, base: str, head: str, source: str) -> None:
+    commits = subprocess.check_output(
+        ["git", "log", "--reverse", "--pretty=format:%H %s", f"{base}..{head}"],
+        text=True,
+        stderr=subprocess.STDOUT,
+    )
+    payload = "\n".join(
+        [
+            f"base: {base}",
+            f"head: {head}",
+            f"source: {source}",
+            "",
+            "commits:",
+            commits.strip(),
+            "",
+        ]
+    )
+    (stage / "COMMITS.txt").write_text(payload, encoding="utf-8")
+
+
 def _require_clean_worktree() -> None:
     try:
         status = subprocess.check_output(
@@ -54,6 +100,86 @@ def _require_clean_worktree() -> None:
             "Commit, stash, or clean changes before running gpt-bundle.\n"
             "git status --porcelain output:\n"
             f"{status}"
+        )
+
+
+def _collect_check_files(stage: Path, run_name: str) -> list[Path]:
+    files = [Path("PROGRESS.md")]
+    run_dir = Path("docs/agent_runs") / run_name
+    staged_run_dir = stage / run_dir
+    if staged_run_dir.exists():
+        for file in staged_run_dir.rglob("*"):
+            if file.is_file():
+                files.append(file.relative_to(stage))
+    return files
+
+
+def _hydrate_base_file(base: str, rel_path: Path, dest_root: Path) -> None:
+    try:
+        content = subprocess.check_output(
+            ["git", "show", f"{base}:{rel_path.as_posix()}"],
+            stderr=subprocess.STDOUT,
+        )
+    except subprocess.CalledProcessError:
+        return
+    target = dest_root / rel_path
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_bytes(content)
+
+
+def _verify_patch_matches(
+    diff_path: Path,
+    stage: Path,
+    base: str,
+    run_name: str,
+) -> None:
+    check_files = _collect_check_files(stage, run_name)
+    if not check_files:
+        return
+
+    scratch = stage / ".patch_check"
+    if scratch.exists():
+        shutil.rmtree(scratch)
+    scratch.mkdir(parents=True, exist_ok=True)
+
+    for rel_path in check_files:
+        _hydrate_base_file(base, rel_path, scratch)
+
+    apply_cmd = [
+        "git",
+        "apply",
+        "--unsafe-paths",
+        "--directory",
+        str(scratch),
+    ]
+    for rel_path in check_files:
+        apply_cmd.extend(["--include", rel_path.as_posix()])
+    apply_cmd.append(str(diff_path))
+
+    try:
+        subprocess.check_output(apply_cmd, text=True, stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as exc:
+        raise SystemExit(
+            "DIFF.patch failed to apply cleanly during bundle verification:\n"
+            f"{exc.output}"
+        ) from exc
+
+    mismatches: list[str] = []
+    for rel_path in check_files:
+        staged_file = stage / rel_path
+        patched_file = scratch / rel_path
+        if not staged_file.exists():
+            continue
+        if not patched_file.exists():
+            mismatches.append(rel_path.as_posix())
+            continue
+        if staged_file.read_bytes() != patched_file.read_bytes():
+            mismatches.append(rel_path.as_posix())
+
+    if mismatches:
+        raise SystemExit(
+            "DIFF.patch does not reproduce bundled files for: "
+            + ", ".join(sorted(mismatches))
         )
 
 
@@ -91,17 +217,14 @@ def main() -> None:
     diff_path = stage / "DIFF.patch"
     last_commit_path = stage / "LAST_COMMIT.txt"
 
-    sha_before, sha_after = _load_meta_shas(
+    base, head, source = _derive_diff_range(
         Path(f"docs/agent_runs/{run_name}/META.json")
     )
-    diff_cmd = ["git", "diff"]
-    if sha_before and sha_after:
-        diff_cmd.append(f"{sha_before}..{sha_after}")
-    else:
-        diff_cmd.append("HEAD~1..HEAD")
-
+    _write_commits(stage, base, head, source)
+    diff_cmd = ["git", "diff", f"{base}..{head}"]
     diff_text = subprocess.check_output(diff_cmd, text=True, stderr=subprocess.STDOUT)
     diff_path.write_text(diff_text, encoding="utf-8")
+    _verify_patch_matches(diff_path, stage, base, run_name)
 
     last_commit = subprocess.check_output(
         ["git", "log", "-1", "--pretty=format:%H%n%an%n%ad%n%s"],

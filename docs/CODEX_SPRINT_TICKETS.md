@@ -62,6 +62,8 @@
 
 **Goal (1 sentence):** Separate parameter selection (WFV) from final reporting (holdout) to prevent p-hacking.
 
+**Status:** FAIL (review) — bundle missing holdout evidence + DIFF.patch mismatch (address in ticket-07).
+
 **Why (ties to diagnosis):**
 - Without a locked holdout, repeated WFV reruns can still become p-hacking. We need a hard boundary.
 
@@ -228,6 +230,32 @@
 **Minimal tests/commands to run:**
 - `python3 -m compileall tools`
 - `make gpt-bundle TICKET=ticket-06 RUN_NAME=<RUN_NAME>`
+
+**End-of-ticket:**
+- **Tests run:** …
+- **Artifacts/logs:** …
+- **Documentation updates:** …
+
+---
+
+## ticket-07 — Fix ticket-02 evidence + bundle integrity
+
+**Goal (1 sentence):** Produce a reviewable bundle that proves holdout selection is isolated and the required artifacts/tests exist; fix DIFF.patch↔bundle mismatch.
+
+**Status:** Done.
+
+**Acceptance criteria:**
+- `pytest -q tests/test_walkforward.py` passes and includes a test that fails if holdout data influences selection.
+- Sample holdout run produces and logs paths to:
+  - `oos_returns.csv`
+  - `holdout_metrics.json`
+- Bundle integrity: `DIFF.patch` matches bundled run-log contents (no mismatches).
+- `PROGRESS.md` uses `$WRDS_DATA_ROOT` placeholder (no `/Volumes/...`).
+
+**Minimal tests/commands to run:**
+- `pytest -q tests/test_walkforward.py`
+- `microalpha wfv --config configs/wfv_flagship_sample_holdout.yaml --out artifacts/sample_wfv_holdout`
+- `make gpt-bundle TICKET=ticket-07 RUN_NAME=<RUN_NAME>`
 
 **End-of-ticket:**
 - **Tests run:** …

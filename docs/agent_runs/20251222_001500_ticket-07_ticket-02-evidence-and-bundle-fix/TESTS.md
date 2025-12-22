@@ -1,0 +1,3 @@
+- `pytest -q tests/test_walkforward.py` (failed: holdout manifest path None due to overwritten fixture file)
+- `pytest -q tests/test_walkforward.py` (pass: 4 tests)
+- WRDS holdout smoke: SKIPPED (blocked: WRDS_DATA_ROOT not set)
