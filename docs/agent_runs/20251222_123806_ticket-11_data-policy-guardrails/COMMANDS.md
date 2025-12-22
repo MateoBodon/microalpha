@@ -713,3 +713,30 @@ apply_patch <<'PATCH'
 +    "notes": "git_sha_after recorded as HEAD because the run log is committed in the same commit; gpt-bundle resolves HEAD."
 *** End Patch
 PATCH
+git status -sb
+date -u +%Y-%m-%dT%H-%M-%SZ
+BUNDLE_TIMESTAMP=2025-12-22T18-46-48Z make gpt-bundle TICKET=ticket-11 RUN_NAME=20251222_123806_ticket-11_data-policy-guardrails
+unzip -p docs/gpt_bundles/2025-12-22T18-46-48Z_ticket-11_20251222_123806_ticket-11_data-policy-guardrails.zip DIFF.patch | rg -n "^(---|\+\+\+) .*\.(csv|parquet|jsonl)" || true
+unzip -p docs/gpt_bundles/2025-12-22T18-46-48Z_ticket-11_20251222_123806_ticket-11_data-policy-guardrails.zip DIFF.patch | rg -n "(wrds|optionmetrics|taq).*\.(csv|parquet|jsonl)" || true
+cat docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/RESULTS.md
+apply_patch <<'PATCH'
+*** Begin Patch
+*** Update File: docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/RESULTS.md
+@@
+ ## Bundle
+-- Previous bundle (before latest run-log/meta updates): `docs/gpt_bundles/2025-12-22T18-02-40Z_ticket-11_20251222_123806_ticket-11_data-policy-guardrails.zip`
+-- Latest bundle attempt failed: `DIFF.patch` mismatch because `META.json` uses a concrete `git_sha_after` that does not include the final run-log commit.
++- Latest bundle: `docs/gpt_bundles/2025-12-22T18-46-48Z_ticket-11_20251222_123806_ticket-11_data-policy-guardrails.zip`
+*** End Patch
+PATCH
+date -u +%Y-%m-%dT%H-%M-%SZ
+apply_patch <<'PATCH'
+*** Begin Patch
+*** Update File: docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/RESULTS.md
+@@
+ ## Notes
+ - No restricted exports or credential material found in tracked files during this scan.
+ - Negative test confirmed `scripts/check_data_policy.py` fails on a staged `secid` violation.
++- Bundle DIFF.patch verified: no `.csv`, `.parquet`, or `.jsonl` paths and no `wrds`/`optionmetrics`/`taq` exports.
+*** End Patch
+PATCH
