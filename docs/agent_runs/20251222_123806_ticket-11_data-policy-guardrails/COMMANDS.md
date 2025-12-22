@@ -569,3 +569,19 @@ apply_patch <<'PATCH'
 *** End Patch
 PATCH
 git status -sb
+git add Makefile scripts/check_data_policy.py scripts/data_policy_allowlist.txt tests/test_data_policy.py docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails
+git commit -m "ticket-11: add data policy guardrails" -m "Tests: pytest -q; python3 -m compileall scripts tools; python3 scripts/check_data_policy.py" -m "Artifacts: none" -m "Docs: docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/"
+git status -sb
+git add docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/COMMANDS.md
+apply_patch <<'PATCH'
+*** Begin Patch
+*** Update File: docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/COMMANDS.md
+@@
+ git status -sb
+-git commit -m "ticket-11: update run log commands" -m "Tests: not run (log update)" -m "Artifacts: none" -m "Docs: docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/COMMANDS.md"
++git add docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/COMMANDS.md
+*** End Patch
+PATCH
+git add docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/COMMANDS.md
+git commit -m "ticket-11: update run log commands" -m "Tests: not run (log update)" -m "Artifacts: none" -m "Docs: docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/COMMANDS.md"
+BUNDLE_TIMESTAMP=2025-12-22T18-02-40Z make gpt-bundle TICKET=ticket-11 RUN_NAME=20251222_123806_ticket-11_data-policy-guardrails
