@@ -198,6 +198,8 @@ EOF
 - git status -sb
 - git status -sb
 - date -u "+%Y-%m-%dT%H-%M-%SZ"
+- git add CHANGELOG.md PROGRESS.md docs/CODEX_SPRINT_TICKETS.md project_state/CURRENT_RESULTS.md tests/test_walkforward.py tools/gpt_bundle.py docs/agent_runs/20251222_001500_ticket-07_ticket-02-evidence-and-bundle-fix
+- git commit -m "ticket-07: finalize ticket-02 evidence + bundle integrity" -m "Tests: pytest -q tests/test_walkforward.py" -m "Artifacts: artifacts/sample_wfv_holdout/2025-12-22T00-40-53Z-99a072e (oos_returns.csv, holdout_metrics.json)" -m "Docs: PROGRESS.md; docs/CODEX_SPRINT_TICKETS.md; project_state/CURRENT_RESULTS.md; CHANGELOG.md; docs/agent_runs/20251222_001500_ticket-07_ticket-02-evidence-and-bundle-fix/"
 - BUNDLE_TIMESTAMP=2025-12-22T00-52-52Z make gpt-bundle TICKET=ticket-07 RUN_NAME=20251222_001500_ticket-07_ticket-02-evidence-and-bundle-fix (failed: DIFF.patch verification mismatch)
 - BASE=99a072e4f8408b4aeaa87f5af444d5103f96b5d5
   HEAD=$(git rev-parse HEAD)
@@ -360,4 +362,6 @@ current = Path(rel).read_text()
 print("match", patched == current)
 PY
 - git status -sb
+- git add tools/gpt_bundle.py docs/agent_runs/20251222_001500_ticket-07_ticket-02-evidence-and-bundle-fix/COMMANDS.md docs/agent_runs/20251222_001500_ticket-07_ticket-02-evidence-and-bundle-fix/RESULTS.md
+- git commit -m "ticket-07: fix gpt-bundle patch verification" -m "Tests: not run (bundle verification fix)" -m "Artifacts: none" -m "Docs: docs/agent_runs/20251222_001500_ticket-07_ticket-02-evidence-and-bundle-fix/RESULTS.md; docs/agent_runs/20251222_001500_ticket-07_ticket-02-evidence-and-bundle-fix/COMMANDS.md"
 - BUNDLE_TIMESTAMP=2025-12-22T00-52-52Z make gpt-bundle TICKET=ticket-07 RUN_NAME=20251222_001500_ticket-07_ticket-02-evidence-and-bundle-fix
