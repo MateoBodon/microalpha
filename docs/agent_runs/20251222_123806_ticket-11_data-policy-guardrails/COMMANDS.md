@@ -172,6 +172,28 @@ apply_patch <<'PATCH'
 +- `project_state/KNOWN_ISSUES.md` updated to reflect resolution (or narrowed scope with provenance).
 *** End Patch
 PATCH
+git status -sb
+git add docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/COMMANDS.md docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/META.json
+git commit -m "ticket-11: finalize run log metadata" -m "Tests: not run (log update)" -m "Artifacts: none" -m "Docs: docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/COMMANDS.md; docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/META.json"
+git status -sb
+git add .gitignore docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/COMMANDS.md docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/RESULTS.md docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/TESTS.md
+git commit -m "ticket-11: ignore local prompts and update run log" -m "Tests: not run (log update)" -m "Artifacts: none" -m "Docs: .gitignore; docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/COMMANDS.md; docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/RESULTS.md; docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/TESTS.md"
+git rev-parse HEAD
+date -Iseconds
+apply_patch <<'PATCH'
+*** Begin Patch
+*** Update File: docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/META.json
+@@
+-  "git_sha_after": "HEAD",
++  "git_sha_after": "151f168ff361bdcc0f99cb26ee553cda1355c238",
+@@
+-  "timestamp_local": "2025-12-22T13:00:52-05:00",
++  "timestamp_local": "2025-12-22T13:26:16-05:00",
+@@
+-    "notes": "git_sha_after recorded as HEAD to avoid self-referential hash; gpt-bundle resolves HEAD."
++    "notes": "git_sha_after recorded as concrete SHA; run log updated after final ticket commits."
+*** End Patch
+PATCH
 apply_patch <<'PATCH'
 *** Begin Patch
 *** Update File: docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/RESULTS.md
