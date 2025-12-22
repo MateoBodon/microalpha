@@ -1,0 +1,32 @@
+{
+  "run_name": "20251222_051500_ticket-10_block-placeholder-runlogs",
+  "ticket_id": "ticket-10",
+  "git_sha_before": "491d2a51a7d6ebd19155755a6113311f15ccd512",
+  "git_sha_after": "HEAD",
+  "branch": "feat/ticket-10-block-placeholder-runlogs",
+  "timestamp_local": "2025-12-22T00:36:47-05:00",
+  "env": {
+    "os": "Darwin 25.0.0 arm64",
+    "python": "Python 3.12.2",
+    "pip_freeze_hash": "3e3519d1a8695fbd767becf34a76406c1123c4e97d95826507acfe308ec78880",
+    "notes": "Run name kept per prompt; timestamp_local reflects system clock."
+  },
+  "data": {
+    "mode": "sample",
+    "dataset_id": "",
+    "wrds_data_root": "",
+    "license_notes": "No raw WRDS data committed."
+  },
+  "config": {
+    "config_paths": [],
+    "config_hashes": {}
+  },
+  "artifacts": {
+    "artifact_dirs": [],
+    "reports": []
+  },
+  "web_research": {
+    "enabled": false,
+    "sources": []
+  }
+}

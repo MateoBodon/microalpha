@@ -291,7 +291,7 @@
 
 **Goal (1 sentence):** Prevent bundling when a run’s ticket id is missing from the sprint tickets file.
 
-**Status:** Done. Run log: `docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/`.
+**Status:** FAIL (review) — placeholder RESULTS.md missing bundle path. Run log: `docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/`.
 
 **Why (ties to process failure):**
 - Ticket-08 failed review because it was not defined in `docs/CODEX_SPRINT_TICKETS.md` even though a run log existed.
@@ -299,6 +299,40 @@
 **Acceptance criteria:**
 - `tools/gpt_bundle.py` reads `docs/agent_runs/<RUN_NAME>/META.json` and fails fast if `ticket_id` is missing from the sprint tickets headers.
 - Error message clearly explains how to fix the issue (add the missing ticket section).
+
+**Minimal tests/commands:**
+- `pytest -q`
+- `python3 -m compileall tools`
+
+Goal: remove/quarantine license-risk artifacts and enforce data policy automatically.
+
+Acceptance criteria (objective):
+
+git ls-files | rg -n "strike,.*market_iv|\bsecid\b|best_bid|best_ask|best_offer" -S returns no matches in tracked CSV/parquet-like artifacts (hits in code/docs allowed).
+
+Any existing artifacts/heston/fit_*.csv / similar quote-surface shaped files are either:
+
+removed from HEAD (preferred), or
+
+replaced with clearly synthetic/public-source inputs and provenance documented.
+
+A new script scripts/check_data_policy.py (or equivalent) exits non-zero on violations and is run in FAST (or at least documented as mandatory).
+
+project_state/KNOWN_ISSUES.md updated to reflect resolution (or narrowed scope with provenance).
+
+---
+
+## ticket-10 — Block placeholder run logs in gpt-bundle
+
+**Goal (1 sentence):** Prevent bundling with placeholder RESULTS.md and backfill ticket-09 results.
+
+**Status:** Done. Run log: `docs/agent_runs/20251222_051500_ticket-10_block-placeholder-runlogs/`.
+
+**Acceptance criteria:**
+- Ticket-09 RESULTS.md is a concrete summary and includes the bundle path.
+- `tools/gpt_bundle.py` blocks bundling if RESULTS.md contains placeholder markers.
+- `tools/gpt_bundle.py` fails when env `TICKET` mismatches META.json ticket_id.
+- Bundle generated for ticket-10 and path recorded in the run log.
 
 **Minimal tests/commands:**
 - `pytest -q`

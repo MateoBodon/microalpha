@@ -51,11 +51,18 @@ def _load_meta(meta_path: Path) -> dict:
         raise SystemExit(f"Invalid META.json at {meta_path}: {exc}") from exc
 
 
-def _require_ticket_defined(meta_path: Path, sprint_path: Path) -> str:
+def _require_ticket_defined(
+    meta_path: Path, sprint_path: Path, expected_ticket: str | None = None
+) -> str:
     meta = _load_meta(meta_path)
     ticket_id = meta.get("ticket_id")
     if not ticket_id:
         raise SystemExit(f"Missing ticket_id in {meta_path}")
+    if expected_ticket and ticket_id != expected_ticket:
+        raise SystemExit(
+            f"TICKET env '{expected_ticket}' does not match META.json ticket_id "
+            f"'{ticket_id}' in {meta_path}."
+        )
     if not sprint_path.exists():
         raise SystemExit(f"Missing sprint ticket file at {sprint_path}")
     sprint_text = sprint_path.read_text(encoding="utf-8")
@@ -66,6 +73,21 @@ def _require_ticket_defined(meta_path: Path, sprint_path: Path) -> str:
             f"Add a section header like '## {ticket_id} — ...' before bundling."
         )
     return ticket_id
+
+
+def _require_results_ready(results_path: Path) -> None:
+    if not results_path.exists():
+        raise SystemExit(f"Missing RESULTS.md at {results_path}")
+    text = results_path.read_text(encoding="utf-8")
+    markers = ["[updated RESULTS", "PENDING", "TODO"]
+    upper_text = text.upper()
+    found = [m for m in markers if m.upper() in upper_text]
+    if found:
+        raise SystemExit(
+            "RESULTS.md appears to be a placeholder (found markers: "
+            + ", ".join(found)
+            + "). Write real results before bundling."
+        )
 
 
 def _resolve_ref(ref: str) -> str:
@@ -230,8 +252,13 @@ def _verify_patch_matches(
 def main() -> None:
     ticket = _env("TICKET")
     run_name = _env("RUN_NAME")
-    meta_path = Path(f"docs/agent_runs/{run_name}/META.json")
-    _require_ticket_defined(meta_path, Path("docs/CODEX_SPRINT_TICKETS.md"))
+    run_dir = Path("docs/agent_runs") / run_name
+    meta_path = run_dir / "META.json"
+    results_path = run_dir / "RESULTS.md"
+    _require_ticket_defined(
+        meta_path, Path("docs/CODEX_SPRINT_TICKETS.md"), expected_ticket=ticket
+    )
+    _require_results_ready(results_path)
     _require_clean_worktree()
 
     timestamp = os.environ.get("BUNDLE_TIMESTAMP") or time.strftime(
