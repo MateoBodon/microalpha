@@ -45,6 +45,9 @@ def test_sample_walkforward_produces_folds(tmp_path: Path) -> None:
     metrics = result["metrics"]
     if metrics.get("reality_check_p_value") is not None:
         assert 0.0 <= float(metrics["reality_check_p_value"]) <= 1.0
+    total_turnover = float(metrics.get("total_turnover") or 0.0)
+    if total_turnover > 0:
+        assert int(metrics.get("num_trades") or 0) > 0
 
     exposures_path = result.get("exposures_path")
     if exposures_path:

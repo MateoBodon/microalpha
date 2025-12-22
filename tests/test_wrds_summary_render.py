@@ -195,3 +195,85 @@ def test_wrds_summary_missing_equity(tmp_path: Path) -> None:
             factors_md=factors_md,
             analytics_plots=plots_dir,
         )
+
+
+def test_wrds_summary_skips_zero_spa(tmp_path: Path) -> None:
+    artifact_dir = tmp_path / "wrds_zero_spa"
+    artifact_dir.mkdir()
+    (artifact_dir / "metrics.json").write_text(
+        json.dumps(
+            {
+                "sharpe_ratio": 0.0,
+                "calmar_ratio": 0.0,
+                "max_drawdown": 0.0,
+                "total_turnover": 0.0,
+                "reality_check_p_value": 1.0,
+            }
+        ),
+        encoding="utf-8",
+    )
+    _write_png(artifact_dir / "equity_curve.png")
+    _write_png(artifact_dir / "bootstrap_hist.png")
+    (artifact_dir / "spa.json").write_text(
+        json.dumps(
+            {
+                "p_value": 1.0,
+                "best_model": "alpha",
+                "candidate_stats": [
+                    {"model": "beta", "t_stat": 0.0},
+                    {"model": "gamma", "t_stat": 0.0},
+                ],
+                "num_bootstrap": 100,
+                "avg_block": 20,
+            }
+        ),
+        encoding="utf-8",
+    )
+    (artifact_dir / "spa.md").write_text("# Hansen SPA Summary\n", encoding="utf-8")
+    factors_md = artifact_dir / "factors_ff5_mom.md"
+    factors_md.write_text(
+        """| Factor | Beta | t-stat |
+| --- | ---:| ---:|
+| Alpha | 0.0100 | 1.20 |
+| Mkt_RF | 0.9500 | 5.00 |
+""",
+        encoding="utf-8",
+    )
+    manifest = {"run_id": "run", "config_path": str(tmp_path / "cfg.yaml")}
+    (artifact_dir / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    (tmp_path / "cfg.yaml").write_text("walkforward: {testing_days: 10}\n", encoding="utf-8")
+    (artifact_dir / "folds.json").write_text(
+        json.dumps(
+            [
+                {
+                    "train_start": "2020-01-01",
+                    "train_end": "2020-06-01",
+                    "test_start": "2020-06-02",
+                    "test_end": "2020-08-01",
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
+    plots_dir = tmp_path / "plots"
+    plots_dir.mkdir()
+    for suffix in ("ic_ir", "deciles", "rolling_betas"):
+        _write_png(plots_dir / f"{manifest['run_id']}_{suffix}.png")
+
+    summary_path = tmp_path / "summary.md"
+    metrics_out = tmp_path / "reports" / "metrics.json"
+    spa_json_out = tmp_path / "reports" / "spa.json"
+
+    output = render_wrds_summary(
+        artifact_dir,
+        summary_path,
+        factors_md=factors_md,
+        analytics_plots=plots_dir,
+        metrics_json_out=metrics_out,
+        spa_json_out=spa_json_out,
+    )
+    content = output.read_text(encoding="utf-8")
+    assert "SPA: skipped" in content
+    spa_copy = json.loads(spa_json_out.read_text(encoding="utf-8"))
+    assert spa_copy["spa_status"] == "skipped"
+    assert "spa_skip_reason" in spa_copy

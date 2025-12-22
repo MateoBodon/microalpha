@@ -107,6 +107,8 @@ def generate_summary(
         if candidate is not None:
             bootstrap_pvalue = float(candidate)
 
+    degenerate_reasons = _detect_degenerate_reasons(metrics, artifact_dir)
+
     output_path = Path(output_path)
 
     lines: list[str] = []
@@ -118,6 +120,13 @@ def generate_summary(
     lines.append("")
     lines.extend(_render_metric_table(metrics))
     lines.append("")
+    if degenerate_reasons:
+        lines.append("## Run is degenerate")
+        lines.append("")
+        lines.append("This run is not interpretable for performance claims:")
+        for reason in degenerate_reasons:
+            lines.append(f"- {reason}")
+        lines.append("")
 
     exposure_section = _render_exposure_summary(metrics)
     if exposure_section:
@@ -313,6 +322,80 @@ def _to_float(value: object) -> float | None:
         return float(value)
     except (TypeError, ValueError):
         return None
+
+
+def _resolve_trades_path(artifact_dir: Path) -> Path | None:
+    for candidate in ("trades.jsonl", "trades.csv"):
+        path = artifact_dir / candidate
+        if path.exists():
+            return path
+    return None
+
+
+def _count_trades(path: Path) -> int:
+    if path.suffix.lower() == ".jsonl":
+        with path.open("r", encoding="utf-8") as handle:
+            return sum(1 for line in handle if line.strip())
+    with path.open("r", encoding="utf-8") as handle:
+        rows = 0
+        header_seen = False
+        for line in handle:
+            if not line.strip():
+                continue
+            if not header_seen:
+                header_seen = True
+                continue
+            rows += 1
+        return rows
+
+
+def _load_returns(artifact_dir: Path) -> pd.Series | None:
+    equity_path = artifact_dir / "equity_curve.csv"
+    if not equity_path.exists():
+        return None
+    df = pd.read_csv(equity_path)
+    if df.empty:
+        return pd.Series([], dtype=float)
+    if "returns" in df.columns:
+        return pd.Series(df["returns"], dtype=float).dropna()
+    if "equity" not in df.columns:
+        return None
+    returns = pd.Series(df["equity"], dtype=float).pct_change().fillna(0.0)
+    return returns
+
+
+def _detect_degenerate_reasons(
+    metrics: Mapping[str, object], artifact_dir: Path
+) -> list[str]:
+    reasons: list[str] = []
+    num_trades = _to_float(metrics.get("num_trades"))
+    if num_trades is None:
+        trades_path = _resolve_trades_path(artifact_dir)
+        if trades_path:
+            num_trades = float(_count_trades(trades_path))
+    if num_trades is not None and int(num_trades) == 0:
+        reasons.append("num_trades == 0 (no executed trades)")
+
+    turnover = _to_float(metrics.get("total_turnover"))
+    if (
+        turnover is not None
+        and num_trades is not None
+        and int(num_trades) == 0
+        and turnover > 0
+    ):
+        reasons.append("turnover > 0 with zero trades (metrics inconsistent)")
+
+    returns = _load_returns(artifact_dir)
+    if returns is not None:
+        returns = returns.dropna()
+        if returns.empty:
+            reasons.append("returns series is empty")
+        else:
+            variance = float(returns.var(ddof=0))
+            if abs(variance) <= 1e-12:
+                reasons.append("returns variance is zero (flat equity curve)")
+
+    return reasons
 
 
 def _relpath(path: Path, output_path: Path) -> str:

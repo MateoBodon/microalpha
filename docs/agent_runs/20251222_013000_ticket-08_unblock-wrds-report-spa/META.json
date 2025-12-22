@@ -1,0 +1,37 @@
+{
+  "run_name": "20251222_013000_ticket-08_unblock-wrds-report-spa",
+  "ticket_id": "ticket-08",
+  "git_sha_before": "0b4ff5aa526fa6c5e904950ab8c2b78c12e3e82c",
+  "git_sha_after": "HEAD",
+  "branch": "feat/ticket-08-unblock-wrds-report",
+  "timestamp_local": "2025-12-21T21:50:27-0500",
+  "env": {
+    "os": "macOS 26.0.1 (Build 25A362)",
+    "python": "3.12.2",
+    "pip_freeze_hash": "",
+    "notes": "pip freeze not captured"
+  },
+  "data": {
+    "mode": "report-only",
+    "dataset_id": "",
+    "wrds_data_root": "",
+    "license_notes": "No raw WRDS data committed."
+  },
+  "config": {
+    "config_paths": [],
+    "config_hashes": {}
+  },
+  "artifacts": {
+    "artifact_dirs": [
+      "artifacts/sample_wfv_holdout/2025-12-22T00-40-53Z-99a072e",
+      "artifacts/wrds_flagship/2025-12-21T22-32-44Z-2b48ef7"
+    ],
+    "reports": [
+      "reports/summaries/flagship_mom.md"
+    ]
+  },
+  "web_research": {
+    "enabled": false,
+    "sources": []
+  }
+}

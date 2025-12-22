@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file. The format 
 - ticket-01: WRDS configs now surface gross leverage/single-name caps and borrow model; reporting now includes net/gross exposure + cost breakdown.
 - WRDS smoke report tolerates zero SPA comparator t-stats (smoke-only) to keep validation runs unblocked.
 - WRDS summary now reports the actual docs image root used for the run.
+- ticket-08: reporting now skips invalid SPA inputs with explicit reasons and flags degenerate runs (zero trades/flat returns).
 - ticket-06: gpt-bundle now refuses dirty worktrees to keep bundles commit-consistent.
 - ticket-06: stop ignoring `project_state/` and `docs/agent_runs/` so audit artifacts are tracked.
 - ticket-06: gpt-bundle honors `BUNDLE_TIMESTAMP` for deterministic bundle paths.

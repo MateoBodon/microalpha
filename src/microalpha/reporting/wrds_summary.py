@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any, Sequence
 
 import matplotlib.pyplot as plt
+import pandas as pd
 import yaml
 
 from microalpha.reporting.robustness import write_robustness_artifacts
@@ -24,7 +25,14 @@ class HeadlineMetrics:
     max_drawdown: float
     turnover: float
     reality_check_p: float
-    spa_p_value: float
+    spa_p_value: float | None
+
+
+@dataclass(frozen=True)
+class SpaRenderResult:
+    path: Path
+    status: str
+    skip_reason: str | None
 
 
 def _require_file(path: Path, label: str) -> Path:
@@ -52,8 +60,16 @@ def _format_human_currency(value: float | None) -> str:
     return f"${value:,.2f}"
 
 
-def _format_ratio(value: float) -> str:
+def _format_ratio(value: float | None) -> str:
+    if value is None or not math.isfinite(value):
+        return "n/a"
     return f"{value:.2f}"
+
+
+def _format_p_value(value: float | None) -> str:
+    if value is None or not math.isfinite(value):
+        return "n/a"
+    return f"{value:.3f}"
 
 
 def _format_pct(value: float) -> str:
@@ -89,8 +105,8 @@ def _render_table(metrics: HeadlineMetrics) -> list[str]:
         f"| MAR | {_format_ratio(metrics.mar)} |",
         f"| MaxDD | {_format_pct(metrics.max_drawdown)} |",
         f"| Turnover | {_format_currency(metrics.turnover)} |",
-        f"| RealityCheck_p_value | {metrics.reality_check_p:.3f} |",
-        f"| SPA_p_value | {metrics.spa_p_value:.3f} |",
+        f"| RealityCheck_p_value | {_format_p_value(metrics.reality_check_p)} |",
+        f"| SPA_p_value | {_format_p_value(metrics.spa_p_value)} |",
     ]
 
 
@@ -158,7 +174,9 @@ def _load_cost_payload(artifact_dir: Path) -> dict | None:
     return None
 
 
-def _extract_headline(metrics_payload: dict, spa_payload: dict) -> HeadlineMetrics:
+def _extract_headline(
+    metrics_payload: dict, spa_payload: dict, *, spa_status: str
+) -> HeadlineMetrics:
     sharpe = float(metrics_payload.get("sharpe_ratio") or 0.0)
     mar = float(metrics_payload.get("calmar_ratio") or 0.0)
     max_dd = abs(float(metrics_payload.get("max_drawdown") or 0.0))
@@ -168,16 +186,15 @@ def _extract_headline(metrics_payload: dict, spa_payload: dict) -> HeadlineMetri
         or metrics_payload.get("bootstrap_p_value")
         or 0.0
     )
-    spa_p = float(spa_payload.get("p_value") or 0.0)
-    headline = HeadlineMetrics(sharpe, mar, max_dd, turnover, rc_p, spa_p)
-    if all(abs(value) < 1e-9 for value in (sharpe, mar, turnover, rc_p, spa_p)):
-        raise SystemExit(
-            "Headline metrics appear to be empty (all zeros). Rerun walk-forward with WRDS data first."
-        )
-    return headline
+    spa_p: float | None
+    if spa_status == "skipped":
+        spa_p = None
+    else:
+        spa_p = float(spa_payload.get("p_value") or 0.0)
+    return HeadlineMetrics(sharpe, mar, max_dd, turnover, rc_p, spa_p)
 
 
-def _parse_factor_table(markdown: str) -> list[dict[str, float | str]]:
+def _parse_factor_table(markdown: str) -> tuple[list[dict[str, float | str]], str | None]:
     rows: list[dict[str, float | str]] = []
     for raw in markdown.splitlines():
         line = raw.strip()
@@ -196,10 +213,10 @@ def _parse_factor_table(markdown: str) -> list[dict[str, float | str]]:
             continue
         rows.append({"factor": factor, "beta": beta, "t_stat": t_stat})
     if not rows:
-        raise SystemExit("Factor regression table is empty; run reports/factors.py first.")
+        return [], "Factor regression table is empty; run reports/factors.py first."
     if all(abs(row["beta"]) < 1e-9 and abs(row["t_stat"]) < 1e-9 for row in rows):
-        raise SystemExit("Factor regression table contains only zeros; rerun the regression.")
-    return rows
+        return rows, "Factor regression table contains only zeros; rerun the regression."
+    return rows, None
 
 
 def _copy_asset(source: Path, destination: Path) -> Path:
@@ -256,36 +273,66 @@ def _relative_to_repo(path: Path) -> str:
         return str(path)
 
 
+def _coerce_float(value: object) -> float | None:
+    if value is None:
+        return None
+    try:
+        candidate = float(value)
+    except (TypeError, ValueError):
+        return None
+    return candidate if math.isfinite(candidate) else None
+
+
+def _spa_skip_reason(spa_payload: dict) -> str | None:
+    candidates = spa_payload.get("candidate_stats")
+    if not isinstance(candidates, list) or not candidates:
+        return "SPA payload missing comparator statistics."
+    t_stats = []
+    for row in candidates:
+        if not isinstance(row, dict):
+            continue
+        t_stats.append(_coerce_float(row.get("t_stat")))
+    finite_stats = [stat for stat in t_stats if stat is not None]
+    if not finite_stats:
+        return "SPA comparator t-stats are all NaN/inf."
+    if not any(abs(val) > 1e-9 for val in finite_stats):
+        return "SPA comparator t-stats are all zero."
+    return None
+
+
+def _render_spa_placeholder(destination: Path, message: str) -> None:
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    fig, ax = plt.subplots(figsize=(8, 3.5))
+    ax.axis("off")
+    ax.text(0.5, 0.5, message, ha="center", va="center", fontsize=12, wrap=True)
+    fig.tight_layout()
+    fig.savefig(destination, dpi=200)
+    plt.close(fig)
+
+
 def _render_spa_plot(
     spa_payload: dict, destination: Path, *, allow_zero: bool = False
-) -> Path:
+) -> SpaRenderResult:
+    skip_reason = _spa_skip_reason(spa_payload)
+    if skip_reason:
+        _render_spa_placeholder(destination, f"SPA skipped: {skip_reason}")
+        return SpaRenderResult(destination, "skipped", skip_reason)
+
     candidates = spa_payload.get("candidate_stats") or []
-    if not candidates:
-        raise SystemExit("SPA payload missing candidate comparator statistics.")
-    labels = [str(row.get("model")) for row in candidates]
-    t_stats = [float(row.get("t_stat") or 0.0) for row in candidates]
-    if not any(abs(val) > 1e-9 for val in t_stats):
-        if not allow_zero:
-            raise SystemExit("SPA comparator t-stats are all zero; rerun SPA generation.")
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        fig, ax = plt.subplots(figsize=(8, 3.5))
-        ax.axis("off")
-        ax.text(
-            0.5,
-            0.5,
-            "SPA comparator t-stats are all zero.",
-            ha="center",
-            va="center",
-            fontsize=12,
-        )
-        fig.tight_layout()
-        fig.savefig(destination, dpi=200)
-        plt.close(fig)
-        return destination
+    labels = [
+        str(row.get("model")) if isinstance(row, dict) else "unknown"
+        for row in candidates
+    ]
+    t_stats = [
+        _coerce_float(row.get("t_stat")) if isinstance(row, dict) else None
+        for row in candidates
+    ]
+    normalized = [stat if stat is not None else 0.0 for stat in t_stats]
+
     destination.parent.mkdir(parents=True, exist_ok=True)
-    order = sorted(range(len(labels)), key=lambda idx: t_stats[idx], reverse=True)
+    order = sorted(range(len(labels)), key=lambda idx: normalized[idx], reverse=True)
     ordered_labels = [labels[idx] for idx in order]
-    ordered_stats = [t_stats[idx] for idx in order]
+    ordered_stats = [normalized[idx] for idx in order]
     fig, ax = plt.subplots(figsize=(10, max(2.5, len(ordered_labels) * 0.45)))
     ax.barh(ordered_labels, ordered_stats, color="#3266c1")
     ax.axvline(0.0, color="black", linewidth=0.8)
@@ -294,7 +341,79 @@ def _render_spa_plot(
     fig.tight_layout()
     fig.savefig(destination, dpi=200)
     plt.close(fig)
-    return destination
+    return SpaRenderResult(destination, "ok", None)
+
+
+def _resolve_trades_path(artifact_dir: Path) -> Path | None:
+    for candidate in ("trades.jsonl", "trades.csv"):
+        path = artifact_dir / candidate
+        if path.exists():
+            return path
+    return None
+
+
+def _count_trades(path: Path) -> int:
+    if path.suffix.lower() == ".jsonl":
+        with path.open("r", encoding="utf-8") as handle:
+            return sum(1 for line in handle if line.strip())
+    with path.open("r", encoding="utf-8") as handle:
+        rows = 0
+        header_seen = False
+        for line in handle:
+            if not line.strip():
+                continue
+            if not header_seen:
+                header_seen = True
+                continue
+            rows += 1
+        return rows
+
+
+def _load_returns(artifact_dir: Path) -> pd.Series | None:
+    equity_path = artifact_dir / "equity_curve.csv"
+    if not equity_path.exists():
+        return None
+    df = pd.read_csv(equity_path)
+    if df.empty:
+        return pd.Series([], dtype=float)
+    if "returns" in df.columns:
+        return pd.Series(df["returns"], dtype=float).dropna()
+    if "equity" not in df.columns:
+        return None
+    returns = pd.Series(df["equity"], dtype=float).pct_change().fillna(0.0)
+    return returns
+
+
+def _detect_degenerate_reasons(metrics_payload: dict, artifact_dir: Path) -> list[str]:
+    reasons: list[str] = []
+    num_trades = _to_float(metrics_payload.get("num_trades"))
+    if num_trades is None:
+        trades_path = _resolve_trades_path(artifact_dir)
+        if trades_path:
+            num_trades = float(_count_trades(trades_path))
+    if num_trades is not None and int(num_trades) == 0:
+        reasons.append("num_trades == 0 (no executed trades)")
+
+    turnover = _to_float(metrics_payload.get("total_turnover"))
+    if (
+        turnover is not None
+        and num_trades is not None
+        and int(num_trades) == 0
+        and turnover > 0
+    ):
+        reasons.append("turnover > 0 with zero trades (metrics inconsistent)")
+
+    returns = _load_returns(artifact_dir)
+    if returns is not None:
+        returns = returns.dropna()
+        if returns.empty:
+            reasons.append("returns series is empty")
+        else:
+            variance = float(returns.var(ddof=0))
+            if abs(variance) <= 1e-12:
+                reasons.append("returns variance is zero (flat equity curve)")
+
+    return reasons
 
 
 def _write_docs_results(
@@ -311,9 +430,14 @@ def _write_docs_results(
     metrics_payload: dict,
     cost_payload: dict | None,
     spa_payload: dict,
+    spa_status: str,
+    spa_skip_reason: str | None,
+    factor_status: str,
+    factor_skip_reason: str | None,
     factor_table_md: str,
     image_map: dict[str, Path],
     spa_md_copy: Path | None,
+    degenerate_reasons: list[str],
 ) -> None:
     docs_path = docs_path.resolve()
     docs_path.parent.mkdir(parents=True, exist_ok=True)
@@ -329,8 +453,8 @@ def _write_docs_results(
         f"| MAR | {_format_ratio(headline.mar)} |",
         f"| Max Drawdown | {_format_pct(headline.max_drawdown)} |",
         f"| Turnover | {_format_human_currency(headline.turnover)} |",
-        f"| Reality Check p-value | {headline.reality_check_p:.3f} |",
-        f"| SPA p-value | {headline.spa_p_value:.3f} |",
+        f"| Reality Check p-value | {_format_p_value(headline.reality_check_p)} |",
+        f"| SPA p-value | {_format_p_value(headline.spa_p_value)} |",
     ]
 
     image_rel = {key: _relpath(path, docs_path) for key, path in image_map.items()}
@@ -350,6 +474,13 @@ def _write_docs_results(
     lines.append("")
     lines.extend(perf_lines)
     lines.append("")
+    if degenerate_reasons:
+        lines.append("## Run is degenerate")
+        lines.append("")
+        lines.append("This run is not interpretable for performance claims:")
+        for reason in degenerate_reasons:
+            lines.append(f"- {reason}")
+        lines.append("")
     exposure_table = _render_exposure_table(metrics_payload)
     if exposure_table:
         lines.append("## Exposure Summary")
@@ -379,24 +510,33 @@ def _write_docs_results(
 
     lines.append("## SPA & Factor Highlights")
     lines.append("")
-    best_model = spa_payload.get("best_model", "unknown")
-    p_value = float(spa_payload.get("p_value") or 0.0)
-    num_bootstrap = spa_payload.get("num_bootstrap") or 0
-    avg_block = spa_payload.get("avg_block") or 0
-    spa_ref = spa_md_rel or spa_payload.get("markdown_path", "reports/summaries/wrds_flagship_spa.md")
-    lines.append(
-        (
-            f"- Hansen SPA best model: **{best_model}** with p-value **{p_value:.3f}** "
-            f"({num_bootstrap} stationary bootstrap draws, block={avg_block}). "
-            f"See `{spa_ref}`."
+    if spa_status == "skipped":
+        lines.append(f"- SPA: skipped — {spa_skip_reason or 'invalid inputs'}")
+    else:
+        best_model = spa_payload.get("best_model", "unknown")
+        p_value = float(spa_payload.get("p_value") or 0.0)
+        num_bootstrap = spa_payload.get("num_bootstrap") or 0
+        avg_block = spa_payload.get("avg_block") or 0
+        spa_ref = spa_md_rel or spa_payload.get(
+            "markdown_path", "reports/summaries/wrds_flagship_spa.md"
         )
-    )
-    lines.append("- FF5 + MOM regression (HAC lags=5):")
-    lines.append("")
-    lines.append("```")
-    lines.append(factor_table_md.strip())
-    lines.append("```")
-    lines.append("")
+        lines.append(
+            (
+                f"- Hansen SPA best model: **{best_model}** with p-value **{p_value:.3f}** "
+                f"({num_bootstrap} stationary bootstrap draws, block={avg_block}). "
+                f"See `{spa_ref}`."
+            )
+        )
+    if factor_status == "skipped":
+        lines.append(f"- Factor regression skipped — {factor_skip_reason}")
+        lines.append("")
+    else:
+        lines.append("- FF5 + MOM regression (HAC lags=5):")
+        lines.append("")
+        lines.append("```")
+        lines.append(factor_table_md.strip())
+        lines.append("```")
+        lines.append("")
 
     lines.append("## Capacity & Turnover")
     lines.append("")
@@ -492,10 +632,17 @@ def render_wrds_summary(
 
     metrics_payload = _load_json(metrics_path)
     spa_payload = _load_json(spa_json_path)
-    headline = _extract_headline(metrics_payload, spa_payload)
+    spa_result = _render_spa_plot(
+        spa_payload, artifact_dir / "spa_tstats.png", allow_zero=allow_zero_spa
+    )
+    spa_status = spa_result.status
+    spa_skip_reason = spa_result.skip_reason
+    headline = _extract_headline(metrics_payload, spa_payload, spa_status=spa_status)
     factors_text = factors_path.read_text(encoding="utf-8")
-    _parse_factor_table(factors_text)
+    _, factor_skip_reason = _parse_factor_table(factors_text)
+    factor_status = "skipped" if factor_skip_reason else "ok"
     cost_payload = _load_cost_payload(artifact_dir)
+    degenerate_reasons = _detect_degenerate_reasons(metrics_payload, artifact_dir)
 
     manifest_payload = _load_json(manifest_path)
     run_id = manifest_payload.get("run_id") or artifact_dir.name or "wrds_run"
@@ -509,18 +656,25 @@ def render_wrds_summary(
     ic_plot = _require_file(analytics_dir / f"{run_id}_ic_ir.png", "IC/IR plot")
     decile_plot = _require_file(analytics_dir / f"{run_id}_deciles.png", "deciles plot")
     beta_plot = _require_file(analytics_dir / f"{run_id}_rolling_betas.png", "rolling betas plot")
-    spa_plot = _render_spa_plot(
-        spa_payload, artifact_dir / "spa_tstats.png", allow_zero=allow_zero_spa
-    )
+    spa_plot = spa_result.path
 
     if metrics_json_out:
         metrics_json_out = metrics_json_out.expanduser().resolve()
         metrics_json_out.parent.mkdir(parents=True, exist_ok=True)
         metrics_copy = dict(metrics_payload)
         metrics_copy["run_id"] = run_id
+        metrics_copy["spa_status"] = spa_status
+        if spa_skip_reason:
+            metrics_copy["spa_skip_reason"] = spa_skip_reason
         metrics_json_out.write_text(json.dumps(metrics_copy, indent=2) + "\n", encoding="utf-8")
     if spa_json_out:
-        _copy_asset(spa_json_path, spa_json_out.expanduser().resolve())
+        spa_json_out = spa_json_out.expanduser().resolve()
+        spa_json_out.parent.mkdir(parents=True, exist_ok=True)
+        spa_copy = dict(spa_payload)
+        spa_copy["spa_status"] = spa_status
+        if spa_skip_reason:
+            spa_copy["spa_skip_reason"] = spa_skip_reason
+        spa_json_out.write_text(json.dumps(spa_copy, indent=2) + "\n", encoding="utf-8")
     if spa_md_out:
         _copy_asset(spa_md_path, spa_md_out.expanduser().resolve())
 
@@ -547,6 +701,13 @@ def render_wrds_summary(
     lines = ["# WRDS Flagship Walk-Forward", "", "## Headline Metrics", ""]
     lines.extend(_render_table(headline))
     lines.append("")
+    if degenerate_reasons:
+        lines.append("## Run is degenerate")
+        lines.append("")
+        lines.append("This run is not interpretable for performance claims:")
+        for reason in degenerate_reasons:
+            lines.append(f"- {reason}")
+        lines.append("")
     exposure_table = _render_exposure_table(metrics_payload)
     if exposure_table:
         lines.append("## Exposure Summary")
@@ -573,12 +734,18 @@ def render_wrds_summary(
 
     lines.append("## Hansen SPA Summary")
     lines.append("")
-    lines.extend(_normalise_section(spa_md_path.read_text(encoding="utf-8")))
+    if spa_status == "skipped":
+        lines.append(f"SPA: skipped — {spa_skip_reason or 'invalid inputs'}")
+    else:
+        lines.extend(_normalise_section(spa_md_path.read_text(encoding="utf-8")))
     lines.append("")
 
     lines.append("## Factor Attribution (FF5+MOM)")
     lines.append("")
-    lines.extend(_normalise_section(factors_text))
+    if factor_status == "skipped":
+        lines.append(f"Factor regression skipped — {factor_skip_reason}")
+    else:
+        lines.extend(_normalise_section(factors_text))
     lines.append("")
 
     output_path.write_text("\n".join(lines).strip() + "\n", encoding="utf-8")
@@ -597,9 +764,14 @@ def render_wrds_summary(
             metrics_payload=metrics_payload,
             cost_payload=cost_payload,
             spa_payload=spa_payload,
+            spa_status=spa_status,
+            spa_skip_reason=spa_skip_reason,
+            factor_status=factor_status,
+            factor_skip_reason=factor_skip_reason,
             factor_table_md=factors_text,
             image_map=doc_image_map,
             spa_md_copy=spa_md_out or spa_md_path,
+            degenerate_reasons=degenerate_reasons,
         )
 
     return output_path

@@ -278,6 +278,11 @@ def run_walk_forward(
     total_commission = 0.0
     total_slippage = 0.0
     total_borrow_cost = 0.0
+    total_num_trades = 0
+    total_trade_notional = 0.0
+    total_realized_pnl = 0.0
+    total_win_trades = 0
+    total_loss_trades = 0
 
     current_date = start_date
     master_rng = np.random.default_rng(cfg.template.seed)
@@ -401,6 +406,7 @@ def run_walk_forward(
             total_turnover += float(portfolio.total_turnover)
             total_borrow_cost += float(getattr(portfolio, "borrow_cost_total", 0.0))
             trades_list = getattr(portfolio, "trades", None) or []
+            total_num_trades += len(trades_list)
             for trade in trades_list:
                 try:
                     total_commission += float(trade.get("commission", 0.0) or 0.0)
@@ -409,6 +415,24 @@ def run_walk_forward(
                     ) * abs(float(trade.get("qty", 0.0) or 0.0))
                 except (TypeError, ValueError):
                     continue
+                try:
+                    qty = float(trade.get("qty", 0.0) or 0.0)
+                    price = float(trade.get("price", 0.0) or 0.0)
+                    total_trade_notional += abs(qty) * abs(price)
+                except (TypeError, ValueError):
+                    pass
+                realized = trade.get("realized_pnl")
+                if realized is not None:
+                    try:
+                        realized_val = float(realized)
+                    except (TypeError, ValueError):
+                        realized_val = None
+                    if realized_val is not None:
+                        total_realized_pnl += realized_val
+                        if realized_val > 0:
+                            total_win_trades += 1
+                        elif realized_val < 0:
+                            total_loss_trades += 1
 
             fold_index = len(folds)
             exposure_path, factor_path = persist_exposures(
@@ -596,6 +620,11 @@ def run_walk_forward(
         holdout_total_commission = 0.0
         holdout_total_slippage = 0.0
         holdout_trades = getattr(holdout_portfolio, "trades", None) or []
+        holdout_num_trades = len(holdout_trades)
+        holdout_trade_notional = 0.0
+        holdout_realized_pnl = 0.0
+        holdout_win_trades = 0
+        holdout_loss_trades = 0
         for trade in holdout_trades:
             try:
                 holdout_total_commission += float(trade.get("commission", 0.0) or 0.0)
@@ -604,6 +633,31 @@ def run_walk_forward(
                 ) * abs(float(trade.get("qty", 0.0) or 0.0))
             except (TypeError, ValueError):
                 continue
+            try:
+                qty = float(trade.get("qty", 0.0) or 0.0)
+                price = float(trade.get("price", 0.0) or 0.0)
+                holdout_trade_notional += abs(qty) * abs(price)
+            except (TypeError, ValueError):
+                pass
+            realized = trade.get("realized_pnl")
+            if realized is not None:
+                try:
+                    realized_val = float(realized)
+                except (TypeError, ValueError):
+                    realized_val = None
+                if realized_val is not None:
+                    holdout_realized_pnl += realized_val
+                    if realized_val > 0:
+                        holdout_win_trades += 1
+                    elif realized_val < 0:
+                        holdout_loss_trades += 1
+        holdout_win_denom = holdout_win_trades + holdout_loss_trades
+        holdout_win_rate = (
+            holdout_win_trades / holdout_win_denom if holdout_win_denom > 0 else 0.0
+        )
+        holdout_avg_trade_notional = (
+            holdout_trade_notional / holdout_num_trades if holdout_num_trades > 0 else 0.0
+        )
         holdout_metrics.update(
             {
                 "borrow_cost_total": float(
@@ -611,6 +665,10 @@ def run_walk_forward(
                 ),
                 "commission_total": float(holdout_total_commission),
                 "slippage_total": float(holdout_total_slippage),
+                "num_trades": holdout_num_trades,
+                "avg_trade_notional": float(holdout_avg_trade_notional),
+                "win_rate": float(holdout_win_rate),
+                "total_realized_pnl": float(holdout_realized_pnl),
             }
         )
 
@@ -696,6 +754,11 @@ def run_walk_forward(
     else:
         reality_check_path = None
 
+    total_win_denom = total_win_trades + total_loss_trades
+    total_win_rate = total_win_trades / total_win_denom if total_win_denom > 0 else 0.0
+    total_avg_trade_notional = (
+        total_trade_notional / total_num_trades if total_num_trades > 0 else 0.0
+    )
     metrics = _summarise_walkforward(
         equity_records,
         artifacts_dir,
@@ -707,6 +770,10 @@ def run_walk_forward(
             "borrow_cost_total": float(total_borrow_cost),
             "commission_total": float(total_commission),
             "slippage_total": float(total_slippage),
+            "num_trades": total_num_trades,
+            "avg_trade_notional": float(total_avg_trade_notional),
+            "win_rate": float(total_win_rate),
+            "total_realized_pnl": float(total_realized_pnl),
         },
     )
 

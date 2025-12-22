@@ -18,3 +18,4 @@ Ticket-02: WRDS report run failed at SPA step (Status: Blocked; zero SPA compara
 ## 2025-12-22
 
 Ticket-07: Ticket-02 evidence + bundle integrity fixes (Status: Done). Run log: `docs/agent_runs/20251222_001500_ticket-07_ticket-02-evidence-and-bundle-fix/`.
+Ticket-08: WRDS report SPA/degenerate-case robustness (Status: Done). Run log: `docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/`.

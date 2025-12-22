@@ -30,6 +30,22 @@ def _write_equity(tmp_path: Path) -> Path:
     return path
 
 
+def _write_flat_equity(tmp_path: Path) -> Path:
+    dates = pd.date_range("2025-01-01", periods=5, freq="D")
+    equity = pd.Series([1_000_000] * len(dates), index=dates)
+    df = pd.DataFrame(
+        {
+            "timestamp": dates.view("int64"),
+            "equity": equity,
+            "exposure": 0.0,
+            "returns": equity.pct_change().fillna(0.0),
+        }
+    )
+    path = tmp_path / "equity_curve.csv"
+    df.to_csv(path, index=False)
+    return path
+
+
 def test_cost_sensitivity_generates_grid(tmp_path: Path) -> None:
     artifact_dir = tmp_path / "artifacts"
     artifact_dir.mkdir()
@@ -104,3 +120,26 @@ def test_summary_includes_robustness_section(tmp_path: Path) -> None:
     assert "Cost & Metadata Robustness" in text
     assert "Cost sensitivity" in text
     assert "Metadata coverage" in text
+
+
+def test_summary_flags_degenerate_run(tmp_path: Path) -> None:
+    artifact_dir = tmp_path / "artifacts"
+    artifact_dir.mkdir()
+    _write_flat_equity(artifact_dir)
+    (artifact_dir / "metrics.json").write_text(
+        json.dumps(
+            {
+                "sharpe_ratio": 0.0,
+                "max_drawdown": 0.0,
+                "total_turnover": 0.0,
+                "num_trades": 0,
+            }
+        ),
+        encoding="utf-8",
+    )
+    summary_path = tmp_path / "summary.md"
+    generate_summary(artifact_dir, output_path=summary_path, factor_csv=None)
+    text = summary_path.read_text(encoding="utf-8")
+    assert "Run is degenerate" in text
+    assert "num_trades == 0" in text
+    assert "returns variance is zero" in text
