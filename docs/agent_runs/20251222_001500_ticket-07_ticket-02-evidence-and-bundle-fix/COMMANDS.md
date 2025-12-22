@@ -198,4 +198,166 @@ EOF
 - git status -sb
 - git status -sb
 - date -u "+%Y-%m-%dT%H-%M-%SZ"
+- BUNDLE_TIMESTAMP=2025-12-22T00-52-52Z make gpt-bundle TICKET=ticket-07 RUN_NAME=20251222_001500_ticket-07_ticket-02-evidence-and-bundle-fix (failed: DIFF.patch verification mismatch)
+- BASE=99a072e4f8408b4aeaa87f5af444d5103f96b5d5
+  HEAD=$(git rev-parse HEAD)
+  PATCH=$(mktemp /tmp/microalpha_diff.XXXXXX)
+  SCRATCH=$(mktemp -d /tmp/microalpha_patchcheck.XXXXXX)
+  git diff "$BASE..$HEAD" > "$PATCH"
+  mkdir -p "$SCRATCH"
+  if git show "$BASE:PROGRESS.md" > "$SCRATCH/PROGRESS.md" 2>/dev/null; then :; fi
+  set -e
+  if git apply --unsafe-paths --directory "$SCRATCH" --include PROGRESS.md "$PATCH"; then echo "applied"; fi
+  if [ -f "$SCRATCH/PROGRESS.md" ]; then diff -q "$SCRATCH/PROGRESS.md" PROGRESS.md && echo "match"; fi
+  echo "scratch:$SCRATCH patch:$PATCH"
+- BASE=99a072e4f8408b4aeaa87f5af444d5103f96b5d5
+  HEAD=$(git rev-parse HEAD)
+  git diff "$BASE..$HEAD" -- PROGRESS.md
+- python3 - <<'PY'
+import subprocess
+from pathlib import Path
+import shutil
+
+base = "99a072e4f8408b4aeaa87f5af444d5103f96b5d5"
+head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+patch = Path("/tmp/microalpha_diff_check.patch")
+patch.write_text(subprocess.check_output(["git", "diff", f"{base}..{head}"], text=True))
+
+scratch = Path("/tmp/microalpha_patchcheck_dir")
+if scratch.exists():
+    shutil.rmtree(scratch)
+scratch.mkdir(parents=True)
+rel = Path("PROGRESS.md")
+content = subprocess.check_output(["git", "show", f"{base}:{rel.as_posix()}"])
+(scratch / rel).parent.mkdir(parents=True, exist_ok=True)
+(scratch / rel).write_bytes(content)
+subprocess.check_output(
+    [
+        "git",
+        "apply",
+        "--unsafe-paths",
+        "--directory",
+        str(scratch),
+        "--include",
+        rel.as_posix(),
+        str(patch),
+    ],
+    stderr=subprocess.STDOUT,
+)
+
+patched = (scratch / rel).read_bytes()
+current = Path(rel).read_bytes()
+print("match", patched == current)
+PY
+- python3 - <<'PY'
+import subprocess
+from pathlib import Path
+import shutil
+
+base = "99a072e4f8408b4aeaa87f5af444d5103f96b5d5"
+head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+patch = Path("/tmp/microalpha_diff_check.patch")
+patch.write_text(subprocess.check_output(["git", "diff", f"{base}..{head}"], text=True))
+
+scratch = Path("/tmp/microalpha_patchcheck_dir2")
+if scratch.exists():
+    shutil.rmtree(scratch)
+scratch.mkdir(parents=True)
+rel = Path("PROGRESS.md")
+content = subprocess.check_output(["git", "show", f"{base}:{rel.as_posix()}"])
+(scratch / rel).parent.mkdir(parents=True, exist_ok=True)
+(scratch / rel).write_bytes(content)
+subprocess.check_output(
+    [
+        "git",
+        "apply",
+        "--unsafe-paths",
+        "--directory",
+        str(scratch),
+        "--include",
+        rel.as_posix(),
+        str(patch),
+    ],
+    stderr=subprocess.STDOUT,
+)
+
+patched = (scratch / rel).read_text()
+current = Path(rel).read_text()
+print("patched exists", (scratch / rel).exists())
+print("current exists", Path(rel).exists())
+print("patched len", len(patched))
+print("current len", len(current))
+print("patched tail", patched.splitlines()[-3:])
+print("current tail", current.splitlines()[-3:])
+PY
+- python3 - <<'PY'
+import subprocess
+from pathlib import Path
+import shutil
+
+base = "99a072e4f8408b4aeaa87f5af444d5103f96b5d5"
+head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+patch = Path("/tmp/microalpha_diff_check.patch")
+patch.write_text(subprocess.check_output(["git", "diff", f"{base}..{head}"], text=True))
+
+for include in ["PROGRESS.md", "b/PROGRESS.md", "a/PROGRESS.md"]:
+    scratch = Path(f"/tmp/microalpha_patchcheck_{include.replace('/', '_')}")
+    if scratch.exists():
+        shutil.rmtree(scratch)
+    scratch.mkdir(parents=True)
+    rel = Path("PROGRESS.md")
+    content = subprocess.check_output(["git", "show", f"{base}:{rel.as_posix()}"])
+    (scratch / rel).parent.mkdir(parents=True, exist_ok=True)
+    (scratch / rel).write_bytes(content)
+    subprocess.check_output(
+        [
+            "git",
+            "apply",
+            "--unsafe-paths",
+            "--directory",
+            str(scratch),
+            "--include",
+            include,
+            str(patch),
+        ],
+        stderr=subprocess.STDOUT,
+    )
+    patched = (scratch / rel).read_text()
+    current = Path(rel).read_text()
+    print(include, patched == current)
+PY
+- python3 - <<'PY'  # failed: git apply without include
+import subprocess
+from pathlib import Path
+import shutil
+
+base = "99a072e4f8408b4aeaa87f5af444d5103f96b5d5"
+head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+patch = Path("/tmp/microalpha_diff_check.patch")
+patch.write_text(subprocess.check_output(["git", "diff", f"{base}..{head}"], text=True))
+
+scratch = Path("/tmp/microalpha_patchcheck_noinclude")
+if scratch.exists():
+    shutil.rmtree(scratch)
+scratch.mkdir(parents=True)
+rel = Path("PROGRESS.md")
+content = subprocess.check_output(["git", "show", f"{base}:{rel.as_posix()}"])
+(scratch / rel).parent.mkdir(parents=True, exist_ok=True)
+(scratch / rel).write_bytes(content)
+subprocess.check_output(
+    [
+        "git",
+        "apply",
+        "--unsafe-paths",
+        "--directory",
+        str(scratch),
+        str(patch),
+    ],
+    stderr=subprocess.STDOUT,
+)
+patched = (scratch / rel).read_text()
+current = Path(rel).read_text()
+print("match", patched == current)
+PY
+- git status -sb
 - BUNDLE_TIMESTAMP=2025-12-22T00-52-52Z make gpt-bundle TICKET=ticket-07 RUN_NAME=20251222_001500_ticket-07_ticket-02-evidence-and-bundle-fix

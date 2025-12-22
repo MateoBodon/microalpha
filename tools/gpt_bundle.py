@@ -131,6 +131,7 @@ def _verify_patch_matches(
     diff_path: Path,
     stage: Path,
     base: str,
+    head: str,
     run_name: str,
 ) -> None:
     check_files = _collect_check_files(stage, run_name)
@@ -145,24 +146,40 @@ def _verify_patch_matches(
     for rel_path in check_files:
         _hydrate_base_file(base, rel_path, scratch)
 
-    apply_cmd = [
-        "git",
-        "apply",
-        "--unsafe-paths",
-        "--directory",
-        str(scratch),
-    ]
     for rel_path in check_files:
-        apply_cmd.extend(["--include", rel_path.as_posix()])
-    apply_cmd.append(str(diff_path))
-
-    try:
-        subprocess.check_output(apply_cmd, text=True, stderr=subprocess.STDOUT)
-    except subprocess.CalledProcessError as exc:
-        raise SystemExit(
-            "DIFF.patch failed to apply cleanly during bundle verification:\n"
-            f"{exc.output}"
-        ) from exc
+        patch_text = subprocess.check_output(
+            [
+                "git",
+                "diff",
+                f"{base}..{head}",
+                "--",
+                rel_path.as_posix(),
+            ],
+            text=True,
+            stderr=subprocess.STDOUT,
+        )
+        if not patch_text.strip():
+            continue
+        patch_file = scratch / f".patch_{rel_path.as_posix().replace('/', '_')}"
+        patch_file.write_text(patch_text, encoding="utf-8")
+        try:
+            subprocess.check_output(
+                [
+                    "git",
+                    "apply",
+                    "--unsafe-paths",
+                    "--directory",
+                    str(scratch),
+                    str(patch_file),
+                ],
+                text=True,
+                stderr=subprocess.STDOUT,
+            )
+        except subprocess.CalledProcessError as exc:
+            raise SystemExit(
+                "DIFF.patch failed to apply cleanly during bundle verification:\n"
+                f"{exc.output}"
+            ) from exc
 
     mismatches: list[str] = []
     for rel_path in check_files:
@@ -224,7 +241,7 @@ def main() -> None:
     diff_cmd = ["git", "diff", f"{base}..{head}"]
     diff_text = subprocess.check_output(diff_cmd, text=True, stderr=subprocess.STDOUT)
     diff_path.write_text(diff_text, encoding="utf-8")
-    _verify_patch_matches(diff_path, stage, base, run_name)
+    _verify_patch_matches(diff_path, stage, base, head, run_name)
 
     last_commit = subprocess.check_output(
         ["git", "log", "-1", "--pretty=format:%H%n%an%n%ad%n%s"],

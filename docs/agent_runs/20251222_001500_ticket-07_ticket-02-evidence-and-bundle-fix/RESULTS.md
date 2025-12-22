@@ -1,6 +1,7 @@
 Summary:
 - Added a holdout-isolation test that contrasts selection with and without a holdout window using a deterministic toy series.
-- Hardened gpt-bundle to record commit ranges (COMMITS.txt) and verify DIFF.patch reproduces bundled PROGRESS/run-log files.
+- Hardened gpt-bundle to record commit ranges (COMMITS.txt) and verify DIFF.patch reproduces bundled PROGRESS/run-log files; verification now applies per-file patches.
+- Note: initial gpt-bundle verification failed due to include-filter mismatch; fixed by applying per-file diffs.
 - Updated progress and sprint docs to reflect ticket-02 review failure and ticket-07 scope; refreshed sample holdout run entry.
 
 Code/doc changes:
