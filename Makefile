@@ -7,7 +7,7 @@ WRDS_ARTIFACT_DIR ?= artifacts/wrds_flagship
 WRDS_SMOKE_CONFIG ?= configs/wfv_flagship_wrds_smoke.yaml
 WRDS_SMOKE_ARTIFACT_DIR ?= artifacts/wrds_flagship_smoke
 
-.PHONY: dev test test-wrds sample wfv wfv-wrds wfv-wrds-smoke wrds wrds-flagship report report-wrds report-wrds-smoke docs clean export-wrds report-wfv gpt-bundle
+.PHONY: dev test test-wrds sample wfv wfv-wrds wfv-wrds-smoke wrds wrds-flagship report report-wrds report-wrds-smoke docs clean export-wrds report-wfv gpt-bundle check-data-policy
 
 dev:
 	pip install -e '.[dev]'
@@ -88,6 +88,9 @@ report-wrds-smoke:
 	PYTHONPATH=src:$$PYTHONPATH python3 reports/tearsheet.py $$latest/equity_curve.csv --bootstrap $$latest/bootstrap.json --metrics $$latest/metrics.json --output $$latest/equity_curve.png --bootstrap-output $$latest/bootstrap_hist.png --title "WRDS Flagship Walk-Forward (Smoke)"; \
 	PYTHONPATH=src:$$PYTHONPATH python3 reports/spa.py --grid $$latest/grid_returns.csv --output-json $$latest/spa.json --output-md $$latest/spa.md --bootstrap 500 --avg-block 63; \
 	PYTHONPATH=src:$$PYTHONPATH python3 reports/render_wrds_flagship.py $$latest --output reports/summaries/wrds_flagship_smoke.md --factors-md $$latest/factors_ff5_mom.md --docs-results docs/results_wrds_smoke.md --docs-image-root $$img_root --analytics-plots artifacts/plots --metrics-json-out reports/summaries/wrds_flagship_smoke_metrics.json --spa-json-out reports/summaries/wrds_flagship_smoke_spa.json --spa-md-out reports/summaries/wrds_flagship_smoke_spa.md --allow-zero-spa
+
+check-data-policy:
+	python3 scripts/check_data_policy.py
 
 gpt-bundle:
 	@if [ -z "$(TICKET)" ] || [ -z "$(RUN_NAME)" ]; then echo "Set TICKET and RUN_NAME (e.g., make gpt-bundle TICKET=ticket-01 RUN_NAME=20251220_223500_ticket-01_wrds-tighten-caps)"; exit 1; fi

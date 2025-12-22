@@ -1,0 +1,4 @@
+# Paths/globs to skip in data-policy scanning.
+# Only allow synthetic/public samples or repo-generated logs with provenance.
+docs/agent_runs/**
+project_state/_generated/**
