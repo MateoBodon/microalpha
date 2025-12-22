@@ -71,3 +71,7 @@ Web research: disabled
 69. git stash push -m "temp stash before gpt-bundle" -- docs/CODEX_SPRINT_TICKETS.md reports/summaries/flagship_mom.md
 70. make gpt-bundle TICKET=ticket-08 RUN_NAME=20251222_013000_ticket-08_unblock-wrds-report-spa
 71. git stash pop
+72. git status -sb
+73. git add docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/COMMANDS.md docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/RESULTS.md
+74. git commit -m "ticket-08: update run logs" -m "Tests: not run (log update only)" -m "Artifacts: docs/gpt_bundles/2025-12-22T02-56-09Z_ticket-08_20251222_013000_ticket-08_unblock-wrds-report-spa.zip" -m "Docs: docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/COMMANDS.md, docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/RESULTS.md"
+75. git status -sb
