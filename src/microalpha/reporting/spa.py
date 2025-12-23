@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Sequence
@@ -14,12 +15,50 @@ import pandas as pd
 
 @dataclass
 class SpaSummary:
-    best_model: str
-    p_value: float
-    observed_stat: float
+    status: str
+    reason: str | None
+    best_model: str | None
+    p_value: float | None
+    observed_stat: float | None
     num_bootstrap: int
     avg_block: int
     candidate_stats: list[dict[str, float | str]]
+    n_obs: int
+    n_strategies: int
+    diagnostics: list[str]
+
+
+_MIN_OBS = 5
+_VAR_EPS = 1e-12
+
+
+def _degenerate_summary(
+    reason: str,
+    *,
+    n_obs: int,
+    n_strategies: int,
+    avg_block: int,
+    num_bootstrap: int,
+    diagnostics: list[str] | None = None,
+) -> SpaSummary:
+    return SpaSummary(
+        status="degenerate",
+        reason=reason,
+        best_model=None,
+        p_value=None,
+        observed_stat=None,
+        num_bootstrap=num_bootstrap,
+        avg_block=avg_block,
+        candidate_stats=[],
+        n_obs=n_obs,
+        n_strategies=n_strategies,
+        diagnostics=diagnostics or [],
+    )
+
+
+def _coerce_numeric_frame(frame: pd.DataFrame) -> pd.DataFrame:
+    numeric = frame.apply(pd.to_numeric, errors="coerce")
+    return numeric.replace([np.inf, -np.inf], np.nan)
 
 
 def load_grid_returns(grid_path: Path) -> pd.DataFrame:
@@ -102,26 +141,152 @@ def compute_spa(
     num_bootstrap: int = 2000,
     seed: int = 0,
 ) -> SpaSummary:
-    if pivot.shape[1] < 2:
-        raise ValueError("SPA test requires at least two candidate models")
-    model_names = list(pivot.columns)
-    matrix = pivot.to_numpy(dtype=float)
+    diagnostics: list[str] = []
+    if not isinstance(pivot, pd.DataFrame):
+        return _degenerate_summary(
+            "pivot is not a DataFrame",
+            n_obs=0,
+            n_strategies=0,
+            avg_block=avg_block,
+            num_bootstrap=num_bootstrap,
+        )
+
+    if avg_block <= 0:
+        diagnostics.append("avg_block <= 0; clamped to 1")
+        avg_block = 1
+    if num_bootstrap <= 0:
+        return _degenerate_summary(
+            "num_bootstrap must be positive",
+            n_obs=0,
+            n_strategies=pivot.shape[1],
+            avg_block=avg_block,
+            num_bootstrap=num_bootstrap,
+        )
+
+    cleaned = _coerce_numeric_frame(pivot)
+    dropped_cols = [col for col in cleaned.columns if cleaned[col].isna().all()]
+    if dropped_cols:
+        diagnostics.append(f"dropped {len(dropped_cols)} all-NaN strategy columns")
+        cleaned = cleaned.drop(columns=dropped_cols)
+    n_strategies = int(cleaned.shape[1])
+    if n_strategies < 2:
+        return _degenerate_summary(
+            "need at least two strategies after cleaning",
+            n_obs=0,
+            n_strategies=n_strategies,
+            avg_block=avg_block,
+            num_bootstrap=num_bootstrap,
+            diagnostics=diagnostics,
+        )
+
+    pre_rows = int(cleaned.shape[0])
+    cleaned = cleaned.dropna(axis=0, how="any")
+    dropped_rows = pre_rows - int(cleaned.shape[0])
+    if dropped_rows:
+        diagnostics.append(f"dropped {dropped_rows} rows with NaN/inf values")
+    n_obs = int(cleaned.shape[0])
+    if n_obs < _MIN_OBS:
+        return _degenerate_summary(
+            f"insufficient observations (n_obs={n_obs}, min_required={_MIN_OBS})",
+            n_obs=n_obs,
+            n_strategies=n_strategies,
+            avg_block=avg_block,
+            num_bootstrap=num_bootstrap,
+            diagnostics=diagnostics,
+        )
+
+    variances = cleaned.var(axis=0, ddof=0)
+    if np.all(np.abs(variances.to_numpy(dtype=float)) <= _VAR_EPS):
+        return _degenerate_summary(
+            "all strategies have zero variance",
+            n_obs=n_obs,
+            n_strategies=n_strategies,
+            avg_block=avg_block,
+            num_bootstrap=num_bootstrap,
+            diagnostics=diagnostics,
+        )
+
+    matrix = cleaned.to_numpy(dtype=float)
+    if not np.isfinite(matrix).all():
+        return _degenerate_summary(
+            "non-finite values remain after cleaning",
+            n_obs=n_obs,
+            n_strategies=n_strategies,
+            avg_block=avg_block,
+            num_bootstrap=num_bootstrap,
+            diagnostics=diagnostics,
+        )
+
     means = matrix.mean(axis=0)
+    if not np.isfinite(means).all():
+        return _degenerate_summary(
+            "non-finite mean returns",
+            n_obs=n_obs,
+            n_strategies=n_strategies,
+            avg_block=avg_block,
+            num_bootstrap=num_bootstrap,
+            diagnostics=diagnostics,
+        )
+
+    model_names = list(cleaned.columns)
     best_idx = int(np.argmax(means))
-    best_model = model_names[best_idx]
+    best_model = str(model_names[best_idx])
     diff_matrix = matrix[:, [best_idx]] - matrix
     diff_matrix = np.delete(diff_matrix, best_idx, axis=1)
     comparator_names = [name for i, name in enumerate(model_names) if i != best_idx]
     observed_stat, component_stats = _spa_stat(diff_matrix)
 
+    if not math.isfinite(observed_stat):
+        return _degenerate_summary(
+            "non-finite observed SPA statistic",
+            n_obs=n_obs,
+            n_strategies=n_strategies,
+            avg_block=avg_block,
+            num_bootstrap=num_bootstrap,
+            diagnostics=diagnostics,
+        )
+    if any(not math.isfinite(stat) for stat in component_stats):
+        return _degenerate_summary(
+            "non-finite comparator t-stats",
+            n_obs=n_obs,
+            n_strategies=n_strategies,
+            avg_block=avg_block,
+            num_bootstrap=num_bootstrap,
+            diagnostics=diagnostics,
+        )
+
     rng = np.random.default_rng(seed)
-    boot_stats = np.zeros(num_bootstrap)
+    boot_stats = np.zeros(num_bootstrap, dtype=float)
+    centered = diff_matrix - diff_matrix.mean(axis=0)
     for b in range(num_bootstrap):
         indices = _stationary_bootstrap_indices(len(matrix), avg_block, rng)
-        boot_slice = diff_matrix[indices, :]
+        boot_slice = centered[indices, :]
         boot_stats[b], _ = _spa_stat(boot_slice)
-    p_value = float(np.mean(boot_stats >= observed_stat))
-    candidate_stats = []
+    finite_boot = boot_stats[np.isfinite(boot_stats)]
+    if finite_boot.size == 0:
+        return _degenerate_summary(
+            "bootstrap statistics are all NaN/inf",
+            n_obs=n_obs,
+            n_strategies=n_strategies,
+            avg_block=avg_block,
+            num_bootstrap=num_bootstrap,
+            diagnostics=diagnostics,
+        )
+    if finite_boot.size != boot_stats.size:
+        diagnostics.append("dropped non-finite bootstrap statistics")
+    p_value = float(np.mean(finite_boot >= observed_stat))
+    if not math.isfinite(p_value):
+        return _degenerate_summary(
+            "non-finite SPA p-value",
+            n_obs=n_obs,
+            n_strategies=n_strategies,
+            avg_block=avg_block,
+            num_bootstrap=num_bootstrap,
+            diagnostics=diagnostics,
+        )
+    p_value = min(max(p_value, 0.0), 1.0)
+
+    candidate_stats: list[dict[str, float | str]] = []
     for name, stat, series in zip(
         comparator_names,
         component_stats,
@@ -129,45 +294,66 @@ def compute_spa(
     ):
         candidate_stats.append(
             {
-                "model": name,
+                "model": str(name),
                 "mean_diff": float(np.mean(series)),
                 "t_stat": float(stat),
             }
         )
     return SpaSummary(
+        status="ok",
+        reason=None,
         best_model=best_model,
         p_value=p_value,
         observed_stat=observed_stat,
         num_bootstrap=num_bootstrap,
         avg_block=avg_block,
         candidate_stats=candidate_stats,
+        n_obs=n_obs,
+        n_strategies=n_strategies,
+        diagnostics=diagnostics,
     )
 
 
 def write_outputs(summary: SpaSummary, json_path: Path, markdown_path: Path) -> None:
     json_path.parent.mkdir(parents=True, exist_ok=True)
     payload = {
+        "status": summary.status,
+        "reason": summary.reason,
         "best_model": summary.best_model,
         "p_value": summary.p_value,
         "observed_stat": summary.observed_stat,
         "num_bootstrap": summary.num_bootstrap,
         "avg_block": summary.avg_block,
         "candidate_stats": summary.candidate_stats,
+        "n_obs": summary.n_obs,
+        "n_strategies": summary.n_strategies,
+        "diagnostics": summary.diagnostics,
     }
     json_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
-    lines = ["# Hansen SPA Summary", "", f"- **Best model:** {summary.best_model}"]
-    lines.append(f"- **Observed max t-stat:** {summary.observed_stat:.3f}")
-    lines.append(f"- **p-value:** {summary.p_value:.3f}")
-    lines.append(f"- **Bootstrap draws:** {summary.num_bootstrap} (avg block {summary.avg_block})")
-    lines.append("")
-    if summary.candidate_stats:
-        lines.append("| Comparator | Mean Diff | t-stat |")
-        lines.append("| --- | ---:| ---:|")
-        for row in summary.candidate_stats:
-            lines.append(
-                f"| {row['model']} | {row['mean_diff']:.4f} | {row['t_stat']:.2f} |"
-            )
+    lines = ["# Hansen SPA Summary", ""]
+    if summary.status != "ok":
+        lines.append(f"- **Status:** {summary.status}")
+        lines.append(f"- **Reason:** {summary.reason or 'invalid inputs'}")
+        lines.append(f"- **Observations:** {summary.n_obs}")
+        lines.append(f"- **Strategies:** {summary.n_strategies}")
+        if summary.diagnostics:
+            lines.append(f"- **Diagnostics:** {', '.join(summary.diagnostics)}")
+    else:
+        lines.append(f"- **Best model:** {summary.best_model}")
+        lines.append(f"- **Observed max t-stat:** {summary.observed_stat:.3f}")
+        lines.append(f"- **p-value:** {summary.p_value:.3f}")
+        lines.append(
+            f"- **Bootstrap draws:** {summary.num_bootstrap} (avg block {summary.avg_block})"
+        )
+        lines.append("")
+        if summary.candidate_stats:
+            lines.append("| Comparator | Mean Diff | t-stat |")
+            lines.append("| --- | ---:| ---:|")
+            for row in summary.candidate_stats:
+                lines.append(
+                    f"| {row['model']} | {row['mean_diff']:.4f} | {row['t_stat']:.2f} |"
+                )
     markdown_path.parent.mkdir(parents=True, exist_ok=True)
     markdown_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
@@ -201,13 +387,22 @@ def _build_parser() -> argparse.ArgumentParser:
 def main(argv: Sequence[str] | None = None) -> None:
     parser = _build_parser()
     args = parser.parse_args(argv)
-    pivot = load_grid_returns(args.grid)
-    summary = compute_spa(
-        pivot,
-        avg_block=args.avg_block,
-        num_bootstrap=args.bootstrap,
-        seed=args.seed,
-    )
+    try:
+        pivot = load_grid_returns(args.grid)
+        summary = compute_spa(
+            pivot,
+            avg_block=args.avg_block,
+            num_bootstrap=args.bootstrap,
+            seed=args.seed,
+        )
+    except Exception as exc:  # pragma: no cover - CLI fallback
+        summary = _degenerate_summary(
+            f"{type(exc).__name__}: {exc}",
+            n_obs=0,
+            n_strategies=0,
+            avg_block=args.avg_block,
+            num_bootstrap=args.bootstrap,
+        )
     write_outputs(summary, args.output_json, args.output_md)
 
 

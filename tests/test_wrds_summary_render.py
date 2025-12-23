@@ -197,7 +197,7 @@ def test_wrds_summary_missing_equity(tmp_path: Path) -> None:
         )
 
 
-def test_wrds_summary_skips_zero_spa(tmp_path: Path) -> None:
+def test_wrds_summary_allows_zero_spa(tmp_path: Path) -> None:
     artifact_dir = tmp_path / "wrds_zero_spa"
     artifact_dir.mkdir()
     (artifact_dir / "metrics.json").write_text(
@@ -273,7 +273,7 @@ def test_wrds_summary_skips_zero_spa(tmp_path: Path) -> None:
         spa_json_out=spa_json_out,
     )
     content = output.read_text(encoding="utf-8")
-    assert "SPA: skipped" in content
+    assert "Hansen SPA Summary" in content
+    assert "SPA degenerate" not in content
     spa_copy = json.loads(spa_json_out.read_text(encoding="utf-8"))
-    assert spa_copy["spa_status"] == "skipped"
-    assert "spa_skip_reason" in spa_copy
+    assert spa_copy["spa_status"] == "ok"

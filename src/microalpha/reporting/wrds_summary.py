@@ -187,10 +187,10 @@ def _extract_headline(
         or 0.0
     )
     spa_p: float | None
-    if spa_status == "skipped":
+    if spa_status != "ok":
         spa_p = None
     else:
-        spa_p = float(spa_payload.get("p_value") or 0.0)
+        spa_p = _coerce_float(spa_payload.get("p_value"))
     return HeadlineMetrics(sharpe, mar, max_dd, turnover, rc_p, spa_p)
 
 
@@ -295,9 +295,29 @@ def _spa_skip_reason(spa_payload: dict) -> str | None:
     finite_stats = [stat for stat in t_stats if stat is not None]
     if not finite_stats:
         return "SPA comparator t-stats are all NaN/inf."
-    if not any(abs(val) > 1e-9 for val in finite_stats):
-        return "SPA comparator t-stats are all zero."
     return None
+
+
+def _spa_status(spa_payload: dict) -> tuple[str, str | None]:
+    status_raw = spa_payload.get("status") or spa_payload.get("spa_status")
+    reason = spa_payload.get("reason") or spa_payload.get("spa_skip_reason")
+    if isinstance(status_raw, str):
+        status = status_raw.lower()
+        if status in {"degenerate", "skipped"}:
+            return "degenerate", reason or "invalid inputs"
+        if status == "ok":
+            if _coerce_float(spa_payload.get("p_value")) is None:
+                return "degenerate", reason or "missing SPA p-value"
+            skip_reason = _spa_skip_reason(spa_payload)
+            if skip_reason:
+                return "degenerate", reason or skip_reason
+            return "ok", None
+    skip_reason = _spa_skip_reason(spa_payload)
+    if skip_reason:
+        return "degenerate", reason or skip_reason
+    if _coerce_float(spa_payload.get("p_value")) is None:
+        return "degenerate", reason or "missing SPA p-value"
+    return "ok", None
 
 
 def _render_spa_placeholder(destination: Path, message: str) -> None:
@@ -313,10 +333,10 @@ def _render_spa_placeholder(destination: Path, message: str) -> None:
 def _render_spa_plot(
     spa_payload: dict, destination: Path, *, allow_zero: bool = False
 ) -> SpaRenderResult:
-    skip_reason = _spa_skip_reason(spa_payload)
-    if skip_reason:
-        _render_spa_placeholder(destination, f"SPA skipped: {skip_reason}")
-        return SpaRenderResult(destination, "skipped", skip_reason)
+    status, reason = _spa_status(spa_payload)
+    if status != "ok":
+        _render_spa_placeholder(destination, f"SPA degenerate: {reason or 'invalid inputs'}")
+        return SpaRenderResult(destination, "degenerate", reason)
 
     candidates = spa_payload.get("candidate_stats") or []
     labels = [
@@ -510,11 +530,11 @@ def _write_docs_results(
 
     lines.append("## SPA & Factor Highlights")
     lines.append("")
-    if spa_status == "skipped":
-        lines.append(f"- SPA: skipped — {spa_skip_reason or 'invalid inputs'}")
+    if spa_status != "ok":
+        lines.append(f"- SPA degenerate: {spa_skip_reason or 'invalid inputs'}")
     else:
         best_model = spa_payload.get("best_model", "unknown")
-        p_value = float(spa_payload.get("p_value") or 0.0)
+        p_value = _coerce_float(spa_payload.get("p_value")) or 0.0
         num_bootstrap = spa_payload.get("num_bootstrap") or 0
         avg_block = spa_payload.get("avg_block") or 0
         spa_ref = spa_md_rel or spa_payload.get(
@@ -734,8 +754,8 @@ def render_wrds_summary(
 
     lines.append("## Hansen SPA Summary")
     lines.append("")
-    if spa_status == "skipped":
-        lines.append(f"SPA: skipped — {spa_skip_reason or 'invalid inputs'}")
+    if spa_status != "ok":
+        lines.append(f"SPA degenerate: {spa_skip_reason or 'invalid inputs'}")
     else:
         lines.extend(_normalise_section(spa_md_path.read_text(encoding="utf-8")))
     lines.append("")
