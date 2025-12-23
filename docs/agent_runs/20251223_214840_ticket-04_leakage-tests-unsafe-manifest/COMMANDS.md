@@ -115,3 +115,4 @@
 113. `git add -f docs/agent_runs/20251223_214840_ticket-04_leakage-tests-unsafe-manifest/RESULTS.md docs/agent_runs/20251223_214840_ticket-04_leakage-tests-unsafe-manifest/COMMANDS.md`
 114. `git commit -m "ticket-04: finalize run results" -m "Tests: pytest -q tests/test_no_lookahead.py; make test-fast" -m "Artifacts: artifacts/sample_flagship/2025-12-23T21-59-20Z-ba5b480/; artifacts/mm_lob_same_tick/2025-12-23T22-00-05Z-ba5b480/" -m "Docs: docs/agent_runs/20251223_214840_ticket-04_leakage-tests-unsafe-manifest/RESULTS.md"`
 115. `git status --porcelain`
+116. `git --no-pager log --oneline -n 5`
