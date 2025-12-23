@@ -51,7 +51,7 @@ commands:
 
 ## WRDS smoke (docs/results_wrds_smoke.md)
 
-- Latest run: 2025-12-23T19-19-16Z-809607a
+- Latest run: 2025-12-23T20-19-56Z-7ca855f
 - Snapshot:
   - Sharpe_HAC: 0.00
   - MAR: 0.00

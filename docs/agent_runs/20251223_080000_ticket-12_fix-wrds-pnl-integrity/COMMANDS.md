@@ -531,3 +531,123 @@ PY`
 256. `git commit -m "ticket-12: run WRDS flagship + WRDS root fallback" -m "Tests: WRDS_DATA_ROOT=$WRDS_DATA_ROOT make wfv-wrds; WRDS_DATA_ROOT=$WRDS_DATA_ROOT make report-wrds" -m "Artifacts: artifacts/wrds_flagship/2025-12-23T19-40-24Z-ff2979d/ (local only); reports/summaries/wrds_flagship*; docs/img/wrds_flagship/2025-12-23T19-40-24Z-ff2979d/" -m "Docs: docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/, docs/results_wrds.md, docs/wrds.md, PROGRESS.md, project_state/CURRENT_RESULTS.md, project_state/KNOWN_ISSUES.md, CHANGELOG.md"`
 257. `git status -sb`
 258. `BUNDLE_TIMESTAMP=2025-12-23T20-05-00Z make gpt-bundle TICKET=ticket-12 RUN_NAME=20251223_080000_ticket-12_fix-wrds-pnl-integrity`
+259. `git branch --show-current`
+260. `rg -n "push origin main|checkout main|switch main" docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/COMMANDS.md -S`
+261. `rg -n "File: docs/CODEX_SPRINT_TICKETS|ticket-12" docs/CODEX_SPRINT_TICKETS.md`
+262. `git diff --name-status HEAD~2..HEAD`
+263. `make test-fast`
+264. `pytest -q`
+265. `WRDS_DATA_ROOT=$WRDS_DATA_ROOT make wfv-wrds-smoke`
+266. `WRDS_DATA_ROOT=$WRDS_DATA_ROOT make report-wrds-smoke`
+267. `python3 scripts/diagnose_artifact_integrity.py --artifact-dir artifacts/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f`
+268. `sed -n '1,80p' docs/results_wrds_smoke.md`
+269. `apply_patch` (update PROGRESS.md)
+270. `apply_patch` (update project_state/CURRENT_RESULTS.md)
+271. `apply_patch` (update TESTS.md with make test-fast/pytest and smoke rerun)
+272. `apply_patch` (update RESULTS.md smoke run id)
+273. `python3 - <<'PY'
+import json
+from pathlib import Path
+meta_path = Path('docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/META.json')
+meta = json.loads(meta_path.read_text())
+meta['artifact_paths'] = [
+    'artifacts/sample_wfv/2025-12-23T18-39-59Z-82c14dc/',
+    'artifacts/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f/',
+    'artifacts/wrds_flagship/2025-12-23T19-40-24Z-ff2979d/',
+]
+meta_path.write_text(json.dumps(meta, indent=2) + '\n')
+PY`
+274. `rg -n "$HOME|$WRDS_DATA_ROOT" PROGRESS.md project_state/CURRENT_RESULTS.md docs/results_wrds_smoke.md docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/RESULTS.md docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/TESTS.md reports/summaries/wrds_flagship_smoke.md reports/summaries/wrds_flagship_smoke_metrics.json -S`
+275. `git status -sb`
+276. `ls -la docs/img/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f`
+277. `git diff --stat reports/summaries/wrds_flagship_smoke_factors.md reports/summaries/wrds_flagship_smoke_spa.json reports/summaries/wrds_flagship_smoke_spa.md`
+278. `rg -n "$HOME|$WRDS_DATA_ROOT" docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity -S`
+279. `date -u "+%Y-%m-%dT%H:%M:%SZ"`
+280. `python3 - <<'PY'
+import json
+from pathlib import Path
+meta_path = Path('docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/META.json')
+meta = json.loads(meta_path.read_text())
+meta['finished_at_utc'] = '2025-12-23T20:26:56Z'
+meta_path.write_text(json.dumps(meta, indent=2) + '\n')
+PY`
+281. `apply_patch` (clean duplicate apply_patch entries)
+282. `apply_patch` (renumber date/meta update entries)
+283. `git status -sb`
+284. `tail -n 40 docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/COMMANDS.md`
+285. `sed -n '250,330p' docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/COMMANDS.md`
+286. `sed -n '1,200p' docs/DOCS_AND_LOGGING_SYSTEM.md`
+287. `ls -1 docs/agent_runs | tail -n 5`
+288. `cat docs/agent_runs/20251222_200000_ticket-01_fix-spa-robustness/META.json`
+289. `cat docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/META.json`
+290. `ls -la reports/summaries | rg -n "wrds_flagship(_smoke)?"`
+291. `ls -la reports/summaries/flagship_mom_wfv.md`
+292. `sed -n '1,200p' docs/CODEX_SPRINT_TICKETS.md`
+293. `rg -n "ticket-12" docs/CODEX_SPRINT_TICKETS.md`
+294. `sed -n '330,420p' docs/CODEX_SPRINT_TICKETS.md`
+295. `git status --short`
+296. `git status --short docs/img/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f`
+297. `ls -la docs/img/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f`
+298. `git check-ignore -v docs/img/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f/equity_curve.png || true`
+299. `sed -n '1,160p' docs/results_wrds_smoke.md`
+300. `rg -n "20-19-56Z-7ca855f" project_state/CURRENT_RESULTS.md`
+301. `sed -n '40,90p' project_state/CURRENT_RESULTS.md`
+302. `rg -n "ticket-12" PROGRESS.md`
+303. `sed -n '1,220p' docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/RESULTS.md`
+304. `sed -n '1,200p' docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/TESTS.md`
+305. `git diff --stat reports/summaries/wrds_flagship_smoke_factors.md reports/summaries/wrds_flagship_smoke_spa.json reports/summaries/wrds_flagship_smoke_spa.md`
+306. `rg -n "$HOME|$WRDS_DATA_ROOT" docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity -S`
+307. `git ls-files docs/local/WRDS_DATA_ROOT.md`
+308. `git rev-parse HEAD`
+309. `python3 - <<'PY'
+from pathlib import Path
+path = Path('docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/COMMANDS.md')
+text = path.read_text()
+lines = text.rstrip().split('\n')
+# Find last command number
+last_num = None
+for line in reversed(lines):
+    if line.strip() and line[0].isdigit() and '. `' in line:
+        try:
+            last_num = int(line.split('.', 1)[0])
+            break
+        except ValueError:
+            pass
+if last_num is None:
+    raise SystemExit('Could not find last command number')
+commands = [
+    'git status -sb',
+    'tail -n 40 docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/COMMANDS.md',
+    "sed -n '250,330p' docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/COMMANDS.md",
+    "sed -n '1,200p' docs/DOCS_AND_LOGGING_SYSTEM.md",
+    'ls -1 docs/agent_runs | tail -n 5',
+    'cat docs/agent_runs/20251222_200000_ticket-01_fix-spa-robustness/META.json',
+    'cat docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/META.json',
+    'ls -la reports/summaries | rg -n "wrds_flagship(_smoke)?"',
+    'ls -la reports/summaries/flagship_mom_wfv.md',
+    "sed -n '1,200p' docs/CODEX_SPRINT_TICKETS.md",
+    'rg -n "ticket-12" docs/CODEX_SPRINT_TICKETS.md',
+    "sed -n '330,420p' docs/CODEX_SPRINT_TICKETS.md",
+    'git status --short',
+    'git status --short docs/img/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f',
+    'ls -la docs/img/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f',
+    'git check-ignore -v docs/img/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f/equity_curve.png || true',
+    "sed -n '1,160p' docs/results_wrds_smoke.md",
+    'rg -n "20-19-56Z-7ca855f" project_state/CURRENT_RESULTS.md',
+    "sed -n '40,90p' project_state/CURRENT_RESULTS.md",
+    'rg -n "ticket-12" PROGRESS.md',
+    "sed -n '1,220p' docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/RESULTS.md",
+    "sed -n '1,200p' docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/TESTS.md",
+    'git diff --stat reports/summaries/wrds_flagship_smoke_factors.md reports/summaries/wrds_flagship_smoke_spa.json reports/summaries/wrds_flagship_smoke_spa.md',
+    'rg -n "$HOME|$WRDS_DATA_ROOT" docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity -S',
+    'git ls-files docs/local/WRDS_DATA_ROOT.md',
+    'git rev-parse HEAD',
+]
+new_lines = lines
+num = last_num
+for cmd in commands:
+    num += 1
+    new_lines.append(f"{num}. `{cmd}`")
+path.write_text('\n'.join(new_lines) + '\n')
+PY`
+310. `tail -n 30 docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/COMMANDS.md`

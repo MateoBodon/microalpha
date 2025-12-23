@@ -33,11 +33,11 @@ _Exposure time series is recorded in equity_curve.csv._
 
 ## Visuals
 
-![Equity Curve](../../docs/img/wrds_flagship_smoke/2025-12-23T19-19-16Z-809607a/equity_curve.png)
+![Equity Curve](../../docs/img/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f/equity_curve.png)
 
-![Bootstrap Sharpe Histogram](../../docs/img/wrds_flagship_smoke/2025-12-23T19-19-16Z-809607a/bootstrap_hist.png)
+![Bootstrap Sharpe Histogram](../../docs/img/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f/bootstrap_hist.png)
 
-![SPA Comparator t-stats](../../docs/img/wrds_flagship_smoke/2025-12-23T19-19-16Z-809607a/spa_tstats.png)
+![SPA Comparator t-stats](../../docs/img/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f/spa_tstats.png)
 
 ## Hansen SPA Summary
 

@@ -9,7 +9,7 @@
 Evidence / artifacts:
 - Sample WFV run: `artifacts/sample_wfv/2025-12-23T18-39-59Z-82c14dc/` (includes `integrity.json`)
 - Sample WFV report: `reports/summaries/flagship_mom_wfv.md`
-- WRDS smoke run: `artifacts/wrds_flagship_smoke/2025-12-23T19-19-16Z-809607a/` (includes `integrity.json`)
+- WRDS smoke run: `artifacts/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f/` (includes `integrity.json`)
 - WRDS smoke report: `reports/summaries/wrds_flagship_smoke.md` (updates `docs/results_wrds_smoke.md`)
 - WRDS flagship run: `artifacts/wrds_flagship/2025-12-23T19-40-24Z-ff2979d/` (includes `integrity.json`, zero-trade/flat-equity)
 - WRDS flagship report: `reports/summaries/wrds_flagship.md` (updates `docs/results_wrds.md`)

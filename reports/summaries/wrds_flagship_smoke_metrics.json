@@ -33,7 +33,7 @@
   "borrow_cost_total": 0.0,
   "commission_total": 4.0405,
   "slippage_total": 0.0,
-  "run_id": "2025-12-23T19-19-16Z-809607a",
+  "run_id": "2025-12-23T20-19-56Z-7ca855f",
   "spa_status": "degenerate",
   "spa_skip_reason": "all strategies have zero variance"
 }
