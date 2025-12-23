@@ -16,6 +16,7 @@ import pandas as pd
 import yaml
 
 from microalpha.reporting.robustness import write_robustness_artifacts
+from microalpha.reporting.spa import SpaSummary, load_grid_returns, write_outputs
 from microalpha.wrds import guard_no_wrds_copy
 
 @dataclass(frozen=True)
@@ -283,6 +284,127 @@ def _coerce_float(value: object) -> float | None:
     return candidate if math.isfinite(candidate) else None
 
 
+def _infer_spa_dimensions(artifact_dir: Path, diagnostics: list[str]) -> tuple[int, int]:
+    grid_path = artifact_dir / "grid_returns.csv"
+    if not grid_path.exists():
+        return 0, 0
+    try:
+        pivot = load_grid_returns(grid_path)
+    except Exception as exc:  # pragma: no cover - defensive fallback
+        diagnostics.append(f"grid_returns unreadable: {type(exc).__name__}: {exc}")
+        return 0, 0
+    return int(pivot.shape[0]), int(pivot.shape[1])
+
+
+def _write_degenerate_spa(
+    json_path: Path,
+    md_path: Path,
+    *,
+    reason: str,
+    diagnostics: list[str],
+    n_obs: int,
+    n_strategies: int,
+) -> dict:
+    summary = SpaSummary(
+        status="degenerate",
+        reason=reason,
+        best_model=None,
+        p_value=None,
+        observed_stat=None,
+        num_bootstrap=0,
+        avg_block=0,
+        candidate_stats=[],
+        n_obs=n_obs,
+        n_strategies=n_strategies,
+        diagnostics=diagnostics,
+    )
+    write_outputs(summary, json_path, md_path)
+    return _load_json(json_path)
+
+
+def _write_spa_markdown_from_payload(payload: dict, md_path: Path) -> None:
+    status, reason = _spa_status(payload)
+    lines = ["# Hansen SPA Summary", ""]
+    if status != "ok":
+        lines.append(f"- **Status:** degenerate")
+        lines.append(f"- **Reason:** {reason or 'invalid inputs'}")
+        lines.append(f"- **Observations:** {payload.get('n_obs', 0)}")
+        lines.append(f"- **Strategies:** {payload.get('n_strategies', 0)}")
+        diagnostics = payload.get("diagnostics")
+        if isinstance(diagnostics, list) and diagnostics:
+            lines.append(f"- **Diagnostics:** {', '.join(str(x) for x in diagnostics)}")
+    else:
+        best_model = payload.get("best_model", "unknown")
+        observed = _coerce_float(payload.get("observed_stat"))
+        p_value = _coerce_float(payload.get("p_value"))
+        num_bootstrap = payload.get("num_bootstrap") or 0
+        avg_block = payload.get("avg_block") or 0
+        lines.append(f"- **Best model:** {best_model}")
+        if observed is not None:
+            lines.append(f"- **Observed max t-stat:** {observed:.3f}")
+        if p_value is not None:
+            lines.append(f"- **p-value:** {p_value:.3f}")
+        lines.append(f"- **Bootstrap draws:** {num_bootstrap} (avg block {avg_block})")
+        candidates = payload.get("candidate_stats")
+        if isinstance(candidates, list) and candidates:
+            lines.append("")
+            lines.append("| Comparator | Mean Diff | t-stat |")
+            lines.append("| --- | ---:| ---:|")
+            for row in candidates:
+                if not isinstance(row, dict):
+                    continue
+                model = row.get("model", "unknown")
+                mean_diff = _coerce_float(row.get("mean_diff"))
+                t_stat = _coerce_float(row.get("t_stat"))
+                lines.append(
+                    f"| {model} | {mean_diff if mean_diff is not None else 0.0:.4f} | "
+                    f"{t_stat if t_stat is not None else 0.0:.2f} |"
+                )
+    md_path.parent.mkdir(parents=True, exist_ok=True)
+    md_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def _ensure_spa_payload(
+    artifact_dir: Path, spa_json: Path | None, spa_md: Path | None
+) -> tuple[Path, Path, dict]:
+    json_path = (spa_json or (artifact_dir / "spa.json")).resolve()
+    md_path = (spa_md or (artifact_dir / "spa.md")).resolve()
+    diagnostics: list[str] = []
+    payload: dict | None = None
+    reason: str | None = None
+
+    if json_path.exists():
+        try:
+            payload = _load_json(json_path)
+            if not isinstance(payload, dict):
+                reason = "spa.json payload is not an object"
+                payload = None
+        except json.JSONDecodeError as exc:
+            reason = f"spa.json invalid JSON: {exc.msg}"
+        except Exception as exc:  # pragma: no cover - defensive fallback
+            reason = f"spa.json unreadable: {type(exc).__name__}"
+            diagnostics.append(str(exc))
+    else:
+        reason = "spa.json missing"
+
+    if payload is None:
+        n_obs, n_strategies = _infer_spa_dimensions(artifact_dir, diagnostics)
+        payload = _write_degenerate_spa(
+            json_path,
+            md_path,
+            reason=reason or "invalid SPA inputs",
+            diagnostics=diagnostics,
+            n_obs=n_obs,
+            n_strategies=n_strategies,
+        )
+        return json_path, md_path, payload
+
+    if not md_path.exists():
+        _write_spa_markdown_from_payload(payload, md_path)
+
+    return json_path, md_path, payload
+
+
 def _spa_skip_reason(spa_payload: dict) -> str | None:
     candidates = spa_payload.get("candidate_stats")
     if not isinstance(candidates, list) or not candidates:
@@ -306,8 +428,11 @@ def _spa_status(spa_payload: dict) -> tuple[str, str | None]:
         if status in {"degenerate", "skipped"}:
             return "degenerate", reason or "invalid inputs"
         if status == "ok":
-            if _coerce_float(spa_payload.get("p_value")) is None:
+            p_value = _coerce_float(spa_payload.get("p_value"))
+            if p_value is None:
                 return "degenerate", reason or "missing SPA p-value"
+            if not (0.0 <= p_value <= 1.0):
+                return "degenerate", reason or "SPA p-value out of bounds"
             skip_reason = _spa_skip_reason(spa_payload)
             if skip_reason:
                 return "degenerate", reason or skip_reason
@@ -315,8 +440,11 @@ def _spa_status(spa_payload: dict) -> tuple[str, str | None]:
     skip_reason = _spa_skip_reason(spa_payload)
     if skip_reason:
         return "degenerate", reason or skip_reason
-    if _coerce_float(spa_payload.get("p_value")) is None:
+    p_value = _coerce_float(spa_payload.get("p_value"))
+    if p_value is None:
         return "degenerate", reason or "missing SPA p-value"
+    if not (0.0 <= p_value <= 1.0):
+        return "degenerate", reason or "SPA p-value out of bounds"
     return "ok", None
 
 
@@ -641,8 +769,9 @@ def render_wrds_summary(
         bootstrap_image or (artifact_dir / "bootstrap_hist.png"),
         "bootstrap_hist.png",
     )
-    spa_json_path = _require_file(spa_json or (artifact_dir / "spa.json"), "spa.json")
-    spa_md_path = _require_file(spa_md or (artifact_dir / "spa.md"), "spa.md")
+    spa_json_path, spa_md_path, spa_payload = _ensure_spa_payload(
+        artifact_dir, spa_json=spa_json, spa_md=spa_md
+    )
     factors_path = _require_file(
         factors_md or (artifact_dir / "factors_ff5_mom.md"),
         "factor regression markdown",
@@ -651,7 +780,6 @@ def render_wrds_summary(
     folds_path = _require_file(artifact_dir / "folds.json", "folds.json")
 
     metrics_payload = _load_json(metrics_path)
-    spa_payload = _load_json(spa_json_path)
     spa_result = _render_spa_plot(
         spa_payload, artifact_dir / "spa_tstats.png", allow_zero=allow_zero_spa
     )
