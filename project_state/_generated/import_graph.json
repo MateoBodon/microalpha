@@ -39,6 +39,12 @@
     "microalpha.microalpha.market_metadata",
     "microalpha.microalpha.slippage"
   ],
+  "src/microalpha/execution_safety.py": [
+    "microalpha.microalpha.config"
+  ],
+  "src/microalpha/integrity.py": [
+    "microalpha.microalpha.portfolio"
+  ],
   "src/microalpha/lob.py": [
     "microalpha.microalpha.events"
   ],
@@ -71,6 +77,7 @@
   "src/microalpha/reporting/tearsheet.py": [],
   "src/microalpha/reporting/wrds_summary.py": [
     "microalpha.reporting.robustness",
+    "microalpha.reporting.spa",
     "microalpha.wrds"
   ],
   "src/microalpha/risk.py": [
@@ -84,6 +91,8 @@
     "microalpha.microalpha.data",
     "microalpha.microalpha.engine",
     "microalpha.microalpha.execution",
+    "microalpha.microalpha.execution_safety",
+    "microalpha.microalpha.integrity",
     "microalpha.microalpha.lob",
     "microalpha.microalpha.logging",
     "microalpha.microalpha.manifest",
@@ -128,6 +137,8 @@
     "microalpha.microalpha.data",
     "microalpha.microalpha.engine",
     "microalpha.microalpha.execution",
+    "microalpha.microalpha.execution_safety",
+    "microalpha.microalpha.integrity",
     "microalpha.microalpha.lob",
     "microalpha.microalpha.logging",
     "microalpha.microalpha.manifest",

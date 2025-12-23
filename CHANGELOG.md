@@ -15,6 +15,8 @@ All notable changes to this project will be documented in this file. The format 
 - ticket-12: PnL integrity checks with `integrity.json`, diagnostic script, and `run_mode` support for smoke/dev runs.
 - ticket-12: `make test-fast` alias for a fast deterministic pytest run.
 - ticket-12: WRDS_DATA_ROOT local-doc fallback (reads `docs/local/WRDS_DATA_ROOT.md` when env var is unset).
+- ticket-04: explicit unsafe execution opt-in with manifest flags (`unsafe_execution`, `unsafe_reasons`, `execution_alignment`) and report banners.
+- ticket-04: red-team leakage tests for future-dated signals and unsafe execution configs.
 
 ### Changed
 - Walk-forward WRDS config aligned to universe coverage (2012–2024) and report pipeline now emits WRDS signals before analytics.
@@ -31,3 +33,4 @@ All notable changes to this project will be documented in this file. The format 
 - ticket-02: Walk-forward runs now support explicit holdout ranges with separate holdout artifacts, selection summaries, and OOS returns; WRDS/sample configs updated for holdout evaluation.
 - ticket-07: gpt-bundle now records commit ranges and verifies DIFF.patch against bundled files; holdout test now proves selection excludes holdout data.
 - ticket-09: gpt-bundle now validates META.json ticket ids against sprint tickets before bundling.
+- ticket-04: engine rejects signals with timestamps that do not match the current market event.

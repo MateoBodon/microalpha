@@ -1,7 +1,7 @@
 <!--
-generated_at: 2025-12-22T19:29:50Z
-git_sha: e08b720b29a8d96342e12e8fb1fc0beaf009f221
-branch: chore/project_state_refresh
+generated_at: 2025-12-23T22:01:33Z
+git_sha: ba5b48089091f6a858b065dd3a388b467dd67984
+branch: codex/ticket-04-leakage-tests-unsafe-manifest
 commands:
   - python3 tools/build_project_state.py
   - python3 tools/render_project_state_docs.py
@@ -9,7 +9,7 @@ commands:
 
 # Dependency Graph
 
-Internal import edges (microalpha.*): 83
+Internal import edges (microalpha.*): 90
 
 ## Adjacency list (file -> internal imports)
 - `src/microalpha/__init__.py` -> microalpha.broker, microalpha.data, microalpha.engine, microalpha.execution, microalpha.manifest, microalpha.metrics, microalpha.portfolio, microalpha.risk_stats
@@ -23,6 +23,8 @@ Internal import edges (microalpha.*): 83
 - `src/microalpha/engine.py` -> microalpha.microalpha.events
 - `src/microalpha/events.py` -> (none)
 - `src/microalpha/execution.py` -> microalpha.microalpha.events, microalpha.microalpha.lob, microalpha.microalpha.market_metadata, microalpha.microalpha.slippage
+- `src/microalpha/execution_safety.py` -> microalpha.microalpha.config
+- `src/microalpha/integrity.py` -> microalpha.microalpha.portfolio
 - `src/microalpha/lob.py` -> microalpha.microalpha.events
 - `src/microalpha/logging.py` -> (none)
 - `src/microalpha/manifest.py` -> (none)
@@ -36,10 +38,10 @@ Internal import edges (microalpha.*): 83
 - `src/microalpha/reporting/spa.py` -> (none)
 - `src/microalpha/reporting/summary.py` -> microalpha.microalpha.reporting.factors
 - `src/microalpha/reporting/tearsheet.py` -> (none)
-- `src/microalpha/reporting/wrds_summary.py` -> microalpha.reporting.robustness, microalpha.wrds
+- `src/microalpha/reporting/wrds_summary.py` -> microalpha.reporting.robustness, microalpha.reporting.spa, microalpha.wrds
 - `src/microalpha/risk.py` -> microalpha.microalpha.risk_stats
 - `src/microalpha/risk_stats.py` -> (none)
-- `src/microalpha/runner.py` -> microalpha.microalpha.broker, microalpha.microalpha.capital, microalpha.microalpha.config, microalpha.microalpha.data, microalpha.microalpha.engine, microalpha.microalpha.execution, microalpha.microalpha.lob, microalpha.microalpha.logging, microalpha.microalpha.manifest, microalpha.microalpha.market_metadata, microalpha.microalpha.metrics, microalpha.microalpha.portfolio, microalpha.microalpha.risk, microalpha.microalpha.slippage, microalpha.microalpha.strategies.breakout, microalpha.microalpha.strategies.cs_momentum, microalpha.microalpha.strategies.flagship_momentum, microalpha.microalpha.strategies.meanrev, microalpha.microalpha.strategies.mm, microalpha.microalpha.wrds
+- `src/microalpha/runner.py` -> microalpha.microalpha.broker, microalpha.microalpha.capital, microalpha.microalpha.config, microalpha.microalpha.data, microalpha.microalpha.engine, microalpha.microalpha.execution, microalpha.microalpha.execution_safety, microalpha.microalpha.integrity, microalpha.microalpha.lob, microalpha.microalpha.logging, microalpha.microalpha.manifest, microalpha.microalpha.market_metadata, microalpha.microalpha.metrics, microalpha.microalpha.portfolio, microalpha.microalpha.risk, microalpha.microalpha.slippage, microalpha.microalpha.strategies.breakout, microalpha.microalpha.strategies.cs_momentum, microalpha.microalpha.strategies.flagship_momentum, microalpha.microalpha.strategies.meanrev, microalpha.microalpha.strategies.mm, microalpha.microalpha.wrds
 - `src/microalpha/slippage.py` -> microalpha.microalpha.market_metadata
 - `src/microalpha/strategies/breakout.py` -> microalpha.microalpha.events
 - `src/microalpha/strategies/cs_momentum.py` -> microalpha.microalpha.events
@@ -47,7 +49,7 @@ Internal import edges (microalpha.*): 83
 - `src/microalpha/strategies/flagship_momentum.py` -> microalpha.microalpha.strategies.flagship_mom
 - `src/microalpha/strategies/meanrev.py` -> microalpha.microalpha.events
 - `src/microalpha/strategies/mm.py` -> microalpha.microalpha.events
-- `src/microalpha/walkforward.py` -> microalpha.microalpha.broker, microalpha.microalpha.config, microalpha.microalpha.config_wfv, microalpha.microalpha.data, microalpha.microalpha.engine, microalpha.microalpha.execution, microalpha.microalpha.lob, microalpha.microalpha.logging, microalpha.microalpha.manifest, microalpha.microalpha.market_metadata, microalpha.microalpha.metrics, microalpha.microalpha.portfolio, microalpha.microalpha.risk_stats, microalpha.microalpha.runner, microalpha.microalpha.strategies.breakout, microalpha.microalpha.strategies.cs_momentum, microalpha.microalpha.strategies.flagship_mom, microalpha.microalpha.strategies.meanrev, microalpha.microalpha.strategies.mm
+- `src/microalpha/walkforward.py` -> microalpha.microalpha.broker, microalpha.microalpha.config, microalpha.microalpha.config_wfv, microalpha.microalpha.data, microalpha.microalpha.engine, microalpha.microalpha.execution, microalpha.microalpha.execution_safety, microalpha.microalpha.integrity, microalpha.microalpha.lob, microalpha.microalpha.logging, microalpha.microalpha.manifest, microalpha.microalpha.market_metadata, microalpha.microalpha.metrics, microalpha.microalpha.portfolio, microalpha.microalpha.risk_stats, microalpha.microalpha.runner, microalpha.microalpha.strategies.breakout, microalpha.microalpha.strategies.cs_momentum, microalpha.microalpha.strategies.flagship_mom, microalpha.microalpha.strategies.meanrev, microalpha.microalpha.strategies.mm
 - `src/microalpha/wrds/__init__.py` -> (none)
 - `tools/build_project_state.py` -> (none)
 - `tools/gpt_bundle.py` -> (none)

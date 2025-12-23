@@ -1,7 +1,7 @@
 <!--
-generated_at: 2025-12-22T19:29:50Z
-git_sha: e08b720b29a8d96342e12e8fb1fc0beaf009f221
-branch: chore/project_state_refresh
+generated_at: 2025-12-23T22:01:33Z
+git_sha: ba5b48089091f6a858b065dd3a388b467dd67984
+branch: codex/ticket-04-leakage-tests-unsafe-manifest
 commands:
   - python3 tools/build_project_state.py
   - python3 tools/render_project_state_docs.py
@@ -10,9 +10,9 @@ commands:
 # Known Issues
 
 - WRDS runs require local exports and are blocked without `WRDS_DATA_ROOT` (see `docs/wrds.md`).
-- docs/results_wrds.md notes the published WRDS metrics are pre-tightening and a full rerun is pending.
 - Large data directories (`data/`, `data_sp500/`, `data_sp500_enriched/`) are present; avoid deep parsing in automation.
 - From `PROGRESS.md`: Ticket-01: Tightened WRDS caps + smoke targets + report upgrades (Status: Partial — blocked by missing WRDS exports). Run log: `docs/agent_runs/20251220_223500_ticket-01_wrds-tighten-caps/`.
 - From `PROGRESS.md`: Ticket-02: Holdout evaluation mode added for walk-forward validation (Status: FAIL (review) — bundle lacked holdout evidence + DIFF mismatch). Run log: `docs/agent_runs/20251221_154039_ticket-02_holdout-wfv/`.
 - From `PROGRESS.md`: Ticket-02: Full WRDS holdout WFV run completed (Status: Done; zero-trade output flagged). Run log: `docs/agent_runs/20251221_173223_ticket-02_holdout-wfv-wrds-full/`.
-- From `PROGRESS.md`: Ticket-01 (2025-12-23) reports now complete; WRDS smoke rerun under ticket-12 integrity checks is complete, but SPA remains degenerate (“all strategies have zero variance”). Full WRDS flagship rerun under the new integrity checks is complete but remains zero-trade/flat-equity, so performance claims are still not interpretable.
+- From `PROGRESS.md`: Ticket-02: WRDS report run failed at SPA step (Status: Blocked; zero SPA comparator t-stats). Run log: `docs/agent_runs/20251221_175417_ticket-02_holdout-wfv-wrds-report/`. Artifacts: `artifacts/wrds_flagship/2025-12-21T22-32-44Z-2b48ef7/`.
+- From `PROGRESS.md`: Ticket-12: PnL integrity checks + same-day fill equity refresh + diagnostic tooling; sample WFV rerun and report generated. WRDS smoke rerun + report completed under `$WRDS_DATA_ROOT` (`artifacts/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f/`), integrity diagnostics OK. WRDS flagship rerun completed (`artifacts/wrds_flagship/2025-12-23T19-40-24Z-ff2979d/`); run remains degenerate (zero trades). Run log: `docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/`.

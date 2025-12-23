@@ -1,7 +1,7 @@
 <!--
-generated_at: 2025-12-22T19:29:50Z
-git_sha: e08b720b29a8d96342e12e8fb1fc0beaf009f221
-branch: chore/project_state_refresh
+generated_at: 2025-12-23T22:01:33Z
+git_sha: ba5b48089091f6a858b065dd3a388b467dd67984
+branch: codex/ticket-04-leakage-tests-unsafe-manifest
 commands:
   - python3 tools/build_project_state.py
   - python3 tools/render_project_state_docs.py
@@ -25,6 +25,8 @@ commands:
 | `src/microalpha/engine.py` | Event-driven backtest engine enforcing strict time ordering. | 1 | 0 |
 | `src/microalpha/events.py` | Core event types exchanged between components. | 5 | 0 |
 | `src/microalpha/execution.py` | Execution models responsible for producing fills. | 8 | 0 |
+| `src/microalpha/execution_safety.py` | Helpers for detecting execution modes that can violate timing assumptions. | 0 | 1 |
+| `src/microalpha/integrity.py` | Integrity checks for PnL and equity consistency. | 1 | 3 |
 | `src/microalpha/lob.py` | Simplified limit order book with FIFO price levels and latency model. | 4 | 0 |
 | `src/microalpha/logging.py` | Lightweight logging utilities for structured artifacts. | 1 | 0 |
 | `src/microalpha/manifest.py` | Utilities for recording reproducibility manifests. | 1 | 6 |
@@ -35,13 +37,13 @@ commands:
 | `src/microalpha/reporting/analytics.py` | Analytics helpers for IC/IR curves, deciles, and rolling betas. | 1 | 15 |
 | `src/microalpha/reporting/factors.py` | Factor regression utilities for Microalpha summaries. | 1 | 7 |
 | `src/microalpha/reporting/robustness.py` | Reporting helpers for cost sensitivity and metadata coverage. | 1 | 10 |
-| `src/microalpha/reporting/spa.py` | Hansen SPA test utilities for Microalpha parameter grids. | 1 | 7 |
-| `src/microalpha/reporting/summary.py` | Markdown summary generator for Microalpha artifacts. | 0 | 21 |
+| `src/microalpha/reporting/spa.py` | Hansen SPA test utilities for Microalpha parameter grids. | 1 | 9 |
+| `src/microalpha/reporting/summary.py` | Markdown summary generator for Microalpha artifacts. | 0 | 25 |
 | `src/microalpha/reporting/tearsheet.py` | Render separate equity and bootstrap plots for Microalpha runs. | 0 | 7 |
-| `src/microalpha/reporting/wrds_summary.py` | WRDS-specific markdown and docs summary renderer. | 2 | 33 |
+| `src/microalpha/reporting/wrds_summary.py` | WRDS-specific markdown and docs summary renderer. | 2 | 41 |
 | `src/microalpha/risk.py` |  | 0 | 3 |
 | `src/microalpha/risk_stats.py` | Statistical helpers for risk analytics. | 0 | 5 |
-| `src/microalpha/runner.py` | High-level execution helpers for single backtests. | 0 | 11 |
+| `src/microalpha/runner.py` | High-level execution helpers for single backtests. | 0 | 13 |
 | `src/microalpha/slippage.py` | Slippage and market impact models. | 6 | 0 |
 | `src/microalpha/strategies/breakout.py` |  | 1 | 0 |
 | `src/microalpha/strategies/cs_momentum.py` |  | 1 | 0 |
@@ -49,8 +51,8 @@ commands:
 | `src/microalpha/strategies/flagship_momentum.py` | Compatibility shim for flagship strategy. | 0 | 0 |
 | `src/microalpha/strategies/meanrev.py` |  | 1 | 0 |
 | `src/microalpha/strategies/mm.py` |  | 1 | 0 |
-| `src/microalpha/walkforward.py` | Walk-forward validation orchestration. | 0 | 21 |
-| `src/microalpha/wrds/__init__.py` | Lightweight helpers for detecting local WRDS credentials and exports. | 0 | 8 |
+| `src/microalpha/walkforward.py` | Walk-forward validation orchestration. | 0 | 23 |
+| `src/microalpha/wrds/__init__.py` | Lightweight helpers for detecting local WRDS credentials and exports. | 0 | 11 |
 | `tools/build_project_state.py` | Generate machine-derived indices for project_state. | 0 | 13 |
 | `tools/gpt_bundle.py` | Create a Prompt-3 bundle for Codex audit artifacts. | 0 | 14 |
 | `tools/render_project_state_docs.py` | Render project_state Markdown docs from generated indices and repo files. | 0 | 41 |

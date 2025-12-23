@@ -1,7 +1,7 @@
 <!--
-generated_at: 2025-12-22T19:29:50Z
-git_sha: e08b720b29a8d96342e12e8fb1fc0beaf009f221
-branch: chore/project_state_refresh
+generated_at: 2025-12-23T22:01:33Z
+git_sha: ba5b48089091f6a858b065dd3a388b467dd67984
+branch: codex/ticket-04-leakage-tests-unsafe-manifest
 commands:
   - python3 tools/build_project_state.py
   - python3 tools/render_project_state_docs.py
@@ -153,6 +153,28 @@ commands:
 
 - (none)
 
+## `src/microalpha/execution_safety.py`
+
+### Classes
+
+- (none)
+
+### Functions
+
+- evaluate_execution_safety(exec_cfg: ExecModelCfg) — Return (unsafe_execution, reasons, alignment_metadata).
+
+## `src/microalpha/integrity.py`
+
+### Classes
+
+- IntegrityResult
+
+### Functions
+
+- _equity_series(equity_records: Sequence[Mapping[str, float | int]] | None)
+- _equity_is_constant(series: np.ndarray, *, tol_abs: float, tol_rel: float)
+- evaluate_portfolio_integrity(portfolio: Portfolio, *, equity_records: Sequence[Mapping[str, float | int]] | None=None, slippage_total: float=0.0, tol_abs: float=1e-06, tol_rel: float=1e-08)
+
 ## `src/microalpha/lob.py`
 
 ### Classes
@@ -187,7 +209,7 @@ commands:
 - resolve_git_sha() — Return ``(full_sha, short_sha)`` for the current Git HEAD.
 - generate_run_id(short_sha: str, timestamp: Optional[datetime]=None) — Create a run identifier using a UTC timestamp and short SHA.
 - _resolve_distribution_version() — Resolve the installed distribution version for microalpha.
-- build(seed: Optional[int], config_path: str, run_id: str, config_sha256: str, config_summary: Mapping[str, Any] | None=None, git_sha: Optional[str]=None) — Construct a manifest and synchronise global RNG state.
+- build(seed: Optional[int], config_path: str, run_id: str, config_sha256: str, config_summary: Mapping[str, Any] | None=None, git_sha: Optional[str]=None, *, unsafe_execution: bool=False, unsafe_reasons: list[str] | None=None, execution_alignment: Mapping[str, Any] | None=None) — Construct a manifest and synchronise global RNG state.
 - extract_config_summary(raw_config: Mapping[str, Any]) — Pull key risk/cost parameters from a config mapping for the manifest.
 - write(manifest: Manifest, outdir: str) — Write the manifest to ``outdir/manifest.json``.
 
@@ -301,6 +323,8 @@ commands:
 
 ### Functions
 
+- _degenerate_summary(reason: str, *, n_obs: int, n_strategies: int, avg_block: int, num_bootstrap: int, diagnostics: list[str] | None=None)
+- _coerce_numeric_frame(frame: pd.DataFrame)
 - load_grid_returns(grid_path: Path)
 - _stationary_bootstrap_indices(n: int, avg_block: int, rng: np.random.Generator)
 - _spa_stat(diff_matrix: np.ndarray)
@@ -318,6 +342,10 @@ commands:
 ### Functions
 
 - _load_json(path: Path)
+- _load_integrity(artifact_dir: Path)
+- _load_manifest(artifact_dir: Path)
+- _unsafe_banner(manifest_payload: Mapping[str, object] | None)
+- _integrity_reasons(payload: Mapping[str, object])
 - _flatten_bootstrap(path: Path)
 - _format_pct(value: float | None)
 - _format_currency(value: float | None)
@@ -366,6 +394,9 @@ commands:
 
 - _require_file(path: Path, label: str)
 - _load_json(path: Path)
+- _load_integrity(artifact_dir: Path)
+- _integrity_reasons(payload: dict | None)
+- _unsafe_banner(manifest_payload: dict | None)
 - _format_currency(value: float)
 - _format_human_currency(value: float | None)
 - _format_ratio(value: float | None)
@@ -386,14 +417,19 @@ commands:
 - _load_config_metadata(config_path: Path | None)
 - _relative_to_repo(path: Path)
 - _coerce_float(value: object)
+- _infer_spa_dimensions(artifact_dir: Path, diagnostics: list[str])
+- _write_degenerate_spa(json_path: Path, md_path: Path, *, reason: str, diagnostics: list[str], n_obs: int, n_strategies: int)
+- _write_spa_markdown_from_payload(payload: dict, md_path: Path)
+- _ensure_spa_payload(artifact_dir: Path, spa_json: Path | None, spa_md: Path | None)
 - _spa_skip_reason(spa_payload: dict)
+- _spa_status(spa_payload: dict)
 - _render_spa_placeholder(destination: Path, message: str)
 - _render_spa_plot(spa_payload: dict, destination: Path, *, allow_zero: bool=False)
 - _resolve_trades_path(artifact_dir: Path)
 - _count_trades(path: Path)
 - _load_returns(artifact_dir: Path)
 - _detect_degenerate_reasons(metrics_payload: dict, artifact_dir: Path)
-- _write_docs_results(docs_path: Path, *, run_id: str, config_label: str, train_start: str, test_end: str, fold_count: int, testing_days: int | None, config_meta: dict[str, Any] | None, headline: HeadlineMetrics, metrics_payload: dict, cost_payload: dict | None, spa_payload: dict, spa_status: str, spa_skip_reason: str | None, factor_status: str, factor_skip_reason: str | None, factor_table_md: str, image_map: dict[str, Path], spa_md_copy: Path | None, degenerate_reasons: list[str])
+- _write_docs_results(docs_path: Path, *, run_id: str, config_label: str, train_start: str, test_end: str, fold_count: int, testing_days: int | None, config_meta: dict[str, Any] | None, headline: HeadlineMetrics, metrics_payload: dict, cost_payload: dict | None, spa_payload: dict, spa_status: str, spa_skip_reason: str | None, factor_status: str, factor_skip_reason: str | None, factor_table_md: str, image_map: dict[str, Path], spa_md_copy: Path | None, degenerate_reasons: list[str], invalid_reasons: list[str], unsafe_lines: list[str] | None)
 - render_wrds_summary(artifact_dir: Path, output_path: Path, *, factors_md: Path | None=None, spa_json: Path | None=None, spa_md: Path | None=None, equity_image: Path | None=None, bootstrap_image: Path | None=None, docs_results: Path | None=None, docs_image_root: Path | None=None, analytics_plots: Path | None=None, metrics_json_out: Path | None=None, spa_json_out: Path | None=None, spa_md_out: Path | None=None, allow_zero_spa: bool=False)
 - _build_parser()
 - main(argv: Sequence[str] | None=None)
@@ -436,6 +472,8 @@ commands:
 - prepare_artifacts_dir(cfg_path: Path, config: Dict[str, Any], base_run_id: str)
 - persist_config(cfg_path: Path, artifacts_dir: Path)
 - _persist_metrics(metrics: Dict[str, Any], artifacts_dir: Path, *, extra_metrics: Mapping[str, Any] | None=None)
+- _persist_integrity(result, artifacts_dir: Path)
+- _update_manifest_integrity(artifacts_dir: Path, integrity_path: str, *, run_invalid: bool)
 - persist_exposures(portfolio: Portfolio, artifacts_dir: Path, filename: str='exposures.csv', factor_filename: str='factor_exposure.csv')
 - _persist_bootstrap(metrics: Dict[str, Any], artifacts_dir: Path, *, periods: int=252, simulations: int=1024)
 - _stable_metrics(metrics: Dict[str, Any])
@@ -538,6 +576,8 @@ commands:
 - _collect_cs_warmup_history(data_handler: MultiCsvDataHandler, train_start: pd.Timestamp, train_end: pd.Timestamp, symbols: Sequence[str])
 - _summarise_walkforward(equity_records: List[Dict[str, Any]], artifacts_dir: Path, total_turnover: float, hac_lags: int | None=None, extra_metrics: Mapping[str, Any] | None=None)
 - _stable_metrics(metrics: Dict[str, Any])
+- _persist_integrity_checks(artifacts_dir: Path, overall_ok: bool, checks: Sequence[Mapping[str, Any]])
+- _update_manifest_integrity(artifacts_dir: Path, integrity_path: str, *, run_invalid: bool)
 - _build_grid_payload(entries: List[Dict[str, Any]])
 - _grid_summary_from_payload(payload: List[Dict[str, Any]])
 - _aggregate_selection_summary(grid_summaries: Sequence[List[Dict[str, Any]]])
@@ -561,7 +601,10 @@ commands:
 - pgpass_path() — Return the expected ~/.pgpass location.
 - has_pgpass_credentials(host: str=WRDS_HOST) — Check whether ~/.pgpass contains a WRDS entry without leaking contents.
 - has_wrds_credentials() — True when ~/.pgpass or WRDS_USERNAME provides credentials.
-- get_wrds_data_root() — Resolve WRDS data root from WRDS_DATA_ROOT without printing it.
+- _local_wrds_doc_path()
+- _parse_wrds_root(line: str)
+- _load_local_wrds_data_root()
+- get_wrds_data_root() — Resolve WRDS data root from WRDS_DATA_ROOT (with local-doc fallback).
 - has_wrds_data(min_entries: int=1) — Return True if WRDS_DATA_ROOT exists and looks non-empty.
 - wrds_status() — Structured status for debugging/logging (no secrets).
 - is_wrds_path(path: Path) — Return True if ``path`` resolves under WRDS_DATA_ROOT.

@@ -10,6 +10,7 @@ report-wrds
 report-wrds-smoke
 sample
 test
+test-fast
 test-wrds
 wfv
 wfv-wrds

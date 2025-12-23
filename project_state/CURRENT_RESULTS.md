@@ -1,7 +1,7 @@
 <!--
-generated_at: 2025-12-22T19:29:50Z
-git_sha: e08b720b29a8d96342e12e8fb1fc0beaf009f221
-branch: chore/project_state_refresh
+generated_at: 2025-12-23T22:01:33Z
+git_sha: ba5b48089091f6a858b065dd3a388b467dd67984
+branch: codex/ticket-04-leakage-tests-unsafe-manifest
 commands:
   - python3 tools/build_project_state.py
   - python3 tools/render_project_state_docs.py
@@ -44,9 +44,8 @@ commands:
   - Max Drawdown: 0.00%
   - Turnover: $0.00
   - Reality Check p-value: 1.000
-  - SPA p-value: degenerate (all strategies have zero variance)
+  - SPA p-value: n/a
 - Report: `reports/summaries/wrds_flagship.md`
-- Rerun status (2025-12-23): WRDS flagship rerun completed; output remains flat/zero-trade and is not interpretable for performance claims.
 
 
 ## WRDS smoke (docs/results_wrds_smoke.md)
@@ -58,22 +57,24 @@ commands:
   - Max Drawdown: 0.07%
   - Turnover: $434.24K
   - Reality Check p-value: 1.000
-  - SPA p-value: degenerate (all strategies have zero variance)
+  - SPA p-value: n/a
 - Report: `reports/summaries/wrds_flagship_smoke.md`
-- Note: Smoke run validates WRDS pipeline wiring; SPA is degenerate and metrics are not interpretable for performance.
+- Note: Smoke run validates WRDS pipeline wiring; metrics are not interpretable for performance.
 
 
 ## Latest progress (PROGRESS.md)
 
 - Date: 2025-12-23
-- Ticket-01: SPA/report robustness hardened + WRDS smoke/report rerun (Status: Done). Run log: `docs/agent_runs/20251222_200000_ticket-01_fix-spa-robustness/`.
+- Ticket-01: SPA/report robustness hardened + WRDS smoke/report rerun (Status: Done). Smoke run: `artifacts/wrds_flagship_smoke/2025-12-23T06-05-28Z-afe1765/`. Report run: `artifacts/wrds_flagship/2025-12-21T22-32-44Z-2b48ef7/`. Run log: `docs/agent_runs/20251222_200000_ticket-01_fix-spa-robustness/`.
+- Ticket-12: PnL integrity checks + same-day fill equity refresh + diagnostic tooling; sample WFV rerun and report generated. WRDS smoke rerun + report completed under `$WRDS_DATA_ROOT` (`artifacts/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f/`), integrity diagnostics OK. WRDS flagship rerun completed (`artifacts/wrds_flagship/2025-12-23T19-40-24Z-ff2979d/`); run remains degenerate (zero trades). Run log: `docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/`.
+- Ticket-04: Leakage guardrails added (signal timestamp invariant, unsafe execution opt-in + manifest fields, report unsafe banner) with red-team tests. Run log: `docs/agent_runs/20251223_214840_ticket-04_leakage-tests-unsafe-manifest/`.
 
 
 ## Recent run logs (docs/agent_runs, last 3)
 
-- `20251223_080000_ticket-12_fix-wrds-pnl-integrity` — PnL integrity checks + WRDS smoke rerun under new checks. (docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/RESULTS.md)
-- `20251222_200000_ticket-01_fix-spa-robustness` — SPA/report robustness and WRDS smoke/report rerun. (docs/agent_runs/20251222_200000_ticket-01_fix-spa-robustness/RESULTS.md)
-- `20251222_123806_ticket-11_data-policy-guardrails` — Formalized ticket-11 in `docs/CODEX_SPRINT_TICKETS.md` and set ticket-09 status to DONE. (docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/RESULTS.md)
+- `20251222_191759_ticket-00_project_state_rebuild` — Regenerated `project_state/` docs and `_generated` indices using updated build/render scripts. (docs/agent_runs/20251222_191759_ticket-00_project_state_rebuild/RESULTS.md)
+- `20251222_200000_ticket-01_fix-spa-robustness` — docs/PLAN_OF_RECORD.md: SPA/reality-check must be present; if degenerate it must be labeled with a reason (no crashes, no silent skips). (docs/agent_runs/20251222_200000_ticket-01_fix-spa-robustness/RESULTS.md)
+- `20251223_080000_ticket-12_fix-wrds-pnl-integrity` — Fixed same-day fill equity snapshots by refreshing after fills and collapsing per-timestamp entries so trades/costs can’t leave a flat equity curve at run end. (docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/RESULTS.md)
 
 
 Sources: `README.md`, `PROGRESS.md`, `docs/results_wrds.md`, `docs/results_wrds_smoke.md`, sample metrics under `artifacts/sample_flagship/`, `artifacts/sample_wfv/`, `artifacts/sample_wfv_holdout/`, and recent `docs/agent_runs/*/RESULTS.md`.

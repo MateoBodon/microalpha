@@ -1,7 +1,7 @@
 <!--
-generated_at: 2025-12-22T19:29:50Z
-git_sha: e08b720b29a8d96342e12e8fb1fc0beaf009f221
-branch: chore/project_state_refresh
+generated_at: 2025-12-23T22:01:33Z
+git_sha: ba5b48089091f6a858b065dd3a388b467dd67984
+branch: codex/ticket-04-leakage-tests-unsafe-manifest
 commands:
   - python3 tools/build_project_state.py
   - python3 tools/render_project_state_docs.py
@@ -10,7 +10,7 @@ commands:
 
 # Test Coverage
 
-- Test modules: 56
+- Test modules: 57
 - Marker config: `pytest.ini` defines `wrds` marker.
 - Primary commands: `pytest -q` or `make test`; WRDS tests via `make test-wrds`.
 
@@ -47,6 +47,7 @@ commands:
 - `tests/test_multiasset_data_handler.py`
 - `tests/test_no_lookahead.py`
 - `tests/test_pnl_attribution.py`
+- `tests/test_pnl_integrity.py`
 - `tests/test_portfolio_risk_caps.py`
 - `tests/test_portfolio_risk_sizing.py`
 - `tests/test_portfolio_turnover_cap.py`

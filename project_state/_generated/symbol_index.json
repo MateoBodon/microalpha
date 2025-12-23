@@ -348,6 +348,48 @@
     "functions": [],
     "module_doc": "Execution models responsible for producing fills."
   },
+  "src/microalpha/execution_safety.py": {
+    "classes": [],
+    "functions": [
+      {
+        "async": false,
+        "doc": "Return (unsafe_execution, reasons, alignment_metadata).",
+        "name": "evaluate_execution_safety",
+        "signature": "(exec_cfg: ExecModelCfg)"
+      }
+    ],
+    "module_doc": "Helpers for detecting execution modes that can violate timing assumptions."
+  },
+  "src/microalpha/integrity.py": {
+    "classes": [
+      {
+        "bases": [],
+        "doc": "",
+        "name": "IntegrityResult"
+      }
+    ],
+    "functions": [
+      {
+        "async": false,
+        "doc": "",
+        "name": "_equity_series",
+        "signature": "(equity_records: Sequence[Mapping[str, float | int]] | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_equity_is_constant",
+        "signature": "(series: np.ndarray, *, tol_abs: float, tol_rel: float)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "evaluate_portfolio_integrity",
+        "signature": "(portfolio: Portfolio, *, equity_records: Sequence[Mapping[str, float | int]] | None=None, slippage_total: float=0.0, tol_abs: float=1e-06, tol_rel: float=1e-08)"
+      }
+    ],
+    "module_doc": "Integrity checks for PnL and equity consistency."
+  },
   "src/microalpha/lob.py": {
     "classes": [
       {
@@ -416,7 +458,7 @@
         "async": false,
         "doc": "Construct a manifest and synchronise global RNG state.",
         "name": "build",
-        "signature": "(seed: Optional[int], config_path: str, run_id: str, config_sha256: str, config_summary: Mapping[str, Any] | None=None, git_sha: Optional[str]=None)"
+        "signature": "(seed: Optional[int], config_path: str, run_id: str, config_sha256: str, config_summary: Mapping[str, Any] | None=None, git_sha: Optional[str]=None, *, unsafe_execution: bool=False, unsafe_reasons: list[str] | None=None, execution_alignment: Mapping[str, Any] | None=None)"
       },
       {
         "async": false,
@@ -736,6 +778,18 @@
       {
         "async": false,
         "doc": "",
+        "name": "_degenerate_summary",
+        "signature": "(reason: str, *, n_obs: int, n_strategies: int, avg_block: int, num_bootstrap: int, diagnostics: list[str] | None=None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_coerce_numeric_frame",
+        "signature": "(frame: pd.DataFrame)"
+      },
+      {
+        "async": false,
+        "doc": "",
         "name": "load_grid_returns",
         "signature": "(grid_path: Path)"
       },
@@ -786,6 +840,30 @@
         "doc": "",
         "name": "_load_json",
         "signature": "(path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_load_integrity",
+        "signature": "(artifact_dir: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_load_manifest",
+        "signature": "(artifact_dir: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_unsafe_banner",
+        "signature": "(manifest_payload: Mapping[str, object] | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_integrity_reasons",
+        "signature": "(payload: Mapping[str, object])"
       },
       {
         "async": false,
@@ -987,6 +1065,24 @@
       {
         "async": false,
         "doc": "",
+        "name": "_load_integrity",
+        "signature": "(artifact_dir: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_integrity_reasons",
+        "signature": "(payload: dict | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_unsafe_banner",
+        "signature": "(manifest_payload: dict | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
         "name": "_format_currency",
         "signature": "(value: float)"
       },
@@ -1107,7 +1203,37 @@
       {
         "async": false,
         "doc": "",
+        "name": "_infer_spa_dimensions",
+        "signature": "(artifact_dir: Path, diagnostics: list[str])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_write_degenerate_spa",
+        "signature": "(json_path: Path, md_path: Path, *, reason: str, diagnostics: list[str], n_obs: int, n_strategies: int)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_write_spa_markdown_from_payload",
+        "signature": "(payload: dict, md_path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_ensure_spa_payload",
+        "signature": "(artifact_dir: Path, spa_json: Path | None, spa_md: Path | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
         "name": "_spa_skip_reason",
+        "signature": "(spa_payload: dict)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_spa_status",
         "signature": "(spa_payload: dict)"
       },
       {
@@ -1150,7 +1276,7 @@
         "async": false,
         "doc": "",
         "name": "_write_docs_results",
-        "signature": "(docs_path: Path, *, run_id: str, config_label: str, train_start: str, test_end: str, fold_count: int, testing_days: int | None, config_meta: dict[str, Any] | None, headline: HeadlineMetrics, metrics_payload: dict, cost_payload: dict | None, spa_payload: dict, spa_status: str, spa_skip_reason: str | None, factor_status: str, factor_skip_reason: str | None, factor_table_md: str, image_map: dict[str, Path], spa_md_copy: Path | None, degenerate_reasons: list[str])"
+        "signature": "(docs_path: Path, *, run_id: str, config_label: str, train_start: str, test_end: str, fold_count: int, testing_days: int | None, config_meta: dict[str, Any] | None, headline: HeadlineMetrics, metrics_payload: dict, cost_payload: dict | None, spa_payload: dict, spa_status: str, spa_skip_reason: str | None, factor_status: str, factor_skip_reason: str | None, factor_table_md: str, image_map: dict[str, Path], spa_md_copy: Path | None, degenerate_reasons: list[str], invalid_reasons: list[str], unsafe_lines: list[str] | None)"
       },
       {
         "async": false,
@@ -1259,6 +1385,18 @@
         "doc": "",
         "name": "_persist_metrics",
         "signature": "(metrics: Dict[str, Any], artifacts_dir: Path, *, extra_metrics: Mapping[str, Any] | None=None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_persist_integrity",
+        "signature": "(result, artifacts_dir: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_update_manifest_integrity",
+        "signature": "(artifacts_dir: Path, integrity_path: str, *, run_invalid: bool)"
       },
       {
         "async": false,
@@ -1482,6 +1620,18 @@
       {
         "async": false,
         "doc": "",
+        "name": "_persist_integrity_checks",
+        "signature": "(artifacts_dir: Path, overall_ok: bool, checks: Sequence[Mapping[str, Any]])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_update_manifest_integrity",
+        "signature": "(artifacts_dir: Path, integrity_path: str, *, run_invalid: bool)"
+      },
+      {
+        "async": false,
+        "doc": "",
         "name": "_build_grid_payload",
         "signature": "(entries: List[Dict[str, Any]])"
       },
@@ -1571,7 +1721,25 @@
       },
       {
         "async": false,
-        "doc": "Resolve WRDS data root from WRDS_DATA_ROOT without printing it.",
+        "doc": "",
+        "name": "_local_wrds_doc_path",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_parse_wrds_root",
+        "signature": "(line: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_load_local_wrds_data_root",
+        "signature": "()"
+      },
+      {
+        "async": false,
+        "doc": "Resolve WRDS data root from WRDS_DATA_ROOT (with local-doc fallback).",
         "name": "get_wrds_data_root",
         "signature": "()"
       },
