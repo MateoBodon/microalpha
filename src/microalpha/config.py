@@ -130,6 +130,7 @@ class BacktestCfg(BaseModel):
     symbol: str
     cash: float = 1_000_000
     run_mode: Literal["headline", "smoke", "dev"] = "headline"
+    allow_unsafe_execution: bool = False
     exec: ExecModelCfg = Field(default_factory=ExecModelCfg)
     strategy: StrategyCfg
     seed: int = 42

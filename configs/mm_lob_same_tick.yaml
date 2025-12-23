@@ -4,6 +4,7 @@ data_path: "data"
 symbol: "SPY"
 cash: 100000.0
 seed: 321
+allow_unsafe_execution: true
 
 exec:
   type: "lob"
@@ -22,4 +23,3 @@ strategy:
   params:
     spread: 1.0
     inventory_limit: 50
-

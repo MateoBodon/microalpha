@@ -29,6 +29,9 @@ class Manifest:
     seed: int
     config_path: str
     config_sha256: str
+    unsafe_execution: bool = False
+    unsafe_reasons: list[str] = field(default_factory=list)
+    execution_alignment: dict[str, Any] = field(default_factory=dict)
     config_summary: dict[str, Any] = field(default_factory=dict)
 
 
@@ -82,6 +85,10 @@ def build(
     config_sha256: str,
     config_summary: Mapping[str, Any] | None = None,
     git_sha: Optional[str] = None,
+    *,
+    unsafe_execution: bool = False,
+    unsafe_reasons: list[str] | None = None,
+    execution_alignment: Mapping[str, Any] | None = None,
 ) -> Manifest:
     """Construct a manifest and synchronise global RNG state."""
 
@@ -104,6 +111,9 @@ def build(
         seed=norm_seed,
         config_path=os.path.abspath(config_path),
         config_sha256=config_sha256,
+        unsafe_execution=bool(unsafe_execution),
+        unsafe_reasons=list(unsafe_reasons or []),
+        execution_alignment=dict(execution_alignment or {}),
         config_summary=dict(config_summary or {}),
     )
 
@@ -148,6 +158,7 @@ def extract_config_summary(raw_config: Mapping[str, Any]) -> dict[str, Any]:
         "exec_type": exec_cfg.get("type"),
         "commission": exec_cfg.get("commission") or exec_cfg.get("aln"),
         "price_impact": exec_cfg.get("price_impact"),
+        "lob_tplus1": exec_cfg.get("lob_tplus1"),
         "slippage_type": slippage_cfg.get("type"),
         "k_lin": slippage_cfg.get("k_lin"),
         "eta": slippage_cfg.get("eta"),

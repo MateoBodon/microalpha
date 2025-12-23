@@ -64,6 +64,8 @@ class Engine:
         for signal in signals:
             if signal.timestamp < self.clock:
                 raise LookaheadError("signal time < current clock")
+            if signal.timestamp > self.clock:
+                raise LookaheadError("signal time > current clock")
 
             orders: Iterable[OrderEvent] = self.portfolio.on_signal(signal)
             for order in orders:

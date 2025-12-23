@@ -28,6 +28,33 @@ def _load_integrity(artifact_dir: Path) -> Mapping[str, object] | None:
         return None
 
 
+def _load_manifest(artifact_dir: Path) -> Mapping[str, object] | None:
+    manifest_path = artifact_dir / "manifest.json"
+    if not manifest_path.exists():
+        return None
+    try:
+        return _load_json(manifest_path)
+    except Exception:
+        return None
+
+
+def _unsafe_banner(manifest_payload: Mapping[str, object] | None) -> list[str]:
+    if not manifest_payload or not manifest_payload.get("unsafe_execution", False):
+        return []
+    reasons = manifest_payload.get("unsafe_reasons") or []
+    reason_text = ""
+    if isinstance(reasons, list) and reasons:
+        reason_text = ", ".join(str(reason) for reason in reasons)
+    if not reason_text:
+        reason_text = "same-bar execution enabled"
+    return [
+        "## UNSAFE / NOT LEAKAGE-SAFE",
+        "",
+        f"Results are not leakage-safe ({reason_text}).",
+        "",
+    ]
+
+
 def _integrity_reasons(payload: Mapping[str, object]) -> list[str]:
     reasons: list[str] = []
     if not payload:
@@ -150,6 +177,9 @@ def generate_summary(
     header = title or DEFAULT_TITLE
     lines.append(f"# {header}")
     lines.append("")
+
+    manifest_payload = _load_manifest(artifact_dir)
+    lines.extend(_unsafe_banner(manifest_payload))
 
     integrity_payload = _load_integrity(artifact_dir)
     integrity_reasons = (

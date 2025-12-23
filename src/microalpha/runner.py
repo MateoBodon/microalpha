@@ -30,6 +30,7 @@ from .execution import (
 from .execution import (
     SquareRootImpact as SquareRootImpactExecutor,
 )
+from .execution_safety import evaluate_execution_safety
 from .integrity import evaluate_portfolio_integrity
 from .logging import JsonlWriter
 from .manifest import (
@@ -93,6 +94,14 @@ def run_from_config(
         config = yaml.safe_load(handle)
 
     cfg = parse_config(config)
+    unsafe_execution, unsafe_reasons, exec_alignment = evaluate_execution_safety(
+        cfg.exec
+    )
+    if unsafe_execution and not cfg.allow_unsafe_execution:
+        raise ValueError(
+            "Unsafe execution mode detected (same-bar fills enabled). "
+            "Set allow_unsafe_execution: true to proceed."
+        )
     cfg_bytes = yaml.safe_dump(config).encode("utf-8")
     config_hash = hashlib.sha256(cfg_bytes).hexdigest()
 
@@ -111,6 +120,9 @@ def run_from_config(
         config_hash,
         config_summary=extract_config_summary(config),
         git_sha=full_sha,
+        unsafe_execution=unsafe_execution,
+        unsafe_reasons=unsafe_reasons,
+        execution_alignment=exec_alignment,
     )
     root_rng = np.random.default_rng(manifest.seed)
     write_manifest(manifest, str(artifacts_dir))

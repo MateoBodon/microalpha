@@ -80,6 +80,23 @@ def _integrity_reasons(payload: dict | None) -> list[str]:
     return reasons
 
 
+def _unsafe_banner(manifest_payload: dict | None) -> list[str]:
+    if not manifest_payload or not manifest_payload.get("unsafe_execution", False):
+        return []
+    reasons = manifest_payload.get("unsafe_reasons") or []
+    reason_text = ""
+    if isinstance(reasons, list) and reasons:
+        reason_text = ", ".join(str(reason) for reason in reasons)
+    if not reason_text:
+        reason_text = "same-bar execution enabled"
+    return [
+        "## UNSAFE / NOT LEAKAGE-SAFE",
+        "",
+        f"Results are not leakage-safe ({reason_text}).",
+        "",
+    ]
+
+
 def _format_currency(value: float) -> str:
     return f"${value:,.0f}"
 
@@ -621,6 +638,7 @@ def _write_docs_results(
     spa_md_copy: Path | None,
     degenerate_reasons: list[str],
     invalid_reasons: list[str],
+    unsafe_lines: list[str] | None,
 ) -> None:
     docs_path = docs_path.resolve()
     docs_path.parent.mkdir(parents=True, exist_ok=True)
@@ -646,6 +664,8 @@ def _write_docs_results(
     lines: list[str] = []
     lines.append("# WRDS Walk-Forward Results (Flagship Momentum)")
     lines.append("")
+    if unsafe_lines:
+        lines.extend(unsafe_lines)
     lines.append(
         (
             f"> Latest run: **{run_id}** (`{config_label}`, {train_start} -> {test_end}, "
@@ -843,6 +863,7 @@ def render_wrds_summary(
     config_meta = _load_config_metadata(config_path if config_path and config_path.exists() else None)
     config_label = _relative_to_repo(config_path) if config_path else (config_path_value or "unknown")
     train_start, test_end, fold_count = _load_folds_metadata(folds_path)
+    unsafe_lines = _unsafe_banner(manifest_payload)
 
     analytics_dir = (analytics_plots or Path("artifacts/plots")).expanduser().resolve()
     ic_plot = _require_file(analytics_dir / f"{run_id}_ic_ir.png", "IC/IR plot")
@@ -890,7 +911,9 @@ def render_wrds_summary(
     }
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    lines = ["# WRDS Flagship Walk-Forward", "", "## Headline Metrics", ""]
+    lines = ["# WRDS Flagship Walk-Forward", ""]
+    lines.extend(unsafe_lines)
+    lines.extend(["## Headline Metrics", ""])
     lines.extend(_render_table(headline))
     lines.append("")
     if integrity_payload and not bool(integrity_payload.get("ok", True)):
@@ -972,6 +995,7 @@ def render_wrds_summary(
             spa_md_copy=spa_md_out or spa_md_path,
             degenerate_reasons=degenerate_reasons,
             invalid_reasons=integrity_reasons,
+            unsafe_lines=unsafe_lines,
         )
 
     return output_path

@@ -28,6 +28,7 @@ from .execution import (
     LOBExecution,
     SquareRootImpact,
 )
+from .execution_safety import evaluate_execution_safety
 from .logging import JsonlWriter
 from .manifest import (
     build as build_manifest,
@@ -176,6 +177,14 @@ def run_walk_forward(
             rc_cfg = cfg.reality_check.model_copy(update=rc_update)
             cfg = cfg.model_copy(update={"reality_check": rc_cfg})
     config_hash = hashlib.sha256(yaml.safe_dump(raw_config).encode("utf-8")).hexdigest()
+    unsafe_execution, unsafe_reasons, exec_alignment = evaluate_execution_safety(
+        cfg.template.exec
+    )
+    if unsafe_execution and not cfg.template.allow_unsafe_execution:
+        raise ValueError(
+            "Unsafe execution mode detected (same-bar fills enabled). "
+            "Set allow_unsafe_execution: true in the template to proceed."
+        )
 
     full_sha, short_sha = resolve_git_sha()
     base_run_id = generate_run_id(short_sha)
@@ -192,6 +201,9 @@ def run_walk_forward(
         config_hash,
         config_summary=extract_config_summary(raw_config),
         git_sha=full_sha,
+        unsafe_execution=unsafe_execution,
+        unsafe_reasons=unsafe_reasons,
+        execution_alignment=exec_alignment,
     )
     write_manifest(manifest, str(artifacts_dir))
     persist_config(cfg_path, artifacts_dir)
@@ -765,6 +777,9 @@ def run_walk_forward(
             "run_id": run_id,
             "config_sha256": config_hash,
             "git_sha": full_sha,
+            "unsafe_execution": bool(unsafe_execution),
+            "unsafe_reasons": list(unsafe_reasons),
+            "execution_alignment": dict(exec_alignment),
             "selection_window_end": str(selection_end.date()),
             "holdout_start": str(holdout_start.date()),
             "holdout_end": str(holdout_end.date()),
