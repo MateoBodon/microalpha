@@ -49,6 +49,7 @@ them forward to the testing window (e.g., keep entries where `namedt <= test_end
   artifacts.
 - The provided Makefile targets expect `WRDS_DATA_ROOT` to point at your local export. Paths are
   interpolated from that env var in `configs/wfv_flagship_wrds.yaml` (no hardcoded directories).
+- For this machine, the local WRDS export root is documented in `docs/local/WRDS_DATA_ROOT.md`.
 - Store your WRDS credentials outside the repo (environment variables or `.pgpass`). Microalpha
   only consumes local CSV/Parquet exports and does not connect to WRDS directly.
 

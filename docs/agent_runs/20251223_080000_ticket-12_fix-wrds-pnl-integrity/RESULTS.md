@@ -8,10 +8,13 @@
 Evidence / artifacts:
 - Sample WFV run: `artifacts/sample_wfv/2025-12-23T18-39-59Z-82c14dc/` (includes `integrity.json`)
 - Sample WFV report: `reports/summaries/flagship_mom_wfv.md`
-- Bundle: `docs/gpt_bundles/2025-12-23T18-55-00Z_ticket-12_20251223_080000_ticket-12_fix-wrds-pnl-integrity.zip`
+- WRDS smoke run: `artifacts/wrds_flagship_smoke/2025-12-23T19-19-16Z-809607a/` (includes `integrity.json`)
+- WRDS smoke report: `reports/summaries/wrds_flagship_smoke.md` (updates `docs/results_wrds_smoke.md`)
+- Bundle: `docs/gpt_bundles/2025-12-23T19-32-00Z_ticket-12_20251223_080000_ticket-12_fix-wrds-pnl-integrity.zip`
 
 WRDS note:
-- `WRDS_DATA_ROOT` was not set, so WRDS smoke rerun was skipped per instructions.
+- `WRDS_DATA_ROOT` is now documented in `docs/local/WRDS_DATA_ROOT.md` (local-only); WRDS smoke rerun executed using `$WRDS_DATA_ROOT`.
+- Integrity diagnostics (`scripts/diagnose_artifact_integrity.py`) on the WRDS smoke artifacts report non-constant equity (std > 0), trades/costs present, and integrity checks OK.
 
 ## Human merge checklist
 - Feature branch only; no main commits
