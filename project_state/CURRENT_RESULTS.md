@@ -37,7 +37,7 @@ commands:
 
 ## WRDS results (docs/results_wrds.md)
 
-- Latest run: 2025-12-21T22-32-44Z-2b48ef7
+- Latest run: 2025-12-23T19-40-24Z-ff2979d
 - Snapshot:
   - Sharpe_HAC: 0.00
   - MAR: 0.00
@@ -46,7 +46,7 @@ commands:
   - Reality Check p-value: 1.000
   - SPA p-value: degenerate (all strategies have zero variance)
 - Report: `reports/summaries/wrds_flagship.md`
-- Rerun status (2025-12-23): WRDS report regenerated; SPA now emits a degenerate summary instead of crashing. Latest run is flat/zero-trade (metrics ~0) and is not interpretable for performance claims.
+- Rerun status (2025-12-23): WRDS flagship rerun completed; output remains flat/zero-trade and is not interpretable for performance claims.
 
 
 ## WRDS smoke (docs/results_wrds_smoke.md)

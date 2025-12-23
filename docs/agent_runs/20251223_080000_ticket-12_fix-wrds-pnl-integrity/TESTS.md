@@ -4,3 +4,5 @@
 - `make test-fast` (pass; 109 passed, 1 skipped)
 - `WRDS_DATA_ROOT=$WRDS_DATA_ROOT make wfv-wrds-smoke` (pass)
 - `WRDS_DATA_ROOT=$WRDS_DATA_ROOT make report-wrds-smoke` (pass; warnings: pandas fillna FutureWarning, matplotlib tight_layout)
+- `WRDS_DATA_ROOT=$WRDS_DATA_ROOT make wfv-wrds` (pass)
+- `WRDS_DATA_ROOT=$WRDS_DATA_ROOT make report-wrds` (pass; warnings: pandas fillna FutureWarning, matplotlib tight_layout)

@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file. The format 
 - ticket-11: data policy checker script + allowlist, Make target, and pytest enforcement.
 - ticket-12: PnL integrity checks with `integrity.json`, diagnostic script, and `run_mode` support for smoke/dev runs.
 - ticket-12: `make test-fast` alias for a fast deterministic pytest run.
+- ticket-12: WRDS_DATA_ROOT local-doc fallback (reads `docs/local/WRDS_DATA_ROOT.md` when env var is unset).
 
 ### Changed
 - Walk-forward WRDS config aligned to universe coverage (2012–2024) and report pipeline now emits WRDS signals before analytics.
