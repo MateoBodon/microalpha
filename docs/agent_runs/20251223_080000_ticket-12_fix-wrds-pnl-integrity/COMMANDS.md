@@ -666,3 +666,9 @@ PY`
 323. `apply_patch (update RESULTS.md bundle path)`
 324. `date -u "+%Y-%m-%dT%H:%M:%SZ"`
 325. `python3 - <<'PY' (update META.json git_sha_after/finished_at_utc/host_env_notes)`
+326. `git status -sb`
+327. `git add -f docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/COMMANDS.md docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/META.json docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/RESULTS.md docs/gpt_bundles/2025-12-23T20-41-14Z_ticket-12_20251223_080000_ticket-12_fix-wrds-pnl-integrity.zip`
+328. `git status -sb`
+329. `git commit -m "ticket-12: update run logs + bundle" -m "Tests: not run (log/bundle update)" -m "Artifacts: docs/gpt_bundles/2025-12-23T20-41-14Z_ticket-12_20251223_080000_ticket-12_fix-wrds-pnl-integrity.zip" -m "Docs: docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/COMMANDS.md, docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/META.json, docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/RESULTS.md"`
+330. `git status -sb`
+331. `git rev-parse HEAD`
