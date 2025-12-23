@@ -1,0 +1,28 @@
+{
+  "run_name": "20251223_214840_ticket-04_leakage-tests-unsafe-manifest",
+  "ticket_id": "ticket-04",
+  "started_at_utc": "2025-12-23T21:48:40Z",
+  "finished_at_utc": "2025-12-23T22:22:01Z",
+  "git_sha_before": "ba5b48089091f6a858b065dd3a388b467dd67984",
+  "git_sha_after": "e9c115bbe65d6f068fbe10884e2d9278b62aec95",
+  "branch_name": "codex/ticket-04-leakage-tests-unsafe-manifest",
+  "host_env_notes": "macOS 26.0.1 / Python 3.12.2 (system) / WRDS_DATA_ROOT unset; WRDS smoke skipped / started_at_utc and finished_at_utc approximate; git_sha_after captured after docs commit before META.json commit",
+  "dataset_id": "sample_repo_data_v1",
+  "config_paths": [
+    "configs/flagship_sample.yaml",
+    "configs/mm_lob_same_tick.yaml"
+  ],
+  "config_sha256": {
+    "configs/flagship_sample.yaml": "4aa74a687173e923ecafbf3795654bdffae88ac6c51404513b188b607ec82194",
+    "configs/mm_lob_same_tick.yaml": "f9f5301766d104c7e7f22b2bcfde3eaf58f61643ef5adf2089949ffc6d4dd8ae"
+  },
+  "artifact_paths": [
+    "artifacts/sample_flagship/2025-12-23T21-59-20Z-ba5b480/",
+    "artifacts/mm_lob_same_tick/2025-12-23T22-00-05Z-ba5b480/"
+  ],
+  "report_paths": [
+    "reports/summaries/flagship_mom.md",
+    "reports/summaries/_artifacts/mm_lob_same_tick.md"
+  ],
+  "web_sources": []
+}
