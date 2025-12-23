@@ -651,3 +651,18 @@ for cmd in commands:
 path.write_text('\n'.join(new_lines) + '\n')
 PY`
 310. `tail -n 30 docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/COMMANDS.md`
+311. `python3 - <<'PY' (append COMMANDS entries)`
+312. `tail -n 8 docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/COMMANDS.md`
+313. `sed -n '1,120p' reports/summaries/wrds_flagship_smoke.md`
+314. `git diff --name-only`
+315. `git add PROGRESS.md project_state/CURRENT_RESULTS.md docs/results_wrds_smoke.md reports/summaries/wrds_flagship_smoke.md reports/summaries/wrds_flagship_smoke_metrics.json docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/COMMANDS.md docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/META.json docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/RESULTS.md docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/TESTS.md`
+316. `git add PROGRESS.md project_state/CURRENT_RESULTS.md reports/summaries/wrds_flagship_smoke.md reports/summaries/wrds_flagship_smoke_metrics.json`
+317. `git add -f docs/results_wrds_smoke.md docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/COMMANDS.md docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/META.json docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/RESULTS.md docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/TESTS.md docs/img/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f`
+318. `git status -sb`
+319. `git commit -m "ticket-12: rerun WRDS smoke + update logs" -m "Tests: make test-fast; pytest -q; WRDS_DATA_ROOT=$WRDS_DATA_ROOT make wfv-wrds-smoke; WRDS_DATA_ROOT=$WRDS_DATA_ROOT make report-wrds-smoke" -m "Artifacts: artifacts/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f/ (local only); reports/summaries/wrds_flagship_smoke*; docs/img/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f/" -m "Docs: docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/, docs/results_wrds_smoke.md, PROGRESS.md, project_state/CURRENT_RESULTS.md"`
+320. `git status -sb`
+321. `make gpt-bundle TICKET=ticket-12 RUN_NAME=20251223_080000_ticket-12_fix-wrds-pnl-integrity`
+322. `git status -sb`
+323. `apply_patch (update RESULTS.md bundle path)`
+324. `date -u "+%Y-%m-%dT%H:%M:%SZ"`
+325. `python3 - <<'PY' (update META.json git_sha_after/finished_at_utc/host_env_notes)`

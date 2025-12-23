@@ -13,7 +13,7 @@ Evidence / artifacts:
 - WRDS smoke report: `reports/summaries/wrds_flagship_smoke.md` (updates `docs/results_wrds_smoke.md`)
 - WRDS flagship run: `artifacts/wrds_flagship/2025-12-23T19-40-24Z-ff2979d/` (includes `integrity.json`, zero-trade/flat-equity)
 - WRDS flagship report: `reports/summaries/wrds_flagship.md` (updates `docs/results_wrds.md`)
-- Bundle: `docs/gpt_bundles/2025-12-23T20-05-00Z_ticket-12_20251223_080000_ticket-12_fix-wrds-pnl-integrity.zip`
+- Bundle: `docs/gpt_bundles/2025-12-23T20-41-14Z_ticket-12_20251223_080000_ticket-12_fix-wrds-pnl-integrity.zip`
 
 WRDS note:
 - `WRDS_DATA_ROOT` is now documented in `docs/local/WRDS_DATA_ROOT.md` (local-only); WRDS smoke + flagship reruns executed using `$WRDS_DATA_ROOT`.
