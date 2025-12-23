@@ -4,6 +4,7 @@
 - Added explicit unsafe execution guardrails with `allow_unsafe_execution` opt-in, manifest fields (`unsafe_execution`, `unsafe_reasons`, `execution_alignment`), and report banners for unsafe runs.
 - Enforced signal timestamp invariants in the engine (future-dated signals now raise LookaheadError).
 - Added red-team tests for future-dated signals and unsafe execution opt-in/manifest labeling.
+- Bundle verification required `git_sha_after` to resolve to a commit containing META.json; updated META.json to use the branch ref (resolved SHA recorded in META.json notes) so gpt-bundle could pass.
 
 ## Code changes
 - `src/microalpha/config.py`: added `allow_unsafe_execution`.

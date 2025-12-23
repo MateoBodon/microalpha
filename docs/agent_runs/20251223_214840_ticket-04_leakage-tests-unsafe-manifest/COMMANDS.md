@@ -112,3 +112,6 @@
 110. `git commit -m "ticket-04: update run meta for bundle" -m "Tests: pytest -q tests/test_no_lookahead.py; make test-fast" -m "Artifacts: artifacts/sample_flagship/2025-12-23T21-59-20Z-ba5b480/; artifacts/mm_lob_same_tick/2025-12-23T22-00-05Z-ba5b480/" -m "Docs: docs/agent_runs/20251223_214840_ticket-04_leakage-tests-unsafe-manifest/META.json"`
 111. `BUNDLE_TIMESTAMP=2025-12-23T22-22-01Z make gpt-bundle TICKET=ticket-04 RUN_NAME=20251223_214840_ticket-04_leakage-tests-unsafe-manifest`
 112. `git status --porcelain`
+113. `git add -f docs/agent_runs/20251223_214840_ticket-04_leakage-tests-unsafe-manifest/RESULTS.md docs/agent_runs/20251223_214840_ticket-04_leakage-tests-unsafe-manifest/COMMANDS.md`
+114. `git commit -m "ticket-04: finalize run results" -m "Tests: pytest -q tests/test_no_lookahead.py; make test-fast" -m "Artifacts: artifacts/sample_flagship/2025-12-23T21-59-20Z-ba5b480/; artifacts/mm_lob_same_tick/2025-12-23T22-00-05Z-ba5b480/" -m "Docs: docs/agent_runs/20251223_214840_ticket-04_leakage-tests-unsafe-manifest/RESULTS.md"`
+115. `git status --porcelain`
