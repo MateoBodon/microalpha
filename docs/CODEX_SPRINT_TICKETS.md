@@ -335,3 +335,30 @@
   - replaced with clearly synthetic/public-source inputs and provenance documented.
 - A new script `scripts/check_data_policy.py` (or equivalent) exits non-zero on violations and is run in FAST (or at least documented as mandatory).
 - `project_state/KNOWN_ISSUES.md` updated to reflect resolution (or narrowed scope with provenance).
+
+---
+
+## ticket-12 — Fix WRDS PnL / flat-return integrity
+
+**Goal (1 sentence):** Ensure PnL, costs, and equity curves reconcile so WRDS smoke runs cannot show flat equity when trades/costs exist.
+
+**Why (ties to diagnosis):**
+- Recent WRDS smoke artifacts show nonzero turnover/costs alongside near-zero return variance; we need explicit invariants to catch any flat-equity-with-trades inconsistencies and enforce cost application.
+
+**Acceptance criteria (objective + falsifiable):**
+- New integrity checks assert:
+  - final_equity ≈ initial_equity + realized_pnl + unrealized_pnl − total_costs (with tolerance and explicit components).
+  - turnover > 0 implies num_trades > 0 (or explicit “desired vs executed” justification).
+  - if total_costs > 0 or num_trades > 0 then equity/returns are not exactly constant.
+- Runs that violate integrity are flagged invalid (smoke) or fail fast (headline).
+- A diagnostic script can reconcile `equity_curve.csv`, `metrics.json`, and `trades.jsonl`.
+- Unit tests cover the new invariants using synthetic data (no WRDS required).
+
+**Minimal tests/commands to run:**
+- `make test-fast` (or `pytest -q` if no alias)
+- `pytest -q tests/test_pnl_integrity.py`
+
+**End-of-ticket (must include these three lines):**
+- **Tests run:** …
+- **Artifacts/logs:** …
+- **Documentation updates:** …

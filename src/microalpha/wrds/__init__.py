@@ -53,13 +53,58 @@ def has_wrds_credentials() -> bool:
     return bool(os.getenv("WRDS_USERNAME"))
 
 
+def _local_wrds_doc_path() -> Path | None:
+    try:
+        repo_root = Path(__file__).resolve().parents[3]
+    except IndexError:
+        return None
+    return repo_root / "docs" / "local" / "WRDS_DATA_ROOT.md"
+
+
+def _parse_wrds_root(line: str) -> str | None:
+    stripped = line.strip()
+    if not stripped or stripped.startswith("#"):
+        return None
+    if stripped.startswith("export WRDS_DATA_ROOT="):
+        return stripped.split("=", 1)[1].strip()
+    if stripped.startswith("WRDS_DATA_ROOT="):
+        return stripped.split("=", 1)[1].strip()
+    if stripped.startswith("- "):
+        candidate = stripped[2:].strip()
+        if candidate and "/" in candidate and " " not in candidate:
+            return candidate
+    return None
+
+
+def _load_local_wrds_data_root() -> Path | None:
+    doc_path = _local_wrds_doc_path()
+    if doc_path is None or not doc_path.exists():
+        return None
+    try:
+        for line in doc_path.read_text(encoding="utf-8").splitlines():
+            candidate = _parse_wrds_root(line)
+            if not candidate or "$" in candidate:
+                continue
+            candidate = candidate.strip("'\"")
+            path = Path(candidate).expanduser()
+            try:
+                resolved = path.resolve()
+            except FileNotFoundError:
+                resolved = path.resolve(strict=False)
+            if resolved.exists():
+                return resolved
+    except OSError:
+        return None
+    return None
+
+
 def get_wrds_data_root() -> Path | None:
-    """Resolve WRDS data root from WRDS_DATA_ROOT without printing it."""
+    """Resolve WRDS data root from WRDS_DATA_ROOT (with local-doc fallback)."""
 
     raw = os.getenv("WRDS_DATA_ROOT")
-    if not raw:
-        return None
-    return Path(raw).expanduser().resolve()
+    if raw:
+        return Path(raw).expanduser().resolve()
+    return _load_local_wrds_data_root()
 
 
 def has_wrds_data(min_entries: int = 1) -> bool:

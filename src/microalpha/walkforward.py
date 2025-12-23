@@ -43,6 +43,7 @@ from .manifest import (
 from .market_metadata import load_symbol_meta
 from .metrics import compute_metrics
 from .portfolio import Portfolio
+from .integrity import evaluate_portfolio_integrity
 from .risk_stats import block_bootstrap
 from .runner import (
     persist_config,
@@ -196,6 +197,7 @@ def run_walk_forward(
     persist_config(cfg_path, artifacts_dir)
 
     trade_logger = JsonlWriter(str(artifacts_dir / "trades.jsonl"))
+    run_mode = getattr(cfg.template, "run_mode", "headline")
 
     data_dir = resolve_path(cfg.template.data_path, cfg_path)
     symbol = cfg.template.symbol
@@ -283,6 +285,8 @@ def run_walk_forward(
     total_realized_pnl = 0.0
     total_win_trades = 0
     total_loss_trades = 0
+    integrity_checks: list[dict[str, Any]] = []
+    integrity_ok = True
 
     current_date = start_date
     master_rng = np.random.default_rng(cfg.template.seed)
@@ -407,12 +411,16 @@ def run_walk_forward(
             total_borrow_cost += float(getattr(portfolio, "borrow_cost_total", 0.0))
             trades_list = getattr(portfolio, "trades", None) or []
             total_num_trades += len(trades_list)
+            fold_slippage = 0.0
             for trade in trades_list:
                 try:
-                    total_commission += float(trade.get("commission", 0.0) or 0.0)
-                    total_slippage += abs(
-                        float(trade.get("slippage", 0.0) or 0.0)
-                    ) * abs(float(trade.get("qty", 0.0) or 0.0))
+                    commission_val = float(trade.get("commission", 0.0) or 0.0)
+                    slippage_val = abs(float(trade.get("slippage", 0.0) or 0.0)) * abs(
+                        float(trade.get("qty", 0.0) or 0.0)
+                    )
+                    total_commission += commission_val
+                    total_slippage += slippage_val
+                    fold_slippage += slippage_val
                 except (TypeError, ValueError):
                     continue
                 try:
@@ -435,6 +443,35 @@ def run_walk_forward(
                             total_loss_trades += 1
 
             fold_index = len(folds)
+            fold_integrity = evaluate_portfolio_integrity(
+                portfolio,
+                equity_records=portfolio.equity_curve,
+                slippage_total=fold_slippage,
+            )
+            integrity_checks.append(
+                {
+                    "fold": fold_index,
+                    "phase": "test",
+                    "ok": bool(fold_integrity.ok),
+                    "reasons": list(fold_integrity.reasons),
+                    "details": dict(fold_integrity.details),
+                }
+            )
+            if not fold_integrity.ok:
+                integrity_ok = False
+                if run_mode == "headline":
+                    integrity_path = _persist_integrity_checks(
+                        artifacts_dir, integrity_ok, integrity_checks
+                    )
+                    _update_manifest_integrity(
+                        artifacts_dir,
+                        integrity_path,
+                        run_invalid=True,
+                    )
+                    raise ValueError(
+                        "PnL integrity check failed in walk-forward fold "
+                        f"{fold_index}: {', '.join(fold_integrity.reasons)}"
+                    )
             exposure_path, factor_path = persist_exposures(
                 portfolio,
                 artifacts_dir,
@@ -605,6 +642,45 @@ def run_walk_forward(
         holdout_engine.run()
         holdout_trade_logger.close()
         holdout_trades_path = holdout_trade_logger.path
+
+        holdout_trades = getattr(holdout_portfolio, "trades", None) or []
+        holdout_slippage_total = 0.0
+        for trade in holdout_trades:
+            try:
+                holdout_slippage_total += abs(
+                    float(trade.get("slippage", 0.0) or 0.0)
+                ) * abs(float(trade.get("qty", 0.0) or 0.0))
+            except (TypeError, ValueError):
+                continue
+        holdout_integrity = evaluate_portfolio_integrity(
+            holdout_portfolio,
+            equity_records=holdout_portfolio.equity_curve,
+            slippage_total=holdout_slippage_total,
+        )
+        integrity_checks.append(
+            {
+                "fold": None,
+                "phase": "holdout",
+                "ok": bool(holdout_integrity.ok),
+                "reasons": list(holdout_integrity.reasons),
+                "details": dict(holdout_integrity.details),
+            }
+        )
+        if not holdout_integrity.ok:
+            integrity_ok = False
+            if run_mode == "headline":
+                integrity_path = _persist_integrity_checks(
+                    artifacts_dir, integrity_ok, integrity_checks
+                )
+                _update_manifest_integrity(
+                    artifacts_dir,
+                    integrity_path,
+                    run_invalid=True,
+                )
+                raise ValueError(
+                    "PnL integrity check failed in holdout: "
+                    + ", ".join(holdout_integrity.reasons)
+                )
 
         holdout_metrics_raw = compute_metrics(
             holdout_portfolio.equity_curve,
@@ -777,7 +853,18 @@ def run_walk_forward(
         },
     )
 
+    integrity_path = _persist_integrity_checks(
+        artifacts_dir, integrity_ok, integrity_checks
+    )
+    _update_manifest_integrity(
+        artifacts_dir,
+        integrity_path,
+        run_invalid=not integrity_ok,
+    )
+
     manifest_payload = asdict(manifest)
+    manifest_payload["integrity_path"] = integrity_path
+    manifest_payload["run_invalid"] = bool(not integrity_ok)
     manifest_payload["walkforward"] = {
         "selection_window_start": str(start_date.date()),
         "selection_window_end": str(selection_end.date()),
@@ -815,6 +902,7 @@ def run_walk_forward(
             "holdout_metrics": holdout_metrics,
             "folds": folds,
             "trades_path": str(artifacts_dir / "trades.jsonl"),
+            "integrity_path": integrity_path,
         }
     )
     return result
@@ -1093,6 +1181,34 @@ def _summarise_walkforward(
 def _stable_metrics(metrics: Dict[str, Any]) -> Dict[str, Any]:
     disallowed = {"run_id", "timestamp", "artifacts_dir", "config_path"}
     return {key: value for key, value in metrics.items() if key not in disallowed}
+
+
+def _persist_integrity_checks(
+    artifacts_dir: Path,
+    overall_ok: bool,
+    checks: Sequence[Mapping[str, Any]],
+) -> str:
+    payload = {
+        "ok": bool(overall_ok),
+        "checks": list(checks),
+    }
+    path = artifacts_dir / "integrity.json"
+    with path.open("w", encoding="utf-8") as handle:
+        json.dump(payload, handle, indent=2)
+    return str(path)
+
+
+def _update_manifest_integrity(
+    artifacts_dir: Path, integrity_path: str, *, run_invalid: bool
+) -> None:
+    manifest_path = artifacts_dir / "manifest.json"
+    if not manifest_path.exists():
+        return
+    payload = json.loads(manifest_path.read_text(encoding="utf-8"))
+    payload["integrity_path"] = integrity_path
+    payload["run_invalid"] = bool(run_invalid)
+    with manifest_path.open("w", encoding="utf-8") as handle:
+        json.dump(payload, handle, indent=2)
 
 
 def _build_grid_payload(entries: List[Dict[str, Any]]) -> List[Dict[str, Any]]:

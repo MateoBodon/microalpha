@@ -37,49 +37,43 @@ commands:
 
 ## WRDS results (docs/results_wrds.md)
 
-- Latest run: 2025-11-21T00-28-22Z-54912a8
+- Latest run: 2025-12-23T19-40-24Z-ff2979d
 - Snapshot:
-  - Sharpe_HAC: 0.40
-  - MAR: 0.04
-  - Max Drawdown: 82.35%
-  - Turnover: $1.84B
-  - Reality Check p-value: 0.986
-  - SPA p-value: 0.603
+  - Sharpe_HAC: 0.00
+  - MAR: 0.00
+  - Max Drawdown: 0.00%
+  - Turnover: $0.00
+  - Reality Check p-value: 1.000
+  - SPA p-value: degenerate (all strategies have zero variance)
 - Report: `reports/summaries/wrds_flagship.md`
-- Rerun status (2025-11-22): a smoke walk-forward using the tightened caps finished on run `2025-11-22T00-21-14Z-c792b44` (2015–2019 window). Report artifacts for that run were not generated, so no verified performance metrics are published. A full 2005–2024 rerun with the tightened spec is still pending; previous attempts exceeded the interactive time window (>2h).
+- Rerun status (2025-12-23): WRDS flagship rerun completed; output remains flat/zero-trade and is not interpretable for performance claims.
 
 
 ## WRDS smoke (docs/results_wrds_smoke.md)
 
-- Latest run: 2025-12-21T21-28-14Z-33c9c2a
+- Latest run: 2025-12-23T20-19-56Z-7ca855f
 - Snapshot:
   - Sharpe_HAC: 0.00
   - MAR: 0.00
   - Max Drawdown: 0.07%
   - Turnover: $434.24K
   - Reality Check p-value: 1.000
-  - SPA p-value: 1.000
+  - SPA p-value: degenerate (all strategies have zero variance)
 - Report: `reports/summaries/wrds_flagship_smoke.md`
-- Note: Smoke run validates WRDS pipeline wiring; metrics are not interpretable for performance.
+- Note: Smoke run validates WRDS pipeline wiring; SPA is degenerate and metrics are not interpretable for performance.
 
 
 ## Latest progress (PROGRESS.md)
 
-- Date: 2025-12-22
-- Ticket-07: Ticket-02 evidence + bundle integrity fixes (Status: Done). Run log: `docs/agent_runs/20251222_001500_ticket-07_ticket-02-evidence-and-bundle-fix/`.
-- Ticket-08: WRDS report SPA/degenerate-case robustness (Status: Done). Run log: `docs/agent_runs/20251222_013000_ticket-08_unblock-wrds-report-spa/`.
-- Ticket-08: Review FAIL (missing sprint ticket entry in `docs/CODEX_SPRINT_TICKETS.md`).
-- Ticket-09: Enforced sprint ticket id checks in bundling + backfilled ticket-08 definition (Status: Done). Run log: `docs/agent_runs/20251222_034500_ticket-09_ticket-id-enforcement/`.
-- Ticket-10: Block placeholder run logs in gpt-bundle + fix ticket-09 RESULTS (Status: Done). Run log: `docs/agent_runs/20251222_051500_ticket-10_block-placeholder-runlogs/`.
-- Ticket-11: Data policy scan + automated guardrails (Status: Done). Run log: `docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/`.
-- Project-state rebuild: regenerated `project_state/` docs + indices with PROGRESS and recent run summaries, updated generation script, and recorded run log at `docs/agent_runs/20251222_191759_ticket-00_project_state_rebuild/`. Bundle: `docs/gpt_bundles/project_state_2025-12-22T19-27-41Z_e08b720b.zip`.
+- Date: 2025-12-23
+- Ticket-01: SPA/report robustness hardened + WRDS smoke/report rerun (Status: Done). Run log: `docs/agent_runs/20251222_200000_ticket-01_fix-spa-robustness/`.
 
 
 ## Recent run logs (docs/agent_runs, last 3)
 
-- `20251222_051500_ticket-10_block-placeholder-runlogs` — Replaced the ticket-09 RESULTS placeholder with a concrete summary and bundle path. (docs/agent_runs/20251222_051500_ticket-10_block-placeholder-runlogs/RESULTS.md)
+- `20251223_080000_ticket-12_fix-wrds-pnl-integrity` — PnL integrity checks + WRDS smoke rerun under new checks. (docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/RESULTS.md)
+- `20251222_200000_ticket-01_fix-spa-robustness` — SPA/report robustness and WRDS smoke/report rerun. (docs/agent_runs/20251222_200000_ticket-01_fix-spa-robustness/RESULTS.md)
 - `20251222_123806_ticket-11_data-policy-guardrails` — Formalized ticket-11 in `docs/CODEX_SPRINT_TICKETS.md` and set ticket-09 status to DONE. (docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/RESULTS.md)
-- `20251222_191759_ticket-00_project_state_rebuild` — Regenerated `project_state/` docs and `_generated` indices using updated build/render scripts. (docs/agent_runs/20251222_191759_ticket-00_project_state_rebuild/RESULTS.md)
 
 
 Sources: `README.md`, `PROGRESS.md`, `docs/results_wrds.md`, `docs/results_wrds_smoke.md`, sample metrics under `artifacts/sample_flagship/`, `artifacts/sample_wfv/`, `artifacts/sample_wfv_holdout/`, and recent `docs/agent_runs/*/RESULTS.md`.

@@ -18,6 +18,41 @@ def _load_json(path: Path) -> Mapping[str, object]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _load_integrity(artifact_dir: Path) -> Mapping[str, object] | None:
+    integrity_path = artifact_dir / "integrity.json"
+    if not integrity_path.exists():
+        return None
+    try:
+        return _load_json(integrity_path)
+    except Exception:
+        return None
+
+
+def _integrity_reasons(payload: Mapping[str, object]) -> list[str]:
+    reasons: list[str] = []
+    if not payload:
+        return reasons
+    if "reasons" in payload:
+        raw = payload.get("reasons") or []
+        if isinstance(raw, list):
+            reasons.extend(str(item) for item in raw if item)
+    checks = payload.get("checks")
+    if isinstance(checks, list):
+        for check in checks:
+            if not isinstance(check, Mapping):
+                continue
+            if check.get("ok", True):
+                continue
+            phase = check.get("phase") or "run"
+            fold = check.get("fold")
+            prefix = f"{phase}"
+            if fold is not None:
+                prefix = f"{phase} fold {fold}"
+            for reason in check.get("reasons") or []:
+                reasons.append(f"{prefix}: {reason}")
+    return reasons
+
+
 def _flatten_bootstrap(path: Path) -> tuple[list[float], float | None]:
     payload = _load_json(path)
     if isinstance(payload, dict):
@@ -115,6 +150,18 @@ def generate_summary(
     header = title or DEFAULT_TITLE
     lines.append(f"# {header}")
     lines.append("")
+
+    integrity_payload = _load_integrity(artifact_dir)
+    integrity_reasons = (
+        _integrity_reasons(integrity_payload) if integrity_payload else []
+    )
+    if integrity_payload and not bool(integrity_payload.get("ok", True)):
+        lines.append("## Run marked invalid")
+        lines.append("")
+        lines.append("Integrity checks failed; results are not interpretable:")
+        for reason in integrity_reasons or ["unspecified integrity failure"]:
+            lines.append(f"- {reason}")
+        lines.append("")
 
     lines.append("## Performance Snapshot")
     lines.append("")

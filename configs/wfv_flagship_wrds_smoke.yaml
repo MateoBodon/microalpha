@@ -7,6 +7,7 @@ template:
   meta_path: "${WRDS_DATA_ROOT}/meta/crsp_security_metadata.csv"
   symbol: "FLAGSHIP_WRDS_SMOKE"
   cash: 15000000.0
+  run_mode: "smoke"
   seed: 20251010
   max_exposure: 1.25
   max_gross_leverage: 1.5

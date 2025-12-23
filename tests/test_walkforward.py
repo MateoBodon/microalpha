@@ -102,6 +102,7 @@ def _write_holdout_fixture(tmp_path: Path, include_holdout: bool = True) -> Path
             "data_path": str(data_dir),
             "symbol": "TEST",
             "cash": 100000.0,
+            "run_mode": "dev",
             "seed": 7,
             "exec": {"type": "instant", "commission": 0.0},
             "strategy": {

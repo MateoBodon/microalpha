@@ -1,0 +1,40 @@
+{
+  "run_name": "20251223_080000_ticket-12_fix-wrds-pnl-integrity",
+  "ticket_id": "ticket-12",
+  "started_at_utc": "2025-12-23T17:50:00Z",
+  "finished_at_utc": "2025-12-23T20:41:39Z",
+  "git_sha_before": "82c14dc66883980970bb812f30cced2ca2e1d352",
+  "git_sha_after": "e4039f9dc79e37b356d16f0a89a4759cf4b721c6",
+  "branch_name": "codex/ticket-12-fix-wrds-pnl-integrity",
+  "host_env_notes": "macOS 26.0.1 / Python 3.12.2 (system) / started_at_utc approximate / git_sha_after set to commit with WRDS smoke rerun + log updates / WRDS_DATA_ROOT set (see docs/local/WRDS_DATA_ROOT.md; local-doc fallback enabled)",
+  "dataset_id": "sample_synth_v1 + wrds_crsp_local_exports_20251221",
+  "config_paths": [
+    "configs/wfv_flagship_sample.yaml",
+    "configs/wfv_flagship_wrds_smoke.yaml",
+    "configs/wfv_flagship_wrds.yaml"
+  ],
+  "config_sha256": {
+    "configs/wfv_flagship_sample.yaml": "137a5d67f45591af1d500af0d2e8576ee85b24dd03b9773ac7f50cb06ec1b2c1",
+    "configs/wfv_flagship_wrds_smoke.yaml": "48445b0f0dcd01c40c204e384aa4fc23d419b14d80cfeb26a17b89c97c9a932c",
+    "configs/wfv_flagship_wrds.yaml": "1d6a855bd753c60ac8319862841c389e1d7e6f0230f4b372d4c12b8be642c7b1"
+  },
+  "artifact_paths": [
+    "artifacts/sample_wfv/2025-12-23T18-39-59Z-82c14dc/",
+    "artifacts/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f/",
+    "artifacts/wrds_flagship/2025-12-23T19-40-24Z-ff2979d/"
+  ],
+  "report_paths": [
+    "reports/summaries/flagship_mom_wfv.md",
+    "reports/summaries/wrds_flagship_smoke.md",
+    "reports/summaries/wrds_flagship_smoke_factors.md",
+    "reports/summaries/wrds_flagship_smoke_metrics.json",
+    "reports/summaries/wrds_flagship_smoke_spa.json",
+    "reports/summaries/wrds_flagship_smoke_spa.md",
+    "reports/summaries/wrds_flagship.md",
+    "reports/summaries/wrds_flagship_factors.md",
+    "reports/summaries/wrds_flagship_metrics.json",
+    "reports/summaries/wrds_flagship_spa.json",
+    "reports/summaries/wrds_flagship_spa.md"
+  ],
+  "web_sources": []
+}

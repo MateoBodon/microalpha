@@ -46,6 +46,40 @@ def _load_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _load_integrity(artifact_dir: Path) -> dict | None:
+    integrity_path = artifact_dir / "integrity.json"
+    if not integrity_path.exists():
+        return None
+    try:
+        return _load_json(integrity_path)
+    except Exception:
+        return None
+
+
+def _integrity_reasons(payload: dict | None) -> list[str]:
+    reasons: list[str] = []
+    if not payload:
+        return reasons
+    raw = payload.get("reasons")
+    if isinstance(raw, list):
+        reasons.extend(str(item) for item in raw if item)
+    checks = payload.get("checks")
+    if isinstance(checks, list):
+        for check in checks:
+            if not isinstance(check, dict):
+                continue
+            if check.get("ok", True):
+                continue
+            phase = check.get("phase") or "run"
+            fold = check.get("fold")
+            prefix = f"{phase}"
+            if fold is not None:
+                prefix = f"{phase} fold {fold}"
+            for reason in check.get("reasons") or []:
+                reasons.append(f"{prefix}: {reason}")
+    return reasons
+
+
 def _format_currency(value: float) -> str:
     return f"${value:,.0f}"
 
@@ -586,6 +620,7 @@ def _write_docs_results(
     image_map: dict[str, Path],
     spa_md_copy: Path | None,
     degenerate_reasons: list[str],
+    invalid_reasons: list[str],
 ) -> None:
     docs_path = docs_path.resolve()
     docs_path.parent.mkdir(parents=True, exist_ok=True)
@@ -622,6 +657,13 @@ def _write_docs_results(
     lines.append("")
     lines.extend(perf_lines)
     lines.append("")
+    if invalid_reasons:
+        lines.append("## Run marked invalid")
+        lines.append("")
+        lines.append("Integrity checks failed; results are not interpretable:")
+        for reason in invalid_reasons:
+            lines.append(f"- {reason}")
+        lines.append("")
     if degenerate_reasons:
         lines.append("## Run is degenerate")
         lines.append("")
@@ -791,6 +833,8 @@ def render_wrds_summary(
     factor_status = "skipped" if factor_skip_reason else "ok"
     cost_payload = _load_cost_payload(artifact_dir)
     degenerate_reasons = _detect_degenerate_reasons(metrics_payload, artifact_dir)
+    integrity_payload = _load_integrity(artifact_dir)
+    integrity_reasons = _integrity_reasons(integrity_payload)
 
     manifest_payload = _load_json(manifest_path)
     run_id = manifest_payload.get("run_id") or artifact_dir.name or "wrds_run"
@@ -849,6 +893,13 @@ def render_wrds_summary(
     lines = ["# WRDS Flagship Walk-Forward", "", "## Headline Metrics", ""]
     lines.extend(_render_table(headline))
     lines.append("")
+    if integrity_payload and not bool(integrity_payload.get("ok", True)):
+        lines.append("## Run marked invalid")
+        lines.append("")
+        lines.append("Integrity checks failed; results are not interpretable:")
+        for reason in integrity_reasons or ["unspecified integrity failure"]:
+            lines.append(f"- {reason}")
+        lines.append("")
     if degenerate_reasons:
         lines.append("## Run is degenerate")
         lines.append("")
@@ -920,6 +971,7 @@ def render_wrds_summary(
             image_map=doc_image_map,
             spa_md_copy=spa_md_out or spa_md_path,
             degenerate_reasons=degenerate_reasons,
+            invalid_reasons=integrity_reasons,
         )
 
     return output_path
