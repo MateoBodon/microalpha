@@ -24,3 +24,8 @@ Ticket-09: Enforced sprint ticket id checks in bundling + backfilled ticket-08 d
 Ticket-10: Block placeholder run logs in gpt-bundle + fix ticket-09 RESULTS (Status: Done). Run log: `docs/agent_runs/20251222_051500_ticket-10_block-placeholder-runlogs/`.
 Ticket-11: Data policy scan + automated guardrails (Status: Done). Run log: `docs/agent_runs/20251222_123806_ticket-11_data-policy-guardrails/`.
 Project-state rebuild: regenerated `project_state/` docs + indices with PROGRESS and recent run summaries, updated generation script, and recorded run log at `docs/agent_runs/20251222_191759_ticket-00_project_state_rebuild/`. Bundle: `docs/gpt_bundles/project_state_2025-12-22T19-27-41Z_e08b720b.zip`.
+
+## 2025-12-23
+
+Ticket-01: SPA/report robustness hardened + WRDS smoke/report rerun (Status: Done). Smoke run: `artifacts/wrds_flagship_smoke/2025-12-23T06-05-28Z-afe1765/`. Report run: `artifacts/wrds_flagship/2025-12-21T22-32-44Z-2b48ef7/`. Run log: `docs/agent_runs/20251222_200000_ticket-01_fix-spa-robustness/`.
+Ticket-12: PnL integrity checks + same-day fill equity refresh + diagnostic tooling; sample WFV rerun and report generated. Run log: `docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/`.

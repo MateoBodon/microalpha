@@ -4,17 +4,28 @@
 
 | Metric | Value |
 | --- | ---:|
-| Sharpe_HAC | 0.22 |
+| Sharpe_HAC | 0.23 |
 | MAR | 0.03 |
 | MaxDD | 34.79% |
 | Turnover | $28,525,695 |
 | RealityCheck_p_value | 1.000 |
 
+## Exposure Summary
+
+| Metric | Value |
+| --- | ---:|
+| Avg net exposure | 17.37% |
+| Avg gross exposure | 158.60% |
+| Max gross exposure | 403.02% |
+| Max net exposure | 163.52% |
+
+_Exposure time series is recorded in equity_curve.csv._
+
 ## Visuals
 
-![Equity Curve](../../artifacts/sample_wfv/2025-10-30T18-39-47Z-a4ab8e7/equity_curve.png)
+![Equity Curve](../../artifacts/sample_wfv/2025-12-23T18-39-59Z-82c14dc/equity_curve.png)
 
-![Bootstrap Sharpe Histogram](../../artifacts/sample_wfv/2025-10-30T18-39-47Z-a4ab8e7/bootstrap_hist.png)
+![Bootstrap Sharpe Histogram](../../artifacts/sample_wfv/2025-12-23T18-39-59Z-82c14dc/bootstrap_hist.png)
 
 ## Bootstrap Reality Check
 
@@ -37,9 +48,13 @@
 
 | Factor | Beta | t-stat |
 | --- | ---:| ---:|
-| Alpha | -0.0055 | -1.42 |
-| Mkt_RF | 10.7236 | 1.74 |
-| SMB | 1.4014 | 0.12 |
-| HML | -13.1416 | -0.77 |
+| Alpha | -0.0051 | -1.27 |
+| Mkt_RF | 11.1851 | 1.85 |
+| SMB | -1.3603 | -0.12 |
+| HML | -13.5354 | -0.82 |
 
 _Computed against `data/factors/ff3_sample.csv` using Newey-West standard errors._
+
+## Cost & Metadata Robustness
+
+_Robustness artifacts unavailable._

@@ -7,13 +7,16 @@ WRDS_ARTIFACT_DIR ?= artifacts/wrds_flagship
 WRDS_SMOKE_CONFIG ?= configs/wfv_flagship_wrds_smoke.yaml
 WRDS_SMOKE_ARTIFACT_DIR ?= artifacts/wrds_flagship_smoke
 
-.PHONY: dev test test-wrds sample wfv wfv-wrds wfv-wrds-smoke wrds wrds-flagship report report-wrds report-wrds-smoke docs clean export-wrds report-wfv gpt-bundle check-data-policy
+.PHONY: dev test test-fast test-wrds sample wfv wfv-wrds wfv-wrds-smoke wrds wrds-flagship report report-wrds report-wrds-smoke docs clean export-wrds report-wfv gpt-bundle check-data-policy
 
 dev:
 	pip install -e '.[dev]'
 
 test:
 	pytest -vv --maxfail=1 --durations=25
+
+test-fast:
+	pytest -q
 
 test-wrds:
 	pytest -m wrds -vv --maxfail=1 --durations=25

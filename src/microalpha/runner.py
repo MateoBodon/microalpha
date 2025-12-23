@@ -30,6 +30,7 @@ from .execution import (
 from .execution import (
     SquareRootImpact as SquareRootImpactExecutor,
 )
+from .integrity import evaluate_portfolio_integrity
 from .logging import JsonlWriter
 from .manifest import (
     build as build_manifest,
@@ -284,12 +285,6 @@ def run_from_config(
 
     trade_logger.close()
 
-    metrics = compute_metrics(
-        portfolio.equity_curve,
-        portfolio.total_turnover,
-        trades=getattr(portfolio, "trades", None),
-        hac_lags=cfg.metrics_hac_lags,
-    )
     commission_total = 0.0
     slippage_total = 0.0
     trades_list = getattr(portfolio, "trades", None) or []
@@ -301,6 +296,30 @@ def run_from_config(
             )
         except (TypeError, ValueError):
             continue
+
+    integrity = evaluate_portfolio_integrity(
+        portfolio,
+        equity_records=portfolio.equity_curve,
+        slippage_total=slippage_total,
+    )
+    integrity_path = _persist_integrity(integrity, artifacts_dir)
+    _update_manifest_integrity(
+        artifacts_dir,
+        integrity_path,
+        run_invalid=not integrity.ok,
+    )
+
+    run_mode = getattr(cfg, "run_mode", "headline")
+    if not integrity.ok and run_mode == "headline":
+        reasons = "; ".join(integrity.reasons) or "integrity check failed"
+        raise ValueError(f"PnL integrity check failed: {reasons}")
+
+    metrics = compute_metrics(
+        portfolio.equity_curve,
+        portfolio.total_turnover,
+        trades=getattr(portfolio, "trades", None),
+        hac_lags=cfg.metrics_hac_lags,
+    )
     bootstrap_path, bootstrap_meta = _persist_bootstrap(metrics, artifacts_dir)
     metrics_paths = _persist_metrics(
         metrics,
@@ -330,6 +349,7 @@ def run_from_config(
             "factor_exposure_path": factor_path,
             "bootstrap_path": bootstrap_path,
             "trades_path": trades_path,
+            "integrity_path": integrity_path,
         }
     )
     return result
@@ -385,6 +405,31 @@ def _persist_metrics(
     manifest_metrics["equity_curve_path"] = str(equity_path)
     manifest_metrics["metrics_path"] = str(metrics_path)
     return manifest_metrics
+
+
+def _persist_integrity(result, artifacts_dir: Path) -> str:
+    payload = {
+        "ok": bool(result.ok),
+        "reasons": list(result.reasons),
+        "details": dict(result.details),
+    }
+    path = artifacts_dir / "integrity.json"
+    with path.open("w", encoding="utf-8") as handle:
+        json.dump(payload, handle, indent=2)
+    return str(path)
+
+
+def _update_manifest_integrity(
+    artifacts_dir: Path, integrity_path: str, *, run_invalid: bool
+) -> None:
+    manifest_path = artifacts_dir / "manifest.json"
+    if not manifest_path.exists():
+        return
+    payload = json.loads(manifest_path.read_text(encoding="utf-8"))
+    payload["integrity_path"] = integrity_path
+    payload["run_invalid"] = bool(run_invalid)
+    with manifest_path.open("w", encoding="utf-8") as handle:
+        json.dump(payload, handle, indent=2)
 
 
 def persist_exposures(

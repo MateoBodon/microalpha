@@ -22,6 +22,7 @@ class Engine:
         self.portfolio = portfolio
         self.broker = broker
         self.rng = rng or np.random.default_rng()
+        self._pending_equity_refresh_ts: int | None = None
 
     def run(self) -> None:
         profiler = None
@@ -31,6 +32,10 @@ class Engine:
 
         for market_event in self.data.stream():
             self._on_market(market_event)
+
+        if self._pending_equity_refresh_ts is not None:
+            self.portfolio.refresh_equity_after_fills(self._pending_equity_refresh_ts)
+            self._pending_equity_refresh_ts = None
 
         if profiler:
             profiler.disable()
@@ -44,10 +49,18 @@ class Engine:
         if self.clock is not None and market_event.timestamp < self.clock:
             raise LookaheadError("out-of-order market event")
 
+        if (
+            self._pending_equity_refresh_ts is not None
+            and market_event.timestamp != self._pending_equity_refresh_ts
+        ):
+            self.portfolio.refresh_equity_after_fills(self._pending_equity_refresh_ts)
+            self._pending_equity_refresh_ts = None
+
         self.clock = market_event.timestamp
         self.portfolio.on_market(market_event)
 
         signals: Iterable[SignalEvent] = self.strategy.on_market(market_event)
+        same_day_fill = False
         for signal in signals:
             if signal.timestamp < self.clock:
                 raise LookaheadError("signal time < current clock")
@@ -61,4 +74,8 @@ class Engine:
                     continue
                 if fill.timestamp < market_event.timestamp:
                     raise LookaheadError("fill before current market event")
+                if fill.timestamp == market_event.timestamp:
+                    same_day_fill = True
                 self.portfolio.on_fill(fill)
+        if same_day_fill:
+            self._pending_equity_refresh_ts = market_event.timestamp

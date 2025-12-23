@@ -62,6 +62,7 @@ class Portfolio:
         self.trades: List[Dict[str, float | int | str | None]] = []
         self.trade_logger = trade_logger
         self.trade_log_path = trade_logger.path if trade_logger else None
+        self.commission_total: float = 0.0
         self.vol_target_annualized = vol_target_annualized
         self.vol_lookback = vol_lookback or 20
         self.max_portfolio_heat = max_portfolio_heat
@@ -107,21 +108,35 @@ class Portfolio:
                     self.borrow_fee_multiplier = float(getattr(borrow_cfg, "multiplier"))
 
     def on_market(self, event: MarketEvent) -> None:
-        self.current_time = event.timestamp
+        self._record_equity(event.timestamp, apply_borrow_costs=True, overwrite_last=True)
+
+    def refresh_equity_after_fills(self, timestamp: int) -> None:
+        """Refresh the latest equity snapshot after same-day fills."""
+        self._record_equity(timestamp, apply_borrow_costs=False, overwrite_last=True)
+
+    def _record_equity(
+        self,
+        timestamp: int,
+        *,
+        apply_borrow_costs: bool,
+        overwrite_last: bool,
+    ) -> None:
+        self.current_time = timestamp
         market_value = 0.0
         gross_market_value = 0.0
         borrow_cost = 0.0
         for symbol, position in self.positions.items():
-            price = self.data_handler.get_latest_price(symbol, event.timestamp)
+            price = self.data_handler.get_latest_price(symbol, timestamp)
             if price is None:
                 continue
             market_value += position.qty * price
             gross_market_value += abs(position.qty * price)
-            borrow_cost += self._borrow_cost_for(
-                symbol, position.qty, price, event.timestamp
-            )
+            if apply_borrow_costs:
+                borrow_cost += self._borrow_cost_for(
+                    symbol, position.qty, price, timestamp
+                )
 
-        if borrow_cost > 0.0:
+        if apply_borrow_costs and borrow_cost > 0.0:
             self.cash -= borrow_cost
             self.cum_realized_pnl -= borrow_cost
             self.borrow_cost_total += borrow_cost
@@ -142,14 +157,42 @@ class Portfolio:
         ):
             self.drawdown_halted = True
 
-        self.equity_curve.append(
-            {
-                "timestamp": event.timestamp,
-                "equity": total_equity,
-                "exposure": exposure,
-                "gross_exposure": gross_exposure,
-            }
-        )
+        record = {
+            "timestamp": timestamp,
+            "equity": total_equity,
+            "exposure": exposure,
+            "gross_exposure": gross_exposure,
+        }
+        if (
+            overwrite_last
+            and self.equity_curve
+            and self.equity_curve[-1].get("timestamp") == timestamp
+        ):
+            self.equity_curve[-1] = record
+        else:
+            self.equity_curve.append(record)
+
+    def valuation_snapshot(self, timestamp: int | None = None) -> tuple[float, float, float]:
+        """Return (market_value, gross_market_value, unrealized_pnl) at timestamp."""
+        ts = self.current_time if timestamp is None else timestamp
+        if ts is None:
+            return 0.0, 0.0, 0.0
+        market_value = 0.0
+        gross_market_value = 0.0
+        unrealized_pnl = 0.0
+        for symbol, position in self.positions.items():
+            if position.qty == 0:
+                continue
+            price = self.data_handler.get_latest_price(symbol, ts)
+            if price is None:
+                price = self.avg_cost.get(symbol)
+            if price is None:
+                continue
+            market_value += position.qty * price
+            gross_market_value += abs(position.qty * price)
+            avg_cost = self.avg_cost.get(symbol, price)
+            unrealized_pnl += (price - avg_cost) * position.qty
+        return market_value, gross_market_value, unrealized_pnl
 
     def on_signal(self, signal: SignalEvent) -> Iterable[OrderEvent]:
         if self.current_time is not None and signal.timestamp < self.current_time:
@@ -229,6 +272,7 @@ class Portfolio:
         trade_value = fill.price * fill.qty
         self.cash -= trade_value
         self.cash -= fill.commission
+        self.commission_total += float(fill.commission)
         self.total_turnover += abs(trade_value)
 
         side = cast(Literal["BUY", "SELL"], "BUY" if fill.qty > 0 else "SELL")

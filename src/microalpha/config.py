@@ -129,6 +129,7 @@ class BacktestCfg(BaseModel):
     data_path: str
     symbol: str
     cash: float = 1_000_000
+    run_mode: Literal["headline", "smoke", "dev"] = "headline"
     exec: ExecModelCfg = Field(default_factory=ExecModelCfg)
     strategy: StrategyCfg
     seed: int = 42

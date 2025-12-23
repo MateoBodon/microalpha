@@ -12,6 +12,8 @@ All notable changes to this project will be documented in this file. The format 
 - Daily FF5+MOM factor bundle from Ken French data plus WRDS image assets under `docs/img/wrds_flagship/`.
 - ticket-01: WRDS smoke Makefile targets and smoke report outputs.
 - ticket-11: data policy checker script + allowlist, Make target, and pytest enforcement.
+- ticket-12: PnL integrity checks with `integrity.json`, diagnostic script, and `run_mode` support for smoke/dev runs.
+- ticket-12: `make test-fast` alias for a fast deterministic pytest run.
 
 ### Changed
 - Walk-forward WRDS config aligned to universe coverage (2012–2024) and report pipeline now emits WRDS signals before analytics.
@@ -20,6 +22,8 @@ All notable changes to this project will be documented in this file. The format 
 - WRDS smoke report tolerates zero SPA comparator t-stats (smoke-only) to keep validation runs unblocked.
 - WRDS summary now reports the actual docs image root used for the run.
 - ticket-08: reporting now skips invalid SPA inputs with explicit reasons and flags degenerate runs (zero trades/flat returns).
+- ticket-01: WRDS summary now auto-generates degenerate SPA outputs when SPA artifacts are missing/invalid and validates SPA p-value bounds so reports never crash on SPA inputs.
+- ticket-12: equity snapshots refresh after same-day fills, and reports now display an invalid-run banner when integrity checks fail.
 - ticket-06: gpt-bundle now refuses dirty worktrees to keep bundles commit-consistent.
 - ticket-06: stop ignoring `project_state/` and `docs/agent_runs/` so audit artifacts are tracked.
 - ticket-06: gpt-bundle honors `BUNDLE_TIMESTAMP` for deterministic bundle paths.
