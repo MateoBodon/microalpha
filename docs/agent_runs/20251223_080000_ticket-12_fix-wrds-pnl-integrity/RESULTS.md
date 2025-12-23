@@ -8,6 +8,7 @@
 Evidence / artifacts:
 - Sample WFV run: `artifacts/sample_wfv/2025-12-23T18-39-59Z-82c14dc/` (includes `integrity.json`)
 - Sample WFV report: `reports/summaries/flagship_mom_wfv.md`
+- Bundle: `docs/gpt_bundles/2025-12-23T18-55-00Z_ticket-12_20251223_080000_ticket-12_fix-wrds-pnl-integrity.zip`
 
 WRDS note:
 - `WRDS_DATA_ROOT` was not set, so WRDS smoke rerun was skipped per instructions.

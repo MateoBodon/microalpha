@@ -185,3 +185,75 @@ PY`
 94. `cp docs/prompts/20251223_080000_ticket-12_fix-wrds-pnl-integrity.md docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/PROMPT.md`
 95. `make gpt-bundle TICKET=ticket-12 RUN_NAME=20251223_080000_ticket-12_fix-wrds-pnl-integrity` (failed: dirty worktree)
 96. `git diff --stat`
+97. `git check-ignore -v docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/COMMANDS.md || true`
+98. `git add -f docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity docs/prompts/20251223_080000_ticket-12_fix-wrds-pnl-integrity.md`
+99. `git status -sb`
+100. `rg -n "Ticket-12" PROGRESS.md`
+101. `git show HEAD:PROGRESS.md | rg -n "Ticket-12" || true`
+102. `git diff -- PROGRESS.md`
+103. `git diff --cached -- PROGRESS.md | head`
+104. `git hash-object PROGRESS.md`
+105. `git rev-parse HEAD:PROGRESS.md`
+106. `git ls-files -v PROGRESS.md`
+107. `git update-index --no-skip-worktree PROGRESS.md CHANGELOG.md project_state/KNOWN_ISSUES.md docs/CODEX_SPRINT_TICKETS.md`
+108. `git status -sb`
+109. `git add CHANGELOG.md PROGRESS.md project_state/KNOWN_ISSUES.md`
+110. `git add -f docs/CODEX_SPRINT_TICKETS.md`
+111. `git status -sb`
+112. `git commit -m "ticket-12: fix PnL/equity integrity checks" -m "Tests: make test-fast" -m "Artifacts: artifacts/sample_wfv/2025-12-23T18-39-59Z-82c14dc/, reports/summaries/flagship_mom_wfv.md" -m "Docs: docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/, docs/prompts/20251223_080000_ticket-12_fix-wrds-pnl-integrity.md, docs/CODEX_SPRINT_TICKETS.md, PROGRESS.md, CHANGELOG.md, project_state/KNOWN_ISSUES.md"`
+113. `git status -sb`
+114. `make gpt-bundle TICKET=ticket-12 RUN_NAME=20251223_080000_ticket-12_fix-wrds-pnl-integrity` (failed: DIFF.patch mismatch)
+115. `git rev-parse HEAD`
+116. `git rev-parse HEAD~1`
+117. `python3 - <<'PY'
+import json
+from pathlib import Path
+meta_path = Path('docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/META.json')
+meta = json.loads(meta_path.read_text())
+meta['git_sha_before'] = 'HEAD~1'
+meta['git_sha_after'] = 'HEAD'
+meta['host_env_notes'] = 'macOS 26.0.1 / Python 3.12.2 (system) / started_at_utc approximate / git_sha refs use HEAD~1..HEAD'
+meta_path.write_text(json.dumps(meta, indent=2) + '\n')
+PY`
+118. `git status -sb`
+119. `python3 - <<'PY'
+import json
+from pathlib import Path
+meta_path = Path('docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/META.json')
+meta = json.loads(meta_path.read_text())
+meta['finished_at_utc'] = '2025-12-23T18:55:00Z'
+meta_path.write_text(json.dumps(meta, indent=2) + '\n')
+PY`
+120. `ls`
+121. `git status -sb`
+122. `rg -n "gpt-bundle|bundle" -S Makefile tools scripts docs -g '*gpt*'`
+123. `sed -n '1,220p' tools/gpt_bundle.py`
+124. `sed -n '220,520p' tools/gpt_bundle.py`
+125. `git log --oneline -n 5`
+126. `sed -n '1,220p' docs/DOCS_AND_LOGGING_SYSTEM.md`
+127. `ls docs/agent_runs | tail -n 5`
+128. `cat docs/agent_runs/20251222_200000_ticket-01_fix-spa-robustness/META.json`
+129. `git diff --stat`
+130. `git diff docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/COMMANDS.md`
+131. `git diff docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/META.json`
+132. `git diff docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/RESULTS.md`
+133. `cat docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/META.json`
+134. `git rev-parse HEAD~1`
+135. `date -u "+%Y-%m-%dT%H:%M:%SZ"`
+136. `python3 - <<'PY'
+import json
+from pathlib import Path
+meta_path = Path('docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/META.json')
+meta = json.loads(meta_path.read_text())
+meta['git_sha_before'] = '82c14dc66883980970bb812f30cced2ca2e1d352'
+meta['git_sha_after'] = 'HEAD'
+meta['finished_at_utc'] = '2025-12-23T19:07:50Z'
+meta['host_env_notes'] = (
+    'macOS 26.0.1 / Python 3.12.2 (system) / started_at_utc approximate '
+    '/ git_sha_after uses HEAD for bundle reproducibility'
+)
+meta_path.write_text(json.dumps(meta, indent=2) + '\n')
+PY`
+137. `git add -f docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/COMMANDS.md docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/META.json docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/RESULTS.md`
+138. `git commit -m "ticket-12: finalize run logs + bundle" -m "Tests: not run (log updates only)" -m "Artifacts: docs/gpt_bundles/2025-12-23T18-55-00Z_ticket-12_20251223_080000_ticket-12_fix-wrds-pnl-integrity.zip" -m "Docs: docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/COMMANDS.md, docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/META.json, docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/RESULTS.md"`
+139. `BUNDLE_TIMESTAMP=2025-12-23T18-55-00Z make gpt-bundle TICKET=ticket-12 RUN_NAME=20251223_080000_ticket-12_fix-wrds-pnl-integrity`
