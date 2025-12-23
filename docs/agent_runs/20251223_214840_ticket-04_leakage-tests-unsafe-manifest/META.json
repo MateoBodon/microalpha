@@ -4,9 +4,9 @@
   "started_at_utc": "2025-12-23T21:48:40Z",
   "finished_at_utc": "2025-12-23T22:22:01Z",
   "git_sha_before": "ba5b48089091f6a858b065dd3a388b467dd67984",
-  "git_sha_after": "e9c115bbe65d6f068fbe10884e2d9278b62aec95",
+  "git_sha_after": "refs/heads/codex/ticket-04-leakage-tests-unsafe-manifest",
   "branch_name": "codex/ticket-04-leakage-tests-unsafe-manifest",
-  "host_env_notes": "macOS 26.0.1 / Python 3.12.2 (system) / WRDS_DATA_ROOT unset; WRDS smoke skipped / started_at_utc and finished_at_utc approximate; git_sha_after captured after docs commit before META.json commit",
+  "host_env_notes": "macOS 26.0.1 / Python 3.12.2 (system) / WRDS_DATA_ROOT unset; WRDS smoke skipped / started_at_utc and finished_at_utc approximate; git_sha_after uses branch ref to avoid self-referential hash, resolves to e5178133b2ea98f26dc1c6442bb704980cb109a8 at bundle time",
   "dataset_id": "sample_repo_data_v1",
   "config_paths": [
     "configs/flagship_sample.yaml",
