@@ -1,6 +1,6 @@
 # WRDS Walk-Forward Results (Flagship Momentum)
 
-> Latest run: **2025-12-23T20-19-56Z-7ca855f** (`configs/wfv_flagship_wrds_smoke.yaml`, 2015-01-05 -> 2018-10-23, 7 folds with 126-day forward tests (~6.0 months))
+> Latest run: **2025-12-24T05-15-43Z-559a99e** (`configs/wfv_flagship_wrds_smoke.yaml`, 2015-01-05 -> 2018-10-23, 7 folds with 126-day forward tests (~6.0 months))
 
 ## Performance Snapshot
 
@@ -35,17 +35,17 @@ _Exposure time series is recorded in equity_curve.csv._
 
 ## Key Visuals
 
-![Equity Curve](img/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f/equity_curve.png)
+![Equity Curve](img/wrds_flagship_smoke/2025-12-24T05-15-43Z-559a99e/equity_curve.png)
 
-![Bootstrap Sharpe Histogram](img/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f/bootstrap_hist.png)
+![Bootstrap Sharpe Histogram](img/wrds_flagship_smoke/2025-12-24T05-15-43Z-559a99e/bootstrap_hist.png)
 
-![SPA Comparator t-stats](img/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f/spa_tstats.png)
+![SPA Comparator t-stats](img/wrds_flagship_smoke/2025-12-24T05-15-43Z-559a99e/spa_tstats.png)
 
-![IC / Rolling IR](img/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f/2025-12-23T20-19-56Z-7ca855f_ic_ir.png)
+![IC / Rolling IR](img/wrds_flagship_smoke/2025-12-24T05-15-43Z-559a99e/2025-12-24T05-15-43Z-559a99e_ic_ir.png)
 
-![Decile Spreads](img/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f/2025-12-23T20-19-56Z-7ca855f_deciles.png)
+![Decile Spreads](img/wrds_flagship_smoke/2025-12-24T05-15-43Z-559a99e/2025-12-24T05-15-43Z-559a99e_deciles.png)
 
-![Rolling FF5+MOM Betas](img/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f/2025-12-23T20-19-56Z-7ca855f_rolling_betas.png)
+![Rolling FF5+MOM Betas](img/wrds_flagship_smoke/2025-12-24T05-15-43Z-559a99e/2025-12-24T05-15-43Z-559a99e_rolling_betas.png)
 
 ## SPA & Factor Highlights
 
@@ -76,4 +76,4 @@ _Exposure time series is recorded in equity_curve.csv._
 - Target turnover ≈ 3.00% of ADV with max 8 positions per sector.
 - Execution assumes TWAP slicing with linear+sqrt impact, 5 bps commissions, and borrow spread floor of 8 bps.
 
-Published artifacts (PNG/MD/JSON summaries) live under `docs/img/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f` and reports/summaries for reproducibility.
+Published artifacts (PNG/MD/JSON summaries) live under `docs/img/wrds_flagship_smoke/2025-12-24T05-15-43Z-559a99e` and reports/summaries for reproducibility.

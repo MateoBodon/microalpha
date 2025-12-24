@@ -30,3 +30,7 @@ Project-state rebuild: regenerated `project_state/` docs + indices with PROGRESS
 Ticket-01: SPA/report robustness hardened + WRDS smoke/report rerun (Status: Done). Smoke run: `artifacts/wrds_flagship_smoke/2025-12-23T06-05-28Z-afe1765/`. Report run: `artifacts/wrds_flagship/2025-12-21T22-32-44Z-2b48ef7/`. Run log: `docs/agent_runs/20251222_200000_ticket-01_fix-spa-robustness/`.
 Ticket-12: PnL integrity checks + same-day fill equity refresh + diagnostic tooling; sample WFV rerun and report generated. WRDS smoke rerun + report completed under `$WRDS_DATA_ROOT` (`artifacts/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f/`), integrity diagnostics OK. WRDS flagship rerun completed (`artifacts/wrds_flagship/2025-12-23T19-40-24Z-ff2979d/`); run remains degenerate (zero trades). Run log: `docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/`.
 Ticket-04: Leakage guardrails added (signal timestamp invariant, unsafe execution opt-in + manifest fields, report unsafe banner) with red-team tests. Run log: `docs/agent_runs/20251223_214840_ticket-04_leakage-tests-unsafe-manifest/`.
+
+## 2025-12-24
+
+Ticket-04: WRDS smoke WFV + report rerun with local exports at `$WRDS_DATA_ROOT` (Status: Done). Smoke run: `artifacts/wrds_flagship_smoke/2025-12-24T05-15-43Z-559a99e/`. Report: `reports/summaries/wrds_flagship_smoke.md`. Run log: `docs/agent_runs/20251224_051508_ticket-04_wrds-smoke-check/`.
