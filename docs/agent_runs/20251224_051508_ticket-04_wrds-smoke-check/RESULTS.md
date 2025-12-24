@@ -22,4 +22,4 @@
 - Matplotlib tight_layout warning from `reporting/tearsheet.py`.
 
 ## Bundle
-- Bundle: pending (run after commits and clean worktree).
+- Bundle: `docs/gpt_bundles/2025-12-24T05-19-48Z_ticket-04_20251224_051508_ticket-04_wrds-smoke-check.zip`

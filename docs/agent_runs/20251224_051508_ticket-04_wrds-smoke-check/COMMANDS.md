@@ -14,3 +14,7 @@
 12. `python3 - <<'PY'` (sha256 for configs/wfv_flagship_wrds_smoke.yaml)
 13. `git status --porcelain`
 14. `git ls-files docs/img/wrds_flagship_smoke | head -n 5`
+15. `git commit -m "ticket-04: wrds smoke rerun" ...`
+16. `date -u +"%Y-%m-%dT%H-%M-%SZ"`
+17. `BUNDLE_TIMESTAMP=2025-12-24T05-19-48Z make gpt-bundle TICKET=ticket-04 RUN_NAME=20251224_051508_ticket-04_wrds-smoke-check` (failed: RESULTS placeholder)
+18. `apply_patch` (update RESULTS bundle path)
