@@ -18,3 +18,6 @@
 16. `date -u +"%Y-%m-%dT%H-%M-%SZ"`
 17. `BUNDLE_TIMESTAMP=2025-12-24T05-19-48Z make gpt-bundle TICKET=ticket-04 RUN_NAME=20251224_051508_ticket-04_wrds-smoke-check` (failed: RESULTS placeholder)
 18. `apply_patch` (update RESULTS bundle path)
+19. `git add -f docs/agent_runs/20251224_051508_ticket-04_wrds-smoke-check/RESULTS.md docs/agent_runs/20251224_051508_ticket-04_wrds-smoke-check/COMMANDS.md`
+20. `git commit -m "ticket-04: finalize wrds smoke results" ...`
+21. `BUNDLE_TIMESTAMP=2025-12-24T05-19-48Z make gpt-bundle TICKET=ticket-04 RUN_NAME=20251224_051508_ticket-04_wrds-smoke-check`
