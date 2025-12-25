@@ -38,3 +38,4 @@ Ticket-04: WRDS smoke WFV + report rerun with local exports at `$WRDS_DATA_ROOT`
 ## 2025-12-25
 
 Ticket-04: Checklist verification (tests, unsafe manifest/report banner validation, data-policy scan). Bundle: `docs/gpt_bundles/2025-12-25T21-43-58Z_ticket-04_20251225_213521_ticket-04_checklist-verify.zip`. Run log: `docs/agent_runs/20251225_213521_ticket-04_checklist-verify/`.
+Ticket-04: Merged `codex/ticket-04-leakage-tests-unsafe-manifest` into `main` and pushed; noted user-updated AGENTS policy permitting merges on explicit instruction. Run log: `docs/agent_runs/20251225_220947_ticket-04_merge-main/`.
