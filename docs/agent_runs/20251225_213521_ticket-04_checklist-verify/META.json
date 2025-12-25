@@ -1,0 +1,24 @@
+{
+  "run_name": "20251225_213521_ticket-04_checklist-verify",
+  "ticket_id": "ticket-04",
+  "started_at_utc": "2025-12-25T21:35:21Z",
+  "finished_at_utc": "2025-12-25T21:46:26Z",
+  "git_sha_before": "8a770104ba164bc708cda8e070bbe05b37643177",
+  "git_sha_after": "refs/heads/codex/ticket-04-leakage-tests-unsafe-manifest",
+  "branch_name": "codex/ticket-04-leakage-tests-unsafe-manifest",
+  "host_env_notes": "macOS 26.0.1 / Python 3.12.2 (system) / verification-only run; git_sha_after uses branch ref to avoid self-referential hash; WRDS_DATA_ROOT not used",
+  "dataset_id": "verification_only",
+  "config_paths": [
+    "configs/mm_lob_same_tick.yaml"
+  ],
+  "config_sha256": {
+    "configs/mm_lob_same_tick.yaml": "f9f5301766d104c7e7f22b2bcfde3eaf58f61643ef5adf2089949ffc6d4dd8ae"
+  },
+  "artifact_paths": [
+    "artifacts/mm_lob_same_tick/2025-12-23T22-00-05Z-ba5b480/"
+  ],
+  "report_paths": [
+    "reports/summaries/_artifacts/mm_lob_same_tick.md"
+  ],
+  "web_sources": []
+}

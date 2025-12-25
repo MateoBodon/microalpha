@@ -34,3 +34,7 @@ Ticket-04: Leakage guardrails added (signal timestamp invariant, unsafe executio
 ## 2025-12-24
 
 Ticket-04: WRDS smoke WFV + report rerun with local exports at `$WRDS_DATA_ROOT` (Status: Done). Smoke run: `artifacts/wrds_flagship_smoke/2025-12-24T05-15-43Z-559a99e/`. Report: `reports/summaries/wrds_flagship_smoke.md`. Run log: `docs/agent_runs/20251224_051508_ticket-04_wrds-smoke-check/`.
+
+## 2025-12-25
+
+Ticket-04: Checklist verification (tests, unsafe manifest/report banner validation, data-policy scan). Bundle: `docs/gpt_bundles/2025-12-25T21-43-58Z_ticket-04_20251225_213521_ticket-04_checklist-verify.zip`. Run log: `docs/agent_runs/20251225_213521_ticket-04_checklist-verify/`.
