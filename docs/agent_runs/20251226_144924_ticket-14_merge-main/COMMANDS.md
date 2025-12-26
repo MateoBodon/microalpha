@@ -18,3 +18,9 @@
 16. `git add -f docs/agent_runs/20251226_144924_ticket-14_merge-main/COMMANDS.md docs/agent_runs/20251226_144924_ticket-14_merge-main/PROMPT.md docs/agent_runs/20251226_144924_ticket-14_merge-main/RESULTS.md docs/agent_runs/20251226_144924_ticket-14_merge-main/TESTS.md docs/agent_runs/20251226_144924_ticket-14_merge-main/META.json docs/prompts/20251226_144924_ticket-14_merge-main.md` (failed: missing prompt path)
 17. `ls -1 docs/prompts | rg '20251226_144924'`
 18. `git add -f docs/agent_runs/20251226_144924_ticket-14_merge-main/COMMANDS.md docs/agent_runs/20251226_144924_ticket-14_merge-main/PROMPT.md docs/agent_runs/20251226_144924_ticket-14_merge-main/RESULTS.md docs/agent_runs/20251226_144924_ticket-14_merge-main/TESTS.md docs/agent_runs/20251226_144924_ticket-14_merge-main/META.json docs/prompts/20251226_144924_ticket-14_merge-main_ticket-14_merge-main.md`
+19. `git status -sb`
+20. `git commit -m "ticket-14: log merge to main" -m "Tests: not run (merge-only log)" -m "Artifacts: none" -m "Docs: docs/agent_runs/20251226_144924_ticket-14_merge-main/"`
+21. `git push origin main`
+22. `git rev-parse HEAD`
+23. `git rev-parse origin/main`
+24. `apply_patch` (update docs/agent_runs/20251226_144924_ticket-14_merge-main/META.json finished_at_utc + git_sha_after)
