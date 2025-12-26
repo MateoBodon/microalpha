@@ -21,6 +21,9 @@
   - `min_price` + `min_adv` filters track `with_history` (mean 23.38).
   - Sleeve selection produces **long/short selected mean 4.67** (max 8), with **0 sector-cap rejections**.
 - **Inference:** signals are being generated after the universe filters; zero trades likely occur in order sizing/risk-cap enforcement (e.g., `max_single_name_weight=0.02`) rather than in the universe/min_price/min_adv filters. Needs confirmation with order-level diagnostics.
+- Manifest/integrity checks for the debug run:
+  - `unsafe_execution=false`, `walkforward.non_degenerate` present, and `run_invalid=true`.
+  - `walkforward.non_degenerate_failure_reason` recorded in `manifest.json` with `min_trades=1`.
 
 External references consulted: none.
 

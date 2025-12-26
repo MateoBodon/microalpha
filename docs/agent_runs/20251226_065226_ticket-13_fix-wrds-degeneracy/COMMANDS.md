@@ -65,3 +65,13 @@
 63. `apply_patch` (docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/RESULTS.md)
 64. `python3 - <<'PY'` (update META.json finished_at_utc)
 65. `BUNDLE_TIMESTAMP=2025-12-26T07-12-26Z make gpt-bundle TICKET=ticket-13 RUN_NAME=20251226_065226_ticket-13_fix-wrds-degeneracy`
+66. `git status -sb`
+67. `git diff --stat`
+68. `git ls-files | rg -n "/Volumes/|Storage/Data|wrds/crsp|wrds/manifests|daily_csv"`
+69. `git ls-files | rg -n "^artifacts/|^data/|^data_sp500"`
+70. `git ls-files docs/local/WRDS_DATA_ROOT.md`
+71. `rg -n "unsafe_execution|allow_unsafe_execution|allow_unsafe|unsafe_execution" configs src/microalpha`
+72. `python3 - <<'PY'` (inspect debug manifest + integrity)
+73. `apply_patch` (docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/RESULTS.md)
+74. `date -u +"%Y-%m-%dT%H:%M:%SZ"`
+75. `python3 - <<'PY'` (update META.json finished_at_utc)
