@@ -367,6 +367,8 @@
 
 **Goal (1 sentence):** Ensure walk-forward selection cannot accept zero-trade configurations by enforcing explicit non-degeneracy constraints and surfacing failures clearly.
 
+**Status:** Done (diagnostics complete; root-cause fix tracked under ticket-14).
+
 **Why (ties to diagnosis):**
 - `project_state/KNOWN_ISSUES.md` flags the WRDS flagship run as degenerate (zero trades) even after integrity fixes.
 - A zero-trade run must not be treated as a valid selection/holdout result.
@@ -393,6 +395,37 @@
 **Expected artifacts/logs to produce:**
 - `docs/agent_runs/<RUN_NAME>/...` (required run log files)
 - Updated `manifest.json` / `folds.json` in the affected run artifacts with non-degenerate metadata
+
+**End-of-ticket:**
+- **Tests run:** …
+- **Artifacts/logs:** …
+- **Documentation updates:** …
+
+## ticket-14 — Trace post-signal order pipeline to explain WRDS zero-trade degeneracy (no p-hacking)
+
+**Goal (1 sentence):** Add order-flow diagnostics from signals through fills, explain zero-trade collapses, and fix the first real bug without loosening thresholds.
+
+**Why (ties to diagnosis):**
+- Ticket-13 showed selections exist yet trades remained zero; downstream sizing/caps needed explicit tracing.
+
+**Files/modules likely touched:**
+- `src/microalpha/order_flow.py` (new diagnostics payload + summaries)
+- `src/microalpha/engine.py` (hook diagnostics into signal/order/fill flow)
+- `src/microalpha/portfolio.py` (drop/clip reasons + weight sizing fix)
+- `src/microalpha/execution.py` (broker reject reason tracking)
+- `src/microalpha/runner.py` / `src/microalpha/walkforward.py` (persist diagnostics, attach to folds/exclusions)
+- `tests/test_order_flow_diagnostics.py`, `tests/test_portfolio_risk_caps.py`
+
+**Acceptance criteria (objective + falsifiable):**
+- Per-rebalance order-flow diagnostics capture target weights, orders created/dropped, broker accepts/rejects, and fills.
+- Single backtest runs emit `order_flow_diagnostics.json` plus manifest summary.
+- WFV `folds.json` records `order_flow_diagnostics` for fold tests and candidate exclusions, with `diagnostic_reason` for non-degenerate rejects.
+- Weight-based sizing no longer falls back to default qty when target weight rounds to zero; cap breaches clip weight-based orders (counted in diagnostics) instead of dropping.
+- Unit tests cover diagnostics population, drop buckets, optional-field safety, and cap clipping.
+
+**Minimal tests/commands to run:**
+- `make test-fast`
+- `pytest -q tests/test_order_flow_diagnostics.py`
 
 **End-of-ticket:**
 - **Tests run:** …

@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file. The format 
 - ticket-04: red-team leakage tests for future-dated signals and unsafe execution configs.
 - ticket-13: non-degenerate WFV selection constraints (min_trades/min_turnover) with manifest/report surfacing and WRDS configs updated.
 - ticket-13: flagship momentum filter diagnostics added to WFV grid exclusions/folds for per-rebalance coverage counts.
+- ticket-14: order-flow diagnostics capturing post-signal sizing/orders/broker/fills with per-rebalance payloads and WFV fold attachments.
 
 ### Changed
 - Walk-forward WRDS config aligned to universe coverage (2012–2024) and report pipeline now emits WRDS signals before analytics.
@@ -36,3 +37,4 @@ All notable changes to this project will be documented in this file. The format 
 - ticket-07: gpt-bundle now records commit ranges and verifies DIFF.patch against bundled files; holdout test now proves selection excludes holdout data.
 - ticket-09: gpt-bundle now validates META.json ticket ids against sprint tickets before bundling.
 - ticket-04: engine rejects signals with timestamps that do not match the current market event.
+- ticket-14: weight-based sizing no longer falls back to default qty when weight rounds to zero; cap breaches clip weight-based orders instead of dropping, and diagnostics track clip counts.

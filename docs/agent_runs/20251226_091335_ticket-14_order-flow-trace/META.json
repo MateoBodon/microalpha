@@ -1,0 +1,23 @@
+{
+  "run_name": "20251226_091335_ticket-14_order-flow-trace",
+  "ticket_id": "ticket-14",
+  "started_at_utc": "2025-12-26T09:13:35Z",
+  "finished_at_utc": "",
+  "git_sha_before": "695a3871edb8f3e0b868a70c5b8ef30437258e59",
+  "git_sha_after": "695a3871edb8f3e0b868a70c5b8ef30437258e59",
+  "branch_name": "codex/ticket-14-order-flow-trace",
+  "host_env_notes": "macOS-26.0.1-arm64-arm-64bit / python 3.12.2",
+  "dataset_id": "wrds_crsp_export_local",
+  "config_paths": [
+    "docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/wfv_flagship_wrds_single_fold.yaml"
+  ],
+  "config_sha256": {
+    "docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/wfv_flagship_wrds_single_fold.yaml": "e917260cd9ca00d3ac76134763120ce6df424eec3600d51187352f79274c913b"
+  },
+  "artifact_paths": [
+    "artifacts/wrds_flagship_debug/2025-12-26T09-33-29Z-695a387/",
+    "artifacts/wrds_flagship_debug/2025-12-26T09-44-24Z-695a387/"
+  ],
+  "report_paths": [],
+  "web_sources": []
+}
