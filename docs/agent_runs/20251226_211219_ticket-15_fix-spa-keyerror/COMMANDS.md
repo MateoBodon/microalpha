@@ -111,3 +111,8 @@
 111. `python3 - <<'PY' ...` (set git_sha_after to c9060097... + add git_sha_after_ref)
 112. `git rev-parse c9060097`
 113. `python3 - <<'PY' ...` (correct git_sha_after to full c9060097 hash)
+114. `git rev-parse HEAD`
+115. `python3 - <<'PY' ...` (set git_sha_after to 1c86c6a58a6575e481df3246693c4d6382547f17)
+116. `git add -f docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/META.json`
+117. `git commit -m "ticket-15: finalize git_sha_after" -m "Tests: not run (meta update only)" -m "Artifacts: none" -m "Docs: docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/META.json"`
+118. `BUNDLE_TIMESTAMP=2025-12-26T21-44-50Z make gpt-bundle TICKET=ticket-15 RUN_NAME=20251226_211219_ticket-15_fix-spa-keyerror`
