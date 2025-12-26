@@ -17,6 +17,7 @@ import pandas as pd
 class SpaSummary:
     status: str
     reason: str | None
+    error: str | None
     best_model: str | None
     p_value: float | None
     observed_stat: float | None
@@ -44,6 +45,32 @@ def _degenerate_summary(
     return SpaSummary(
         status="degenerate",
         reason=reason,
+        error=None,
+        best_model=None,
+        p_value=None,
+        observed_stat=None,
+        num_bootstrap=num_bootstrap,
+        avg_block=avg_block,
+        candidate_stats=[],
+        n_obs=n_obs,
+        n_strategies=n_strategies,
+        diagnostics=diagnostics or [],
+    )
+
+
+def _error_summary(
+    error: str,
+    *,
+    n_obs: int,
+    n_strategies: int,
+    avg_block: int,
+    num_bootstrap: int,
+    diagnostics: list[str] | None = None,
+) -> SpaSummary:
+    return SpaSummary(
+        status="error",
+        reason=None,
+        error=error,
         best_model=None,
         p_value=None,
         observed_stat=None,
@@ -95,12 +122,9 @@ def load_grid_returns(grid_path: Path) -> pd.DataFrame:
         else:
             frame["panel_id"] = frame.index.astype(str)
     frame["_order"] = np.arange(len(frame))
-    pivot = (
-        frame.pivot_table(index="panel_id", columns="model", values="value", aggfunc="first")
-        .dropna()
-    )
+    pivot = frame.pivot_table(index="panel_id", columns="model", values="value", aggfunc="first")
     order = frame.groupby("panel_id")["_order"].min().sort_values()
-    pivot = pivot.loc[order.index]
+    pivot = pivot.reindex(order.index)
     return pivot
 
 
@@ -302,6 +326,7 @@ def compute_spa(
     return SpaSummary(
         status="ok",
         reason=None,
+        error=None,
         best_model=best_model,
         p_value=p_value,
         observed_stat=observed_stat,
@@ -318,7 +343,9 @@ def write_outputs(summary: SpaSummary, json_path: Path, markdown_path: Path) -> 
     json_path.parent.mkdir(parents=True, exist_ok=True)
     payload = {
         "status": summary.status,
+        "spa_status": summary.status,
         "reason": summary.reason,
+        "spa_error": summary.error,
         "best_model": summary.best_model,
         "p_value": summary.p_value,
         "observed_stat": summary.observed_stat,
@@ -334,7 +361,10 @@ def write_outputs(summary: SpaSummary, json_path: Path, markdown_path: Path) -> 
     lines = ["# Hansen SPA Summary", ""]
     if summary.status != "ok":
         lines.append(f"- **Status:** {summary.status}")
-        lines.append(f"- **Reason:** {summary.reason or 'invalid inputs'}")
+        if summary.status == "error":
+            lines.append(f"- **Error:** {summary.error or summary.reason or 'unknown error'}")
+        else:
+            lines.append(f"- **Reason:** {summary.reason or 'invalid inputs'}")
         lines.append(f"- **Observations:** {summary.n_obs}")
         lines.append(f"- **Strategies:** {summary.n_strategies}")
         if summary.diagnostics:
@@ -396,7 +426,7 @@ def main(argv: Sequence[str] | None = None) -> None:
             seed=args.seed,
         )
     except Exception as exc:  # pragma: no cover - CLI fallback
-        summary = _degenerate_summary(
+        summary = _error_summary(
             f"{type(exc).__name__}: {exc}",
             n_obs=0,
             n_strategies=0,
