@@ -29,6 +29,6 @@
   - Result: **Failure** — `Non-degenerate constraints rejected all candidates (min_trades=1; excluded=264).`
   - Artifacts (written before failure): `artifacts/wrds_flagship/2025-12-26T06-20-30Z-364496b/`
   - Metrics: `num_trades=0`, `total_turnover=0.0`.
-- Bundle: `docs/gpt_bundles/2025-12-26T02-53-08Z_ticket-13_20251226_023453_ticket-13_fix-wrds-degeneracy.zip`
+- Bundle: `docs/gpt_bundles/2025-12-26T06-33-15Z_ticket-13_20251226_023453_ticket-13_fix-wrds-degeneracy.zip`
 
 External references consulted: none.

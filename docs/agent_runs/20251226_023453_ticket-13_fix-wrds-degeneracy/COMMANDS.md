@@ -157,3 +157,12 @@
 155. `git add -f docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/COMMANDS.md docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/META.json docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/RESULTS.md docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/TESTS.md`
 156. `git commit -m "ticket-13: log WRDS reruns" -m "Tests: not run (see run log; WRDS WFV reruns failed non-degenerate)" -m "Artifacts: artifacts/wrds_flagship_smoke/2025-12-26T06-19-16Z-364496b; artifacts/wrds_flagship/2025-12-26T06-20-30Z-364496b" -m "Docs: PROGRESS.md; project_state/KNOWN_ISSUES.md; docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/COMMANDS.md; docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/RESULTS.md; docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/TESTS.md; docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/META.json"`
 157. `git status -sb`
+158. `git add -f docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/COMMANDS.md`
+159. `git commit -m "ticket-13: update command log" -m "Tests: not run (log update)" -m "Artifacts: none" -m "Docs: docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/COMMANDS.md"`
+160. `make gpt-bundle TICKET=ticket-13 RUN_NAME=20251226_023453_ticket-13_fix-wrds-degeneracy`
+161. `apply_patch` (docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/RESULTS.md)
+162. `date -u +"%Y-%m-%dT%H:%M:%SZ"`
+163. `python3 - <<'PY'` (update META.json finished_at_utc)
+164. `git add -f docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/COMMANDS.md docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/RESULTS.md docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/META.json`
+165. `git commit -m "ticket-13: refresh bundle log" -m "Tests: not run (log update)" -m "Artifacts: docs/gpt_bundles/2025-12-26T06-33-15Z_ticket-13_20251226_023453_ticket-13_fix-wrds-degeneracy.zip" -m "Docs: docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/COMMANDS.md; docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/RESULTS.md; docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/META.json"`
+166. `BUNDLE_TIMESTAMP=2025-12-26T06-33-15Z make gpt-bundle TICKET=ticket-13 RUN_NAME=20251226_023453_ticket-13_fix-wrds-degeneracy`
