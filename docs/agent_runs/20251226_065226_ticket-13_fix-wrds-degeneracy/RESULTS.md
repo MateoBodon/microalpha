@@ -24,4 +24,4 @@
 
 External references consulted: none.
 
-- Bundle: `docs/gpt_bundles/2025-12-26T07-10-10Z_ticket-13_20251226_065226_ticket-13_fix-wrds-degeneracy.zip`
+- Bundle: `docs/gpt_bundles/2025-12-26T07-12-26Z_ticket-13_20251226_065226_ticket-13_fix-wrds-degeneracy.zip`

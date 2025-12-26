@@ -61,3 +61,7 @@
 59. `BUNDLE_TIMESTAMP=2025-12-26T07-10-10Z make gpt-bundle TICKET=ticket-13 RUN_NAME=20251226_065226_ticket-13_fix-wrds-degeneracy`
 60. `date -u +"%Y-%m-%dT%H:%M:%SZ"`
 61. `python3 - <<'PY'` (update META.json finished_at_utc)
+62. `date -u +"%Y-%m-%dT%H-%M-%SZ"`
+63. `apply_patch` (docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/RESULTS.md)
+64. `python3 - <<'PY'` (update META.json finished_at_utc)
+65. `BUNDLE_TIMESTAMP=2025-12-26T07-12-26Z make gpt-bundle TICKET=ticket-13 RUN_NAME=20251226_065226_ticket-13_fix-wrds-degeneracy`
