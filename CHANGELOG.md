@@ -39,3 +39,4 @@ All notable changes to this project will be documented in this file. The format 
 - ticket-04: engine rejects signals with timestamps that do not match the current market event.
 - ticket-14: weight-based sizing no longer falls back to default qty when weight rounds to zero; cap breaches clip weight-based orders instead of dropping, and diagnostics track clip counts.
 - ticket-15: SPA grid-returns loading reindexed to avoid KeyErrors; SPA outputs now include `spa_status`/`spa_error`, and WRDS summaries gate headline language when SPA fails.
+- gpt-bundle: allow optional `git_sha_after_ref` in META.json to derive diff ranges while keeping concrete git SHA metadata.

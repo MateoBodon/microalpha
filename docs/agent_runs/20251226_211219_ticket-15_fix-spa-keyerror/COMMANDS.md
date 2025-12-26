@@ -70,3 +70,44 @@
 70. `python3 - <<'PY' ...` (update META git_sha_after values; succeeded)
 71. `python3 - <<'PY' ...` (verify all git_sha_after are concrete)
 72. `git status -sb`
+73. `git add src/microalpha/reporting/spa.py src/microalpha/reporting/wrds_summary.py tests/test_spa_regression_keyerror.py`
+74. `git commit -m "ticket-15: fix SPA grid loading and error status" -m "Tests: make test-fast; pytest -q tests/test_spa_regression_keyerror.py" -m "Artifacts: none" -m "Docs: none"`
+75. `git status -sb`
+76. `make gpt-bundle TICKET=ticket-15 RUN_NAME=20251226_211219_ticket-15_fix-spa-keyerror` (failed: dirty worktree)
+77. `git add CHANGELOG.md PROGRESS.md docs/CODEX_SPRINT_TICKETS.md docs/agent_runs/20251223_214840_ticket-04-leakage-tests-unsafe-manifest/META.json docs/agent_runs/20251224_051508_ticket-04_wrds-smoke-check/META.json docs/agent_runs/20251225_213521_ticket-04_checklist-verify/META.json docs/agent_runs/20251225_220947_ticket-04_merge-main/META.json docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/META.json docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/META.json docs/results_wrds.md project_state/CURRENT_RESULTS.md project_state/KNOWN_ISSUES.md reports/summaries/wrds_flagship.md reports/summaries/wrds_flagship_metrics.json reports/summaries/wrds_flagship_spa.json reports/summaries/wrds_flagship_spa.md` (failed: docs ignored)
+78. `git add CHANGELOG.md PROGRESS.md project_state/CURRENT_RESULTS.md project_state/KNOWN_ISSUES.md reports/summaries/wrds_flagship.md reports/summaries/wrds_flagship_metrics.json reports/summaries/wrds_flagship_spa.json reports/summaries/wrds_flagship_spa.md`
+79. `git add -f docs/CODEX_SPRINT_TICKETS.md docs/results_wrds.md docs/agent_runs/20251223_214840_ticket-04-leakage-tests-unsafe-manifest/META.json docs/agent_runs/20251224_051508_ticket-04_wrds-smoke-check/META.json docs/agent_runs/20251225_213521_ticket-04_checklist-verify/META.json docs/agent_runs/20251225_220947_ticket-04_merge-main/META.json docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/META.json docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/META.json docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror docs/prompts/20251226_211219_ticket-15_fix-spa-keyerror.md`
+80. `git status -sb`
+81. `git commit -m "ticket-15: refresh WRDS SPA reports and logs" -m "Tests: not run (see prior commit)" -m "Artifacts: artifacts/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/ (local only); reports/summaries/wrds_flagship*.{md,json}" -m "Docs: CHANGELOG.md, PROGRESS.md, docs/CODEX_SPRINT_TICKETS.md, docs/results_wrds.md, docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/, docs/prompts/20251226_211219_ticket-15_fix-spa-keyerror.md, project_state/CURRENT_RESULTS.md, project_state/KNOWN_ISSUES.md; meta SHA fixes in docs/agent_runs/*/META.json"`
+82. `git status -sb`
+83. `make gpt-bundle TICKET=ticket-15 RUN_NAME=20251226_211219_ticket-15_fix-spa-keyerror` (failed: git_sha_after=PENDING)
+84. `python3 - <<'PY' ...` (set git_sha_after to db51d31c0d3535179e480c4fa23c217b6aebc0b1)
+85. `git add -f docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/META.json`
+86. `git commit -m "ticket-15: finalize run meta sha" -m "Tests: not run (meta update only)" -m "Artifacts: none" -m "Docs: docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/META.json"`
+87. `git status -sb`
+88. `make gpt-bundle TICKET=ticket-15 RUN_NAME=20251226_211219_ticket-15_fix-spa-keyerror` (failed: invalid revision range)
+89. `git log --oneline -n 5`
+90. `git rev-parse db51d31c`
+91. `git log --reverse --pretty=format:%H %s 12b63a22117a3a5acf1784eac2df4418c3037ba9..db51d31c0d3535179e480c4fa23c217b6aebc0b1` (failed: invalid revision range)
+92. `python3 - <<'PY' ...` (replace git_sha_after with db51d31c6754defff65ca6218a17a60faa37e412)
+93. `git add -f docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/META.json`
+94. `git commit -m "ticket-15: correct run meta sha" -m "Tests: not run (meta update only)" -m "Artifacts: none" -m "Docs: docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/META.json"`
+95. `make gpt-bundle TICKET=ticket-15 RUN_NAME=20251226_211219_ticket-15_fix-spa-keyerror` (failed: DIFF.patch mismatch)
+96. `sed -n '1,220p' tools/gpt_bundle.py`
+97. `sed -n '220,360p' tools/gpt_bundle.py`
+98. `apply_patch` (update `tools/gpt_bundle.py` for `git_sha_after_ref`)
+99. `apply_patch` (update `CHANGELOG.md` for gpt-bundle note)
+100. `python3 - <<'PY' ...` (set `git_sha_after` to branch ref + add `git_sha_after_resolved`)
+101. `git add -f docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/META.json`
+102. `git commit -m "ticket-15: switch meta sha to branch ref" -m "Tests: not run (meta update only)" -m "Artifacts: none" -m "Docs: docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/META.json"`
+103. `date -u +%Y-%m-%dT%H-%M-%SZ`
+104. `git rev-parse HEAD`
+105. `python3 - <<'PY' ...` (update finished_at_utc + RESULTS bundle path)
+106. `git add -f docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/META.json docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/RESULTS.md`
+107. `git commit -m "ticket-15: record bundle path in run log" -m "Tests: not run (log update only)" -m "Artifacts: docs/gpt_bundles/2025-12-26T21-44-50Z_ticket-15_20251226_211219_ticket-15_fix-spa-keyerror.zip" -m "Docs: docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/RESULTS.md; docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/META.json"`
+108. `BUNDLE_TIMESTAMP=2025-12-26T21-44-50Z make gpt-bundle TICKET=ticket-15 RUN_NAME=20251226_211219_ticket-15_fix-spa-keyerror`
+109. `cat docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/META.json`
+110. `git status -sb`
+111. `python3 - <<'PY' ...` (set git_sha_after to c9060097... + add git_sha_after_ref)
+112. `git rev-parse c9060097`
+113. `python3 - <<'PY' ...` (correct git_sha_after to full c9060097 hash)

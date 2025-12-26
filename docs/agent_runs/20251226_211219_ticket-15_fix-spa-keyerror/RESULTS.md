@@ -1,6 +1,7 @@
 - Fixed SPA grid-returns ordering to avoid KeyError, added explicit SPA error status + banner gating in WRDS summaries, and introduced a regression test for missing panel ids.
 - Refreshed WRDS flagship SPA + summaries from `artifacts/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/` after the fix.
 - Backfilled concrete `git_sha_after` values in prior run logs to restore audit hygiene.
+- Added `git_sha_after_ref` support in `tools/gpt_bundle.py` so META.json can store concrete SHAs while bundles resolve a ref for diff verification.
 
 Before/after (WRDS flagship SPA):
 | Item | Before | After |
