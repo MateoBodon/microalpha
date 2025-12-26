@@ -24,3 +24,9 @@
 22. `git rev-parse HEAD`
 23. `git rev-parse origin/main`
 24. `apply_patch` (update docs/agent_runs/20251226_144924_ticket-14_merge-main/META.json finished_at_utc + git_sha_after)
+25. `git add -f docs/agent_runs/20251226_144924_ticket-14_merge-main/COMMANDS.md docs/agent_runs/20251226_144924_ticket-14_merge-main/META.json`
+26. `git commit -m "ticket-14: update merge run log" -m "Tests: not run (merge-only log)" -m "Artifacts: none" -m "Docs: docs/agent_runs/20251226_144924_ticket-14_merge-main/"`
+27. `git push origin main`
+28. `git rev-parse HEAD`
+29. `git rev-parse origin/main`
+30. `git status -sb`
