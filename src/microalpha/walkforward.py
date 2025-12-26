@@ -16,7 +16,7 @@ import yaml
 
 from .broker import SimulatedBroker
 from .config import BacktestCfg, ExecModelCfg
-from .config_wfv import RealityCheckCfg, WFVCfg
+from .config_wfv import NonDegenerateCfg, RealityCheckCfg, WFVCfg
 from .data import CsvDataHandler, DataHandler, MultiCsvDataHandler
 from .engine import Engine
 from .execution import (
@@ -79,6 +79,31 @@ EXECUTION_MAPPING = {
     "kyle": KyleLambda,
     "lob": LOBExecution,
 }
+
+
+def _non_degenerate_active(cfg: NonDegenerateCfg | None) -> bool:
+    return bool(cfg and cfg.is_active())
+
+
+def _non_degenerate_reasons(
+    portfolio: Portfolio, cfg: NonDegenerateCfg | None
+) -> list[str]:
+    if not _non_degenerate_active(cfg):
+        return []
+    reasons: list[str] = []
+    num_trades = len(getattr(portfolio, "trades", None) or [])
+    turnover = float(getattr(portfolio, "total_turnover", 0.0) or 0.0)
+    if cfg is None:
+        return reasons
+    if cfg.min_trades is not None and num_trades < cfg.min_trades:
+        reasons.append(
+            f"num_trades {num_trades} < min_trades {int(cfg.min_trades)}"
+        )
+    if cfg.min_turnover is not None and turnover < cfg.min_turnover:
+        reasons.append(
+            f"total_turnover {turnover:.4f} < min_turnover {float(cfg.min_turnover):.4f}"
+        )
+    return reasons
 
 
 def load_wfv_cfg(path: str) -> WFVCfg:
@@ -153,6 +178,7 @@ def load_wfv_cfg(path: str) -> WFVCfg:
             grid=grid,
             artifacts_dir=raw.get("artifacts_dir"),
             reality_check=reality_payload,
+            non_degenerate=raw.get("non_degenerate"),
         )
 
     raise ValueError("Invalid walk-forward configuration schema.")
@@ -326,6 +352,7 @@ def run_walk_forward(
                 rc_result,
                 grid_payload,
                 grid_summary,
+                grid_exclusions,
             ) = _optimise_parameters(
                 data_handler,
                 train_start,
@@ -336,6 +363,7 @@ def run_walk_forward(
                 cfg.template,
                 train_rng,
                 cfg.reality_check,
+                non_degenerate=cfg.non_degenerate,
                 symbol_meta=symbol_meta,
             )
 
@@ -353,6 +381,8 @@ def run_walk_forward(
                         "reality_check": None,
                         "spa_pvalue": None,
                         "grid_summary": [],
+                        "grid_exclusions": grid_exclusions,
+                        "selection_status": "no_valid_candidates",
                     }
                 )
                 current_date += pd.Timedelta(days=testing_days)
@@ -540,6 +570,7 @@ def run_walk_forward(
                 "factor_exposure_path": factor_path,
                 "spa_pvalue": None,
                 "grid_summary": grid_summary,
+                "grid_exclusions": grid_exclusions,
             }
 
             if grid_payload:
@@ -567,6 +598,44 @@ def run_walk_forward(
             json.dump(selection_summary, handle, indent=2)
         selection_summary_path = str(selection_path)
 
+    non_degenerate_cfg = cfg.non_degenerate
+    non_degenerate_active = _non_degenerate_active(non_degenerate_cfg)
+    total_excluded = sum(len(fold.get("grid_exclusions") or []) for fold in folds)
+    non_degenerate_payload: Dict[str, Any] | None = None
+    if non_degenerate_active and non_degenerate_cfg is not None:
+        non_degenerate_payload = {
+            "min_trades": non_degenerate_cfg.min_trades,
+            "min_turnover": non_degenerate_cfg.min_turnover,
+        }
+    selection_failure_reason: str | None = None
+    if non_degenerate_active and not selection_summary:
+        criteria = []
+        if non_degenerate_cfg is not None and non_degenerate_cfg.min_trades is not None:
+            criteria.append(f"min_trades={int(non_degenerate_cfg.min_trades)}")
+        if (
+            non_degenerate_cfg is not None
+            and non_degenerate_cfg.min_turnover is not None
+        ):
+            criteria.append(
+                f"min_turnover={float(non_degenerate_cfg.min_turnover)}"
+            )
+        criteria_text = ", ".join(criteria) if criteria else "unspecified"
+        selection_failure_reason = (
+            "Non-degenerate constraints rejected all candidates "
+            f"({criteria_text}; excluded={total_excluded})."
+        )
+    if selection_failure_reason:
+        integrity_ok = False
+        integrity_checks.append(
+            {
+                "fold": None,
+                "phase": "selection",
+                "ok": False,
+                "reasons": [selection_failure_reason],
+                "details": {"excluded_candidates": int(total_excluded)},
+            }
+        )
+
     selected_entry = selection_summary[0] if selection_summary else None
     selected_model = selected_entry["model"] if selected_entry else None
     selected_params = (
@@ -585,221 +654,223 @@ def run_walk_forward(
     holdout_trades_path: str | None = None
     if holdout_start is not None and holdout_end is not None:
         if selected_params_full is None:
-            raise ValueError("Holdout configured but no selection results found")
+            if not selection_failure_reason:
+                raise ValueError("Holdout configured but no selection results found")
+        if selected_params_full is not None:
 
-        warmup_end = holdout_start - pd.Timedelta(days=1)
-        warmup_prices = None
-        warmup_history = None
-        if strategy_name in {"CrossSectionalMomentum", "FlagshipMomentumStrategy"}:
-            assert isinstance(data_handler, MultiCsvDataHandler)
-            warmup_start = warmup_end - pd.Timedelta(days=training_days)
-            warmup_history = _collect_cs_warmup_history(
+            warmup_end = holdout_start - pd.Timedelta(days=1)
+            warmup_prices = None
+            warmup_history = None
+            if strategy_name in {"CrossSectionalMomentum", "FlagshipMomentumStrategy"}:
+                assert isinstance(data_handler, MultiCsvDataHandler)
+                warmup_start = warmup_end - pd.Timedelta(days=training_days)
+                warmup_history = _collect_cs_warmup_history(
+                    data_handler,
+                    warmup_start,
+                    warmup_end,
+                    cs_symbols,
+                )
+            else:
+                assert isinstance(data_handler, CsvDataHandler)
+                warmup_prices = _collect_warmup_prices(
+                    data_handler, warmup_end, selected_params_full.get("lookback", 0)
+                )
+
+            data_handler.set_date_range(holdout_start, holdout_end)
+            if strategy_name in {"CrossSectionalMomentum", "FlagshipMomentumStrategy"}:
+                assert isinstance(data_handler, MultiCsvDataHandler)
+                kwargs = _strategy_kwargs(selected_params_full)
+                kwargs.pop("warmup_prices", None)
+                if warmup_history:
+                    kwargs["warmup_history"] = warmup_history
+                holdout_strategy = strategy_class(**kwargs)
+            else:
+                holdout_strategy = strategy_class(
+                    symbol=symbol,
+                    **_strategy_kwargs(selected_params_full, warmup_prices),
+                )
+
+            holdout_trade_logger = JsonlWriter(
+                str(artifacts_dir / "holdout_trades.jsonl")
+            )
+            holdout_portfolio = _build_portfolio(
                 data_handler,
-                warmup_start,
-                warmup_end,
-                cs_symbols,
+                cfg.template,
+                trade_logger=holdout_trade_logger,
+                symbol_meta=symbol_meta,
             )
-        else:
-            assert isinstance(data_handler, CsvDataHandler)
-            warmup_prices = _collect_warmup_prices(
-                data_handler, warmup_end, selected_params_full.get("lookback", 0)
+            if hasattr(holdout_strategy, "sector_map") and holdout_strategy.sector_map:
+                holdout_portfolio.sector_of.update(holdout_strategy.sector_map)
+
+            holdout_rng = _spawn_rng(master_rng)
+            exec_rng = _spawn_rng(holdout_rng)
+            holdout_executor = _build_executor(
+                data_handler,
+                cfg.template.exec,
+                exec_rng,
+                symbol_meta=symbol_meta,
             )
+            holdout_broker = SimulatedBroker(holdout_executor)
+            import os as _os
 
-        data_handler.set_date_range(holdout_start, holdout_end)
-        if strategy_name in {"CrossSectionalMomentum", "FlagshipMomentumStrategy"}:
-            assert isinstance(data_handler, MultiCsvDataHandler)
-            kwargs = _strategy_kwargs(selected_params_full)
-            kwargs.pop("warmup_prices", None)
-            if warmup_history:
-                kwargs["warmup_history"] = warmup_history
-            holdout_strategy = strategy_class(**kwargs)
-        else:
-            holdout_strategy = strategy_class(
-                symbol=symbol,
-                **_strategy_kwargs(selected_params_full, warmup_prices),
+            _os.environ["MICROALPHA_ARTIFACTS_DIR"] = str(artifacts_dir)
+
+            holdout_engine = Engine(
+                data_handler,
+                holdout_strategy,
+                holdout_portfolio,
+                holdout_broker,
+                rng=_spawn_rng(holdout_rng),
             )
+            holdout_engine.run()
+            holdout_trade_logger.close()
+            holdout_trades_path = holdout_trade_logger.path
 
-        holdout_trade_logger = JsonlWriter(
-            str(artifacts_dir / "holdout_trades.jsonl")
-        )
-        holdout_portfolio = _build_portfolio(
-            data_handler,
-            cfg.template,
-            trade_logger=holdout_trade_logger,
-            symbol_meta=symbol_meta,
-        )
-        if hasattr(holdout_strategy, "sector_map") and holdout_strategy.sector_map:
-            holdout_portfolio.sector_of.update(holdout_strategy.sector_map)
-
-        holdout_rng = _spawn_rng(master_rng)
-        exec_rng = _spawn_rng(holdout_rng)
-        holdout_executor = _build_executor(
-            data_handler,
-            cfg.template.exec,
-            exec_rng,
-            symbol_meta=symbol_meta,
-        )
-        holdout_broker = SimulatedBroker(holdout_executor)
-        import os as _os
-
-        _os.environ["MICROALPHA_ARTIFACTS_DIR"] = str(artifacts_dir)
-
-        holdout_engine = Engine(
-            data_handler,
-            holdout_strategy,
-            holdout_portfolio,
-            holdout_broker,
-            rng=_spawn_rng(holdout_rng),
-        )
-        holdout_engine.run()
-        holdout_trade_logger.close()
-        holdout_trades_path = holdout_trade_logger.path
-
-        holdout_trades = getattr(holdout_portfolio, "trades", None) or []
-        holdout_slippage_total = 0.0
-        for trade in holdout_trades:
-            try:
-                holdout_slippage_total += abs(
-                    float(trade.get("slippage", 0.0) or 0.0)
-                ) * abs(float(trade.get("qty", 0.0) or 0.0))
-            except (TypeError, ValueError):
-                continue
-        holdout_integrity = evaluate_portfolio_integrity(
-            holdout_portfolio,
-            equity_records=holdout_portfolio.equity_curve,
-            slippage_total=holdout_slippage_total,
-        )
-        integrity_checks.append(
-            {
-                "fold": None,
-                "phase": "holdout",
-                "ok": bool(holdout_integrity.ok),
-                "reasons": list(holdout_integrity.reasons),
-                "details": dict(holdout_integrity.details),
-            }
-        )
-        if not holdout_integrity.ok:
-            integrity_ok = False
-            if run_mode == "headline":
-                integrity_path = _persist_integrity_checks(
-                    artifacts_dir, integrity_ok, integrity_checks
-                )
-                _update_manifest_integrity(
-                    artifacts_dir,
-                    integrity_path,
-                    run_invalid=True,
-                )
-                raise ValueError(
-                    "PnL integrity check failed in holdout: "
-                    + ", ".join(holdout_integrity.reasons)
-                )
-
-        holdout_metrics_raw = compute_metrics(
-            holdout_portfolio.equity_curve,
-            holdout_portfolio.total_turnover,
-            hac_lags=cfg.template.metrics_hac_lags,
-        )
-        holdout_metrics_copy = dict(holdout_metrics_raw)
-        holdout_df = cast(
-            pd.DataFrame, holdout_metrics_copy.pop("equity_df", pd.DataFrame())
-        )
-        holdout_metrics = _stable_metrics(holdout_metrics_copy)
-
-        holdout_total_commission = 0.0
-        holdout_total_slippage = 0.0
-        holdout_trades = getattr(holdout_portfolio, "trades", None) or []
-        holdout_num_trades = len(holdout_trades)
-        holdout_trade_notional = 0.0
-        holdout_realized_pnl = 0.0
-        holdout_win_trades = 0
-        holdout_loss_trades = 0
-        for trade in holdout_trades:
-            try:
-                holdout_total_commission += float(trade.get("commission", 0.0) or 0.0)
-                holdout_total_slippage += abs(
-                    float(trade.get("slippage", 0.0) or 0.0)
-                ) * abs(float(trade.get("qty", 0.0) or 0.0))
-            except (TypeError, ValueError):
-                continue
-            try:
-                qty = float(trade.get("qty", 0.0) or 0.0)
-                price = float(trade.get("price", 0.0) or 0.0)
-                holdout_trade_notional += abs(qty) * abs(price)
-            except (TypeError, ValueError):
-                pass
-            realized = trade.get("realized_pnl")
-            if realized is not None:
+            holdout_trades = getattr(holdout_portfolio, "trades", None) or []
+            holdout_slippage_total = 0.0
+            for trade in holdout_trades:
                 try:
-                    realized_val = float(realized)
+                    holdout_slippage_total += abs(
+                        float(trade.get("slippage", 0.0) or 0.0)
+                    ) * abs(float(trade.get("qty", 0.0) or 0.0))
                 except (TypeError, ValueError):
-                    realized_val = None
-                if realized_val is not None:
-                    holdout_realized_pnl += realized_val
-                    if realized_val > 0:
-                        holdout_win_trades += 1
-                    elif realized_val < 0:
-                        holdout_loss_trades += 1
-        holdout_win_denom = holdout_win_trades + holdout_loss_trades
-        holdout_win_rate = (
-            holdout_win_trades / holdout_win_denom if holdout_win_denom > 0 else 0.0
-        )
-        holdout_avg_trade_notional = (
-            holdout_trade_notional / holdout_num_trades if holdout_num_trades > 0 else 0.0
-        )
-        holdout_metrics.update(
-            {
-                "borrow_cost_total": float(
-                    getattr(holdout_portfolio, "borrow_cost_total", 0.0)
+                    continue
+            holdout_integrity = evaluate_portfolio_integrity(
+                holdout_portfolio,
+                equity_records=holdout_portfolio.equity_curve,
+                slippage_total=holdout_slippage_total,
+            )
+            integrity_checks.append(
+                {
+                    "fold": None,
+                    "phase": "holdout",
+                    "ok": bool(holdout_integrity.ok),
+                    "reasons": list(holdout_integrity.reasons),
+                    "details": dict(holdout_integrity.details),
+                }
+            )
+            if not holdout_integrity.ok:
+                integrity_ok = False
+                if run_mode == "headline":
+                    integrity_path = _persist_integrity_checks(
+                        artifacts_dir, integrity_ok, integrity_checks
+                    )
+                    _update_manifest_integrity(
+                        artifacts_dir,
+                        integrity_path,
+                        run_invalid=True,
+                    )
+                    raise ValueError(
+                        "PnL integrity check failed in holdout: "
+                        + ", ".join(holdout_integrity.reasons)
+                    )
+
+            holdout_metrics_raw = compute_metrics(
+                holdout_portfolio.equity_curve,
+                holdout_portfolio.total_turnover,
+                hac_lags=cfg.template.metrics_hac_lags,
+            )
+            holdout_metrics_copy = dict(holdout_metrics_raw)
+            holdout_df = cast(
+                pd.DataFrame, holdout_metrics_copy.pop("equity_df", pd.DataFrame())
+            )
+            holdout_metrics = _stable_metrics(holdout_metrics_copy)
+
+            holdout_total_commission = 0.0
+            holdout_total_slippage = 0.0
+            holdout_trades = getattr(holdout_portfolio, "trades", None) or []
+            holdout_num_trades = len(holdout_trades)
+            holdout_trade_notional = 0.0
+            holdout_realized_pnl = 0.0
+            holdout_win_trades = 0
+            holdout_loss_trades = 0
+            for trade in holdout_trades:
+                try:
+                    holdout_total_commission += float(trade.get("commission", 0.0) or 0.0)
+                    holdout_total_slippage += abs(
+                        float(trade.get("slippage", 0.0) or 0.0)
+                    ) * abs(float(trade.get("qty", 0.0) or 0.0))
+                except (TypeError, ValueError):
+                    continue
+                try:
+                    qty = float(trade.get("qty", 0.0) or 0.0)
+                    price = float(trade.get("price", 0.0) or 0.0)
+                    holdout_trade_notional += abs(qty) * abs(price)
+                except (TypeError, ValueError):
+                    pass
+                realized = trade.get("realized_pnl")
+                if realized is not None:
+                    try:
+                        realized_val = float(realized)
+                    except (TypeError, ValueError):
+                        realized_val = None
+                    if realized_val is not None:
+                        holdout_realized_pnl += realized_val
+                        if realized_val > 0:
+                            holdout_win_trades += 1
+                        elif realized_val < 0:
+                            holdout_loss_trades += 1
+            holdout_win_denom = holdout_win_trades + holdout_loss_trades
+            holdout_win_rate = (
+                holdout_win_trades / holdout_win_denom if holdout_win_denom > 0 else 0.0
+            )
+            holdout_avg_trade_notional = (
+                holdout_trade_notional / holdout_num_trades if holdout_num_trades > 0 else 0.0
+            )
+            holdout_metrics.update(
+                {
+                    "borrow_cost_total": float(
+                        getattr(holdout_portfolio, "borrow_cost_total", 0.0)
+                    ),
+                    "commission_total": float(holdout_total_commission),
+                    "slippage_total": float(holdout_total_slippage),
+                    "num_trades": holdout_num_trades,
+                    "avg_trade_notional": float(holdout_avg_trade_notional),
+                    "win_rate": float(holdout_win_rate),
+                    "total_realized_pnl": float(holdout_realized_pnl),
+                }
+            )
+
+            if holdout_df is not None and not holdout_df.empty:
+                holdout_equity_path = str(artifacts_dir / "holdout_equity_curve.csv")
+                holdout_df.to_csv(holdout_equity_path, index=False)
+                if "returns" in holdout_df.columns:
+                    holdout_returns_path = str(artifacts_dir / "holdout_returns.csv")
+                    holdout_df[["timestamp", "returns"]].to_csv(
+                        holdout_returns_path, index=False
+                    )
+
+            holdout_metrics_path = str(artifacts_dir / "holdout_metrics.json")
+            with Path(holdout_metrics_path).open("w", encoding="utf-8") as handle:
+                json.dump(holdout_metrics, handle, indent=2)
+
+            holdout_manifest_payload = {
+                "run_id": run_id,
+                "config_sha256": config_hash,
+                "git_sha": full_sha,
+                "unsafe_execution": bool(unsafe_execution),
+                "unsafe_reasons": list(unsafe_reasons),
+                "execution_alignment": dict(exec_alignment),
+                "selection_window_end": str(selection_end.date()),
+                "holdout_start": str(holdout_start.date()),
+                "holdout_end": str(holdout_end.date()),
+                "selected_model": selected_model,
+                "selected_params": selected_params,
+                "selected_params_full": selected_params_full,
+                "selection_metric": (
+                    None
+                    if selected_entry is None
+                    else float(selected_entry.get("mean_sharpe", 0.0) or 0.0)
                 ),
-                "commission_total": float(holdout_total_commission),
-                "slippage_total": float(holdout_total_slippage),
-                "num_trades": holdout_num_trades,
-                "avg_trade_notional": float(holdout_avg_trade_notional),
-                "win_rate": float(holdout_win_rate),
-                "total_realized_pnl": float(holdout_realized_pnl),
+                "selection_summary_path": selection_summary_path,
+                "holdout_metrics_path": holdout_metrics_path,
+                "holdout_equity_curve_path": holdout_equity_path,
+                "holdout_returns_path": holdout_returns_path,
+                "holdout_trades_path": holdout_trades_path,
             }
-        )
-
-        if holdout_df is not None and not holdout_df.empty:
-            holdout_equity_path = str(artifacts_dir / "holdout_equity_curve.csv")
-            holdout_df.to_csv(holdout_equity_path, index=False)
-            if "returns" in holdout_df.columns:
-                holdout_returns_path = str(artifacts_dir / "holdout_returns.csv")
-                holdout_df[["timestamp", "returns"]].to_csv(
-                    holdout_returns_path, index=False
-                )
-
-        holdout_metrics_path = str(artifacts_dir / "holdout_metrics.json")
-        with Path(holdout_metrics_path).open("w", encoding="utf-8") as handle:
-            json.dump(holdout_metrics, handle, indent=2)
-
-        holdout_manifest_payload = {
-            "run_id": run_id,
-            "config_sha256": config_hash,
-            "git_sha": full_sha,
-            "unsafe_execution": bool(unsafe_execution),
-            "unsafe_reasons": list(unsafe_reasons),
-            "execution_alignment": dict(exec_alignment),
-            "selection_window_end": str(selection_end.date()),
-            "holdout_start": str(holdout_start.date()),
-            "holdout_end": str(holdout_end.date()),
-            "selected_model": selected_model,
-            "selected_params": selected_params,
-            "selected_params_full": selected_params_full,
-            "selection_metric": (
-                None
-                if selected_entry is None
-                else float(selected_entry.get("mean_sharpe", 0.0) or 0.0)
-            ),
-            "selection_summary_path": selection_summary_path,
-            "holdout_metrics_path": holdout_metrics_path,
-            "holdout_equity_curve_path": holdout_equity_path,
-            "holdout_returns_path": holdout_returns_path,
-            "holdout_trades_path": holdout_trades_path,
-        }
-        holdout_manifest_path = str(artifacts_dir / "holdout_manifest.json")
-        with Path(holdout_manifest_path).open("w", encoding="utf-8") as handle:
-            json.dump(holdout_manifest_payload, handle, indent=2)
+            holdout_manifest_path = str(artifacts_dir / "holdout_manifest.json")
+            with Path(holdout_manifest_path).open("w", encoding="utf-8") as handle:
+                json.dump(holdout_manifest_payload, handle, indent=2)
 
     exposures_path: str | None = None
     factor_exposure_path: str | None = None
@@ -891,10 +962,16 @@ def run_walk_forward(
         "selection_summary_path": selection_summary_path,
         "holdout_metrics_path": holdout_metrics_path,
         "holdout_manifest_path": holdout_manifest_path,
+        "non_degenerate": non_degenerate_payload,
+        "non_degenerate_excluded": int(total_excluded),
+        "non_degenerate_failure_reason": selection_failure_reason,
     }
     manifest_path = artifacts_dir / "manifest.json"
     with manifest_path.open("w", encoding="utf-8") as handle:
         json.dump(manifest_payload, handle, indent=2)
+
+    if selection_failure_reason:
+        raise ValueError(selection_failure_reason)
 
     result: Dict[str, Any] = dict(manifest_payload)
     result.update(
@@ -933,6 +1010,8 @@ def _optimise_parameters(
     cfg: BacktestCfg,
     rng: np.random.Generator,
     reality_cfg: RealityCheckCfg,
+    *,
+    non_degenerate: NonDegenerateCfg | None = None,
     symbol_meta: Mapping[str, Any] | None = None,
 ) -> Tuple[
     Dict[str, Any],
@@ -940,9 +1019,11 @@ def _optimise_parameters(
     Dict[str, Any] | None,
     List[Dict[str, Any]],
     List[Dict[str, Any]],
+    List[Dict[str, Any]],
 ]:
     best_entry: Dict[str, Any] | None = None
     results: List[Dict[str, Any]] = []
+    exclusions: List[Dict[str, Any]] = []
 
     keys = list(param_grid.keys())
 
@@ -991,6 +1072,22 @@ def _optimise_parameters(
             portfolio.total_turnover,
             hac_lags=cfg.metrics_hac_lags,
         )
+
+        exclusion_reasons = _non_degenerate_reasons(portfolio, non_degenerate)
+        if exclusion_reasons:
+            exclusions.append(
+                {
+                    "model": _format_param_label(params),
+                    "params": dict(params),
+                    "num_trades": len(getattr(portfolio, "trades", None) or []),
+                    "turnover": float(
+                        getattr(portfolio, "total_turnover", 0.0) or 0.0
+                    ),
+                    "reasons": exclusion_reasons,
+                }
+            )
+            continue
+
         results.append(
             {
                 "params": dict(params),
@@ -1002,7 +1099,7 @@ def _optimise_parameters(
         )
 
     if not results:
-        return {}, None, None, [], []
+        return {}, None, None, [], [], exclusions
 
     grid_payload = _build_grid_payload(results)
     grid_summary = _grid_summary_from_payload(grid_payload)
@@ -1023,7 +1120,14 @@ def _optimise_parameters(
 
     params = dict(base_params)
     params.update(best_entry["params"])
-    return params, best_entry["metrics"], reality_result, grid_payload, grid_summary
+    return (
+        params,
+        best_entry["metrics"],
+        reality_result,
+        grid_payload,
+        grid_summary,
+        exclusions,
+    )
 
 
 def _build_portfolio(

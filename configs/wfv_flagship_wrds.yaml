@@ -84,3 +84,6 @@ reality_check:
   method: "stationary"
   samples: 2000
   block_length: 63
+
+non_degenerate:
+  min_trades: 1

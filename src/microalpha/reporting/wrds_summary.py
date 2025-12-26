@@ -97,6 +97,44 @@ def _unsafe_banner(manifest_payload: dict | None) -> list[str]:
     ]
 
 
+def _render_non_degenerate(manifest_payload: dict | None) -> list[str]:
+    if not manifest_payload:
+        return []
+    wf_payload = manifest_payload.get("walkforward")
+    if not isinstance(wf_payload, dict):
+        return []
+    constraints = wf_payload.get("non_degenerate")
+    if not isinstance(constraints, dict):
+        return []
+    parts: list[str] = []
+    min_trades = constraints.get("min_trades")
+    min_turnover = constraints.get("min_turnover")
+    if min_trades is not None:
+        try:
+            parts.append(f"min_trades >= {int(min_trades)}")
+        except (TypeError, ValueError):
+            parts.append(f"min_trades >= {min_trades}")
+    if min_turnover is not None:
+        try:
+            parts.append(f"min_turnover >= {float(min_turnover):.4f}")
+        except (TypeError, ValueError):
+            parts.append(f"min_turnover >= {min_turnover}")
+    if not parts:
+        return []
+    excluded = wf_payload.get("non_degenerate_excluded")
+    suffix = (
+        f" (excluded {int(excluded)} candidate(s) during selection)"
+        if excluded is not None
+        else ""
+    )
+    return [
+        "## Selection Constraints",
+        "",
+        f"- Non-degenerate: {', '.join(parts)}{suffix}",
+        "",
+    ]
+
+
 def _format_currency(value: float) -> str:
     return f"${value:,.0f}"
 
@@ -913,6 +951,7 @@ def render_wrds_summary(
     output_path.parent.mkdir(parents=True, exist_ok=True)
     lines = ["# WRDS Flagship Walk-Forward", ""]
     lines.extend(unsafe_lines)
+    lines.extend(_render_non_degenerate(manifest_payload))
     lines.extend(["## Headline Metrics", ""])
     lines.extend(_render_table(headline))
     lines.append("")

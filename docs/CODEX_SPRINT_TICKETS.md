@@ -363,6 +363,38 @@
 - **Artifacts/logs:** …
 - **Documentation updates:** …
 
-ticket-13 (proposed): Fix WRDS flagship degeneracy (0 trades) without p-hacking
+## ticket-13 — Fix WRDS flagship degeneracy (0 trades) without p-hacking
 
-Goal: make the flagship config generate non-trivial trades via defensible defaults (not parameter fishing), then rerun holdout evaluation.
+**Goal (1 sentence):** Ensure walk-forward selection cannot accept zero-trade configurations by enforcing explicit non-degeneracy constraints and surfacing failures clearly.
+
+**Why (ties to diagnosis):**
+- `project_state/KNOWN_ISSUES.md` flags the WRDS flagship run as degenerate (zero trades) even after integrity fixes.
+- A zero-trade run must not be treated as a valid selection/holdout result.
+
+**Files/modules likely touched:**
+- `src/microalpha/config_wfv.py` (non-degenerate config schema)
+- `src/microalpha/walkforward.py` (selection filtering + manifest metadata)
+- `configs/wfv_flagship_wrds.yaml` (set non-degenerate thresholds)
+- `configs/wfv_flagship_wrds_smoke.yaml` (keep smoke consistent)
+- `src/microalpha/reporting/summary.py` and/or `src/microalpha/reporting/wrds_summary.py` (surface constraints)
+- `tests/test_degeneracy_constraints.py` (new regression test)
+
+**Acceptance criteria (objective + falsifiable):**
+- WFV config supports `non_degenerate` thresholds (`min_trades`, optional `min_turnover`).
+- Walk-forward selection excludes candidates that fail non-degenerate criteria and records exclusions in `folds.json` plus `manifest.json`.
+- If non-degenerate is required and no candidates pass, the run fails with a clear error (no silent degenerate acceptance).
+- Unit test proves zero-trade configurations are rejected when non-degeneracy is required (synthetic data only).
+- WRDS flagship config includes `non_degenerate: {min_trades: 1}` (or equivalent).
+
+**Minimal tests/commands to run:**
+- `make test-fast`
+- `pytest -q tests/test_degeneracy_constraints.py`
+
+**Expected artifacts/logs to produce:**
+- `docs/agent_runs/<RUN_NAME>/...` (required run log files)
+- Updated `manifest.json` / `folds.json` in the affected run artifacts with non-degenerate metadata
+
+**End-of-ticket:**
+- **Tests run:** …
+- **Artifacts/logs:** …
+- **Documentation updates:** …
