@@ -116,3 +116,5 @@
 116. `git add -f docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/META.json`
 117. `git commit -m "ticket-15: finalize git_sha_after" -m "Tests: not run (meta update only)" -m "Artifacts: none" -m "Docs: docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/META.json"`
 118. `BUNDLE_TIMESTAMP=2025-12-26T21-44-50Z make gpt-bundle TICKET=ticket-15 RUN_NAME=20251226_211219_ticket-15_fix-spa-keyerror`
+119. `cat docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/META.json`
+120. `git status -sb`
