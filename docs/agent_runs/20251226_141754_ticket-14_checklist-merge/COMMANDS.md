@@ -41,3 +41,5 @@
 39. `git rev-parse 9a2ffa30`
 40. `apply_patch` (fix git_sha_after in docs/agent_runs/20251226_122058_ticket-14_wrds-full-run/META.json)
 41. `apply_patch` (fix git_sha_before in docs/agent_runs/20251226_141754_ticket-14_checklist-merge/META.json)
+42. `BUNDLE_TIMESTAMP=2025-12-26T19-22-33Z make gpt-bundle TICKET=ticket-14 RUN_NAME=20251226_141754_ticket-14_checklist-merge` (failed: DIFF.patch mismatch)
+43. `apply_patch` (update docs/agent_runs/20251226_141754_ticket-14_checklist-merge/RESULTS.md with bundle failure note)

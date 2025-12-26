@@ -13,3 +13,4 @@
 ## Bundle
 
 - `docs/gpt_bundles/2025-12-26T19-22-33Z_ticket-14_20251226_141754_ticket-14_checklist-merge.zip`
+- Bundle generation currently fails because `git_sha_after` is concrete (required by checklist) but does not match the current head commit for patch verification; needs a decision on allowing `git_sha_after=HEAD` for bundling or adjusting the bundler.
