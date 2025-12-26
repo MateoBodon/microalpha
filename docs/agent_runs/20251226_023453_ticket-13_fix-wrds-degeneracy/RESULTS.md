@@ -18,5 +18,6 @@
   - Result: **Expected failure** — `Non-degenerate constraints rejected all candidates (min_trades=1; excluded=32).`
   - Artifacts (written before failure): `artifacts/sample_wfv_non_degenerate/2025-12-26T02-36-37Z-6c3fc9f/`
 - WRDS smoke rerun skipped (no `WRDS_DATA_ROOT` set).
+- Bundle: `docs/gpt_bundles/2025-12-26T02-53-08Z_ticket-13_20251226_023453_ticket-13_fix-wrds-degeneracy.zip`
 
 External references consulted: none.

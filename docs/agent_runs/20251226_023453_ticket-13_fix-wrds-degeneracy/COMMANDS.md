@@ -104,3 +104,11 @@
 102. `cat docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/RESULTS.md`
 103. `git add -f docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/COMMANDS.md`
 104. `git commit -m "ticket-13: update command log" -m "Tests: not run (log update)" -m "Artifacts: none" -m "Docs: docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/COMMANDS.md"`
+105. `git status -sb`
+106. `make gpt-bundle TICKET=ticket-13 RUN_NAME=20251226_023453_ticket-13_fix-wrds-degeneracy`
+107. `date -u +"%Y-%m-%dT%H-%M-%SZ"`
+108. `apply_patch` (docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/RESULTS.md)
+109. `apply_patch` (docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/RESULTS.md)
+110. `git status -sb`
+111. `git add -f docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/COMMANDS.md docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/RESULTS.md`
+112. `git commit -m "ticket-13: record bundle path" -m "Tests: not run (log update)" -m "Artifacts: docs/gpt_bundles/2025-12-26T02-53-08Z_ticket-13_20251226_023453_ticket-13_fix-wrds-degeneracy.zip" -m "Docs: docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/COMMANDS.md; docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/RESULTS.md"`
