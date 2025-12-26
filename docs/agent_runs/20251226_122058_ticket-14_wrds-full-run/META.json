@@ -1,0 +1,28 @@
+{
+  "run_name": "20251226_122058_ticket-14_wrds-full-run",
+  "ticket_id": "ticket-14",
+  "started_at_utc": "2025-12-26T12:20:58Z",
+  "finished_at_utc": "2025-12-26T17:56:33Z",
+  "git_sha_before": "75ce3c83b152564d4e9fc3291ba78d753fa5a39f",
+  "git_sha_after": "HEAD",
+  "branch_name": "codex/ticket-14-order-flow-trace",
+  "host_env_notes": "macOS-26.0.1-arm64-arm-64bit / python 3.12.2 / started_at_utc derived from local run_name timestamp",
+  "dataset_id": "wrds_crsp_export_local",
+  "config_paths": [
+    "configs/wfv_flagship_wrds.yaml"
+  ],
+  "config_sha256": {
+    "configs/wfv_flagship_wrds.yaml": "f1235bff9c0c3dbbdabd8e9e38529c177184ab3ddad3f2c20ab17a6f374769f1"
+  },
+  "artifact_paths": [
+    "artifacts/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/"
+  ],
+  "report_paths": [
+    "reports/summaries/wrds_flagship.md",
+    "reports/summaries/wrds_flagship_factors.md",
+    "reports/summaries/wrds_flagship_metrics.json",
+    "reports/summaries/wrds_flagship_spa.json",
+    "reports/summaries/wrds_flagship_spa.md"
+  ],
+  "web_sources": []
+}

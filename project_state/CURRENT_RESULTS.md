@@ -37,13 +37,13 @@ commands:
 
 ## WRDS results (docs/results_wrds.md)
 
-- Latest run: 2025-12-23T19-40-24Z-ff2979d
+- Latest run: 2025-12-26T17-21-39Z-75ce3c8
 - Snapshot:
-  - Sharpe_HAC: 0.00
-  - MAR: 0.00
-  - Max Drawdown: 0.00%
-  - Turnover: $0.00
-  - Reality Check p-value: 1.000
+  - Sharpe_HAC: 0.03
+  - MAR: 0.01
+  - Max Drawdown: 8.33%
+  - Turnover: $32.84MM
+  - Reality Check p-value: 0.996
   - SPA p-value: n/a
 - Report: `reports/summaries/wrds_flagship.md`
 
