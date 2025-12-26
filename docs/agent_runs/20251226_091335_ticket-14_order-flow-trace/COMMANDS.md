@@ -105,3 +105,27 @@
 103. `rg -n \"agent_runs\" .gitignore`
 104. `ls docs/agent_runs/20251226_091335_ticket-14_order-flow-trace`
 105. `git check-ignore -v docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/COMMANDS.md`
+106. `git add src/microalpha/order_flow.py src/microalpha/engine.py src/microalpha/execution.py src/microalpha/portfolio.py src/microalpha/runner.py src/microalpha/walkforward.py src/microalpha/config.py tests/test_order_flow_diagnostics.py tests/test_portfolio_risk_caps.py`
+107. `git commit -m "ticket-14: add order-flow diagnostics and cap-aware sizing" -m "Tests: make test-fast; pytest -q tests/test_order_flow_diagnostics.py" -m "Artifacts: none" -m "Docs: none"`
+108. `git add CHANGELOG.md PROGRESS.md docs/CODEX_SPRINT_TICKETS.md project_state/KNOWN_ISSUES.md` (ignored; rerun with `-f` for docs)
+109. `git add CHANGELOG.md PROGRESS.md project_state/KNOWN_ISSUES.md`
+110. `git add -f docs/CODEX_SPRINT_TICKETS.md`
+111. `git add -f docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/COMMANDS.md docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/RESULTS.md docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/TESTS.md docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/META.json docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/PROMPT.md docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/wfv_flagship_wrds_single_fold.yaml docs/prompts/20251226_091335_ticket-14_order-flow-trace.md`
+112. `git commit -m "ticket-14: update docs and run logs" -m "Tests: make test-fast; pytest -q tests/test_order_flow_diagnostics.py" -m "Artifacts: artifacts/wrds_flagship_debug/2025-12-26T09-33-29Z-695a387/; artifacts/wrds_flagship_debug/2025-12-26T09-44-24Z-695a387/" -m "Docs: CHANGELOG.md; PROGRESS.md; docs/CODEX_SPRINT_TICKETS.md; project_state/KNOWN_ISSUES.md; docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/*; docs/prompts/20251226_091335_ticket-14_order-flow-trace.md"`
+113. `make gpt-bundle TICKET=ticket-14 RUN_NAME=20251226_091335_ticket-14_order-flow-trace` (failed: RESULTS placeholder)
+114. `apply_patch` (update bundle line in `docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/RESULTS.md`)
+115. `make gpt-bundle TICKET=ticket-14 RUN_NAME=20251226_091335_ticket-14_order-flow-trace` (failed: dirty worktree)
+116. `git add -f docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/RESULTS.md`
+117. `git commit -m "ticket-14: prep bundle log" -m "Tests: not run (log update)" -m "Artifacts: none" -m "Docs: docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/RESULTS.md"`
+118. `git status -sb`
+119. `make gpt-bundle TICKET=ticket-14 RUN_NAME=20251226_091335_ticket-14_order-flow-trace` (failed: DIFF mismatch)
+120. `rg -n "gpt-bundle" Makefile tools -S`
+121. `sed -n '80,140p' Makefile`
+122. `sed -n '120,220p' tools/gpt_bundle.py`
+123. `sed -n '220,320p' tools/gpt_bundle.py`
+124. `git rev-parse HEAD`
+125. `git rev-parse HEAD~3`
+126. `date -u +"%Y-%m-%dT%H-%M-%SZ"` (bundle timestamp)
+127. `apply_patch` (record bundle path in `docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/RESULTS.md`)
+128. `date -u +"%Y-%m-%dT%H:%M:%SZ"` (finished timestamp)
+129. `python3 - <<'PY'` (update `META.json` git sha + finished time)

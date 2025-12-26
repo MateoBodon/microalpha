@@ -6,4 +6,4 @@
   - Pre-fix (expected fail): `artifacts/wrds_flagship_debug/2025-12-26T09-33-29Z-695a387/` (non-degenerate rejected all candidates; `folds.json` shows `diagnostic_reason=no_orders` with drop reasons in order-flow payloads).
   - Post-fix: `artifacts/wrds_flagship_debug/2025-12-26T09-44-24Z-695a387/` (single-fold WFV succeeds; `num_trades=12`, `total_turnover=2964947.94`; order-flow summary shows `clipped_by_caps=10` with `max_single_name_weight`/`max_exposure` clips).
 - Config used: `docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/wfv_flagship_wrds_single_fold.yaml`.
-- Bundle: to be generated via `make gpt-bundle TICKET=ticket-14 RUN_NAME=20251226_091335_ticket-14_order-flow-trace`.
+- Bundle: `docs/gpt_bundles/2025-12-26T09-59-50Z_ticket-14_20251226_091335_ticket-14_order-flow-trace.zip`.
