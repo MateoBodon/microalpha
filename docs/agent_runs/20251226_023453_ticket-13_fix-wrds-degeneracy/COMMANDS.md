@@ -92,3 +92,9 @@
 90. `make gpt-bundle TICKET=ticket-13 RUN_NAME=20251226_023453_ticket-13_fix-wrds-degeneracy` (failed: DIFF.patch mismatch)
 91. `git rev-parse HEAD`
 92. `python3 - <<'PY'` (update META.json git_sha_after)
+93. `pwd`
+94. `git status -sb`
+95. `ls docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy`
+96. `tail -n 40 docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/COMMANDS.md`
+97. `cat docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/META.json`
+98. `rg -n "gpt-bundle" -S Makefile scripts docs -g'*'`
