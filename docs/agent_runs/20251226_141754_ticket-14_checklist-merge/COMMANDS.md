@@ -1,0 +1,33 @@
+# Commands
+
+1. `date "+%Y%m%d_%H%M%S"`
+2. `mkdir -p docs/agent_runs/20251226_141754_ticket-14_checklist-merge`
+3. `cat > docs/prompts/20251226_141754_ticket-14_checklist-merge_ticket-14_checklist-merge.md <<'EOF' ... EOF`
+4. `cat > docs/agent_runs/20251226_141754_ticket-14_checklist-merge/PROMPT.md <<'EOF' ... EOF`
+5. `sed -n '1,200p' docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/RESULTS.md`
+6. `python3 - <<'PY' ... PY` (inspect pre-fix folds.json order_flow_diagnostics)
+7. `python3 - <<'PY' ... PY` (inspect post-fix folds.json order_flow_diagnostics)
+8. `python3 - <<'PY' ... PY` (inspect manifest.json for order_flow_diagnostics)
+9. `cat docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/META.json`
+10. `cat docs/agent_runs/20251226_122058_ticket-14_wrds-full-run/META.json`
+11. `rg -n "ticket-13|ticket-14" -n docs/CODEX_SPRINT_TICKETS.md`
+12. `sed -n '360,440p' docs/CODEX_SPRINT_TICKETS.md`
+13. `git log --oneline --decorate -n 15`
+14. `apply_patch` (update docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/META.json git_sha_after)
+15. `apply_patch` (update docs/agent_runs/20251226_122058_ticket-14_wrds-full-run/META.json git_sha_after)
+16. `apply_patch` (update docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/RESULTS.md with stage evidence)
+17. `git diff main..HEAD -- configs`
+18. `git diff main..HEAD -U0 | rg -n "min_adv|min_price|min_trades|min_turnover|max_exposure|max_single_name_weight|turnover_cap|turnover"`
+19. `git show --stat 7d23c4b7`
+20. `git diff main..HEAD -- src/microalpha/portfolio.py`
+21. `ls -la artifacts/wrds_flagship_debug/2025-12-26T09-33-29Z-695a387`
+22. `ls -la artifacts/wrds_flagship_debug/2025-12-26T09-44-24Z-695a387`
+23. `cat docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/TESTS.md`
+24. `ls -1 docs/agent_runs/20251226_091335_ticket-14_order-flow-trace`
+25. `ls -1 docs/agent_runs/20251226_122058_ticket-14_wrds-full-run`
+26. `date -u "+%Y-%m-%dT%H-%M-%SZ"`
+27. `cat > docs/agent_runs/20251226_141754_ticket-14_checklist-merge/TESTS.md <<'EOF' ... EOF`
+28. `cat > docs/agent_runs/20251226_141754_ticket-14_checklist-merge/RESULTS.md <<'EOF' ... EOF`
+29. `apply_patch` (update PROGRESS.md with checklist run entry)
+30. `git add PROGRESS.md`
+31. `git add -f docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/META.json docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/RESULTS.md docs/agent_runs/20251226_122058_ticket-14_wrds-full-run/META.json docs/agent_runs/20251226_141754_ticket-14_checklist-merge/COMMANDS.md docs/agent_runs/20251226_141754_ticket-14_checklist-merge/PROMPT.md docs/agent_runs/20251226_141754_ticket-14_checklist-merge/RESULTS.md docs/agent_runs/20251226_141754_ticket-14_checklist-merge/TESTS.md docs/prompts/20251226_141754_ticket-14_checklist-merge_ticket-14_checklist-merge.md`
