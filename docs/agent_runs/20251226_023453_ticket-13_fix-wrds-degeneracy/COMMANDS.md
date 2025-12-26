@@ -89,3 +89,6 @@
 87. `git add -f docs/prompts/20251226_023453_ticket-13_fix-wrds-degeneracy.md docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/PROMPT.md docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/COMMANDS.md docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/RESULTS.md docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/TESTS.md docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/META.json docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/wfv_sample_non_degenerate.yaml`
 88. `git status --porcelain --untracked-files=all`
 89. `git commit -m "ticket-13: add run logs" -m "Tests: make test-fast" -m "Artifacts: artifacts/sample_wfv_non_degenerate/2025-12-26T02-36-37Z-6c3fc9f (expected non-degenerate rejection)" -m "Docs: docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/, docs/prompts/20251226_023453_ticket-13_fix-wrds-degeneracy.md"`
+90. `make gpt-bundle TICKET=ticket-13 RUN_NAME=20251226_023453_ticket-13_fix-wrds-degeneracy` (failed: DIFF.patch mismatch)
+91. `git rev-parse HEAD`
+92. `python3 - <<'PY'` (update META.json git_sha_after)
