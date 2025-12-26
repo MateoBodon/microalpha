@@ -1,0 +1,20 @@
+{
+  "run_name": "20251226_141754_ticket-14_checklist-merge",
+  "ticket_id": "ticket-14",
+  "started_at_utc": "2025-12-26T14:17:54Z",
+  "finished_at_utc": "2025-12-26T19:25:34Z",
+  "git_sha_before": "9a2ffa30e9df9754195a4003c7237edb19f67fb5",
+  "git_sha_after": "2450bf0793208ceea3cab5ef037eceeb1496809a",
+  "branch_name": "codex/ticket-14-order-flow-trace",
+  "host_env_notes": "macOS-26.0.1-arm64-arm-64bit / python 3.12.2 / started_at_utc derived from local run_name timestamp",
+  "dataset_id": "wrds_crsp_export_local (evidence review only)",
+  "config_paths": [],
+  "config_sha256": {},
+  "artifact_paths": [
+    "artifacts/wrds_flagship_debug/2025-12-26T09-33-29Z-695a387/",
+    "artifacts/wrds_flagship_debug/2025-12-26T09-44-24Z-695a387/",
+    "artifacts/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/"
+  ],
+  "report_paths": [],
+  "web_sources": []
+}

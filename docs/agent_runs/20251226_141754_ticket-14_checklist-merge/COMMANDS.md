@@ -31,3 +31,7 @@
 29. `apply_patch` (update PROGRESS.md with checklist run entry)
 30. `git add PROGRESS.md`
 31. `git add -f docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/META.json docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/RESULTS.md docs/agent_runs/20251226_122058_ticket-14_wrds-full-run/META.json docs/agent_runs/20251226_141754_ticket-14_checklist-merge/COMMANDS.md docs/agent_runs/20251226_141754_ticket-14_checklist-merge/PROMPT.md docs/agent_runs/20251226_141754_ticket-14_checklist-merge/RESULTS.md docs/agent_runs/20251226_141754_ticket-14_checklist-merge/TESTS.md docs/prompts/20251226_141754_ticket-14_checklist-merge_ticket-14_checklist-merge.md`
+32. `git commit -m "ticket-14: finalize checklist evidence" -m "Tests: not run (checklist-only; see prior run logs)" -m "Artifacts: artifacts/wrds_flagship_debug/2025-12-26T09-33-29Z-695a387/, artifacts/wrds_flagship_debug/2025-12-26T09-44-24Z-695a387/, artifacts/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/" -m "Docs: docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/, docs/agent_runs/20251226_122058_ticket-14_wrds-full-run/, docs/agent_runs/20251226_141754_ticket-14_checklist-merge/, PROGRESS.md"`
+33. `git rev-parse HEAD`
+34. `date -u "+%Y-%m-%dT%H:%M:%SZ"`
+35. `cat > docs/agent_runs/20251226_141754_ticket-14_checklist-merge/META.json <<'EOF' ... EOF`
