@@ -85,3 +85,9 @@
 83. `BUNDLE_TIMESTAMP=2025-12-26T07-34-57Z make gpt-bundle TICKET=ticket-13 RUN_NAME=20251226_065226_ticket-13_fix-wrds-degeneracy`
 84. `date -u +"%Y-%m-%dT%H:%M:%SZ"`
 85. `python3 - <<'PY'` (update META.json finished_at_utc)
+86. `git switch main`
+87. `git merge codex/ticket-13-fix-wrds-degeneracy`
+88. `git push origin main`
+89. `git status -sb`
+90. `date -u +"%Y-%m-%dT%H:%M:%SZ"`
+91. `python3 - <<'PY'` (update META.json finished_at_utc)
