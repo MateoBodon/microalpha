@@ -136,3 +136,4 @@
 134. `git rev-parse HEAD`
 135. `date -u +"%Y-%m-%dT%H:%M:%SZ"` (updated finished timestamp)
 136. `python3 - <<'PY'` (update `META.json` git sha + finished time)
+137. `python3 - <<'PY'` (set `git_sha_after` to HEAD)
