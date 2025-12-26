@@ -35,3 +35,9 @@
 33. `git rev-parse HEAD`
 34. `date -u "+%Y-%m-%dT%H:%M:%SZ"`
 35. `cat > docs/agent_runs/20251226_141754_ticket-14_checklist-merge/META.json <<'EOF' ... EOF`
+36. `BUNDLE_TIMESTAMP=2025-12-26T19-22-33Z make gpt-bundle TICKET=ticket-14 RUN_NAME=20251226_141754_ticket-14_checklist-merge` (failed: invalid revision range)
+37. `git log --reverse --pretty=format:%H\ %s 9a2ffa30e9df9754195a4003c7237edb19f67fb5..2450bf0793208ceea3cab5ef037eceeb1496809a`
+38. `git show --quiet --pretty=format:%P 2450bf0793208ceea3cab5ef037eceeb1496809a`
+39. `git rev-parse 9a2ffa30`
+40. `apply_patch` (fix git_sha_after in docs/agent_runs/20251226_122058_ticket-14_wrds-full-run/META.json)
+41. `apply_patch` (fix git_sha_before in docs/agent_runs/20251226_141754_ticket-14_checklist-merge/META.json)
