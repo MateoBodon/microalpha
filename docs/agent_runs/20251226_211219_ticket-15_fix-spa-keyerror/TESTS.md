@@ -1,0 +1,5 @@
+- `make test-fast` (pass)
+  - Warnings:
+    - DeprecationWarning: ExecModelCfg.aln is deprecated; use 'commission' instead.
+    - FutureWarning: pandas Series.fillna(method=...) is deprecated; use ffill/bfill.
+- `pytest -q tests/test_spa_regression_keyerror.py` (pass)

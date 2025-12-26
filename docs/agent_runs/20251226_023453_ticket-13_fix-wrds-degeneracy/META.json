@@ -4,7 +4,7 @@
   "started_at_utc": "2025-12-26T02:34:53Z",
   "finished_at_utc": "2025-12-26T06:33:26Z",
   "git_sha_before": "6c3fc9f686916c134e15f70334cb568cd527155a",
-  "git_sha_after": "HEAD",
+  "git_sha_after": "d4c8edf7ac1890dc2bec33e8025dab3bc80652ba",
   "branch_name": "codex/ticket-13-fix-wrds-degeneracy",
   "host_env_notes": "macOS 26.0.1 / Python 3.12.2 / zsh / WRDS_DATA_ROOT set (see docs/local/WRDS_DATA_ROOT.md; local-doc fallback enabled)",
   "dataset_id": "wrds_crsp_export_20251221_v1 + sample_data_v1",

@@ -44,7 +44,8 @@ commands:
   - Max Drawdown: 8.33%
   - Turnover: $32.84MM
   - Reality Check p-value: 0.996
-  - SPA p-value: n/a
+  - SPA status: ok
+  - SPA p-value: 0.031
 - Report: `reports/summaries/wrds_flagship.md`
 
 

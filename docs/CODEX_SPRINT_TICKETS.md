@@ -405,6 +405,8 @@
 
 **Goal (1 sentence):** Add order-flow diagnostics from signals through fills, explain zero-trade collapses, and fix the first real bug without loosening thresholds.
 
+**Status:** FAIL (review) — WRDS flagship report still had SPA KeyError/degenerate inference and audit hygiene regressions (META git_sha_after recorded as HEAD) that invalidate the headline claim.
+
 **Why (ties to diagnosis):**
 - Ticket-13 showed selections exist yet trades remained zero; downstream sizing/caps needed explicit tracing.
 
@@ -426,6 +428,30 @@
 **Minimal tests/commands to run:**
 - `make test-fast`
 - `pytest -q tests/test_order_flow_diagnostics.py`
+
+**End-of-ticket:**
+- **Tests run:** …
+- **Artifacts/logs:** …
+- **Documentation updates:** …
+
+## ticket-15 — Fix SPA KeyError on WRDS flagship + block headline when inference failed
+
+**Goal (1 sentence):** Prevent SPA KeyErrors in WRDS flagship reports and block headline/inference when SPA fails.
+
+**Status:** Done (review pending).
+
+**Acceptance criteria (objective + falsifiable):**
+- SPA bootstrapping loads grid returns without `KeyError` on `artifacts/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/`.
+- SPA outputs include `spa_status` plus `spa_error` when an exception occurs; degenerate cases report a real reason.
+- If `spa_status != ok`, `docs/results_wrds.md` and `reports/summaries/wrds_flagship.md` show an explicit “INFERENCE FAILED” banner and block headline phrasing.
+- Regression test covers the missing-panel-id grid scenario and validates schema (spa_status, p_value bounds).
+- Report-only rerun updates `reports/summaries/wrds_flagship_spa.json` without `KeyError ... not in index`.
+
+**Minimal tests/commands to run:**
+- `make test-fast`
+- `pytest -q tests/test_spa_regression_keyerror.py`
+- `PYTHONPATH=src:$PYTHONPATH python3 reports/spa.py --grid artifacts/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/grid_returns.csv --output-json artifacts/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/spa.json --output-md artifacts/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/spa.md --bootstrap 2000 --avg-block 63`
+- `PYTHONPATH=src:$PYTHONPATH python3 reports/render_wrds_flagship.py artifacts/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8 --output reports/summaries/wrds_flagship.md --factors-md artifacts/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/factors_ff5_mom.md --docs-results docs/results_wrds.md --docs-image-root docs/img/wrds_flagship --analytics-plots artifacts/plots --metrics-json-out reports/summaries/wrds_flagship_metrics.json --spa-json-out reports/summaries/wrds_flagship_spa.json --spa-md-out reports/summaries/wrds_flagship_spa.md`
 
 **End-of-ticket:**
 - **Tests run:** …
