@@ -75,6 +75,59 @@ class FlagshipMomentumStrategy:
         self.max_history = (
             (self.lookback_months + self.skip_months + 2) * TRADING_DAYS_MONTH
         )
+        self._filter_diagnostics: List[Dict[str, float | int | str]] = []
+
+    # ------------------------------------------------------------------
+    def get_filter_diagnostics(self) -> Dict[str, object]:
+        entries = list(self._filter_diagnostics)
+        summary: Dict[str, Dict[str, float | int]] = {}
+        keys = [
+            "universe_total",
+            "with_history",
+            "min_price_pass",
+            "min_adv_pass",
+            "frame_count",
+            "long_target",
+            "short_target",
+            "long_selected",
+            "short_selected",
+            "long_sector_cap_rejections",
+            "short_sector_cap_rejections",
+        ]
+        for key in keys:
+            values = [int(entry.get(key, 0) or 0) for entry in entries]
+            if values:
+                summary[key] = {
+                    "min": int(min(values)),
+                    "max": int(max(values)),
+                    "mean": float(np.mean(values)),
+                }
+            else:
+                summary[key] = {"min": 0, "max": 0, "mean": 0.0}
+        return {
+            "rebalance_count": int(len(entries)),
+            "summary": summary,
+            "per_rebalance": entries,
+        }
+
+    # ------------------------------------------------------------------
+    def _init_rebalance_diagnostics(
+        self, period_end: pd.Timestamp, universe: Optional[pd.DataFrame]
+    ) -> Dict[str, float | int | str]:
+        return {
+            "period_end": str(period_end.date()),
+            "universe_total": int(len(universe)) if universe is not None else 0,
+            "with_history": 0,
+            "min_price_pass": 0,
+            "min_adv_pass": 0,
+            "frame_count": 0,
+            "long_target": 0,
+            "short_target": 0,
+            "long_selected": 0,
+            "short_selected": 0,
+            "long_sector_cap_rejections": 0,
+            "short_sector_cap_rejections": 0,
+        }
 
     # ------------------------------------------------------------------
     def _load_universe(self, path: str) -> Dict[pd.Timestamp, pd.DataFrame]:
@@ -148,15 +201,19 @@ class FlagshipMomentumStrategy:
         self, period_end: pd.Timestamp, event_timestamp: int
     ) -> List[SignalEvent]:
         universe = self._universe_snapshot(period_end)
+        diagnostics = self._init_rebalance_diagnostics(period_end, universe)
         if universe is None or universe.empty:
+            self._filter_diagnostics.append(diagnostics)
             return []
 
-        frame = self._build_score_frame(universe)
+        frame = self._build_score_frame(universe, diagnostics)
         if frame.empty:
+            self._filter_diagnostics.append(diagnostics)
             return []
 
-        long_sel = self._select_sleeve(frame, sleeve="long")
-        short_sel = self._select_sleeve(frame, sleeve="short")
+        long_sel = self._select_sleeve(frame, sleeve="long", diagnostics=diagnostics)
+        short_sel = self._select_sleeve(frame, sleeve="short", diagnostics=diagnostics)
+        self._filter_diagnostics.append(diagnostics)
         return self._build_signals(long_sel, short_sel, event_timestamp, period_end)
 
     # ------------------------------------------------------------------
@@ -174,7 +231,11 @@ class FlagshipMomentumStrategy:
         return (self.lookback_months + self.skip_months) * TRADING_DAYS_MONTH + 1
 
     # ------------------------------------------------------------------
-    def _build_score_frame(self, universe: pd.DataFrame) -> pd.DataFrame:
+    def _build_score_frame(
+        self,
+        universe: pd.DataFrame,
+        diagnostics: Optional[Dict[str, float | int | str]] = None,
+    ) -> pd.DataFrame:
         records: List[Dict[str, float | str]] = []
         required = self._required_bars()
         skip_days = self.skip_months * TRADING_DAYS_MONTH
@@ -185,8 +246,12 @@ class FlagshipMomentumStrategy:
             prices = self.price_history.get(symbol_str)
             if not prices or len(prices) < required:
                 continue
+            if diagnostics is not None:
+                diagnostics["with_history"] = int(diagnostics["with_history"]) + 1
             if prices[-1] < self.min_price:
                 continue
+            if diagnostics is not None:
+                diagnostics["min_price_pass"] = int(diagnostics["min_price_pass"]) + 1
 
             recent_idx = -skip_days - 1 if skip_days > 0 else -1
             if abs(recent_idx) > len(prices):
@@ -202,6 +267,8 @@ class FlagshipMomentumStrategy:
             adv = float(row.get("adv_20", 0.0) or 0.0)
             if adv < self.min_adv:
                 continue
+            if diagnostics is not None:
+                diagnostics["min_adv_pass"] = int(diagnostics["min_adv_pass"]) + 1
 
             records.append(
                 {
@@ -213,6 +280,8 @@ class FlagshipMomentumStrategy:
                 }
             )
 
+        if diagnostics is not None:
+            diagnostics["frame_count"] = len(records)
         if not records:
             return pd.DataFrame()
 
@@ -235,20 +304,36 @@ class FlagshipMomentumStrategy:
         return frame
 
     # ------------------------------------------------------------------
-    def _select_sleeve(self, frame: pd.DataFrame, sleeve: str) -> SleeveSelection:
+    def _select_sleeve(
+        self,
+        frame: pd.DataFrame,
+        sleeve: str,
+        diagnostics: Optional[Dict[str, float | int | str]] = None,
+    ) -> SleeveSelection:
         if frame.empty:
             return SleeveSelection([], frame.iloc[0:0])
         count = len(frame)
         if sleeve == "long":
             target_n = int(round(count * self.top_frac))
             ascending = False
+            target_key = "long_target"
+            selected_key = "long_selected"
+            rejected_key = "long_sector_cap_rejections"
         else:
             target_n = int(round(count * self.bottom_frac))
             ascending = True
+            target_key = "short_target"
+            selected_key = "short_selected"
+            rejected_key = "short_sector_cap_rejections"
 
         if target_n <= 0:
+            if diagnostics is not None:
+                diagnostics[target_key] = 0
+                diagnostics[selected_key] = 0
             return SleeveSelection([], frame.iloc[0:0])
         target_n = max(1, target_n)
+        if diagnostics is not None:
+            diagnostics[target_key] = int(target_n)
 
         ordered = frame.sort_values("sector_z", ascending=ascending)
         selected_rows = []
@@ -256,6 +341,8 @@ class FlagshipMomentumStrategy:
         for _, row in ordered.iterrows():
             sector = str(row["sector"])
             if per_sector[sector] >= self.max_positions_per_sector:
+                if diagnostics is not None:
+                    diagnostics[rejected_key] = int(diagnostics[rejected_key]) + 1
                 continue
             selected_rows.append(row)
             per_sector[sector] += 1
@@ -263,8 +350,12 @@ class FlagshipMomentumStrategy:
                 break
 
         if not selected_rows:
+            if diagnostics is not None:
+                diagnostics[selected_key] = 0
             return SleeveSelection([], frame.iloc[0:0])
         selected = pd.DataFrame(selected_rows)
+        if diagnostics is not None:
+            diagnostics[selected_key] = int(len(selected_rows))
         return SleeveSelection(selected["symbol"].tolist(), selected)
 
     # ------------------------------------------------------------------

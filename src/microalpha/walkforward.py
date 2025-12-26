@@ -447,6 +447,15 @@ def run_walk_forward(
             )
             engine.run()
 
+            filter_diagnostics: Dict[str, Any] | None = None
+            if hasattr(strategy, "get_filter_diagnostics"):
+                try:
+                    filter_diagnostics = strategy.get_filter_diagnostics()
+                except Exception as exc:  # pragma: no cover - diagnostics should not fail the run
+                    filter_diagnostics = {
+                        "error": f"{type(exc).__name__}: {exc}",
+                    }
+
             if portfolio.equity_curve:
                 equity_records.extend(portfolio.equity_curve)
             total_turnover += float(portfolio.total_turnover)
@@ -562,6 +571,7 @@ def run_walk_forward(
                 "best_params": best_params,
                 "train_metrics": _metrics_summary(train_metrics),
                 "test_metrics": _metrics_summary(test_metrics),
+                "filter_diagnostics": filter_diagnostics,
                 "reality_check_pvalue": (
                     None if rc_pvalue is None else float(rc_pvalue)
                 ),
@@ -1064,7 +1074,28 @@ def _optimise_parameters(
         )
         engine.run()
 
+        filter_diagnostics: Dict[str, Any] | None = None
+        if hasattr(strategy, "get_filter_diagnostics"):
+            try:
+                filter_diagnostics = strategy.get_filter_diagnostics()
+            except Exception as exc:  # pragma: no cover - diagnostics should not fail tuning
+                filter_diagnostics = {
+                    "error": f"{type(exc).__name__}: {exc}",
+                }
+
         if not portfolio.equity_curve:
+            exclusions.append(
+                {
+                    "model": _format_param_label(params),
+                    "params": dict(params),
+                    "num_trades": len(getattr(portfolio, "trades", None) or []),
+                    "turnover": float(
+                        getattr(portfolio, "total_turnover", 0.0) or 0.0
+                    ),
+                    "reasons": ["empty_equity_curve"],
+                    "filter_diagnostics": filter_diagnostics,
+                }
+            )
             continue
 
         metrics = compute_metrics(
@@ -1084,6 +1115,7 @@ def _optimise_parameters(
                         getattr(portfolio, "total_turnover", 0.0) or 0.0
                     ),
                     "reasons": exclusion_reasons,
+                    "filter_diagnostics": filter_diagnostics,
                 }
             )
             continue
