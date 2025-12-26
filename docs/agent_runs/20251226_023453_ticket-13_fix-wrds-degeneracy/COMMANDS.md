@@ -118,3 +118,37 @@
 116. `git add -f docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/COMMANDS.md`
 117. `git commit -m "ticket-13: log bundle rerun" -m "Tests: not run (log update)" -m "Artifacts: docs/gpt_bundles/2025-12-26T02-53-08Z_ticket-13_20251226_023453_ticket-13_fix-wrds-degeneracy.zip" -m "Docs: docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/COMMANDS.md"`
 118. `BUNDLE_TIMESTAMP=2025-12-26T02-53-08Z make gpt-bundle TICKET=ticket-13 RUN_NAME=20251226_023453_ticket-13_fix-wrds-degeneracy`
+119. `ls /Volumes/Storage/Data`
+120. `ls /Volumes/Storage/Data/wrds`
+121. `rg -n "WRDS_DATA_ROOT" -S src configs docs | head -n 50`
+122. `sed -n '1,120p' docs/wrds.md`
+123. `rg -n "docs/local" -S .gitignore .git/info/exclude`
+124. `cat .git/info/exclude`
+125. `ls /Volumes/Storage/Data/wrds/crsp | head -n 20`
+126. `sed -n '1,140p' src/microalpha/wrds/__init__.py`
+127. `mkdir -p docs/local`
+128. `cat <<'EOF' > docs/local/WRDS_DATA_ROOT.md` (set WRDS_DATA_ROOT)
+129. `cat docs/local/WRDS_DATA_ROOT.md`
+130. `WRDS_DATA_ROOT=/Volumes/Storage/Data/wrds microalpha wfv --config configs/wfv_flagship_wrds_smoke.yaml` (failed: non-degenerate rejected all candidates)
+131. `ls -td artifacts/wrds_flagship_smoke/* 2>/dev/null | head -1`
+132. `sed -n '1,120p' configs/wfv_flagship_wrds_smoke.yaml`
+133. `python3 - <<'PY'` (inspect smoke metrics)
+134. `python3 - <<'PY'` (count smoke trades)
+135. `python3 - <<'PY'` (inspect smoke manifest)
+136. `python3 - <<'PY'` (inspect smoke manifest keys)
+137. `python3 - <<'PY'` (inspect smoke config_summary)
+138. `WRDS_DATA_ROOT=/Volumes/Storage/Data/wrds microalpha wfv --config configs/wfv_flagship_wrds.yaml` (failed: non-degenerate rejected all candidates)
+139. `ls -td artifacts/wrds_flagship/* 2>/dev/null | head -1`
+140. `python3 - <<'PY'` (inspect flagship metrics)
+141. `python3 - <<'PY'` (inspect flagship manifest)
+142. `ls /Volumes/Storage/Data/wrds/manifests | head -n 20`
+143. `ls -td /Volumes/Storage/Data/wrds/manifests/* | head -n 1`
+144. `ls /Volumes/Storage/Data/wrds/manifests/20251221_001618 | head -n 20`
+145. `python3 - <<'PY'` (inspect WRDS manifest keys)
+146. `python3 - <<'PY'` (inspect WRDS manifest timestamps)
+147. `date -u +"%Y-%m-%dT%H:%M:%SZ"`
+148. `python3 - <<'PY'` (update META.json for WRDS reruns)
+149. `apply_patch` (docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/RESULTS.md)
+150. `apply_patch` (docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/TESTS.md)
+151. `apply_patch` (PROGRESS.md)
+152. `apply_patch` (project_state/KNOWN_ISSUES.md)

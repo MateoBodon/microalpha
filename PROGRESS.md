@@ -43,3 +43,4 @@ Ticket-04: Merged `codex/ticket-04-leakage-tests-unsafe-manifest` into `main` an
 ## 2025-12-26
 
 Ticket-13: Added non-degenerate WFV selection constraints (min_trades/min_turnover) with manifest/report surfacing and WRDS configs updated; added regression test and sample non-degenerate run (expected failure when zero-trade). Run log: `docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/`.
+Ticket-13: WRDS smoke + flagship reruns executed under `$WRDS_DATA_ROOT`; both failed non-degenerate constraints (zero trades). Smoke artifacts: `artifacts/wrds_flagship_smoke/2025-12-26T06-19-16Z-364496b/`. Flagship artifacts: `artifacts/wrds_flagship/2025-12-26T06-20-30Z-364496b/`. Run log: `docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/`.
