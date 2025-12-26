@@ -4,10 +4,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Dict, Iterable, List, Literal, Mapping, cast
+from typing import TYPE_CHECKING
 
 from .events import FillEvent, LookaheadError, MarketEvent, OrderEvent, SignalEvent
 from .logging import JsonlWriter
 from .market_metadata import SymbolMeta
+
+if TYPE_CHECKING:
+    from .order_flow import OrderFlowDiagnostics
 
 NS_PER_DAY = 86_400_000_000_000
 TRADING_DAYS_PER_YEAR = 252
@@ -39,6 +43,7 @@ class Portfolio:
         capital_policy=None,
         symbol_meta: Mapping[str, SymbolMeta] | None = None,
         borrow_cfg: Mapping[str, float | None] | object | None = None,
+        order_flow: "OrderFlowDiagnostics | None" = None,
     ):
         self.data_handler = data_handler
         self.initial_cash = initial_cash
@@ -79,6 +84,8 @@ class Portfolio:
         self.borrow_fee_bps: float | None = None
         self.borrow_fee_floor_bps: float | None = None
         self.borrow_fee_multiplier: float = 1.0
+        self.order_flow = order_flow
+        self._last_sizing_reject_reason: str | None = None
         if borrow_cfg is not None:
             if isinstance(borrow_cfg, Mapping):
                 self.borrow_fee_bps = (
@@ -201,48 +208,148 @@ class Portfolio:
         if signal.side == "EXIT":
             position = self.positions.get(signal.symbol)
             if not position or position.qty == 0:
+                if self.order_flow:
+                    self.order_flow.record_order_drop(
+                        "exit_no_position", signal=signal
+                    )
                 return []
             side = cast(Literal["BUY", "SELL"], "SELL" if position.qty > 0 else "BUY")
-            return [
-                OrderEvent(signal.timestamp, signal.symbol, abs(position.qty), side)
-            ]
+            order = OrderEvent(signal.timestamp, signal.symbol, abs(position.qty), side)
+            if self.order_flow:
+                self.order_flow.record_order_created(order, signal=signal)
+            return [order]
 
         if self.drawdown_halted:
+            if self.order_flow:
+                self.order_flow.record_order_drop(
+                    "drawdown_halted", signal=signal, clipped_by_caps=True
+                )
             return []
 
         qty = self._sized_quantity(signal)
         if qty == 0:
+            if self.order_flow:
+                reason = self._last_sizing_reject_reason or "qty_rounded_to_zero"
+                self.order_flow.record_order_drop(reason, signal=signal)
             return []
 
         price = self.data_handler.get_latest_price(signal.symbol, signal.timestamp)
         if price is None:
+            if self.order_flow:
+                self.order_flow.record_order_drop("missing_price", signal=signal)
             return []
 
         if self.turnover_cap is not None:
             projected_turnover = self.total_turnover + price * qty
             if projected_turnover > self.turnover_cap:
+                if self.order_flow:
+                    self.order_flow.record_order_drop(
+                        "turnover_cap", signal=signal, clipped_by_caps=True
+                    )
                 return []
 
         side = cast(Literal["BUY", "SELL"], "BUY" if signal.side == "LONG" else "SELL")
+        projected_equity = self.last_equity if self.last_equity else self.initial_cash
+        has_weight = bool(
+            signal.meta and "weight" in signal.meta and "qty" not in signal.meta
+        )
         anticipated_market_value = (
             self.market_value + (qty if side == "BUY" else -qty) * price
         )
-        projected_equity = self.last_equity if self.last_equity else self.initial_cash
         projected_exposure = (
-            abs(anticipated_market_value) / projected_equity
-            if projected_equity
-            else 0.0
+            abs(anticipated_market_value) / projected_equity if projected_equity else 0.0
         )
 
         if self.max_exposure is not None and projected_exposure > self.max_exposure:
-            return []
+            if has_weight and projected_equity:
+                max_abs_mv = float(self.max_exposure) * projected_equity
+                if side == "BUY":
+                    max_additional = max_abs_mv - self.market_value
+                else:
+                    max_additional = max_abs_mv + self.market_value
+                max_qty_exposure = int(max_additional / price) if max_additional > 0 else 0
+                if max_qty_exposure <= 0:
+                    if self.order_flow:
+                        self.order_flow.record_order_drop(
+                            "max_exposure", signal=signal, clipped_by_caps=True
+                        )
+                    return []
+                if max_qty_exposure < qty:
+                    qty = max_qty_exposure
+                    if self.order_flow:
+                        self.order_flow.record_order_clip("max_exposure", signal=signal)
+                anticipated_market_value = (
+                    self.market_value + (qty if side == "BUY" else -qty) * price
+                )
+                projected_exposure = (
+                    abs(anticipated_market_value) / projected_equity
+                    if projected_equity
+                    else 0.0
+                )
+                if projected_exposure > self.max_exposure:
+                    if self.order_flow:
+                        self.order_flow.record_order_drop(
+                            "max_exposure", signal=signal, clipped_by_caps=True
+                        )
+                    return []
+            else:
+                if self.order_flow:
+                    self.order_flow.record_order_drop(
+                        "max_exposure", signal=signal, clipped_by_caps=True
+                    )
+                return []
 
         if self.max_single_name_weight is not None and projected_equity:
             prev_qty = self.positions.get(signal.symbol, PortfolioPosition()).qty
             new_qty = prev_qty + (qty if side == "BUY" else -qty)
             projected_weight = abs(new_qty * price) / projected_equity
             if projected_weight > self.max_single_name_weight:
-                return []
+                if has_weight:
+                    max_abs_qty = int(
+                        (float(self.max_single_name_weight) * projected_equity) / price
+                    )
+                    if max_abs_qty <= 0:
+                        if self.order_flow:
+                            self.order_flow.record_order_drop(
+                                "max_single_name_weight",
+                                signal=signal,
+                                clipped_by_caps=True,
+                            )
+                        return []
+                    desired_new_qty = max_abs_qty if side == "BUY" else -max_abs_qty
+                    clipped_qty = abs(desired_new_qty - prev_qty)
+                    if clipped_qty <= 0:
+                        if self.order_flow:
+                            self.order_flow.record_order_drop(
+                                "max_single_name_weight",
+                                signal=signal,
+                                clipped_by_caps=True,
+                            )
+                        return []
+                    if clipped_qty < qty:
+                        qty = clipped_qty
+                        if self.order_flow:
+                            self.order_flow.record_order_clip(
+                                "max_single_name_weight", signal=signal
+                            )
+                    new_qty = prev_qty + (qty if side == "BUY" else -qty)
+                    projected_weight = abs(new_qty * price) / projected_equity
+                    if projected_weight > self.max_single_name_weight:
+                        if self.order_flow:
+                            self.order_flow.record_order_drop(
+                                "max_single_name_weight",
+                                signal=signal,
+                                clipped_by_caps=True,
+                            )
+                        return []
+                else:
+                    if self.order_flow:
+                        self.order_flow.record_order_drop(
+                            "max_single_name_weight",
+                            signal=signal,
+                            clipped_by_caps=True,
+                        )
+                    return []
 
         if self.max_gross_leverage is not None and projected_equity:
             prev_qty = self.positions.get(signal.symbol, PortfolioPosition()).qty
@@ -257,9 +364,16 @@ class Portfolio:
             projected_gross = max(current_gross - prev_abs_value + new_abs_value, 0.0)
             projected_gross_exposure = projected_gross / projected_equity
             if projected_gross_exposure > self.max_gross_leverage:
+                if self.order_flow:
+                    self.order_flow.record_order_drop(
+                        "max_gross_leverage", signal=signal, clipped_by_caps=True
+                    )
                 return []
 
-        return [OrderEvent(signal.timestamp, signal.symbol, qty, side)]
+        order = OrderEvent(signal.timestamp, signal.symbol, qty, side)
+        if self.order_flow:
+            self.order_flow.record_order_created(order, signal=signal)
+        return [order]
 
     def on_fill(self, fill: FillEvent) -> None:
         if self.current_time is not None and fill.timestamp < self.current_time:
@@ -413,8 +527,8 @@ class Portfolio:
                     if price and price > 0:
                         target_dollar = target_weight * equity
                         qty = int(abs(target_dollar / price))
-                        if qty > 0:
-                            return qty
+                        return qty
+                return 0
         if self.kelly_fraction and self.last_equity and self.current_time is not None:
             price = self.data_handler.get_latest_price(signal.symbol, self.current_time)
             if price:
@@ -423,8 +537,11 @@ class Portfolio:
         return self.default_order_qty
 
     def _sized_quantity(self, signal: SignalEvent) -> int:
+        self._last_sizing_reject_reason = None
         base = self._signal_quantity(signal)
         if base == 0 or not self.last_equity:
+            if base == 0:
+                self._last_sizing_reject_reason = "qty_rounded_to_zero"
             return base
         price = (
             self.data_handler.get_latest_price(signal.symbol, self.current_time)
@@ -461,6 +578,7 @@ class Portfolio:
                 self.last_equity, 1e-9
             )
             if projected_heat > self.max_portfolio_heat:
+                self._last_sizing_reject_reason = "max_portfolio_heat"
                 return 0
 
         # Sector cap: limit number of open positions per sector
@@ -472,6 +590,7 @@ class Portfolio:
                     if pos.qty != 0 and self.sector_of.get(sym) == sector:
                         open_in_sector += 1
                 if open_in_sector >= self.max_positions_per_sector and base > 0:
+                    self._last_sizing_reject_reason = "max_positions_per_sector"
                     return 0
 
         # Capital policy adjustment (e.g., vol scaling)
@@ -486,4 +605,6 @@ class Portfolio:
                     int(self.current_time),
                 )
             )
+            if base == 0:
+                self._last_sizing_reject_reason = "capital_policy_zero"
         return base

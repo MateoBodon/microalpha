@@ -46,6 +46,7 @@ from .manifest import (
 )
 from .market_metadata import load_symbol_meta
 from .metrics import compute_metrics
+from .order_flow import OrderFlowDiagnostics
 from .portfolio import Portfolio
 from .risk import bootstrap_sharpe_ratio
 from .slippage import (
@@ -195,6 +196,7 @@ def run_from_config(
     trade_logger = JsonlWriter(str(artifacts_dir / "trades.jsonl"))
     capital_policy = resolve_capital_policy(cfg.capital_policy)
 
+    order_flow = OrderFlowDiagnostics() if cfg.order_flow_diagnostics else None
     portfolio = Portfolio(
         data_handler=data_handler,
         initial_cash=initial_cash,
@@ -213,6 +215,7 @@ def run_from_config(
         capital_policy=capital_policy,
         symbol_meta=symbol_meta,
         borrow_cfg=cfg.borrow,
+        order_flow=order_flow,
     )
     exec_type = cfg.exec.type.lower() if cfg.exec.type else "instant"
     executor_cls = EXECUTION_MAPPING.get(exec_type, Executor)
@@ -297,6 +300,23 @@ def run_from_config(
 
     trade_logger.close()
 
+    filter_diagnostics: Dict[str, Any] | None = None
+    if hasattr(strategy, "get_filter_diagnostics"):
+        try:
+            filter_diagnostics = strategy.get_filter_diagnostics()
+        except Exception as exc:  # pragma: no cover - diagnostics should not fail run
+            filter_diagnostics = {
+                "error": f"{type(exc).__name__}: {exc}",
+            }
+
+    order_flow_path: str | None = None
+    if order_flow is not None:
+        order_flow_path = _persist_order_flow_diagnostics(
+            order_flow,
+            artifacts_dir,
+            filter_diagnostics=filter_diagnostics,
+        )
+
     commission_total = 0.0
     slippage_total = 0.0
     trades_list = getattr(portfolio, "trades", None) or []
@@ -362,6 +382,7 @@ def run_from_config(
             "bootstrap_path": bootstrap_path,
             "trades_path": trades_path,
             "integrity_path": integrity_path,
+            "order_flow_diagnostics_path": order_flow_path,
         }
     )
     return result
@@ -442,6 +463,37 @@ def _update_manifest_integrity(
     payload["run_invalid"] = bool(run_invalid)
     with manifest_path.open("w", encoding="utf-8") as handle:
         json.dump(payload, handle, indent=2)
+
+
+def _update_manifest_order_flow(
+    artifacts_dir: Path, diagnostics_path: str, summary: Mapping[str, Any]
+) -> None:
+    manifest_path = artifacts_dir / "manifest.json"
+    if not manifest_path.exists():
+        return
+    payload = json.loads(manifest_path.read_text(encoding="utf-8"))
+    payload["order_flow_diagnostics_path"] = diagnostics_path
+    payload["order_flow_summary"] = dict(summary)
+    with manifest_path.open("w", encoding="utf-8") as handle:
+        json.dump(payload, handle, indent=2)
+
+
+def _persist_order_flow_diagnostics(
+    order_flow: OrderFlowDiagnostics,
+    artifacts_dir: Path,
+    *,
+    filter_diagnostics: Mapping[str, Any] | None = None,
+) -> str:
+    try:
+        order_flow.merge_filter_diagnostics(filter_diagnostics)
+    except Exception as exc:  # pragma: no cover - diagnostics should not fail run
+        order_flow.record_error(f"merge_filter_diagnostics_error: {type(exc).__name__}: {exc}")
+    payload = order_flow.payload()
+    path = artifacts_dir / "order_flow_diagnostics.json"
+    with path.open("w", encoding="utf-8") as handle:
+        json.dump(payload, handle, indent=2)
+    _update_manifest_order_flow(artifacts_dir, str(path), payload.get("summary", {}))
+    return str(path)
 
 
 def persist_exposures(

@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
+from collections import Counter
+from dataclasses import dataclass, field
 from typing import Any, Dict, Literal, Mapping, Optional, Protocol, Sequence
 
 import numpy as np
@@ -40,6 +41,8 @@ class Executor:
     queue_randomize: bool = True
     volatility_lookback: int = 20
     min_fill_qty: int = 1
+    last_reject_reason: str | None = None
+    _reject_reasons: list[str] = field(default_factory=list, init=False, repr=False)
 
     def __post_init__(self) -> None:
         self._symbol_meta: Dict[str, SymbolMeta] = {}
@@ -60,9 +63,27 @@ class Executor:
         if self.slippage_model and self._symbol_meta:
             self.slippage_model.update_metadata(self._symbol_meta)
 
+    def _reset_reject_tracking(self) -> None:
+        self.last_reject_reason = None
+        self._reject_reasons = []
+
+    def _record_reject(self, reason: str) -> None:
+        self._reject_reasons.append(reason)
+        self.last_reject_reason = reason
+
+    def _summarize_reject_reasons(self) -> str:
+        if not self._reject_reasons:
+            return "no_fills"
+        counts = Counter(self._reject_reasons)
+        return counts.most_common(1)[0][0]
+
     def execute(self, order: OrderEvent, current_ts: int) -> Optional[FillEvent]:
+        self._reset_reject_tracking()
         fill_ts = self._fill_timestamp(order, current_ts)
-        return self._build_fill(order, fill_ts, order.qty)
+        fill = self._build_fill(order, fill_ts, order.qty)
+        if fill is None:
+            self.last_reject_reason = self._summarize_reject_reasons()
+        return fill
 
     def _fill_timestamp(self, order: OrderEvent, current_ts: int) -> int:
         future = self.data_handler.get_future_timestamps(current_ts, 1)
@@ -87,7 +108,11 @@ class Executor:
         self, order: OrderEvent, timestamp: int, qty: int
     ) -> Optional[FillEvent]:
         market_price = self.data_handler.get_latest_price(order.symbol, timestamp)
-        if market_price is None or qty == 0:
+        if market_price is None:
+            self._record_reject("missing_price")
+            return None
+        if qty == 0:
+            self._record_reject("qty_zero")
             return None
 
         meta = self._get_symbol_meta(order.symbol)
@@ -109,12 +134,14 @@ class Executor:
                 limit_price = market_price if limit_price is None else limit_price
 
         if not self._limit_crossable(order, market_price, limit_price, limit_context):
+            self._record_reject("limit_not_crossed")
             return None
 
         fill_qty = self._resolve_fill_quantity(
             order, market_price, timestamp, qty, limit_context, meta
         )
         if fill_qty == 0:
+            self._record_reject("fill_qty_zero")
             return None
 
         sign = 1 if order.side == "BUY" else -1
@@ -279,6 +306,7 @@ class TWAP(Executor):
         self.slices = max(1, slices)
 
     def execute(self, order: OrderEvent, current_ts: int) -> Optional[FillEvent]:
+        self._reset_reject_tracking()
         future = self.data_handler.get_future_timestamps(current_ts, self.slices)
         if not future:
             future = [current_ts]
@@ -305,6 +333,7 @@ class TWAP(Executor):
             slippages.append(partial.slippage)
 
         if total_signed_qty == 0:
+            self.last_reject_reason = self._summarize_reject_reasons()
             return None
 
         avg_price = total_trade_value / total_signed_qty
@@ -348,6 +377,7 @@ class VWAP(Executor):
         self.slices = max(1, slices)
 
     def execute(self, order: OrderEvent, current_ts: int) -> Optional[FillEvent]:
+        self._reset_reject_tracking()
         future = list(self.data_handler.get_future_timestamps(current_ts, self.slices))
         if not future:
             future = [current_ts]
@@ -394,6 +424,7 @@ class VWAP(Executor):
             slippages.append(partial.slippage)
 
         if total_signed_qty == 0:
+            self.last_reject_reason = self._summarize_reject_reasons()
             return None
         avg_price = total_trade_value / total_signed_qty
         avg_slippage = sum(slippages) / len(slippages) if slippages else 0.0
@@ -438,6 +469,7 @@ class ImplementationShortfall(Executor):
         self.urgency = max(1e-3, min(float(urgency), 1.0))
 
     def execute(self, order: OrderEvent, current_ts: int) -> Optional[FillEvent]:
+        self._reset_reject_tracking()
         future = list(self.data_handler.get_future_timestamps(current_ts, self.slices))
         if not future:
             future = [current_ts]
@@ -472,6 +504,7 @@ class ImplementationShortfall(Executor):
             slippages.append(partial.slippage)
 
         if total_signed_qty == 0:
+            self.last_reject_reason = self._summarize_reject_reasons()
             return None
         avg_price = total_trade_value / total_signed_qty
         avg_slippage = sum(slippages) / len(slippages) if slippages else 0.0
@@ -523,8 +556,11 @@ class LOBExecution(Executor):
         self.lob_tplus1 = lob_tplus1
 
     def execute(self, order: OrderEvent, current_ts: int) -> Optional[FillEvent]:
+        self._reset_reject_tracking()
         fills = self.book.submit(order)
         if not fills:
+            self._record_reject("lob_no_fills")
+            self.last_reject_reason = self._summarize_reject_reasons()
             return None
         if len(fills) == 1:
             fill = fills[0]

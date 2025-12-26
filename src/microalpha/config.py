@@ -131,6 +131,7 @@ class BacktestCfg(BaseModel):
     cash: float = 1_000_000
     run_mode: Literal["headline", "smoke", "dev"] = "headline"
     allow_unsafe_execution: bool = False
+    order_flow_diagnostics: bool = True
     exec: ExecModelCfg = Field(default_factory=ExecModelCfg)
     strategy: StrategyCfg
     seed: int = 42

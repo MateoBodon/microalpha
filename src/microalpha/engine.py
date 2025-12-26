@@ -59,7 +59,16 @@ class Engine:
         self.clock = market_event.timestamp
         self.portfolio.on_market(market_event)
 
-        signals: Iterable[SignalEvent] = self.strategy.on_market(market_event)
+        signals_iter: Iterable[SignalEvent] = self.strategy.on_market(market_event)
+        signals = list(signals_iter)
+        order_flow = getattr(self.portfolio, "order_flow", None)
+        if order_flow and signals:
+            try:
+                order_flow.begin_rebalance(signals, market_event.timestamp)
+            except Exception as exc:  # pragma: no cover - diagnostics should not fail run
+                order_flow.record_error(
+                    f"begin_rebalance_error: {type(exc).__name__}: {exc}"
+                )
         same_day_fill = False
         for signal in signals:
             if signal.timestamp < self.clock:
@@ -73,7 +82,17 @@ class Engine:
                     order, market_event.timestamp
                 )
                 if fill is None:
+                    if order_flow:
+                        reason = getattr(
+                            getattr(self.broker, "executor", None),
+                            "last_reject_reason",
+                            None,
+                        )
+                        order_flow.record_broker_reject(order, reason)
                     continue
+                if order_flow:
+                    order_flow.record_broker_accept(order)
+                    order_flow.record_fill(fill)
                 if fill.timestamp < market_event.timestamp:
                     raise LookaheadError("fill before current market event")
                 if fill.timestamp == market_event.timestamp:
@@ -81,3 +100,10 @@ class Engine:
                 self.portfolio.on_fill(fill)
         if same_day_fill:
             self._pending_equity_refresh_ts = market_event.timestamp
+        if order_flow and signals:
+            try:
+                order_flow.end_rebalance()
+            except Exception as exc:  # pragma: no cover - diagnostics should not fail run
+                order_flow.record_error(
+                    f"end_rebalance_error: {type(exc).__name__}: {exc}"
+                )

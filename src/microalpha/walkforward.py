@@ -43,6 +43,7 @@ from .manifest import (
 )
 from .market_metadata import load_symbol_meta
 from .metrics import compute_metrics
+from .order_flow import OrderFlowDiagnostics, infer_non_degenerate_reason
 from .portfolio import Portfolio
 from .integrity import evaluate_portfolio_integrity
 from .risk_stats import block_bootstrap
@@ -416,11 +417,17 @@ def run_walk_forward(
                 strategy = strategy_class(
                     symbol=symbol, **_strategy_kwargs(best_params, warmup_prices)
                 )
+            order_flow = (
+                OrderFlowDiagnostics()
+                if cfg.template.order_flow_diagnostics
+                else None
+            )
             portfolio = _build_portfolio(
                 data_handler,
                 cfg.template,
                 trade_logger=trade_logger,
                 symbol_meta=symbol_meta,
+                order_flow=order_flow,
             )
             if hasattr(strategy, "sector_map") and strategy.sector_map:
                 portfolio.sector_of.update(strategy.sector_map)
@@ -455,6 +462,7 @@ def run_walk_forward(
                     filter_diagnostics = {
                         "error": f"{type(exc).__name__}: {exc}",
                     }
+            order_flow_payload = _finalize_order_flow(order_flow, filter_diagnostics)
 
             if portfolio.equity_curve:
                 equity_records.extend(portfolio.equity_curve)
@@ -572,6 +580,7 @@ def run_walk_forward(
                 "train_metrics": _metrics_summary(train_metrics),
                 "test_metrics": _metrics_summary(test_metrics),
                 "filter_diagnostics": filter_diagnostics,
+                "order_flow_diagnostics": order_flow_payload,
                 "reality_check_pvalue": (
                     None if rc_pvalue is None else float(rc_pvalue)
                 ),
@@ -1049,10 +1058,12 @@ def _optimise_parameters(
             strategy = strategy_class(**_strategy_kwargs(combined))
         else:
             strategy = strategy_class(symbol=cfg.symbol, **_strategy_kwargs(combined))
+        order_flow = OrderFlowDiagnostics() if cfg.order_flow_diagnostics else None
         portfolio = _build_portfolio(
             data_handler,
             cfg,
             symbol_meta=symbol_meta,
+            order_flow=order_flow,
         )
         if hasattr(strategy, "sector_map") and strategy.sector_map:
             portfolio.sector_of.update(strategy.sector_map)
@@ -1082,6 +1093,7 @@ def _optimise_parameters(
                 filter_diagnostics = {
                     "error": f"{type(exc).__name__}: {exc}",
                 }
+        order_flow_payload = _finalize_order_flow(order_flow, filter_diagnostics)
 
         if not portfolio.equity_curve:
             exclusions.append(
@@ -1094,6 +1106,7 @@ def _optimise_parameters(
                     ),
                     "reasons": ["empty_equity_curve"],
                     "filter_diagnostics": filter_diagnostics,
+                    "order_flow_diagnostics": order_flow_payload,
                 }
             )
             continue
@@ -1106,6 +1119,7 @@ def _optimise_parameters(
 
         exclusion_reasons = _non_degenerate_reasons(portfolio, non_degenerate)
         if exclusion_reasons:
+            diagnostic_reason = infer_non_degenerate_reason(order_flow_payload)
             exclusions.append(
                 {
                     "model": _format_param_label(params),
@@ -1116,6 +1130,8 @@ def _optimise_parameters(
                     ),
                     "reasons": exclusion_reasons,
                     "filter_diagnostics": filter_diagnostics,
+                    "order_flow_diagnostics": order_flow_payload,
+                    "diagnostic_reason": diagnostic_reason,
                 }
             )
             continue
@@ -1167,6 +1183,7 @@ def _build_portfolio(
     cfg: BacktestCfg,
     trade_logger: JsonlWriter | None = None,
     symbol_meta: Mapping[str, Any] | None = None,
+    order_flow: OrderFlowDiagnostics | None = None,
 ) -> Portfolio:
     return Portfolio(
         data_handler=data_handler,
@@ -1186,6 +1203,7 @@ def _build_portfolio(
         capital_policy=resolve_capital_policy(cfg.capital_policy),
         symbol_meta=symbol_meta,
         borrow_cfg=cfg.borrow,
+        order_flow=order_flow,
     )
 
 
@@ -1332,6 +1350,21 @@ def _summarise_walkforward(
 def _stable_metrics(metrics: Dict[str, Any]) -> Dict[str, Any]:
     disallowed = {"run_id", "timestamp", "artifacts_dir", "config_path"}
     return {key: value for key, value in metrics.items() if key not in disallowed}
+
+
+def _finalize_order_flow(
+    order_flow: OrderFlowDiagnostics | None,
+    filter_diagnostics: Mapping[str, Any] | None,
+) -> Dict[str, Any] | None:
+    if order_flow is None:
+        return None
+    try:
+        order_flow.merge_filter_diagnostics(filter_diagnostics)
+    except Exception as exc:  # pragma: no cover - diagnostics should not fail run
+        order_flow.record_error(
+            f"merge_filter_diagnostics_error: {type(exc).__name__}: {exc}"
+        )
+    return order_flow.payload()
 
 
 def _persist_integrity_checks(
