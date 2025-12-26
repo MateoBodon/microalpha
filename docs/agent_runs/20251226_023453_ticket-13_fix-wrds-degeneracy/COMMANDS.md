@@ -152,3 +152,8 @@
 150. `apply_patch` (docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/TESTS.md)
 151. `apply_patch` (PROGRESS.md)
 152. `apply_patch` (project_state/KNOWN_ISSUES.md)
+153. `git status -sb`
+154. `git add PROGRESS.md project_state/KNOWN_ISSUES.md`
+155. `git add -f docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/COMMANDS.md docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/META.json docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/RESULTS.md docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/TESTS.md`
+156. `git commit -m "ticket-13: log WRDS reruns" -m "Tests: not run (see run log; WRDS WFV reruns failed non-degenerate)" -m "Artifacts: artifacts/wrds_flagship_smoke/2025-12-26T06-19-16Z-364496b; artifacts/wrds_flagship/2025-12-26T06-20-30Z-364496b" -m "Docs: PROGRESS.md; project_state/KNOWN_ISSUES.md; docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/COMMANDS.md; docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/RESULTS.md; docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/TESTS.md; docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/META.json"`
+157. `git status -sb`
