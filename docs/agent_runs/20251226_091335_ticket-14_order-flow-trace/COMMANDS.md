@@ -144,3 +144,4 @@
 142. `git commit -m "ticket-14: log bundle command" -m "Tests: not run (log update)" -m "Artifacts: docs/gpt_bundles/2025-12-26T09-59-50Z_ticket-14_20251226_091335_ticket-14_order-flow-trace.zip" -m "Docs: docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/COMMANDS.md"`
 143. `BUNDLE_TIMESTAMP=2025-12-26T09-59-50Z make gpt-bundle TICKET=ticket-14 RUN_NAME=20251226_091335_ticket-14_order-flow-trace`
 144. `git status -sb`
+145. `BUNDLE_TIMESTAMP=2025-12-26T09-59-50Z make gpt-bundle TICKET=ticket-14 RUN_NAME=20251226_091335_ticket-14_order-flow-trace`
