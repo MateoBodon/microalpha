@@ -98,3 +98,11 @@
 96. `apply_patch` (docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/RESULTS.md)
 97. `date -u +"%Y-%m-%dT%H:%M:%SZ"`
 98. `python3 - <<'PY'` (update META.json finished_at_utc)
+99. `BUNDLE_TIMESTAMP=2025-12-26T07-39-54Z make gpt-bundle TICKET=ticket-13 RUN_NAME=20251226_065226_ticket-13_fix-wrds-degeneracy`
+100. `apply_patch` (docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/RESULTS.md)
+101. `date -u +"%Y-%m-%dT%H:%M:%SZ"`
+102. `python3 - <<'PY'` (update META.json finished_at_utc)
+103. `git add -f docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/COMMANDS.md docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/RESULTS.md docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/META.json`
+104. `git commit -m "ticket-13: refresh final bundle" -m "Tests: not run (log update)" -m "Artifacts: docs/gpt_bundles/2025-12-26T07-39-54Z_ticket-13_20251226_065226_ticket-13_fix-wrds-degeneracy.zip" -m "Docs: docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/COMMANDS.md; docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/RESULTS.md; docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/META.json"`
+105. `BUNDLE_TIMESTAMP=2025-12-26T07-39-54Z make gpt-bundle TICKET=ticket-13 RUN_NAME=20251226_065226_ticket-13_fix-wrds-degeneracy`
+106. `git push origin main`
