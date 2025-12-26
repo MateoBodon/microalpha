@@ -75,3 +75,10 @@
 73. `apply_patch` (docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/RESULTS.md)
 74. `date -u +"%Y-%m-%dT%H:%M:%SZ"`
 75. `python3 - <<'PY'` (update META.json finished_at_utc)
+76. `git add -f docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/COMMANDS.md docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/RESULTS.md docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/META.json`
+77. `git commit -m "ticket-13: checklist log updates" -m "Tests: not run (log update)" -m "Artifacts: none" -m "Docs: docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/COMMANDS.md; docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/RESULTS.md; docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/META.json"`
+78. `date -u +"%Y-%m-%dT%H-%M-%SZ"`
+79. `BUNDLE_TIMESTAMP=2025-12-26T07-34-57Z make gpt-bundle TICKET=ticket-13 RUN_NAME=20251226_065226_ticket-13_fix-wrds-degeneracy`
+80. `apply_patch` (docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/RESULTS.md)
+81. `date -u +"%Y-%m-%dT%H:%M:%SZ"`
+82. `python3 - <<'PY'` (update META.json finished_at_utc)
