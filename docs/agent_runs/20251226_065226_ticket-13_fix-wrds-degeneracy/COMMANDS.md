@@ -91,3 +91,10 @@
 89. `git status -sb`
 90. `date -u +"%Y-%m-%dT%H:%M:%SZ"`
 91. `python3 - <<'PY'` (update META.json finished_at_utc)
+92. `git add -f docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/COMMANDS.md docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/META.json`
+93. `git commit -m "ticket-13: log merge and push" -m "Tests: not run (log update)" -m "Artifacts: none" -m "Docs: docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/COMMANDS.md; docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/META.json"`
+94. `date -u +"%Y-%m-%dT%H-%M-%SZ"`
+95. `BUNDLE_TIMESTAMP=2025-12-26T07-38-25Z make gpt-bundle TICKET=ticket-13 RUN_NAME=20251226_065226_ticket-13_fix-wrds-degeneracy`
+96. `apply_patch` (docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/RESULTS.md)
+97. `date -u +"%Y-%m-%dT%H:%M:%SZ"`
+98. `python3 - <<'PY'` (update META.json finished_at_utc)
