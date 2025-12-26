@@ -2,7 +2,7 @@
   "run_name": "20251226_211219_ticket-15_fix-spa-keyerror",
   "ticket_id": "ticket-15",
   "started_at_utc": "2025-12-26T21:12:19Z",
-  "finished_at_utc": "2025-12-26T21:34:22Z",
+  "finished_at_utc": "2025-12-26T21:44:50Z",
   "git_sha_before": "12b63a22117a3a5acf1784eac2df4418c3037ba9",
   "git_sha_after": "refs/heads/codex/ticket-15-fix-spa-keyerror",
   "branch_name": "codex/ticket-15-fix-spa-keyerror",
@@ -25,5 +25,5 @@
     "docs/results_wrds.md"
   ],
   "web_sources": [],
-  "git_sha_after_resolved": "d8db2da0a64b82b5a2c8b1ed62afbc6c0834f2b1"
+  "git_sha_after_resolved": "26418566a392d7f3b81b84d820c2905173775c6f"
 }
