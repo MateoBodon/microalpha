@@ -115,3 +115,6 @@
 113. `git status -sb`
 114. `git add -f docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/COMMANDS.md`
 115. `git commit -m "ticket-13: finalize command log" -m "Tests: not run (log update)" -m "Artifacts: none" -m "Docs: docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/COMMANDS.md"`
+116. `git add -f docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/COMMANDS.md`
+117. `git commit -m "ticket-13: log bundle rerun" -m "Tests: not run (log update)" -m "Artifacts: docs/gpt_bundles/2025-12-26T02-53-08Z_ticket-13_20251226_023453_ticket-13_fix-wrds-degeneracy.zip" -m "Docs: docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/COMMANDS.md"`
+118. `BUNDLE_TIMESTAMP=2025-12-26T02-53-08Z make gpt-bundle TICKET=ticket-13 RUN_NAME=20251226_023453_ticket-13_fix-wrds-degeneracy`
