@@ -23,3 +23,5 @@
 - **Inference:** signals are being generated after the universe filters; zero trades likely occur in order sizing/risk-cap enforcement (e.g., `max_single_name_weight=0.02`) rather than in the universe/min_price/min_adv filters. Needs confirmation with order-level diagnostics.
 
 External references consulted: none.
+
+- Bundle: `docs/gpt_bundles/2025-12-26T07-10-10Z_ticket-13_20251226_065226_ticket-13_fix-wrds-degeneracy.zip`

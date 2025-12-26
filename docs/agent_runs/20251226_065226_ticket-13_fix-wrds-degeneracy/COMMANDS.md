@@ -54,3 +54,7 @@
 52. `apply_patch` (PROGRESS.md)
 53. `apply_patch` (project_state/KNOWN_ISSUES.md)
 54. `apply_patch` (CHANGELOG.md)
+55. `make gpt-bundle TICKET=ticket-13 RUN_NAME=20251226_065226_ticket-13_fix-wrds-degeneracy`
+56. `apply_patch` (docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/RESULTS.md)
+57. `date -u +"%Y-%m-%dT%H:%M:%SZ"`
+58. `python3 - <<'PY'` (update META.json finished_at_utc)
