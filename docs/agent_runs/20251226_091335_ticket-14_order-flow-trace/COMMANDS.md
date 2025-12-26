@@ -129,3 +129,10 @@
 127. `apply_patch` (record bundle path in `docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/RESULTS.md`)
 128. `date -u +"%Y-%m-%dT%H:%M:%SZ"` (finished timestamp)
 129. `python3 - <<'PY'` (update `META.json` git sha + finished time)
+130. `git add -f docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/RESULTS.md docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/META.json docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/COMMANDS.md`
+131. `git commit -m "ticket-14: finalize bundle metadata" -m "Tests: not run (log update)" -m "Artifacts: docs/gpt_bundles/2025-12-26T09-59-50Z_ticket-14_20251226_091335_ticket-14_order-flow-trace.zip" -m "Docs: docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/COMMANDS.md; docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/RESULTS.md; docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/META.json"`
+132. `git status -sb`
+133. `BUNDLE_TIMESTAMP=2025-12-26T09-59-50Z make gpt-bundle TICKET=ticket-14 RUN_NAME=20251226_091335_ticket-14_order-flow-trace` (failed: DIFF mismatch)
+134. `git rev-parse HEAD`
+135. `date -u +"%Y-%m-%dT%H:%M:%SZ"` (updated finished timestamp)
+136. `python3 - <<'PY'` (update `META.json` git sha + finished time)
