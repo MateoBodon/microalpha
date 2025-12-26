@@ -1,0 +1,23 @@
+{
+  "run_name": "20251226_065226_ticket-13_fix-wrds-degeneracy",
+  "ticket_id": "ticket-13",
+  "started_at_utc": "2025-12-26T06:52:26Z",
+  "finished_at_utc": "2025-12-26T07:07:36Z",
+  "git_sha_before": "d4c8edf7ac1890dc2bec33e8025dab3bc80652ba",
+  "git_sha_after": "HEAD",
+  "branch_name": "codex/ticket-13-fix-wrds-degeneracy",
+  "host_env_notes": "macOS 26.0.1 / Python 3.12.2 / zsh / WRDS_DATA_ROOT set (see docs/local/WRDS_DATA_ROOT.md; local-doc fallback enabled)",
+  "dataset_id": "wrds_crsp_export_20251221_v1",
+  "config_paths": [
+    "docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/wfv_flagship_wrds_single_fold.yaml"
+  ],
+  "config_sha256": {
+    "docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/wfv_flagship_wrds_single_fold.yaml": "05a3ff0c332e2d6da06bd314563d5b2b4f9c0ab6b811f20a066c74fe263c2d75"
+  },
+  "artifact_paths": [
+    "artifacts/wrds_flagship_debug/2025-12-26T07-00-41Z-d4c8edf/"
+  ],
+  "report_paths": [],
+  "web_sources": [],
+  "local_wrds_note": "docs/local/WRDS_DATA_ROOT.md"
+}
