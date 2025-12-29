@@ -121,3 +121,26 @@
 121. `git add -f docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/COMMANDS.md`
 122. `git commit -m "ticket-15: update run command log" -m "Tests: not run (log update only)" -m "Artifacts: none" -m "Docs: docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/COMMANDS.md"`
 123. `BUNDLE_TIMESTAMP=2025-12-26T21-44-50Z make gpt-bundle TICKET=ticket-15 RUN_NAME=20251226_211219_ticket-15_fix-spa-keyerror`
+124. `git status --short`
+125. `git branch --show-current`
+126. `ls -la docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror`
+127. `tail -n 40 docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/COMMANDS.md`
+128. `cat docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/RESULTS.md`
+129. `cat docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/META.json`
+130. `git log -n 5 --oneline`
+131. `rg -n "git_sha_after_ref|head_ref|git_sha_after" tools/gpt_bundle.py`
+132. `sed -n '1,160p' tools/gpt_bundle.py`
+133. `date -u +%Y-%m-%dT%H-%M-%SZ`
+134. `git rev-parse HEAD`
+135. `python3 - <<'PY' ...` (update post-merge bundle log: RESULTS/META/COMMANDS)
+136. `git status --short`
+137. `tail -n 10 docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/RESULTS.md`
+138. `cat docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/META.json`
+139. `tail -n 20 docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/COMMANDS.md`
+140. `python3 - <<'PY' ...` (insert missing command-log entries)
+141. `tail -n 20 docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/COMMANDS.md`
+142. `python3 - <<'PY' ...` (insert missing tail command entry)
+143. `git add -f docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/COMMANDS.md docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/RESULTS.md docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/META.json`
+144. `git commit -m "ticket-15: record post-merge bundle" -m "Tests: not run (log update only)" -m "Artifacts: docs/gpt_bundles/2025-12-29T09-42-17Z_ticket-15_20251226_211219_ticket-15_fix-spa-keyerror.zip" -m "Docs: docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/COMMANDS.md; docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/RESULTS.md; docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/META.json"`
+145. `BUNDLE_TIMESTAMP=2025-12-29T09-42-17Z make gpt-bundle TICKET=ticket-15 RUN_NAME=20251226_211219_ticket-15_fix-spa-keyerror`
+146. `git push origin main`

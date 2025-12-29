@@ -17,4 +17,5 @@ Outputs:
 - WRDS summary: `reports/summaries/wrds_flagship.md`
 - Docs summary: `docs/results_wrds.md`
 
-Bundle: `docs/gpt_bundles/2025-12-26T21-44-50Z_ticket-15_20251226_211219_ticket-15_fix-spa-keyerror.zip`
+Bundle (pre-merge): `docs/gpt_bundles/2025-12-26T21-44-50Z_ticket-15_20251226_211219_ticket-15_fix-spa-keyerror.zip`
+Post-merge bundle: `docs/gpt_bundles/2025-12-29T09-42-17Z_ticket-15_20251226_211219_ticket-15_fix-spa-keyerror.zip`
