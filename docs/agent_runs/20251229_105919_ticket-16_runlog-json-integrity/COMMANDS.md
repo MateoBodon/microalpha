@@ -128,3 +128,27 @@
 126. `git add -f docs/agent_runs/20251229_105919_ticket-16_runlog-json-integrity/COMMANDS.md`
 127. `git commit -m "ticket-16: finalize run log commands" -m "Tests: not run (log update only)" -m "Artifacts: docs/gpt_bundles/2025-12-29T11-34-11Z_ticket-16_20251229_105919_ticket-16_runlog-json-integrity.zip" -m "Docs: docs/agent_runs/20251229_105919_ticket-16_runlog-json-integrity/COMMANDS.md"`
 128. `make gpt-bundle TICKET=ticket-16 RUN_NAME=20251229_105919_ticket-16_runlog-json-integrity BUNDLE_TIMESTAMP=2025-12-29T11-34-11Z`
+129. `python3 -m json.tool docs/agent_runs/20251224_051508_ticket-04_wrds-smoke-check/META.json >/dev/null`
+130. `rg -n "ticket-15" docs/CODEX_SPRINT_TICKETS.md | head -n 5`
+131. `rg -n "Status:.*ticket-15" -n docs/CODEX_SPRINT_TICKETS.md | head -n 5` (no matches)
+132. `rg -n "Status:" -n -C 1 docs/CODEX_SPRINT_TICKETS.md | rg -n "ticket-15" -n -C 2` (no matches)
+133. `rg -n "ticket-15" -n -C 3 docs/CODEX_SPRINT_TICKETS.md | head -n 20`
+134. `sed -n '508,520p' docs/CODEX_SPRINT_TICKETS.md`
+135. `rg -n "ticket-16" docs/CODEX_SPRINT_TICKETS.md | head -n 10`
+136. `rg -n "2025-12-29" PROGRESS.md`
+137. `rg -n "Bundle" docs/agent_runs/20251229_105919_ticket-16_runlog-json-integrity/RESULTS.md`
+138. `git checkout main`
+139. `git merge --ff-only codex/ticket-16-runlog-json-integrity`
+140. `apply_patch` (append review + merge commands to COMMANDS.md)
+141. `date -u '+%Y-%m-%dT%H:%M:%SZ'`
+142. `date -u '+%Y-%m-%dT%H-%M-%SZ'`
+143. `git rev-parse e258a3b0`
+144. `apply_patch` (update ticket-16 META.json finished_at_utc + git_sha_after)
+145. `apply_patch` (update ticket-16 RESULTS bundle path)
+146. `make validate-runlogs`
+147. `git status -sb`
+148. `apply_patch` (append review timestamps + post-merge commands to COMMANDS.md)
+149. `git add -f docs/agent_runs/20251229_105919_ticket-16_runlog-json-integrity/COMMANDS.md docs/agent_runs/20251229_105919_ticket-16_runlog-json-integrity/META.json docs/agent_runs/20251229_105919_ticket-16_runlog-json-integrity/RESULTS.md`
+150. `git commit -m "ticket-16: post-merge run log updates" -m "Tests: make test-fast; make validate-runlogs; python3 -m compileall tools scripts" -m "Artifacts: docs/gpt_bundles/2025-12-29T12-00-05Z_ticket-16_20251229_105919_ticket-16_runlog-json-integrity.zip" -m "Docs: docs/agent_runs/20251229_105919_ticket-16_runlog-json-integrity/COMMANDS.md, docs/agent_runs/20251229_105919_ticket-16_runlog-json-integrity/META.json, docs/agent_runs/20251229_105919_ticket-16_runlog-json-integrity/RESULTS.md"`
+151. `git push origin main`
+152. `make gpt-bundle TICKET=ticket-16 RUN_NAME=20251229_105919_ticket-16_runlog-json-integrity BUNDLE_TIMESTAMP=2025-12-29T12-00-05Z`

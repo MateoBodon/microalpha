@@ -34,4 +34,4 @@
 - It does not verify that listed paths exist or that `config_sha256` matches file contents.
 
 ## Bundle
-- Bundle: `docs/gpt_bundles/2025-12-29T11-34-11Z_ticket-16_20251229_105919_ticket-16_runlog-json-integrity.zip`
+- Bundle: `docs/gpt_bundles/2025-12-29T12-00-05Z_ticket-16_20251229_105919_ticket-16_runlog-json-integrity.zip`
