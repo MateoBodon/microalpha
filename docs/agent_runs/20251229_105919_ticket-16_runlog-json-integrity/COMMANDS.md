@@ -123,3 +123,8 @@
 121. `git commit -m "ticket-16: fix run log SHA for bundling" -m "Tests: not run (meta/log fix only)" -m "Artifacts: none" -m "Docs: docs/agent_runs/20251229_105919_ticket-16_runlog-json-integrity/"`
 122. `git status -sb`
 123. `make gpt-bundle TICKET=ticket-16 RUN_NAME=20251229_105919_ticket-16_runlog-json-integrity BUNDLE_TIMESTAMP=2025-12-29T11-34-11Z`
+124. `git add -f docs/agent_runs/20251229_105919_ticket-16_runlog-json-integrity/COMMANDS.md`
+125. `git commit -m "ticket-16: update run log commands" -m "Tests: not run (log update only)" -m "Artifacts: docs/gpt_bundles/2025-12-29T11-34-11Z_ticket-16_20251229_105919_ticket-16_runlog-json-integrity.zip" -m "Docs: docs/agent_runs/20251229_105919_ticket-16_runlog-json-integrity/COMMANDS.md"`
+126. `git add -f docs/agent_runs/20251229_105919_ticket-16_runlog-json-integrity/COMMANDS.md`
+127. `git commit -m "ticket-16: finalize run log commands" -m "Tests: not run (log update only)" -m "Artifacts: docs/gpt_bundles/2025-12-29T11-34-11Z_ticket-16_20251229_105919_ticket-16_runlog-json-integrity.zip" -m "Docs: docs/agent_runs/20251229_105919_ticket-16_runlog-json-integrity/COMMANDS.md"`
+128. `make gpt-bundle TICKET=ticket-16 RUN_NAME=20251229_105919_ticket-16_runlog-json-integrity BUNDLE_TIMESTAMP=2025-12-29T11-34-11Z`
