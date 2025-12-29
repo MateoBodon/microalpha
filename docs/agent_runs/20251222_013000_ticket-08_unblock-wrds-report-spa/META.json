@@ -2,7 +2,7 @@
   "run_name": "20251222_013000_ticket-08_unblock-wrds-report-spa",
   "ticket_id": "ticket-08",
   "git_sha_before": "0b4ff5aa526fa6c5e904950ab8c2b78c12e3e82c",
-  "git_sha_after": "HEAD",
+  "git_sha_after": "7d2bfcd24b9da2883f04a07a5dcd2a08f1620289",
   "branch": "feat/ticket-08-unblock-wrds-report",
   "timestamp_local": "2025-12-21T21:50:27-0500",
   "env": {
@@ -33,5 +33,20 @@
   "web_research": {
     "enabled": false,
     "sources": []
-  }
+  },
+  "branch_name": "feat/ticket-08-unblock-wrds-report",
+  "started_at_utc": "2025-12-22T02:50:27Z",
+  "finished_at_utc": "2025-12-22T02:50:27Z",
+  "dataset_id": "",
+  "config_paths": [],
+  "config_sha256": {},
+  "artifact_paths": [
+    "artifacts/sample_wfv_holdout/2025-12-22T00-40-53Z-99a072e",
+    "artifacts/wrds_flagship/2025-12-21T22-32-44Z-2b48ef7"
+  ],
+  "report_paths": [
+    "reports/summaries/flagship_mom.md"
+  ],
+  "web_sources": [],
+  "host_env_notes": "macOS 26.0.1 (Build 25A362) / 3.12.2 / notes: pip freeze not captured"
 }

@@ -6,5 +6,19 @@
   "commands": [
     "python3 tools/build_project_state.py",
     "python3 tools/render_project_state_docs.py"
-  ]
+  ],
+  "run_name": "2025-12-20T21-31-14Z_project_state_rebuild",
+  "ticket_id": "ticket-00",
+  "git_sha_before": "b128e4afd50f87337bbdba31e6ee47e33d423add",
+  "git_sha_after": "b128e4afd50f87337bbdba31e6ee47e33d423add",
+  "branch_name": "main",
+  "started_at_utc": "2025-12-20T21:31:14Z",
+  "finished_at_utc": "2025-12-20T21:31:14Z",
+  "dataset_id": "unknown",
+  "config_paths": [],
+  "config_sha256": {},
+  "artifact_paths": [],
+  "report_paths": [],
+  "web_sources": [],
+  "host_env_notes": "unknown"
 }

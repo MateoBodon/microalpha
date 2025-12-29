@@ -2,7 +2,7 @@
   "run_name": "20251222_191759_ticket-00_project_state_rebuild",
   "ticket_id": "ticket-00",
   "git_sha_before": "e08b720b29a8d96342e12e8fb1fc0beaf009f221",
-  "git_sha_after": "HEAD",
+  "git_sha_after": "42f98d78fd659b5dcdec27b480bf669a10c66abc",
   "branch": "chore/project_state_refresh",
   "timestamp_local": "2025-12-22T14:24:41-0500",
   "env": {
@@ -30,5 +30,17 @@
   "web_research": {
     "enabled": false,
     "sources": []
-  }
+  },
+  "branch_name": "chore/project_state_refresh",
+  "started_at_utc": "2025-12-22T19:24:41Z",
+  "finished_at_utc": "2025-12-22T19:24:41Z",
+  "dataset_id": "",
+  "config_paths": [],
+  "config_sha256": {},
+  "artifact_paths": [],
+  "report_paths": [
+    "docs/gpt_bundles/project_state_2025-12-22T19-27-41Z_e08b720b.zip"
+  ],
+  "web_sources": [],
+  "host_env_notes": "macOS-26.0.1-arm64-arm-64bit / 3.12.2 / notes: Run name uses UTC timestamp; no web research used."
 }

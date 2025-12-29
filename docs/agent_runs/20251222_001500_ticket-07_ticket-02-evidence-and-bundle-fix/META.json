@@ -2,7 +2,7 @@
   "run_name": "20251222_001500_ticket-07_ticket-02-evidence-and-bundle-fix",
   "ticket_id": "ticket-07",
   "git_sha_before": "99a072e4f8408b4aeaa87f5af444d5103f96b5d5",
-  "git_sha_after": "HEAD",
+  "git_sha_after": "ca14cc503e196ec8aad003c219c1eb30defa77c7",
   "branch": "feat/ticket-07-ticket-02-evidence-and-bundle-fix",
   "timestamp_local": "2025-12-22T00:15:00",
   "env": {
@@ -34,5 +34,21 @@
   "web_research": {
     "enabled": false,
     "sources": []
-  }
+  },
+  "branch_name": "feat/ticket-07-ticket-02-evidence-and-bundle-fix",
+  "started_at_utc": "2025-12-22T00:15:00",
+  "finished_at_utc": "2025-12-22T00:15:00",
+  "dataset_id": "sample",
+  "config_paths": [
+    "configs/wfv_flagship_sample_holdout.yaml"
+  ],
+  "config_sha256": {
+    "configs/wfv_flagship_sample_holdout.yaml": "2b755f76181413502366291eecf7b5585f2c6d1039df9d2f3a1a81412a615ae3"
+  },
+  "artifact_paths": [
+    "artifacts/sample_wfv_holdout/2025-12-22T00-40-53Z-99a072e"
+  ],
+  "report_paths": [],
+  "web_sources": [],
+  "host_env_notes": "macOS-26.0.1-arm64-arm-64bit / 3.12.2 / notes: WRDS_DATA_ROOT not set; WRDS runs skipped. / timestamps derived from timestamp_local"
 }

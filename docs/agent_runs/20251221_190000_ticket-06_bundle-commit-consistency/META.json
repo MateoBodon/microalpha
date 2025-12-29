@@ -2,7 +2,7 @@
   "run_name": "20251221_190000_ticket-06_bundle-commit-consistency",
   "ticket_id": "ticket-06",
   "git_sha_before": "bf7e8ea58e82c009404eb0e5fa2ccde8a62a72a2",
-  "git_sha_after": "HEAD",
+  "git_sha_after": "631272f7041bff01de865fa5139a4a9e4004c3b2",
   "branch": "feat/ticket-06-bundle-commit-consistency",
   "timestamp_local": "2025-12-21T14:43:30-0500",
   "env": {
@@ -28,5 +28,15 @@
   "web_research": {
     "enabled": false,
     "sources": []
-  }
+  },
+  "branch_name": "feat/ticket-06-bundle-commit-consistency",
+  "started_at_utc": "2025-12-21T19:43:30Z",
+  "finished_at_utc": "2025-12-21T19:43:30Z",
+  "dataset_id": "",
+  "config_paths": [],
+  "config_sha256": {},
+  "artifact_paths": [],
+  "report_paths": [],
+  "web_sources": [],
+  "host_env_notes": "macOS 26.0.1 (Build 25A362) / 3.12.2 / notes: pip freeze not captured"
 }

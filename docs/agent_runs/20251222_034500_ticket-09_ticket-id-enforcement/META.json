@@ -2,7 +2,7 @@
   "run_name": "20251222_034500_ticket-09_ticket-id-enforcement",
   "ticket_id": "ticket-09",
   "git_sha_before": "05261d0e2d1d0a233ee635062ab0de01c54b4d0f",
-  "git_sha_after": "HEAD",
+  "git_sha_after": "a54e87959f547c6b75841008a7ff326faad11b24",
   "branch": "feat/ticket-09-ticket-id-enforcement",
   "timestamp_local": "2025-12-21T23:09:47-05:00",
   "env": {
@@ -28,5 +28,15 @@
   "web_research": {
     "enabled": false,
     "sources": []
-  }
+  },
+  "branch_name": "feat/ticket-09-ticket-id-enforcement",
+  "started_at_utc": "2025-12-22T04:09:47Z",
+  "finished_at_utc": "2025-12-22T04:09:47Z",
+  "dataset_id": "",
+  "config_paths": [],
+  "config_sha256": {},
+  "artifact_paths": [],
+  "report_paths": [],
+  "web_sources": [],
+  "host_env_notes": "macOS 26.0.1 (Build 25A362) / 3.12.2 / notes: pip freeze not captured"
 }

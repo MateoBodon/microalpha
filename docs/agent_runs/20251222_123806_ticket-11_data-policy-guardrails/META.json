@@ -2,7 +2,7 @@
   "run_name": "20251222_123806_ticket-11_data-policy-guardrails",
   "ticket_id": "ticket-11",
   "git_sha_before": "8a937654a4ae593a6fddb9410d4df3493286c13c",
-  "git_sha_after": "HEAD",
+  "git_sha_after": "e08b720b29a8d96342e12e8fb1fc0beaf009f221",
   "branch": "feat/ticket-11-data-policy-guardrails",
   "timestamp_local": "2025-12-22T14:01:00-05:00",
   "env": {
@@ -28,5 +28,15 @@
   "web_research": {
     "enabled": false,
     "sources": []
-  }
+  },
+  "branch_name": "feat/ticket-11-data-policy-guardrails",
+  "started_at_utc": "2025-12-22T19:01:00Z",
+  "finished_at_utc": "2025-12-22T19:01:00Z",
+  "dataset_id": "",
+  "config_paths": [],
+  "config_sha256": {},
+  "artifact_paths": [],
+  "report_paths": [],
+  "web_sources": [],
+  "host_env_notes": "Darwin 25.0.0 arm64 / Python 3.12.2 / notes: git_sha_after recorded as HEAD because the run log is committed in the same commit; gpt-bundle resolves HEAD."
 }

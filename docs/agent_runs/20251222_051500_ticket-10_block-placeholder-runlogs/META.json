@@ -2,7 +2,7 @@
   "run_name": "20251222_051500_ticket-10_block-placeholder-runlogs",
   "ticket_id": "ticket-10",
   "git_sha_before": "491d2a51a7d6ebd19155755a6113311f15ccd512",
-  "git_sha_after": "HEAD",
+  "git_sha_after": "8a937654a4ae593a6fddb9410d4df3493286c13c",
   "branch": "feat/ticket-10-block-placeholder-runlogs",
   "timestamp_local": "2025-12-22T00:36:47-05:00",
   "env": {
@@ -28,5 +28,15 @@
   "web_research": {
     "enabled": false,
     "sources": []
-  }
+  },
+  "branch_name": "feat/ticket-10-block-placeholder-runlogs",
+  "started_at_utc": "2025-12-22T05:36:47Z",
+  "finished_at_utc": "2025-12-22T05:36:47Z",
+  "dataset_id": "",
+  "config_paths": [],
+  "config_sha256": {},
+  "artifact_paths": [],
+  "report_paths": [],
+  "web_sources": [],
+  "host_env_notes": "Darwin 25.0.0 arm64 / Python 3.12.2 / notes: Run name kept per prompt; timestamp_local reflects system clock."
 }
