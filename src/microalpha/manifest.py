@@ -11,6 +11,7 @@ import sys
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from importlib import metadata as importlib_metadata
+from pathlib import Path
 from typing import Any, Mapping, Optional, Tuple
 
 import numpy as np
@@ -33,6 +34,48 @@ class Manifest:
     unsafe_reasons: list[str] = field(default_factory=list)
     execution_alignment: dict[str, Any] = field(default_factory=dict)
     config_summary: dict[str, Any] = field(default_factory=dict)
+
+
+class ManifestLoadError(RuntimeError):
+    """Raised when a manifest cannot be loaded safely."""
+
+    def __init__(self, path: Path, message: str) -> None:
+        super().__init__(f"{path}: {message}")
+        self.path = path
+
+
+def load_manifest_path(path: str | Path) -> dict[str, Any]:
+    """Load a manifest JSON file and validate it is a JSON object."""
+
+    manifest_path = Path(path)
+    try:
+        raw = manifest_path.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise ManifestLoadError(
+            manifest_path,
+            f"unable to read manifest ({exc.__class__.__name__}: {exc})",
+        ) from exc
+
+    try:
+        payload = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise ManifestLoadError(manifest_path, f"invalid JSON ({exc})") from exc
+
+    if not isinstance(payload, dict):
+        raise ManifestLoadError(manifest_path, "manifest must be a JSON object")
+
+    return payload
+
+
+def load_manifest(artifact_dir: str | Path, *, required: bool = True) -> dict[str, Any] | None:
+    """Load a manifest.json from an artifact directory."""
+
+    manifest_path = Path(artifact_dir) / "manifest.json"
+    if not manifest_path.exists():
+        if required:
+            raise ManifestLoadError(manifest_path, "manifest.json not found")
+        return None
+    return load_manifest_path(manifest_path)
 
 
 def resolve_git_sha() -> Tuple[str, str]:
