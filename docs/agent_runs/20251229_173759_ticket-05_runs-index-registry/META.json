@@ -1,0 +1,17 @@
+{
+  "run_name": "20251229_173759_ticket-05_runs-index-registry",
+  "ticket_id": "ticket-05",
+  "started_at_utc": "2025-12-29T17:37:59Z",
+  "finished_at_utc": "2025-12-29T18:01:53Z",
+  "git_sha_before": "ac61ea9dc070a5b708614e252f8921dbfeda9c13",
+  "git_sha_after": "43c018f3b2fe38ecdad44155feaacc1e195e8242",
+  "git_sha_after_ref": "HEAD",
+  "branch_name": "codex/ticket-05-runs-index-registry",
+  "host_env_notes": "Darwin 25.0.0 (arm64) / Python 3.12.2",
+  "dataset_id": "artifact_manifests_existing_repo",
+  "config_paths": [],
+  "config_sha256": {},
+  "artifact_paths": ["artifacts/"],
+  "report_paths": ["reports/summaries/runs_index.csv"],
+  "web_sources": []
+}

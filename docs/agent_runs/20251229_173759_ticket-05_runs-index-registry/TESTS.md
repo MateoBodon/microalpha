@@ -1,0 +1,7 @@
+- `make test-fast` (failed: missing run log files RESULTS.md/TESTS.md/META.json; fixed by creating run logs, then reran)
+- `make test-fast` (pass: 120 passed, 1 skipped; warnings about ExecModelCfg.aln deprecation and pandas fillna method)
+- `python3 -m compileall tools scripts src` (pass)
+- `python3 scripts/build_runs_index.py --help` (pass)
+- `python3 scripts/build_runs_index.py` (pass)
+- `python3 -m compileall tools scripts src` (pass, after CSV newline update)
+- `make test-fast` (pass: 120 passed, 1 skipped; same warnings as above)
