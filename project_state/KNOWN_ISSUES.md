@@ -11,6 +11,7 @@ commands:
 
 - WRDS runs require local exports and are blocked without `WRDS_DATA_ROOT` (see `docs/wrds.md`).
 - Large data directories (`data/`, `data_sp500/`, `data_sp500_enriched/`) are present; avoid deep parsing in automation.
+- RESOLVED (ticket-15): WRDS flagship SPA previously failed with `KeyError: ... not in index` when loading grid returns (report-only run on `artifacts/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/`). Fix: reindex grid returns to preserve panel order and classify exceptions as `spa_status=error`; SPA now runs with p-value in range.
 - From `PROGRESS.md`: Ticket-01: Tightened WRDS caps + smoke targets + report upgrades (Status: Partial — blocked by missing WRDS exports). Run log: `docs/agent_runs/20251220_223500_ticket-01_wrds-tighten-caps/`.
 - From `PROGRESS.md`: Ticket-02: Holdout evaluation mode added for walk-forward validation (Status: FAIL (review) — bundle lacked holdout evidence + DIFF mismatch). Run log: `docs/agent_runs/20251221_154039_ticket-02_holdout-wfv/`.
 - From `PROGRESS.md`: Ticket-02: Full WRDS holdout WFV run completed (Status: Done; zero-trade output flagged). Run log: `docs/agent_runs/20251221_173223_ticket-02_holdout-wfv-wrds-full/`.

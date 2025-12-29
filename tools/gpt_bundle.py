@@ -32,14 +32,18 @@ def _copy_path(src: Path, dest_root: Path, missing: list[str]) -> None:
         shutil.copy2(src, dest)
 
 
-def _load_meta_shas(meta_path: Path) -> tuple[str | None, str | None]:
+def _load_meta_shas(meta_path: Path) -> tuple[str | None, str | None, str | None]:
     if not meta_path.exists():
-        return None, None
+        return None, None, None
     try:
         payload = json.loads(meta_path.read_text(encoding="utf-8"))
     except json.JSONDecodeError:
-        return None, None
-    return payload.get("git_sha_before"), payload.get("git_sha_after")
+        return None, None, None
+    return (
+        payload.get("git_sha_before"),
+        payload.get("git_sha_after"),
+        payload.get("git_sha_after_ref"),
+    )
 
 
 def _load_meta(meta_path: Path) -> dict:
@@ -103,11 +107,12 @@ def _resolve_ref(ref: str) -> str:
 
 
 def _derive_diff_range(meta_path: Path) -> tuple[str, str, str]:
-    sha_before, sha_after = _load_meta_shas(meta_path)
+    sha_before, sha_after, sha_after_ref = _load_meta_shas(meta_path)
     if sha_before and sha_after:
         base = _resolve_ref(sha_before)
-        head = _resolve_ref(sha_after)
-        source = f"META.json ({sha_before}..{sha_after})"
+        head_ref = sha_after_ref or sha_after
+        head = _resolve_ref(head_ref)
+        source = f"META.json ({sha_before}..{head_ref})"
         return base, head, source
 
     base = _resolve_ref("HEAD~1")

@@ -4,7 +4,7 @@
   "started_at_utc": "2025-12-25T22:09:47Z",
   "finished_at_utc": "2025-12-25T22:15:06Z",
   "git_sha_before": "cea1413173500dbd60f011adf32ace01a6c6dae5",
-  "git_sha_after": "refs/heads/codex/ticket-04-leakage-tests-unsafe-manifest",
+  "git_sha_after": "6c3fc9f686916c134e15f70334cb568cd527155a",
   "branch_name": "codex/ticket-04-leakage-tests-unsafe-manifest",
   "host_env_notes": "macOS 26.0.1 / Python 3.12.2 (system) / user stated AGENTS.md was updated to allow main merges on explicit instruction; git_sha_after uses branch ref to avoid self-referential hash",
   "dataset_id": "merge_only",

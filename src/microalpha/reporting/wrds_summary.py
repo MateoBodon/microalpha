@@ -397,6 +397,7 @@ def _write_degenerate_spa(
     summary = SpaSummary(
         status="degenerate",
         reason=reason,
+        error=None,
         best_model=None,
         p_value=None,
         observed_stat=None,
@@ -415,8 +416,11 @@ def _write_spa_markdown_from_payload(payload: dict, md_path: Path) -> None:
     status, reason = _spa_status(payload)
     lines = ["# Hansen SPA Summary", ""]
     if status != "ok":
-        lines.append(f"- **Status:** degenerate")
-        lines.append(f"- **Reason:** {reason or 'invalid inputs'}")
+        lines.append(f"- **Status:** {status}")
+        if status == "error":
+            lines.append(f"- **Error:** {reason or 'unknown error'}")
+        else:
+            lines.append(f"- **Reason:** {reason or 'invalid inputs'}")
         lines.append(f"- **Observations:** {payload.get('n_obs', 0)}")
         lines.append(f"- **Strategies:** {payload.get('n_strategies', 0)}")
         diagnostics = payload.get("diagnostics")
@@ -512,8 +516,11 @@ def _spa_skip_reason(spa_payload: dict) -> str | None:
 def _spa_status(spa_payload: dict) -> tuple[str, str | None]:
     status_raw = spa_payload.get("status") or spa_payload.get("spa_status")
     reason = spa_payload.get("reason") or spa_payload.get("spa_skip_reason")
+    error = spa_payload.get("spa_error") or spa_payload.get("error")
     if isinstance(status_raw, str):
         status = status_raw.lower()
+        if status == "error":
+            return "error", str(error or reason or "SPA error")
         if status in {"degenerate", "skipped"}:
             return "degenerate", reason or "invalid inputs"
         if status == "ok":
@@ -537,6 +544,19 @@ def _spa_status(spa_payload: dict) -> tuple[str, str | None]:
     return "ok", None
 
 
+def _spa_failure_banner(spa_status: str, spa_skip_reason: str | None) -> list[str]:
+    if spa_status == "ok":
+        return []
+    label = "SPA error" if spa_status == "error" else "SPA degenerate"
+    reason = spa_skip_reason or "invalid inputs"
+    return [
+        f"## INFERENCE FAILED ({label})",
+        "",
+        f"INFERENCE FAILED ({label}): {reason} — not resume-credible / not headline.",
+        "",
+    ]
+
+
 def _render_spa_placeholder(destination: Path, message: str) -> None:
     destination.parent.mkdir(parents=True, exist_ok=True)
     fig, ax = plt.subplots(figsize=(8, 3.5))
@@ -551,6 +571,9 @@ def _render_spa_plot(
     spa_payload: dict, destination: Path, *, allow_zero: bool = False
 ) -> SpaRenderResult:
     status, reason = _spa_status(spa_payload)
+    if status == "error":
+        _render_spa_placeholder(destination, f"SPA error: {reason or 'unknown error'}")
+        return SpaRenderResult(destination, "error", reason)
     if status != "ok":
         _render_spa_placeholder(destination, f"SPA degenerate: {reason or 'invalid inputs'}")
         return SpaRenderResult(destination, "degenerate", reason)
@@ -711,6 +734,8 @@ def _write_docs_results(
         )
     )
     lines.append("")
+    if spa_status != "ok":
+        lines.extend(_spa_failure_banner(spa_status, spa_skip_reason))
     lines.append("## Performance Snapshot")
     lines.append("")
     lines.extend(perf_lines)
@@ -759,7 +784,8 @@ def _write_docs_results(
     lines.append("## SPA & Factor Highlights")
     lines.append("")
     if spa_status != "ok":
-        lines.append(f"- SPA degenerate: {spa_skip_reason or 'invalid inputs'}")
+        label = "SPA error" if spa_status == "error" else "SPA degenerate"
+        lines.append(f"- {label}: {spa_skip_reason or 'invalid inputs'}")
     else:
         best_model = spa_payload.get("best_model", "unknown")
         p_value = _coerce_float(spa_payload.get("p_value")) or 0.0
@@ -952,7 +978,10 @@ def render_wrds_summary(
     lines = ["# WRDS Flagship Walk-Forward", ""]
     lines.extend(unsafe_lines)
     lines.extend(_render_non_degenerate(manifest_payload))
-    lines.extend(["## Headline Metrics", ""])
+    if spa_status != "ok":
+        lines.extend(_spa_failure_banner(spa_status, spa_skip_reason))
+    headline_title = "## Headline Metrics" if spa_status == "ok" else "## Headline Metrics (blocked)"
+    lines.extend([headline_title, ""])
     lines.extend(_render_table(headline))
     lines.append("")
     if integrity_payload and not bool(integrity_payload.get("ok", True)):
@@ -996,7 +1025,8 @@ def render_wrds_summary(
     lines.append("## Hansen SPA Summary")
     lines.append("")
     if spa_status != "ok":
-        lines.append(f"SPA degenerate: {spa_skip_reason or 'invalid inputs'}")
+        label = "SPA error" if spa_status == "error" else "SPA degenerate"
+        lines.append(f"{label}: {spa_skip_reason or 'invalid inputs'}")
     else:
         lines.extend(_normalise_section(spa_md_path.read_text(encoding="utf-8")))
     lines.append("")

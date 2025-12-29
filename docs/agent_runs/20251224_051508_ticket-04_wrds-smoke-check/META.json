@@ -4,7 +4,7 @@
   "started_at_utc": "2025-12-24T05:15:08Z",
   "finished_at_utc": "2025-12-24T05:18:30Z",
   "git_sha_before": "559a99e401d416b942b77fbf4b0bba10095cae9a",
-  "git_sha_after": "refs/heads/codex/ticket-04-leakage-tests-unsafe-manifest",
+  nf3abcc5b33023d85e000b4506e0034251f539b",
   "branch_name": "codex/ticket-04-leakage-tests-unsafe-manifest",
   "host_env_notes": "macOS 26.0.1 / Python 3.12.2 (system) / WRDS_DATA_ROOT=/Volumes/Storage/Data/wrds / started_at_utc and finished_at_utc approximate; git_sha_after uses branch ref to avoid self-referential hash",
   "dataset_id": "wrds_crsp_local_exports_20251224",
