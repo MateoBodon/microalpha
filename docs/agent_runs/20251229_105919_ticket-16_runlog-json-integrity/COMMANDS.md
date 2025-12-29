@@ -110,4 +110,12 @@
 108. `sed -n '1,240p' tools/gpt_bundle.py`
 109. `rg -n "BUNDLE_TIMESTAMP|bundle" tools/gpt_bundle.py | head -n 40`
 110. `sed -n '250,340p' tools/gpt_bundle.py`
-111. `make gpt-bundle TICKET=ticket-16 RUN_NAME=20251229_105919_ticket-16_runlog-json-integrity BUNDLE_TIMESTAMP=2025-12-29T11-34-11Z`
+111. `make gpt-bundle TICKET=ticket-16 RUN_NAME=20251229_105919_ticket-16_runlog-json-integrity BUNDLE_TIMESTAMP=2025-12-29T11-34-11Z` (failed: invalid revision range from META.json git_sha_after)
+112. `git log --reverse --pretty=format:%H %s 02bb3b2057f09e8e6a223f6bb35d47425d84f6f7..c8cc410cf0d4ed0c19256e54531ba239c00b2479` (failed: ambiguous argument `%s`)
+113. `python3 - <<'PY' ...` (subprocess git log check; failed: invalid revision range)
+114. `git log --oneline --decorate -n 10`
+115. `git rev-parse c8cc410c`
+116. `git rev-parse HEAD`
+117. `apply_patch` (update ticket-16 META.json git_sha_after/git_sha_after_ref)
+118. `apply_patch` (append bundle failure + rerun commands to COMMANDS.md)
+119. `make gpt-bundle TICKET=ticket-16 RUN_NAME=20251229_105919_ticket-16_runlog-json-integrity BUNDLE_TIMESTAMP=2025-12-29T11-34-11Z`
