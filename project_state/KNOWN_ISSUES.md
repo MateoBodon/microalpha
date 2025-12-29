@@ -9,6 +9,7 @@ commands:
 
 # Known Issues
 
+- RESOLVED (ticket-16): Run-log META.json files drifted from required schema (missing keys / invalid JSON), breaking audit validation. Impact: run-log integrity checks could not be automated. Detected during ticket-16 repo-wide META.json parse/validation scan. Fix: repaired META.json files and added `scripts/validate_run_logs.py` + Make target. Prevention: `make test-fast` now runs run-log validation.
 - WRDS runs require local exports and are blocked without `WRDS_DATA_ROOT` (see `docs/wrds.md`).
 - Large data directories (`data/`, `data_sp500/`, `data_sp500_enriched/`) are present; avoid deep parsing in automation.
 - RESOLVED (ticket-15): WRDS flagship SPA previously failed with `KeyError: ... not in index` when loading grid returns (report-only run on `artifacts/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/`). Fix: reindex grid returns to preserve panel order and classify exceptions as `spa_status=error`; SPA now runs with p-value in range.

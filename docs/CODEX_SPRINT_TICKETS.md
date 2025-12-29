@@ -58,6 +58,77 @@
 
 ---
 
+## ticket-00 — Project state rebuild (doc regeneration)
+
+**Goal (1 sentence):** Rebuild `project_state/` docs and indices with a traceable run log.
+
+**Status:** Done.
+
+**Why (ties to diagnosis):**
+- Keep project state summaries current and auditable for interviews/reviews.
+
+**Files/modules likely touched:**
+- `tools/build_project_state.py`
+- `tools/render_project_state_docs.py`
+- `project_state/*`
+- `PROGRESS.md`
+
+**Acceptance criteria (objective + falsifiable):**
+- `project_state/` docs are regenerated and include the latest run summaries.
+- Run log exists under `docs/agent_runs/<RUN_NAME>/` with required metadata.
+
+**Minimal tests/commands to run:**
+- `python3 tools/build_project_state.py`
+- `python3 tools/render_project_state_docs.py`
+
+**Expected artifacts/logs to produce:**
+- `docs/agent_runs/<RUN_NAME>/...`
+
+**End-of-ticket:**
+- **Tests run:** …
+- **Artifacts/logs:** …
+- **Documentation updates:** …
+
+---
+
+## ticket-16 — Run-log META.json integrity + validator
+
+**Goal (1 sentence):** Repair corrupted run-log META.json files and enforce validation via a dedicated script + Make target.
+
+**Why (ties to diagnosis):**
+- Run logs are the audit trail; broken META.json files undermine traceability and review integrity.
+
+**Files/modules likely touched:**
+- `scripts/validate_run_logs.py`
+- `Makefile`
+- `docs/agent_runs/*/META.json`
+- `docs/CODEX_SPRINT_TICKETS.md`
+- `PROGRESS.md`
+- `project_state/KNOWN_ISSUES.md`
+- `CHANGELOG.md`
+
+**Acceptance criteria (objective + falsifiable):**
+- All `docs/agent_runs/*/META.json` files parse as valid JSON and include required keys.
+- `scripts/validate_run_logs.py` exits non-zero on any missing file/field or invalid SHA.
+- `make validate-runlogs` runs the validator successfully.
+- `make test-fast` includes run-log validation or documentation explicitly states it is a merge gate.
+- Ticket IDs in run logs are validated against `docs/CODEX_SPRINT_TICKETS.md`.
+
+**Minimal tests/commands to run:**
+- `make test-fast`
+- `make validate-runlogs`
+- `python3 -m compileall tools scripts`
+
+**Expected artifacts/logs to produce:**
+- `docs/agent_runs/<RUN_NAME>/...`
+
+**End-of-ticket:**
+- **Tests run:** …
+- **Artifacts/logs:** …
+- **Documentation updates:** …
+
+---
+
 ## ticket-02 — Add holdout evaluation mode (WFV selection ≠ final test)
 
 **Goal (1 sentence):** Separate parameter selection (WFV) from final reporting (holdout) to prevent p-hacking.
@@ -438,7 +509,7 @@
 
 **Goal (1 sentence):** Prevent SPA KeyErrors in WRDS flagship reports and block headline/inference when SPA fails.
 
-**Status:** Done (review pending).
+**Status:** DONE (reviewed PASS) — SPA KeyError fix verified with report-only rerun and logged evidence.
 
 **Acceptance criteria (objective + falsifiable):**
 - SPA bootstrapping loads grid returns without `KeyError` on `artifacts/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/`.

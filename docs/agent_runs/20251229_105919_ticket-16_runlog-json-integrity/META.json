@@ -1,0 +1,16 @@
+{
+  "run_name": "20251229_105919_ticket-16_runlog-json-integrity",
+  "ticket_id": "ticket-16",
+  "started_at_utc": "2025-12-29T10:59:19Z",
+  "finished_at_utc": "2025-12-29T11:32:33Z",
+  "git_sha_before": "02bb3b2057f09e8e6a223f6bb35d47425d84f6f7",
+  "git_sha_after": "c8cc410cf0d4ed0c19256e54531ba239c00b2479",
+  "branch_name": "codex/ticket-16-runlog-json-integrity",
+  "host_env_notes": "Darwin 25.0.0 arm64 / Python 3.12.2 / run-log integrity maintenance",
+  "dataset_id": "process_only",
+  "config_paths": [],
+  "config_sha256": {},
+  "artifact_paths": [],
+  "report_paths": [],
+  "web_sources": []
+}

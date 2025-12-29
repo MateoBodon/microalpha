@@ -20,6 +20,7 @@ All notable changes to this project will be documented in this file. The format 
 - ticket-13: non-degenerate WFV selection constraints (min_trades/min_turnover) with manifest/report surfacing and WRDS configs updated.
 - ticket-13: flagship momentum filter diagnostics added to WFV grid exclusions/folds for per-rebalance coverage counts.
 - ticket-14: order-flow diagnostics capturing post-signal sizing/orders/broker/fills with per-rebalance payloads and WFV fold attachments.
+- ticket-16: run-log validator script + `make validate-runlogs` target to enforce META.json integrity.
 
 ### Changed
 - Walk-forward WRDS config aligned to universe coverage (2012–2024) and report pipeline now emits WRDS signals before analytics.
@@ -40,3 +41,4 @@ All notable changes to this project will be documented in this file. The format 
 - ticket-14: weight-based sizing no longer falls back to default qty when weight rounds to zero; cap breaches clip weight-based orders instead of dropping, and diagnostics track clip counts.
 - ticket-15: SPA grid-returns loading reindexed to avoid KeyErrors; SPA outputs now include `spa_status`/`spa_error`, and WRDS summaries gate headline language when SPA fails.
 - gpt-bundle: allow optional `git_sha_after_ref` in META.json to derive diff ranges while keeping concrete git SHA metadata.
+- test-fast now includes run-log validation before pytest.

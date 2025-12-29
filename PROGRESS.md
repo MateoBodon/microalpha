@@ -49,3 +49,7 @@ Ticket-14: Added order-flow diagnostics + cap-aware weight sizing; WRDS single-f
 Ticket-14: Full WRDS flagship WFV + report rerun (trades execute). Artifacts: `artifacts/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/`. Report: `reports/summaries/wrds_flagship.md`. Run log: `docs/agent_runs/20251226_122058_ticket-14_wrds-full-run/`.
 Ticket-14: Checklist validation, run-log SHA fixes, and merge prep. Run log: `docs/agent_runs/20251226_141754_ticket-14_checklist-merge/`.
 Ticket-15: Fixed SPA grid_returns indexing (KeyError) and added SPA error status handling + inference gating; reran WRDS flagship SPA/report on `artifacts/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/` (SPA p-value 0.031). Run log: `docs/agent_runs/20251226_211219_ticket-15_fix-spa-keyerror/`.
+
+## 2025-12-29
+
+Ticket-16: Repaired run-log META.json files and added run-log validator + Make target; validation now enforced via `make test-fast`. Run log: `docs/agent_runs/20251229_105919_ticket-16_runlog-json-integrity/`.
