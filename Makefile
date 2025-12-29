@@ -7,7 +7,7 @@ WRDS_ARTIFACT_DIR ?= artifacts/wrds_flagship
 WRDS_SMOKE_CONFIG ?= configs/wfv_flagship_wrds_smoke.yaml
 WRDS_SMOKE_ARTIFACT_DIR ?= artifacts/wrds_flagship_smoke
 
-.PHONY: dev test test-fast test-wrds sample wfv wfv-wrds wfv-wrds-smoke wrds wrds-flagship report report-wrds report-wrds-smoke docs clean export-wrds report-wfv gpt-bundle check-data-policy
+.PHONY: dev test test-fast test-wrds sample wfv wfv-wrds wfv-wrds-smoke wrds wrds-flagship report report-wrds report-wrds-smoke docs clean export-wrds report-wfv gpt-bundle check-data-policy validate-runlogs
 
 dev:
 	pip install -e '.[dev]'
@@ -16,6 +16,7 @@ test:
 	pytest -vv --maxfail=1 --durations=25
 
 test-fast:
+	python3 scripts/validate_run_logs.py
 	pytest -q
 
 test-wrds:
@@ -94,6 +95,9 @@ report-wrds-smoke:
 
 check-data-policy:
 	python3 scripts/check_data_policy.py
+
+validate-runlogs:
+	python3 scripts/validate_run_logs.py
 
 gpt-bundle:
 	@if [ -z "$(TICKET)" ] || [ -z "$(RUN_NAME)" ]; then echo "Set TICKET and RUN_NAME (e.g., make gpt-bundle TICKET=ticket-01 RUN_NAME=20251220_223500_ticket-01_wrds-tighten-caps)"; exit 1; fi
