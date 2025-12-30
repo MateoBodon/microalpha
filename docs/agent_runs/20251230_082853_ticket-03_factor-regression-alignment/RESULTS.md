@@ -20,3 +20,4 @@ Report:
 Bundle:
 - `docs/gpt_bundles/2025-12-30T08-58-30Z_ticket-03_20251230_082853_ticket-03_factor-regression-alignment.zip`
 - Post-merge bundle: `docs/gpt_bundles/2025-12-30T09-07-28Z_ticket-03_20251230_082853_ticket-03_factor-regression-alignment.zip`
+- Final bundle: `docs/gpt_bundles/2025-12-30T09-10-32Z_ticket-03_20251230_082853_ticket-03_factor-regression-alignment.zip`

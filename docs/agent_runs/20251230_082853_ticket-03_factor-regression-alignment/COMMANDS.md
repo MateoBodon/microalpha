@@ -290,3 +290,7 @@ PY
 - git rev-parse HEAD
 - BUNDLE_TIMESTAMP=2025-12-30T09-07-28Z make gpt-bundle TICKET=ticket-03 RUN_NAME=20251230_082853_ticket-03_factor-regression-alignment
 - git push origin main
+- date -u "+%Y-%m-%dT%H-%M-%SZ"
+- date -u "+%Y-%m-%dT%H:%M:%SZ"
+- BUNDLE_TIMESTAMP=2025-12-30T09-10-32Z make gpt-bundle TICKET=ticket-03 RUN_NAME=20251230_082853_ticket-03_factor-regression-alignment
+- git push origin main
