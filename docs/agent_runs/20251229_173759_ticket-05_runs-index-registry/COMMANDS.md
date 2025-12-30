@@ -120,3 +120,13 @@ make validate-runlogs
 git status --porcelain
 git add PROGRESS.md scripts/data_policy_allowlist.txt
 git add -f docs/agent_runs/20251229_173759_ticket-05_runs-index-registry
+git commit -m "ticket-05: update data policy allowlist and run log" -m "Tests: make test-fast (pass); make validate-runlogs; make check-data-policy" -m "Artifacts: docs/agent_runs/20251229_173759_ticket-05_runs-index-registry/" -m "Docs: PROGRESS.md"
+git status --porcelain
+printf '%s\n' "git checkout main" "git merge codex/ticket-05-runs-index-registry" "git push origin main" "BUNDLE_TIMESTAMP=2025-12-30T02-51-20Z make gpt-bundle TICKET=ticket-05 RUN_NAME=20251229_173759_ticket-05_runs-index-registry" >> docs/agent_runs/20251229_173759_ticket-05_runs-index-registry/COMMANDS.md
+git checkout main
+git merge codex/ticket-05-runs-index-registry
+git push origin main
+BUNDLE_TIMESTAMP=2025-12-30T02-51-20Z make gpt-bundle TICKET=ticket-05 RUN_NAME=20251229_173759_ticket-05_runs-index-registry
+git status --porcelain
+git add -f docs/agent_runs/20251229_173759_ticket-05_runs-index-registry/COMMANDS.md
+git commit -m "ticket-05: update run log commands" -m "Tests: make test-fast (pass)" -m "Artifacts: docs/agent_runs/20251229_173759_ticket-05_runs-index-registry/COMMANDS.md" -m "Docs: docs/agent_runs/20251229_173759_ticket-05_runs-index-registry/COMMANDS.md"
