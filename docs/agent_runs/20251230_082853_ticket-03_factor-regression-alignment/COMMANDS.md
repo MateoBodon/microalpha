@@ -278,3 +278,8 @@ PY
 - rg -n "ticket-05" docs/CODEX_SPRINT_TICKETS.md
 - sed -n '245,310p' docs/CODEX_SPRINT_TICKETS.md
 - make test-fast
+- rg -n "Status" docs/CODEX_SPRINT_TICKETS.md | head
+- git status -sb
+- git add docs/CODEX_SPRINT_TICKETS.md (failed: docs ignored)
+- git add -f docs/CODEX_SPRINT_TICKETS.md docs/agent_runs/20251230_082853_ticket-03_factor-regression-alignment/COMMANDS.md docs/agent_runs/20251230_082853_ticket-03_factor-regression-alignment/RESULTS.md docs/agent_runs/20251230_082853_ticket-03_factor-regression-alignment/TESTS.md
+- rg -n "Status" docs/CODEX_SPRINT_TICKETS.md | head
