@@ -58,3 +58,4 @@ Ticket-05: Added deterministic runs index registry script, Make target, tests, a
 ## 2025-12-30
 
 Ticket-03: Factor regression alignment + explicit return resampling, frequency/n_obs reporting, and alignment tests. Run log: `docs/agent_runs/20251230_082853_ticket-03_factor-regression-alignment/`.
+Ticket-17: Baseline suite + comparison reporting (Status: Done). Run log: `docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/`.
