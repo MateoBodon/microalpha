@@ -2,3 +2,4 @@
 # Only allow synthetic/public samples or repo-generated logs with provenance.
 docs/agent_runs/**
 project_state/_generated/**
+reports/summaries/runs_index.csv

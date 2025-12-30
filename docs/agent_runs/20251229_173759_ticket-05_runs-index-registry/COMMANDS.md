@@ -97,3 +97,26 @@ python3 - <<'PY' (remove gpt-bundle log entry)
 git add -f docs/agent_runs/20251229_173759_ticket-05_runs-index-registry docs/prompts/20251229_173759_ticket-05_runs-index-registry_ticket-05_runs-index-registry.md
 git commit -m "ticket-05: add run logs and prompt" -m "Tests: make test-fast (pass)" -m "Artifacts: docs/agent_runs/20251229_173759_ticket-05_runs-index-registry/" -m "Docs: docs/prompts/20251229_173759_ticket-05_runs-index-registry_ticket-05_runs-index-registry.md"
 BUNDLE_TIMESTAMP=2025-12-29T18-01-53Z make gpt-bundle TICKET=ticket-05 RUN_NAME=20251229_173759_ticket-05_runs-index-registry
+make test-fast
+sed -n '1,200p' scripts/data_policy_allowlist.txt
+apply_patch <<'PATCH' (update scripts/data_policy_allowlist.txt)
+make test-fast
+make validate-runlogs
+make check-data-policy
+python3 scripts/build_runs_index.py
+git diff --stat reports/summaries/runs_index.csv
+rg -n "permno|secid|cusip|ticker|gvkey" reports/summaries/runs_index.csv
+apply_patch <<'PATCH' (update PROGRESS.md ticket-05 status)
+git status --porcelain
+cat <<'EOF' > docs/agent_runs/20251229_173759_ticket-05_runs-index-registry/RESULTS.md
+cat <<'EOF' > docs/agent_runs/20251229_173759_ticket-05_runs-index-registry/TESTS.md
+git rev-parse HEAD
+git status --porcelain
+cat docs/agent_runs/20251229_173759_ticket-05_runs-index-registry/META.json
+date -u +%Y-%m-%dT%H:%M:%SZ
+cat <<'EOF' > docs/agent_runs/20251229_173759_ticket-05_runs-index-registry/RESULTS.md
+cat <<'EOF' > docs/agent_runs/20251229_173759_ticket-05_runs-index-registry/META.json
+make validate-runlogs
+git status --porcelain
+git add PROGRESS.md scripts/data_policy_allowlist.txt
+git add -f docs/agent_runs/20251229_173759_ticket-05_runs-index-registry
