@@ -1,3 +1,4 @@
 - `make test-fast` (failed: `tests/test_factor_alignment.py::test_align_factor_panel_requires_explicit_resample` n_obs mismatch)
 - `make test-fast` (pass: 123 passed, 1 skipped)
 - `make test-fast` (pass: 123 passed, 1 skipped)
+- `make test-fast` (pass: 123 passed, 1 skipped)

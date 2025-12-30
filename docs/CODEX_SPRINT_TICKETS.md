@@ -246,6 +246,8 @@
 
 **Goal (1 sentence):** Make it easy to show *all* runs and prevent cherry-picking.
 
+**Status:** DONE. Run log: `docs/agent_runs/20251229_173759_ticket-05_runs-index-registry/`.
+
 **Why (ties to diagnosis):**
 - Without a runs ledger, good-looking artifacts can be accused of being selected after many failures.
 

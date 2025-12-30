@@ -275,3 +275,6 @@ PY
 - git status -sb
 - git commit -m "ticket-03: add run logs" -m "Tests: make test-fast" -m "Artifacts: docs/gpt_bundles/2025-12-30T08-58-30Z_ticket-03_20251230_082853_ticket-03_factor-regression-alignment.zip" -m "Docs: docs/agent_runs/20251230_082853_ticket-03_factor-regression-alignment/; docs/prompts/20251230_082853_ticket-03_factor-regression-alignment_ticket-03_factor-regression-alignment.md"
 - BUNDLE_TIMESTAMP=2025-12-30T08-58-30Z make gpt-bundle TICKET=ticket-03 RUN_NAME=20251230_082853_ticket-03_factor-regression-alignment
+- rg -n "ticket-05" docs/CODEX_SPRINT_TICKETS.md
+- sed -n '245,310p' docs/CODEX_SPRINT_TICKETS.md
+- make test-fast

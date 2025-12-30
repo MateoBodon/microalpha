@@ -3,6 +3,7 @@ Summary:
 - Reports and factors CLI now surface frequency + n_obs; factor summary explicitly resamples returns when using weekly sample factors.
 - Added alignment tests (shifted dates, frequency mismatch with/without resample, forward-fill guard).
 - Updated docs to reflect weekly sample factors and explicit resampling behavior.
+- Updated `docs/CODEX_SPRINT_TICKETS.md` ticket-05 status to DONE with run log link.
 - Generated updated sample WFV summary with frequency metadata in the factor section.
 
 Code/doc changes:
