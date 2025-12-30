@@ -91,6 +91,37 @@
 
 ---
 
+## ticket-17 — Baseline suite + comparison reporting
+
+**Goal (1 sentence):** Add baseline suite computation and baseline comparison reporting for headline runs, using the same calendar + universe rules.
+
+**Why (ties to diagnosis):**
+- Headline results must be contextualized with baseline performance to avoid cherry-picking.
+
+**Acceptance criteria (objective + falsifiable):**
+- Baselines computed on the same calendar and universe rules as the evaluated run.
+- `artifacts/<run_id>/baselines.csv` exists with stable schema:
+  - `date, flagship_net, eqw_universe, market_proxy, mom_12_1, cash_rf`
+- Report includes baseline comparison table (Sharpe_HAC, MaxDD, CAGR, turnover) and overlay plot.
+- Missing baselines are labeled with explicit reason (e.g., “missing market proxy: …”).
+- Tests include:
+  - synthetic lookahead guard for momentum formation window
+  - deterministic baselines.csv schema/order check
+- `make test-fast` is green and a baseline-enabled sample report is produced.
+- If `WRDS_DATA_ROOT` is available, a WRDS baseline smoke report runs without committing raw data.
+
+**Minimal tests/commands to run:**
+- `make test-fast`
+- `pytest -q tests/test_baselines.py`
+- `make report` (or `make report-wfv` if sample report requires WFV artifacts)
+
+**End-of-ticket:**
+- **Tests run:** …
+- **Artifacts/logs:** …
+- **Documentation updates:** …
+
+---
+
 ## ticket-16 — Run-log META.json integrity + validator
 
 **Goal (1 sentence):** Repair corrupted run-log META.json files and enforce validation via a dedicated script + Make target.
