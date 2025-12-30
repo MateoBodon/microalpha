@@ -285,15 +285,25 @@ commands:
 ### Classes
 
 - FactorResult
+- FactorRegressionMeta
+- FactorRegressionOutput
 
 ### Functions
 
+- _validate_datetime_index(index: pd.DatetimeIndex, label: str)
+- _normalize_freq_label(freq: str)
+- _label_from_timedelta(delta: pd.Timedelta)
+- _infer_index_frequency(index: pd.DatetimeIndex)
+- _compound_returns(returns: pd.Series)
+- _resample_returns_to_factor_index(returns: pd.Series, factor_index: pd.DatetimeIndex, rule: str | None)
+- align_factor_panel(returns: pd.Series, factors: pd.DataFrame, *, allow_resample: bool=False, resample_rule: str | None=None)
 - _prepare_returns(equity_csv: Path)
 - _prepare_factors(factor_csv: Path, required: Sequence[str])
 - _design_matrix(factors: pd.DataFrame, factor_names: Sequence[str], excess_returns: pd.Series)
 - _newey_west_se(X: np.ndarray, residuals: np.ndarray, lag: int)
-- compute_factor_regression(equity_csv: Path, factor_csv: Path, model: str='ff3', hac_lags: int=5) — Run Carhart/FF5(+MOM) regressions with Newey-West errors.
+- compute_factor_regression(equity_csv: Path, factor_csv: Path, model: str='ff3', hac_lags: int=5, *, allow_resample: bool=False, resample_rule: str | None=None) — Run Carhart/FF5(+MOM) regressions with Newey-West errors.
 - _format_markdown_table(results: Iterable[FactorResult])
+- _format_meta_line(meta: FactorRegressionMeta)
 - main()
 
 ## `src/microalpha/reporting/robustness.py`

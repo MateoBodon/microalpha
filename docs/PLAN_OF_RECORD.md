@@ -1,195 +1,142 @@
 # PLAN OF RECORD — microalpha
 
-**Date:** 2025-12-20  
-**Purpose:** A hard contract for *resume-credible* evidence. If a result is not produced under this protocol, it does **not** get marketed as “alpha.”
+## What this repo is trying to prove (core claim)
+- microalpha is a **leakage-safe**, **deterministic**, **event-driven** backtesting + **walk-forward** research system that produces **audit-grade artifacts** (manifest, configs, trade logs, reports).
+- Secondary claim (only after validity is locked): the repo can run a **bias-aware** evaluation of a pre-specified equity strategy on **real WRDS/CRSP data**. This is *not* an “alpha discovery” claim by default.
 
----
+## Stop-the-line rules (non-negotiable)
+- No lookahead / leakage: **t+1 execution**, monotonic timestamps, no implicit forward-fill leakage.
+- No survivorship bias: **point-in-time universe** and explicit **delisting handling**.
+- No p-hacking: pre-declared candidate grids; **final holdout** untouched until the end.
+- No fabricated results: every number in docs must link to a run directory produced by a recorded command.
 
-## 0) What this repo is trying to prove (core claim)
+## Estimand (target object)
+Let r_t be the **daily net return series** of a strategy on an investable point-in-time universe after:
+- commissions,
+- slippage/impact,
+- borrow (short rebate/borrow cost).
 
-**Core claim (allowed):**
-- microalpha is a **leakage-safe, deterministic, event-driven research backtester** with **walk-forward validation** and **proper inference outputs** (e.g., HAC Sharpe, bootstrap reality check/SPA where applicable).
-- The repo can produce **reproducible artifacts** (manifested configs + deterministic trade logs) that allow an interviewer to audit *what ran*.
+Primary estimand:
+- **Holdout** annualized Sharpe of r_t, with **HAC** standard errors (headline metric).
 
-**Core claim (not allowed yet):**
-- “I found alpha” on WRDS/CRSP — not until we have **one locked protocol run** with **baselines + costs + risk caps + holdout** and the evidence survives scrutiny.
+Reporting window:
+- A single immutable **holdout period H** (configured once; never used for tuning).
 
----
+## Headline metrics (must report ALL, net-of-costs)
+Holdout:
+- Sharpe_HAC (net)
+- Annualized return, annualized vol
+- Max drawdown
+- Turnover (gross and net)
+- Cost decomposition: commission / slippage+impact / borrow (each in bps and $)
+- Multiple-testing adjusted inference: **Hansen SPA p-value** over the full candidate set evaluated during tuning
+- Reality-check / bootstrap p-value (if SPA is degenerate, report **“degenerate” + reason**, do not crash)
 
-## 1) Estimand + target metrics (what we’re measuring)
+Diagnostics (not headline, but must exist for audit):
+- Net/gross exposure time series + concentration
+- Trade count, average holding period
+- Factor regression on holdout (FF5+Mom): alpha + HAC t-stat, plus key betas
 
-**Estimand (primary):**
-- **Out-of-sample (OOS) net returns** of a pre-registered strategy family under a fixed execution + cost + risk framework, evaluated via walk-forward + a final holdout.
+## Baselines (same calendar, same universe rules)
+Required:
+- Equal-weight universe portfolio (monthly rebalance)
+- Market proxy: CRSP value-weighted index (preferred) or SPY total return (fallback)
+- Naive momentum baseline (simple, not “flagship”): rank by 12-1m return, equal-weight top decile, monthly rebalance
+- Cash / risk-free
 
-**Primary metrics (must be reported on OOS stream only):**
-- **Sharpe (HAC/Newey–West)**, CAGR, annualized vol
-- **Max drawdown**, Calmar/MAR
-- **Turnover** (and turnover cap binding %), gross exposure, net exposure
-- **Cost breakdown** (spread/impact/fees/borrow) and net vs gross performance
+## Evaluation protocol (defensible; no p-hacking)
+### Data (WRDS)
+- Returns/prices: CRSP daily for common stocks (shrcd 10/11; exchcd 1/2/3).
+- Risk-free + factors: Ken French daily via WRDS export (repo sample factors are weekly; reports resample returns explicitly).
+- Delisting: incorporate dlret/terminal returns via ETL or explicit engine rule (documented; tested).
 
-**Inference outputs (must be shown, not hidden):**
-- Strategy-family selection guardrail outputs:
-  - **Bootstrap “reality check” p-value** over the searched family
-  - **SPA** p-value if implemented/available for the same family
-- Factor attribution:
-  - **FF3/FF5 + MOM** regression: alpha, t-stat (HAC), betas (same frequency alignment)
+### Universe (point-in-time)
+Default (recommended because it’s point-in-time by construction):
+- Monthly top N by lagged market cap at month-end, effective next month.
+- Universe snapshots written to disk with `effective_date`.
+- Strategy uses the latest snapshot **<= t** (never future).
 
----
+### Execution & costs (headline runs)
+- Signals computed at close t → executed earliest at **t+1** (no same-tick fills in safe/headline mode).
+- Costs always ON for headline:
+  - commission
+  - slippage/impact
+  - borrow
+- Report must include **cost sensitivity** (0.5× / 1× / 2× costs).
 
-## 2) Baselines (non-negotiable)
+### Splits (nested evaluation)
+- Walk-forward is for parameter selection only:
+  - For fold i: train window → fit/estimate; validation window → select params.
+  - Candidate grid is **declared in config** and stored in artifacts.
+- Final holdout:
+  - A single immutable holdout window H evaluated once per strategy/config.
+  - Holdout metrics stored separately (e.g., `holdout_metrics.json`) and are the only headline numbers.
 
-We will always compare the “flagship” variant against:
+### Inference (selection bias control)
+- SPA / reality-check computed on the **holdout** return series across **ALL candidates considered during tuning**.
+- If inference cannot be computed, the run cannot be labeled “headline”.
 
-1. **Canonical cross-sectional momentum baseline**
-   - Simple 12–1 momentum rank, monthly rebalance, equal-weight long/short (or long-only if shorting constraints)
-2. **No-signal baseline**
-   - Dollar-neutral random ranks (seeded) or “flat” (no trades) to sanity-check cost/turnover plumbing
-3. **Market proxy**
-   - SPY / market return (if available), or CRSP value-weighted market return series if already in data exports
-4. **Factor benchmark**
-   - FF MOM factor exposure / alpha attribution (not “proof”, just honesty)
+### Robustness (pre-registered; NOT tuned on holdout)
+Minimum robustness grid:
+- Universe size: N in {300, 500, 1000} (or documented alternatives)
+- Rebalance: monthly vs weekly
+- Cost multipliers: 0.5× / 1× / 2×
+- Training window sensitivity (within reasonable bounds)
 
----
+## What counts as “resume-credible”
+A run is resume-credible only if ALL are true:
+- Reproducible: exact command + config + dataset_id reproduce artifacts; manifest captures git SHA + config hash.
+- Valid: point-in-time universe, delist handling, t+1 execution; unsafe flags absent (or loudly labeled and excluded from headline).
+- No p-hacking: holdout untouched during tuning; candidate set declared up front.
+- Contextualized: baselines reported; claims match evidence (no “alpha” language unless justified).
+- Inference present: SPA/reality-check output exists and is interpretable (not silently skipped).
 
-## 3) Evaluation protocol (pre-registered; do not deviate without updating this doc)
+Aspirational “strong headline” target (not guaranteed; do not contort protocol to hit it):
+- Holdout Sharpe_HAC (net) >= 0.8
+- MaxDD <= 25%
+- SPA p-value <= 0.10
+- Robustness: Sharpe stays positive at 2× costs and across >=2 universe variants
 
-### 3.1 Data + bias controls (WRDS/CRSP path)
-- **No raw WRDS data committed**. Local-only under `WRDS_DATA_ROOT`.
-- Universe construction must be **date-conditional** (no survivorship via “today’s constituents”).
-- Corporate actions / delistings must be handled consistently (explicit QA checks in exporter).
-
-### 3.2 Time semantics + leakage constraints
-- **t+1 execution** by default for daily strategies.
-- Any “unsafe” mode (same-tick fills, etc.) must:
-  - require explicit opt-in in config
-  - be written into `manifest.json` as `unsafe_execution: true`
-  - be flagged in the report header
-
-### 3.3 Costs + constraints (must be explicit in config + reported)
-- Execution model: **TWAP/VWAP/IS** (whatever repo supports), but must specify:
-  - spread floor
-  - impact model (linear / sqrt) and parameters
-  - borrow rate model (for shorts)
-- Risk controls (hard caps, not vibes):
-  - max gross leverage
-  - max single-name weight
-  - sector exposure caps (if sector neutral)
-  - volatility targeting (optional, but strongly recommended)
-  - ADV-linked turnover clamp (must show when it binds)
-
-### 3.4 Split logic (WFV + holdout)
-We use three tiers:
-
-- **Train**: compute signals/features; fit any needed transforms
-- **WFV selection**: optimize over a *pre-declared small grid* using WFV train windows only
-- **Final holdout**: a fixed OOS date range **never used for selection**  
-  - One-shot evaluation. No reruns after peeking (if rerun needed for bugfix, document “why” and keep the old run).
-
-### 3.5 Robustness checklist (minimum)
-For the final “resume run” we must include:
-- **Cost sensitivity sweep**: multipliers ∈ {0.5, 1, 2, 4} on spread/impact
-- **Universe variants**: at least 2 (e.g., top 500 vs top 1000 by mkt cap/liquidity)
-- **Subperiod stability**: at least 3 regimes (pre-crisis / crisis / post-crisis or similar)
-- **Capacity proxy**: turnover vs ADV; show if strategy collapses at realistic scale
-
----
-
-## 4) What counts as “resume-credible” (gating criteria)
-
-A run is “resume-credible” only if ALL are true:
-
-- ✅ Leakage tests pass (timestamp monotonicity, t+1 execution, no backdated signals)
-- ✅ Baselines included and run under the same costs/constraints
-- ✅ Protocol frozen in-repo (this file + config hashes recorded in manifest)
-- ✅ OOS-only metrics reported (no in-sample cherry-picked plots)
-- ✅ Real-data smoke run executed (WRDS exports), or explicitly documented as blocked
-- ✅ Artifacts reproducible from commands (documented below)
-- ✅ Results are not obviously degenerate (e.g., max DD > ~50% without an explicit leverage rationale)
-
----
-
-## 5) Roadmap with commands + expected artifacts
-
-### 5.1 Next 1–2 weeks (validity + one credible demo run)
-
-**(A) Tighten risk/cost caps + add WRDS smoke config**
+## Roadmap (commands + expected artifacts)
+### Horizon: 1–2 weeks (validity + one locked WRDS headline run)
+1) Make inference/reporting robust (no SPA crashes; degenerate cases handled)
 - Commands:
   - `pytest -q`
-  - `make sample && make report`
-  - `WRDS_DATA_ROOT=/path/to/wrds make wfv-wrds` *(or smoke target if available)*
+  - (if WRDS available) `WRDS_DATA_ROOT=/path/to/wrds make report-wrds`
+- Expected artifacts:
+  - `artifacts/<run_id>/spa.json` + `spa.md` (or equivalent)
+  - `reports/summaries/<run_id>_wrds_flagship.md` references SPA output explicitly
+
+2) Enforce unsafe-mode labeling (no accidental lookahead)
+- Commands: `pytest -q`
+- Expected artifacts:
+  - `manifest.json` contains explicit `unsafe_*` flags when relevant
+  - Reports show a **NOT LEAKAGE-SAFE** banner for unsafe runs
+
+3) Produce ONE locked WRDS run (nested eval + holdout) and publish it
+- Commands:
+  - `WRDS_DATA_ROOT=/path/to/wrds make wfv-wrds`
   - `WRDS_DATA_ROOT=/path/to/wrds make report-wrds`
-- Expected artifacts:
-  - `artifacts/<run_id>/manifest.json` (git SHA, config hash, seeds, unsafe flags)
-  - `artifacts/<run_id>/metrics.json` (gross+net)
-  - `artifacts/<run_id>/equity_curve.csv`, `trades.jsonl`
-  - `artifacts/<run_id>/bootstrap*.json` (reality check / SPA outputs)
-  - `artifacts/<run_id>/report/*` (tearsheet plots + summary markdown)
+- Expected artifacts (must exist for “headline”):
+  - `manifest.json`, `metrics.json`, `holdout_metrics.json`
+  - `equity_curve.csv`, `trades.jsonl`
+  - `folds/` (per-fold metrics + chosen params)
+  - `tearsheet.png` + `drawdown.png`
+  - `baselines.csv` + baseline overlay plot
+  - `spa.md/json` + reality-check outputs (or “degenerate + reason”)
+- Docs updated:
+  - `PROGRESS.md`
+  - `docs/results_wrds.md` (links to run_id + caveats)
+  - `README.md` (one-line link to results page; no hype)
 
-**(B) Add holdout evaluation path**
-- Commands:
-  - `microalpha wfv --config configs/wfv_flagship_*.yaml --out artifacts/...`
-- Expected artifacts:
-  - `artifacts/<run_id>/oos_returns.csv` (explicit OOS stream)
-  - `artifacts/<run_id>/holdout_metrics.json` (locked)
+### Horizon: 4–8 weeks (robustness grid + attribution)
+- Run the pre-registered robustness grid (do not change after holdout review)
+  - Command (to add): `python scripts/run_robustness_grid.py --config configs/robustness_grid_wrds.yaml`
+  - Artifacts: summary table + cost sensitivity + universe sensitivity + fold stability plots
+- Add factor attribution on holdout (FF5+Mom) + rolling betas
+  - Artifacts: `reports/summaries/<run_id>_factors.md` + CSV tables
 
-**(C) Baseline strategy + comparison table**
-- Commands:
-  - `microalpha run --config configs/baseline_mom_*.yaml --out artifacts/...`
-  - `microalpha report --artifact-dir artifacts/...`
-- Expected artifacts:
-  - `reports/tables/baseline_vs_flagship.md`
-  - `reports/figures/equity_overlay.png`
-
-### 5.2 Next 4–8 weeks (full grid + robustness)
-
-- Robustness grid: universe × rebalance freq × neutralization × cost multipliers
-- Capacity analysis: turnover vs ADV, slippage calibration
-- Multiple testing discipline: pre-register the model family; report reality-check/SPA for the family
-- Experiment registry: auto index of manifests to prevent cherry-picking
-
-### 5.3 Longer-term (institution-grade)
-
-- Dataset QA gates + schema checksums
-- Fully reproducible environment (lockfile, container, CI parity)
-- Audit-grade reporting: rolling betas, exposure heatmaps, stress periods
-- Speed/scalability improvements (parquet, caching, vectorized loops)
-
----
-
-## 6) Canonical “main run” commands (copy/paste)
-
-> Use Make targets where available; prefer `microalpha ...` CLI only when Make is missing.
-
-### Minimal: sample pipeline
-- `make test`
-- `make sample`
-- `make report`
-
-### Walk-forward: sample
-- `make wfv`
-- `make report-wfv`
-
-### Real-data: WRDS (local only)
-- `export WRDS_DATA_ROOT=/abs/path/to/wrds_exports`
-- `make wfv-wrds`
-- `make report-wrds`
-
----
-
-## 7) Artifact policy (what can be committed)
-
-✅ Allowed to commit:
-- small synthetic datasets already in repo
-- **derived** summaries: plots/tables/metrics, run manifests, config hashes
-- tiny WRDS-derived **license-safe** samples *only if allowed* (assume “no” by default)
-
-🚫 Never commit:
-- raw WRDS exports
-- anything that reconstructs raw WRDS data
-
----
-
-## 8) Related process docs
-- `docs/DOCS_AND_LOGGING_SYSTEM.md` (run logs + self-audit protocol)
-- `docs/CODEX_SPRINT_TICKETS.md` (next sprint execution)
-- `AGENTS.md` (Codex + contributor rules)
+### Longer-term (institution-grade polish)
+- Data provenance: dataset_id + checksums for exports; schema validation in CI.
+- Performance: caching + profiling; deterministic parallelization for grids.
+- Research hygiene: deflated Sharpe / selection bias adjustments; documented model risk.

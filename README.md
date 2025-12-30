@@ -31,7 +31,7 @@ _Source artefacts: `artifacts/sample_flagship/2025-10-30T18-39-31Z-a4ab8e7` and 
 | SMB | 1.4014 | 0.12 |
 | HML | -13.1416 | -0.77 |
 
-Computed automatically against `data/factors/ff3_sample.csv` using HAC (Newey–West) standard errors. The table is injected into `reports/summaries/flagship_mom_wfv.md` when the factor CSV is present.
+Computed automatically against `data/factors/ff3_sample.csv` using HAC (Newey–West) standard errors. The sample factor bundle is weekly; reports explicitly resample returns to match factor frequency and record the frequency + sample size alongside the table. The table is injected into `reports/summaries/flagship_mom_wfv.md` when the factor CSV is present.
 
 ---
 

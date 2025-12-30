@@ -538,17 +538,35 @@ def _render_factor_section(
     from .factors import compute_factor_regression
 
     try:
-        results = compute_factor_regression(equity_csv, factor_csv, hac_lags=hac_lags)
+        output = compute_factor_regression(
+            equity_csv,
+            factor_csv,
+            hac_lags=hac_lags,
+            allow_resample=True,
+        )
     except Exception:  # pragma: no cover - fallback when regression fails
         return None
-    if not results:
+    if not output.results:
         return None
 
     lines = ["## Factor Regression (FF3 sample)", ""]
     lines.append("| Factor | Beta | t-stat |")
     lines.append("| --- | ---:| ---:|")
-    for row in results:
+    for row in output.results:
         lines.append(f"| {row.name} | {row.beta:.4f} | {row.t_stat:.2f} |")
+    lines.append("")
+    meta = output.meta
+    start = meta.overlap_start.date().isoformat() if meta.overlap_start else "n/a"
+    end = meta.overlap_end.date().isoformat() if meta.overlap_end else "n/a"
+    resample_note = ""
+    if meta.resampled:
+        rule = f", rule={meta.resample_rule}" if meta.resample_rule else ""
+        resample_note = f" (resampled returns{rule})"
+    lines.append(
+        "_Frequency: "
+        f"returns {meta.returns_freq}, factors {meta.factors_freq}; "
+        f"overlap {start} to {end}; n_obs={meta.n_obs}{resample_note}._"
+    )
     lines.append("")
     lines.append(
         "_Computed against `data/factors/ff3_sample.csv` using Newey-West standard errors._"
