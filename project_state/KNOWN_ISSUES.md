@@ -9,6 +9,7 @@ commands:
 
 # Known Issues
 
+- RESOLVED (ticket-03): Factor regression alignment could silently drop/misalign dates when factor/return frequencies differed. Fix: explicit alignment checks, optional compounded resampling, and frequency/n_obs reporting in summaries.
 - RESOLVED (ticket-16): Run-log META.json files drifted from required schema (missing keys / invalid JSON), breaking audit validation. Impact: run-log integrity checks could not be automated. Detected during ticket-16 repo-wide META.json parse/validation scan. Fix: repaired META.json files and added `scripts/validate_run_logs.py` + Make target. Prevention: `make test-fast` now runs run-log validation.
 - WRDS runs require local exports and are blocked without `WRDS_DATA_ROOT` (see `docs/wrds.md`).
 - Large data directories (`data/`, `data_sp500/`, `data_sp500_enriched/`) are present; avoid deep parsing in automation.

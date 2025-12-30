@@ -54,3 +54,7 @@ Ticket-15: Fixed SPA grid_returns indexing (KeyError) and added SPA error status
 
 Ticket-16: Repaired run-log META.json files and added run-log validator + Make target; validation now enforced via `make test-fast`. Run log: `docs/agent_runs/20251229_105919_ticket-16_runlog-json-integrity/`.
 Ticket-05: Added deterministic runs index registry script, Make target, tests, and run registry docs (Status: Done). Run log: `docs/agent_runs/20251229_173759_ticket-05_runs-index-registry/`.
+
+## 2025-12-30
+
+Ticket-03: Factor regression alignment + explicit return resampling, frequency/n_obs reporting, and alignment tests. Run log: `docs/agent_runs/20251230_082853_ticket-03_factor-regression-alignment/`.

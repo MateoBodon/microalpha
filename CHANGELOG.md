@@ -38,6 +38,7 @@ All notable changes to this project will be documented in this file. The format 
 - ticket-02: Walk-forward runs now support explicit holdout ranges with separate holdout artifacts, selection summaries, and OOS returns; WRDS/sample configs updated for holdout evaluation.
 - ticket-07: gpt-bundle now records commit ranges and verifies DIFF.patch against bundled files; holdout test now proves selection excludes holdout data.
 - ticket-09: gpt-bundle now validates META.json ticket ids against sprint tickets before bundling.
+- ticket-03: factor regression now enforces index alignment, requires explicit resampling for frequency mismatches, and reports frequency + sample size metadata (CLI includes resample flags).
 - ticket-04: engine rejects signals with timestamps that do not match the current market event.
 - ticket-14: weight-based sizing no longer falls back to default qty when weight rounds to zero; cap breaches clip weight-based orders instead of dropping, and diagnostics track clip counts.
 - ticket-15: SPA grid-returns loading reindexed to avoid KeyErrors; SPA outputs now include `spa_status`/`spa_error`, and WRDS summaries gate headline language when SPA fails.

@@ -48,13 +48,50 @@ _Exposure time series is recorded in equity_curve.csv._
 
 | Factor | Beta | t-stat |
 | --- | ---:| ---:|
-| Alpha | -0.0051 | -1.27 |
-| Mkt_RF | 11.1851 | 1.85 |
-| SMB | -1.3603 | -0.12 |
-| HML | -13.5354 | -0.82 |
+| Alpha | -0.0058 | -0.39 |
+| Mkt_RF | 17.2808 | 0.81 |
+| SMB | -33.6482 | -0.72 |
+| HML | -21.0700 | -0.49 |
+
+_Frequency: returns daily, factors weekly; overlap 2020-07-10 to 2021-11-24; n_obs=73 (resampled returns)._
 
 _Computed against `data/factors/ff3_sample.csv` using Newey-West standard errors._
 
 ## Cost & Metadata Robustness
 
-_Robustness artifacts unavailable._
+**Cost sensitivity (ex-post scaling of recorded costs)**
+
+| Multiplier | Sharpe | MaxDD | CAGR | MAR | Cost drag (bps/yr) |
+| --- | ---:| ---:| ---:| ---:| ---:|
+| 0.50 | 0.23 | 34.79% | 1.08% | 0.03 | -1.2 |
+| 1.00 | 0.23 | 34.79% | 1.07% | 0.03 | 0.0 |
+| 2.00 | 0.23 | 34.79% | 1.04% | 0.03 | 2.5 |
+
+_Scales recorded commissions and slippage; borrow costs are not logged and are excluded. No re-simulation performed._
+
+**Cost breakdown (totals)**
+
+| Category | Total |
+| --- | ---:|
+| Commission | $345 |
+| Slippage | $0 |
+| Borrow | $28,539 |
+| Total | $28,884 |
+
+**Metadata coverage (liquidity/borrow inputs)**
+
+| Metric | Value |
+| --- | ---:|
+| Notional with ADV | 100.00% |
+| Notional with spread_bps | 100.00% |
+| Short notional with borrow fee | 100.00% |
+
+Top fallback symbols (trade counts):
+- BETA: adv_missing=0, spread_missing=0, borrow_missing=0
+- ALFA: adv_missing=0, spread_missing=0, borrow_missing=0
+- EPSI: adv_missing=0, spread_missing=0, borrow_missing=0
+- ZETA: adv_missing=0, spread_missing=0, borrow_missing=0
+- GAMM: adv_missing=0, spread_missing=0, borrow_missing=0
+- DELT: adv_missing=0, spread_missing=0, borrow_missing=0
+
+_Coverage based on metadata CSV (if provided). Missing values imply default ADV/spread/borrow costs were used by the simulator._
