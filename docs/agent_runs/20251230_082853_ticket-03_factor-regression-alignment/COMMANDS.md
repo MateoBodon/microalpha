@@ -283,3 +283,9 @@ PY
 - git add docs/CODEX_SPRINT_TICKETS.md (failed: docs ignored)
 - git add -f docs/CODEX_SPRINT_TICKETS.md docs/agent_runs/20251230_082853_ticket-03_factor-regression-alignment/COMMANDS.md docs/agent_runs/20251230_082853_ticket-03_factor-regression-alignment/RESULTS.md docs/agent_runs/20251230_082853_ticket-03_factor-regression-alignment/TESTS.md
 - rg -n "Status" docs/CODEX_SPRINT_TICKETS.md | head
+- git checkout main
+- git merge codex/ticket-03-factor-regression-alignment
+- date -u "+%Y-%m-%dT%H-%M-%SZ"
+- date -u "+%Y-%m-%dT%H:%M:%SZ"
+- git rev-parse HEAD
+- BUNDLE_TIMESTAMP=2025-12-30T09-07-28Z make gpt-bundle TICKET=ticket-03 RUN_NAME=20251230_082853_ticket-03_factor-regression-alignment
