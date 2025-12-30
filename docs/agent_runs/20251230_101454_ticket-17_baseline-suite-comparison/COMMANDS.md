@@ -171,3 +171,10 @@ cat <<'EOF' > docs/agent_runs/20251230_101454_ticket-17_baseline-suite-compariso
 date -u +%Y-%m-%dT%H-%M-%SZ
 git rev-parse HEAD
 date -u +%Y-%m-%dT%H:%M:%SZ
+git add CHANGELOG.md PROGRESS.md reports/summaries/flagship_mom.md reports/summaries/flagship_mom_baselines.png
+git add -f docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/*
+git commit -m "ticket-17: update reports and run logs" -m "Tests: make test-fast\nArtifacts: reports/summaries/flagship_mom.md, reports/summaries/flagship_mom_baselines.png\nDocs: CHANGELOG.md, PROGRESS.md, docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison"
+git status -sb
+make gpt-bundle TICKET=ticket-17 RUN_NAME=20251230_101454_ticket-17_baseline-suite-comparison (BUNDLE_TIMESTAMP=2025-12-30T10-58-58Z)
+git add -f docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md
+git commit -m "ticket-17: finalize run log commands" -m "Tests: not run (log update only)\nArtifacts: none\nDocs: docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md"
