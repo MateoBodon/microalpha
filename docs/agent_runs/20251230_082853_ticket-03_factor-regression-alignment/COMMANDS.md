@@ -271,3 +271,6 @@ PY
 - git commit -m "ticket-03: update report + living docs" -m "Tests: make test-fast" -m "Artifacts: reports/summaries/flagship_mom_wfv.md" -m "Docs: CHANGELOG.md; PROGRESS.md; project_state/KNOWN_ISSUES.md"
 - date -u "+%Y-%m-%dT%H-%M-%SZ"
 - git rev-parse HEAD
+- git add -f docs/agent_runs/20251230_082853_ticket-03_factor-regression-alignment docs/prompts/20251230_082853_ticket-03_factor-regression-alignment_ticket-03_factor-regression-alignment.md
+- git status -sb
+- git commit -m "ticket-03: add run logs" -m "Tests: make test-fast" -m "Artifacts: docs/gpt_bundles/2025-12-30T08-58-30Z_ticket-03_20251230_082853_ticket-03_factor-regression-alignment.zip" -m "Docs: docs/agent_runs/20251230_082853_ticket-03_factor-regression-alignment/; docs/prompts/20251230_082853_ticket-03_factor-regression-alignment_ticket-03_factor-regression-alignment.md"
