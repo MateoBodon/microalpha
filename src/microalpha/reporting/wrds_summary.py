@@ -9,12 +9,20 @@ import os
 import shutil
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Sequence
+from typing import Any, Mapping, Sequence
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import yaml
 
+from microalpha.reporting.baselines import (
+    BASELINE_LABELS,
+    compute_baseline_metrics,
+    compute_baselines,
+    load_baseline_status,
+    plot_baseline_overlay,
+    render_baseline_table,
+)
 from microalpha.reporting.robustness import write_robustness_artifacts
 from microalpha.reporting.spa import SpaSummary, load_grid_returns, write_outputs
 from microalpha.wrds import guard_no_wrds_copy
@@ -209,6 +217,15 @@ def _to_float(value: object) -> float | None:
         return None
 
 
+def _to_int(value: object) -> int | None:
+    if value is None:
+        return None
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
 def _render_exposure_table(metrics_payload: dict) -> list[str] | None:
     avg_net = _to_float(metrics_payload.get("avg_exposure"))
     avg_gross = _to_float(metrics_payload.get("avg_gross_exposure"))
@@ -224,6 +241,65 @@ def _render_exposure_table(metrics_payload: dict) -> list[str] | None:
         f"| Max net exposure | {_format_pct(max_net or 0.0) if max_net is not None else 'n/a'} |",
         f"| Max gross exposure | {_format_pct(max_gross or 0.0) if max_gross is not None else 'n/a'} |",
     ]
+
+
+def _render_baseline_missing(status: Mapping[str, object]) -> list[str]:
+    lines: list[str] = []
+    for key in ("eqw_universe", "market_proxy", "mom_12_1", "cash_rf"):
+        entry = status.get(key) if isinstance(status, Mapping) else None
+        if not isinstance(entry, Mapping):
+            continue
+        if entry.get("status") == "ok":
+            continue
+        reason = entry.get("reason") or "unavailable"
+        label = BASELINE_LABELS.get(key, key)
+        lines.append(f"- missing {label.lower()}: {reason}")
+    return lines
+
+
+def _build_baseline_section(
+    baselines: pd.DataFrame,
+    status: Mapping[str, object],
+    metrics_payload: Mapping[str, object],
+    output_path: Path,
+    overlay_path: Path | None,
+    baselines_csv: Path,
+) -> list[str]:
+    lines: list[str] = ["## Baselines", ""]
+    if baselines.empty:
+        lines.append("_Baselines unavailable._")
+        lines.append("")
+        return lines
+
+    hac_lags = _to_int(metrics_payload.get("sharpe_hac_lags"))
+    metrics_table = compute_baseline_metrics(
+        baselines,
+        flagship_metrics=metrics_payload,
+        hac_lags=hac_lags,
+        status=status,
+    )
+    if not metrics_table.empty:
+        lines.append(render_baseline_table(metrics_table))
+        lines.append("")
+
+    if overlay_path:
+        lines.append(f"![Baseline Overlay]({_relpath(overlay_path, output_path)})")
+        lines.append("")
+
+    if baselines_csv.exists():
+        lines.append(f"- Baselines CSV: `{_relpath(baselines_csv, output_path)}`")
+
+    missing_lines = _render_baseline_missing(status)
+    if missing_lines:
+        lines.extend(missing_lines)
+    mom_entry = status.get("mom_12_1") if isinstance(status, Mapping) else None
+    if isinstance(mom_entry, Mapping) and mom_entry.get("reason"):
+        lines.append(f"- Momentum baseline: {mom_entry['reason']}")
+    lines.append(
+        "- Turnover for baselines is unit-notional weight turnover; flagship uses reported total_turnover."
+    )
+    lines.append("")
+    return lines
 
 
 def _render_cost_breakdown(cost_payload: dict | None) -> list[str] | None:
@@ -688,6 +764,9 @@ def _write_docs_results(
     config_meta: dict[str, Any] | None,
     headline: HeadlineMetrics,
     metrics_payload: dict,
+    baselines: pd.DataFrame,
+    baselines_status: dict[str, object],
+    baselines_csv: Path,
     cost_payload: dict | None,
     spa_payload: dict,
     spa_status: str,
@@ -740,6 +819,17 @@ def _write_docs_results(
     lines.append("")
     lines.extend(perf_lines)
     lines.append("")
+    baseline_overlay = image_map.get("baselines") if image_map else None
+    lines.extend(
+        _build_baseline_section(
+            baselines,
+            baselines_status,
+            metrics_payload,
+            docs_path,
+            baseline_overlay,
+            baselines_csv,
+        )
+    )
     if invalid_reasons:
         lines.append("## Run marked invalid")
         lines.append("")
@@ -906,6 +996,13 @@ def render_wrds_summary(
     folds_path = _require_file(artifact_dir / "folds.json", "folds.json")
 
     metrics_payload = _load_json(metrics_path)
+    baselines = compute_baselines(artifact_dir)
+    baselines_status = load_baseline_status(artifact_dir) or {}
+    baselines_csv = artifact_dir / "baselines.csv"
+    baseline_overlay: Path | None = None
+    if not baselines.empty:
+        overlay_path = output_path.parent / f"{output_path.stem}_baselines.png"
+        baseline_overlay = plot_baseline_overlay(baselines, overlay_path)
     spa_result = _render_spa_plot(
         spa_payload, artifact_dir / "spa_tstats.png", allow_zero=allow_zero_spa
     )
@@ -967,6 +1064,10 @@ def render_wrds_summary(
             "deciles": _copy_asset(decile_plot, run_img_dir / decile_plot.name),
             "rolling_betas": _copy_asset(beta_plot, run_img_dir / beta_plot.name),
         }
+        if baseline_overlay:
+            doc_image_map["baselines"] = _copy_asset(
+                baseline_overlay, run_img_dir / baseline_overlay.name
+            )
 
     image_for_summary = {
         "equity": doc_image_map["equity"] if doc_image_map else equity_png,
@@ -984,6 +1085,16 @@ def render_wrds_summary(
     lines.extend([headline_title, ""])
     lines.extend(_render_table(headline))
     lines.append("")
+    lines.extend(
+        _build_baseline_section(
+            baselines,
+            baselines_status,
+            metrics_payload,
+            output_path,
+            baseline_overlay,
+            baselines_csv,
+        )
+    )
     if integrity_payload and not bool(integrity_payload.get("ok", True)):
         lines.append("## Run marked invalid")
         lines.append("")
@@ -1053,6 +1164,9 @@ def render_wrds_summary(
             config_meta=config_meta,
             headline=headline,
             metrics_payload=metrics_payload,
+            baselines=baselines,
+            baselines_status=baselines_status,
+            baselines_csv=baselines_csv,
             cost_payload=cost_payload,
             spa_payload=spa_payload,
             spa_status=spa_status,

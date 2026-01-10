@@ -22,6 +22,7 @@ All notable changes to this project will be documented in this file. The format 
 - ticket-14: order-flow diagnostics capturing post-signal sizing/orders/broker/fills with per-rebalance payloads and WFV fold attachments.
 - ticket-16: run-log validator script + `make validate-runlogs` target to enforce META.json integrity.
 - ticket-05: deterministic runs index registry builder, Make target, and run registry documentation.
+- ticket-17: baseline suite computation with `baselines.csv`/status plus baseline comparison table + overlay plot in summary reports.
 
 ### Changed
 - Walk-forward WRDS config aligned to universe coverage (2012–2024) and report pipeline now emits WRDS signals before analytics.
@@ -44,3 +45,4 @@ All notable changes to this project will be documented in this file. The format 
 - ticket-15: SPA grid-returns loading reindexed to avoid KeyErrors; SPA outputs now include `spa_status`/`spa_error`, and WRDS summaries gate headline language when SPA fails.
 - gpt-bundle: allow optional `git_sha_after_ref` in META.json to derive diff ranges while keeping concrete git SHA metadata.
 - test-fast now includes run-log validation before pytest.
+- Cost sensitivity note now clarifies borrow costs are logged separately and not scaled.

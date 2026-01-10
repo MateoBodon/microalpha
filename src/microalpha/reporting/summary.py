@@ -10,6 +10,15 @@ from typing import Mapping, Sequence
 
 import pandas as pd
 
+from microalpha.reporting.baselines import (
+    BASELINE_LABELS,
+    compute_baseline_metrics,
+    compute_baselines,
+    load_baseline_status,
+    plot_baseline_overlay,
+    render_baseline_table,
+)
+
 DEFAULT_OUTPUT = Path("reports/summaries/flagship_mom.md")
 DEFAULT_TITLE = "Flagship Momentum Case Study"
 
@@ -236,6 +245,8 @@ def generate_summary(
     lines.append("")
     lines.extend(_render_metric_table(metrics))
     lines.append("")
+    lines.extend(_render_baselines_section(artifact_dir, output_path, metrics))
+
     if degenerate_reasons:
         lines.append("## Run is degenerate")
         lines.append("")
@@ -410,6 +421,65 @@ def _render_exposure_summary(metrics: Mapping[str, object]) -> str | None:
     return "\n".join(lines)
 
 
+def _render_baselines_section(
+    artifact_dir: Path, output_path: Path, metrics: Mapping[str, object]
+) -> list[str]:
+    lines: list[str] = ["## Baselines", ""]
+    baselines = compute_baselines(artifact_dir)
+    if baselines.empty:
+        lines.append("_Baselines unavailable._")
+        lines.append("")
+        return lines
+
+    status = load_baseline_status(artifact_dir) or {}
+    hac_lags = _to_int(metrics.get("sharpe_hac_lags"))
+    metrics_table = compute_baseline_metrics(
+        baselines,
+        flagship_metrics=metrics,
+        hac_lags=hac_lags,
+        status=status,
+    )
+    if not metrics_table.empty:
+        lines.append(render_baseline_table(metrics_table))
+        lines.append("")
+
+    overlay_path = output_path.parent / f"{output_path.stem}_baselines.png"
+    overlay = plot_baseline_overlay(baselines, overlay_path)
+    if overlay:
+        lines.append(f"![Baseline Overlay]({_relpath(overlay, output_path)})")
+        lines.append("")
+
+    baselines_csv = artifact_dir / "baselines.csv"
+    if baselines_csv.exists():
+        lines.append(f"- Baselines CSV: `{_relpath(baselines_csv, output_path)}`")
+
+    missing_lines = _render_baseline_missing(status)
+    if missing_lines:
+        lines.extend(missing_lines)
+    mom_entry = status.get("mom_12_1") if isinstance(status, Mapping) else None
+    if isinstance(mom_entry, Mapping) and mom_entry.get("reason"):
+        lines.append(f"- Momentum baseline: {mom_entry['reason']}")
+    lines.append(
+        "- Turnover for baselines is unit-notional weight turnover; flagship uses reported total_turnover."
+    )
+    lines.append("")
+    return lines
+
+
+def _render_baseline_missing(status: Mapping[str, object]) -> list[str]:
+    lines: list[str] = []
+    for key in ("eqw_universe", "market_proxy", "mom_12_1", "cash_rf"):
+        entry = status.get(key) if isinstance(status, Mapping) else None
+        if not isinstance(entry, Mapping):
+            continue
+        if entry.get("status") == "ok":
+            continue
+        reason = entry.get("reason") or "unavailable"
+        label = BASELINE_LABELS.get(key, key)
+        lines.append(f"- missing {label.lower()}: {reason}")
+    return lines
+
+
 def _render_cost_breakdown(cost_path: Path) -> str | None:
     if not cost_path.exists():
         return None
@@ -436,6 +506,15 @@ def _to_float(value: object) -> float | None:
         return None
     try:
         return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _to_int(value: object) -> int | None:
+    if value is None:
+        return None
+    try:
+        return int(value)
     except (TypeError, ValueError):
         return None
 

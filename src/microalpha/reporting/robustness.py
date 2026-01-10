@@ -124,8 +124,8 @@ def compute_cost_sensitivity(
     return {
         "method": "ex_post_cost_scaling",
         "description": (
-            "Scales recorded commissions and slippage; borrow costs are not logged "
-            "and are excluded. No re-simulation performed."
+            "Scales recorded commissions and slippage; borrow costs (if present) "
+            "are logged separately and not scaled. No re-simulation performed."
         ),
         "multipliers": [float(m) for m in multipliers],
         "baseline": base_metrics,

@@ -10,6 +10,22 @@
 | Turnover | $28,525,695 |
 | RealityCheck_p_value | 1.000 |
 
+## Baselines
+
+| Series | Sharpe_HAC | MaxDD | CAGR | Turnover |
+| --- | ---:| ---:| ---:| ---:|
+| Flagship (net) | 0.23 | 34.79% | 1.07% | 28525695.1044 |
+| Equal-weight universe | -0.93 | 20.49% | -10.07% | 0.0000 |
+| Market proxy | 0.00 | 0.00% | 0.00% | 0.0000 |
+| Momentum 12-1 | -1.35 | 10.30% | -25.62% | 0.0000 |
+| Cash / RF | 0.00 | 0.00% | 0.00% | 0.0000 |
+
+![Baseline Overlay](flagship_mom_wfv_baselines.png)
+
+- Baselines CSV: `../../artifacts/sample_wfv/2025-12-23T18-39-59Z-82c14dc/baselines.csv`
+- Momentum baseline: lookback=12M skip=1M long_short=False
+- Turnover for baselines is unit-notional weight turnover; flagship uses reported total_turnover.
+
 ## Exposure Summary
 
 | Metric | Value |
@@ -67,7 +83,7 @@ _Computed against `data/factors/ff3_sample.csv` using Newey-West standard errors
 | 1.00 | 0.23 | 34.79% | 1.07% | 0.03 | 0.0 |
 | 2.00 | 0.23 | 34.79% | 1.04% | 0.03 | 2.5 |
 
-_Scales recorded commissions and slippage; borrow costs are not logged and are excluded. No re-simulation performed._
+_Scales recorded commissions and slippage; borrow costs (if present) are logged separately and not scaled. No re-simulation performed._
 
 **Cost breakdown (totals)**
 
