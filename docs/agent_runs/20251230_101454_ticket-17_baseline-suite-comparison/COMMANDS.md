@@ -178,3 +178,28 @@ git status -sb
 make gpt-bundle TICKET=ticket-17 RUN_NAME=20251230_101454_ticket-17_baseline-suite-comparison (BUNDLE_TIMESTAMP=2025-12-30T10-58-58Z)
 git add -f docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md
 git commit -m "ticket-17: finalize run log commands" -m "Tests: not run (log update only)\nArtifacts: none\nDocs: docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md"
+rg -n "borrow" reports/summaries/flagship_mom_wfv.md
+sed -n '1,200p' reports/summaries/flagship_mom_wfv.md
+apply_patch <<'PATCH' (update robustness.py cost_sensitivity description)
+PATCH
+rg -n "ticket-03" -n docs/CODEX_SPRINT_TICKETS.md
+sed -n '180,240p' docs/CODEX_SPRINT_TICKETS.md
+apply_patch <<'PATCH' (add ticket-03 Status DONE)
+PATCH
+make report-wfv
+make report-wfv
+rg -n "borrow costs" reports/summaries/flagship_mom_wfv.md
+rg -n "ticket-17" docs/CODEX_SPRINT_TICKETS.md
+git ls-files | rg "baselines\\.csv|baselines_status"
+apply_patch <<'PATCH' (update CHANGELOG.md borrow note)
+PATCH
+make validate-runlogs
+make test-fast
+cat <<'EOF' > docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/TESTS.md
+git add CHANGELOG.md docs/CODEX_SPRINT_TICKETS.md src/microalpha/reporting/robustness.py reports/summaries/flagship_mom_wfv.md reports/summaries/flagship_mom_wfv_baselines.png
+git add CHANGELOG.md src/microalpha/reporting/robustness.py reports/summaries/flagship_mom_wfv.md reports/summaries/flagship_mom_wfv_baselines.png
+git add -f docs/CODEX_SPRINT_TICKETS.md
+git commit -m "ticket-17: fix borrow note + update wfv report" -m "Tests: make validate-runlogs, make test-fast\nArtifacts: reports/summaries/flagship_mom_wfv.md, reports/summaries/flagship_mom_wfv_baselines.png\nDocs: CHANGELOG.md, docs/CODEX_SPRINT_TICKETS.md"
+git show --stat -1
+shasum -a 256 configs/wfv_flagship_sample.yaml
+git status -sb
