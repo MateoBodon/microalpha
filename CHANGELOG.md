@@ -45,3 +45,4 @@ All notable changes to this project will be documented in this file. The format 
 - ticket-15: SPA grid-returns loading reindexed to avoid KeyErrors; SPA outputs now include `spa_status`/`spa_error`, and WRDS summaries gate headline language when SPA fails.
 - gpt-bundle: allow optional `git_sha_after_ref` in META.json to derive diff ranges while keeping concrete git SHA metadata.
 - test-fast now includes run-log validation before pytest.
+- Cost sensitivity note now clarifies borrow costs are logged separately and not scaled.

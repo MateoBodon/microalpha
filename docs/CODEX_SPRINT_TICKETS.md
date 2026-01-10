@@ -205,6 +205,8 @@
 
 **Goal (1 sentence):** Make factor regression frequency-safe (no silent misalignment) and ensure docs match reality.
 
+**Status:** DONE. Run log: `docs/agent_runs/20251230_082853_ticket-03_factor-regression-alignment/`.
+
 **Why (ties to diagnosis):**
 - A daily vs weekly mismatch (or any alignment bug) is an interview trust-killer.
 
