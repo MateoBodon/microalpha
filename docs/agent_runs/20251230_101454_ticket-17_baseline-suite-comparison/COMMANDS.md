@@ -203,3 +203,6 @@ git commit -m "ticket-17: fix borrow note + update wfv report" -m "Tests: make v
 git show --stat -1
 shasum -a 256 configs/wfv_flagship_sample.yaml
 git status -sb
+git add -f docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/TESTS.md
+git commit -m "ticket-17: update run log tests" -m "Tests: make validate-runlogs, make test-fast\nArtifacts: none\nDocs: docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison"
+git add -f docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md
