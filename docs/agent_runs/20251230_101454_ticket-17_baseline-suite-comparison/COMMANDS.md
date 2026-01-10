@@ -207,4 +207,8 @@ git add -f docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/C
 git commit -m "ticket-17: update run log tests" -m "Tests: make validate-runlogs, make test-fast\nArtifacts: none\nDocs: docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison"
 git add -f docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md
 git commit -m "ticket-17: update run log commands" -m "Tests: not run (log update only)\nArtifacts: none\nDocs: docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md"
+git add -f docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md
 git commit -m "ticket-17: sync run log commands" -m "Tests: not run (log update only)\nArtifacts: none\nDocs: docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md"
+apply_patch <<'PATCH' (insert missing git add before sync commit)
+PATCH
+git commit -m "ticket-17: update run log command history" -m "Tests: not run (log update only)\nArtifacts: none\nDocs: docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md"
