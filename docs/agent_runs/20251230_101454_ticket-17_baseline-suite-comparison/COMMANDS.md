@@ -323,7 +323,27 @@ EOF_TESTS
 git status -sb
 git add -f docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/RESULTS.md docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/TESTS.md docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/META.json
 git commit -m "ticket-17: update run log post-merge" -m "Tests: make validate-runlogs\nArtifacts: none\nDocs: docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison"
-BUNDLE_TIMESTAMP=2026-01-10T10-46-59Z make gpt-bundle TICKET=ticket-17 RUN_NAME=20251230_101454_ticket-17_baseline-suite-comparison
-git push origin main
 git add -f docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md
 git commit -m "ticket-17: sync run log commands post-merge" -m "Tests: not run (log update only)\nArtifacts: none\nDocs: docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md"
+BUNDLE_TIMESTAMP=2026-01-10T10-46-59Z make gpt-bundle TICKET=ticket-17 RUN_NAME=20251230_101454_ticket-17_baseline-suite-comparison
+git push origin main
+tail -n 40 docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md
+apply_patch <<'PATCH'
+*** Begin Patch
+*** Update File: docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md
+@@
+ git status -sb
+ git add -f docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/RESULTS.md docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/TESTS.md docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/META.json
+ git commit -m "ticket-17: update run log post-merge" -m "Tests: make validate-runlogs\nArtifacts: none\nDocs: docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison"
+-BUNDLE_TIMESTAMP=2026-01-10T10-46-59Z make gpt-bundle TICKET=ticket-17 RUN_NAME=20251230_101454_ticket-17_baseline-suite-comparison
+-git push origin main
+ git add -f docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md
+ git commit -m "ticket-17: sync run log commands post-merge" -m "Tests: not run (log update only)\nArtifacts: none\nDocs: docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md"
++BUNDLE_TIMESTAMP=2026-01-10T10-46-59Z make gpt-bundle TICKET=ticket-17 RUN_NAME=20251230_101454_ticket-17_baseline-suite-comparison
++git push origin main
+*** End Patch
+PATCH
+echo "tail -n 40 docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md" >> docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md
+git add -f docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md
+git commit -m "ticket-17: fix run log command order" -m "Tests: not run (log update only)\nArtifacts: none\nDocs: docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md"
+git push origin main
