@@ -320,3 +320,10 @@ cat <<'EOF_TESTS' > docs/agent_runs/20251230_101454_ticket-17_baseline-suite-com
 - `make test-fast` — passed (126 tests). Warnings: pandas FutureWarnings (date_range freq='M'), ExecModelCfg.aln deprecation, analytics fillna deprecation.
 - `make validate-runlogs` — passed (post-merge run log update).
 EOF_TESTS
+git status -sb
+git add -f docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/RESULTS.md docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/TESTS.md docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/META.json
+git commit -m "ticket-17: update run log post-merge" -m "Tests: make validate-runlogs\nArtifacts: none\nDocs: docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison"
+BUNDLE_TIMESTAMP=2026-01-10T10-46-59Z make gpt-bundle TICKET=ticket-17 RUN_NAME=20251230_101454_ticket-17_baseline-suite-comparison
+git push origin main
+git add -f docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md
+git commit -m "ticket-17: sync run log commands post-merge" -m "Tests: not run (log update only)\nArtifacts: none\nDocs: docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md"
