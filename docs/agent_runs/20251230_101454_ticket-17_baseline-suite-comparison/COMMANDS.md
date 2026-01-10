@@ -206,3 +206,5 @@ git status -sb
 git add -f docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/TESTS.md
 git commit -m "ticket-17: update run log tests" -m "Tests: make validate-runlogs, make test-fast\nArtifacts: none\nDocs: docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison"
 git add -f docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md
+git commit -m "ticket-17: update run log commands" -m "Tests: not run (log update only)\nArtifacts: none\nDocs: docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md"
+git commit -m "ticket-17: sync run log commands" -m "Tests: not run (log update only)\nArtifacts: none\nDocs: docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md"
