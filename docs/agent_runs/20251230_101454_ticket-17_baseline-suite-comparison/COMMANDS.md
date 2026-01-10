@@ -212,3 +212,111 @@ git commit -m "ticket-17: sync run log commands" -m "Tests: not run (log update 
 apply_patch <<'PATCH' (insert missing git add before sync commit)
 PATCH
 git commit -m "ticket-17: update run log command history" -m "Tests: not run (log update only)\nArtifacts: none\nDocs: docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md"
+git checkout main
+git pull --ff-only origin main
+git merge --no-ff codex/ticket-17-baseline-suite-comparison
+# NOTE: merge editor aborted; completed with explicit commit.
+git status -sb
+git commit -m "Merge branch 'codex/ticket-17-baseline-suite-comparison'"
+date -u +%Y-%m-%dT%H-%M-%SZ
+cat <<'EOF' > docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/RESULTS.md
+pwd
+git status -sb
+rg -n "" docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/COMMANDS.md
+cat docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/RESULTS.md
+ls -la docs/gpt_bundles | tail -n 20
+cat docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/TESTS.md
+cat docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/META.json
+sed -n '1,200p' docs/DOCS_AND_LOGGING_SYSTEM.md
+rg -n "ticket-03|Status" docs/CODEX_SPRINT_TICKETS.md | head -n 20
+rg -n "borrow costs" -n reports/summaries/flagship_mom_wfv.md
+ls -la reports/summaries | rg -n "wfv_baselines"
+git rev-parse HEAD
+git branch --show-current
+ls -la artifacts/sample_flagship/2025-12-23T21-59-20Z-ba5b480 | rg -n "baselines"
+ls -la artifacts/sample_wfv/2025-12-23T18-39-59Z-82c14dc | rg -n "baselines"
+head -n 2 artifacts/sample_flagship/2025-12-23T21-59-20Z-ba5b480/baselines.csv
+head -n 2 artifacts/sample_wfv/2025-12-23T18-39-59Z-82c14dc/baselines.csv
+rg -n "permno|permco|cusip" artifacts/sample_flagship/2025-12-23T21-59-20Z-ba5b480/baselines.csv || true
+rg -n "permno|permco|cusip" artifacts/sample_wfv/2025-12-23T18-39-59Z-82c14dc/baselines.csv || true
+shasum -a 256 configs/flagship_sample.yaml
+shasum -a 256 configs/wfv_flagship_sample.yaml
+rg -n "baselines\.csv" reports/summaries/flagship_mom.md
+rg -n "baselines\.csv" reports/summaries/flagship_mom_wfv.md
+rg -n "gpt_bundles" .gitignore .git/info/exclude
+date -u +%Y-%m-%dT%H-%M-%SZ
+BUNDLE_TIMESTAMP=2026-01-10T10-46-59Z make gpt-bundle TICKET=ticket-17 RUN_NAME=20251230_101454_ticket-17_baseline-suite-comparison
+cat <<'EOF' > docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/RESULTS.md
+# Results
+
+- Added baseline suite computation with `baselines.csv` + `baselines_status.json` (equal-weight universe, market proxy w/ SPY fallback, 12-1 momentum long-only, cash/RF).
+- Summary and WRDS reports include a Baselines section (Sharpe_HAC/MaxDD/CAGR/turnover table, overlay plot, missing-baseline labels, baselines CSV link).
+- Fixed cost-sensitivity text to clarify borrow costs are logged separately (not scaled) and regenerated `reports/summaries/flagship_mom_wfv.md` + `reports/summaries/flagship_mom_wfv_baselines.png`.
+- Updated `docs/CODEX_SPRINT_TICKETS.md` ticket-03 status to DONE with run log link.
+- Added synthetic tests for lookahead safety and baselines schema stability.
+- Generated baseline-enabled sample reports: `reports/summaries/flagship_mom.md`, `reports/summaries/flagship_mom_baselines.png`, `reports/summaries/flagship_mom_wfv.md`, `reports/summaries/flagship_mom_wfv_baselines.png`.
+- Sample artifacts updated locally with baselines outputs under `artifacts/sample_flagship/2025-12-23T21-59-20Z-ba5b480/` and `artifacts/sample_wfv/2025-12-23T18-39-59Z-82c14dc/` (git-ignored).
+- Data policy check: no `baselines.csv` or `baselines_status.json` tracked in git.
+- Identifier scan: no `permno`/`permco`/`cusip` found in sample baselines CSVs.
+- WRDS smoke report not run (WRDS_DATA_ROOT not set).
+- Bundle (post-merge): `docs/gpt_bundles/2026-01-10T10-46-59Z_ticket-17_20251230_101454_ticket-17_baseline-suite-comparison.zip`.
+# NOTE: attempted to append full RESULTS.md logging block with nested EOF; zsh reported `command not found: EOF`.
+cat <<'EOF_RESULTS' > docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/RESULTS.md
+# Results
+
+- Added baseline suite computation with `baselines.csv` + `baselines_status.json` (equal-weight universe, market proxy w/ SPY fallback, 12-1 momentum long-only, cash/RF).
+- Summary and WRDS reports include a Baselines section (Sharpe_HAC/MaxDD/CAGR/turnover table, overlay plot, missing-baseline labels, baselines CSV link).
+- Fixed cost-sensitivity text to clarify borrow costs are logged separately (not scaled) and regenerated `reports/summaries/flagship_mom_wfv.md` + `reports/summaries/flagship_mom_wfv_baselines.png`.
+- Updated `docs/CODEX_SPRINT_TICKETS.md` ticket-03 status to DONE with run log link.
+- Added synthetic tests for lookahead safety and baselines schema stability.
+- Generated baseline-enabled sample reports: `reports/summaries/flagship_mom.md`, `reports/summaries/flagship_mom_baselines.png`, `reports/summaries/flagship_mom_wfv.md`, `reports/summaries/flagship_mom_wfv_baselines.png`.
+- Sample artifacts updated locally with baselines outputs under `artifacts/sample_flagship/2025-12-23T21-59-20Z-ba5b480/` and `artifacts/sample_wfv/2025-12-23T18-39-59Z-82c14dc/` (git-ignored).
+- Data policy check: no `baselines.csv` or `baselines_status.json` tracked in git.
+- Identifier scan: no `permno`/`permco`/`cusip` found in sample baselines CSVs.
+- WRDS smoke report not run (WRDS_DATA_ROOT not set).
+- Bundle (post-merge): `docs/gpt_bundles/2026-01-10T10-46-59Z_ticket-17_20251230_101454_ticket-17_baseline-suite-comparison.zip`.
+EOF_RESULTS
+date -u +%Y-%m-%dT%H:%M:%SZ
+cat <<'EOF_META' > docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/META.json
+{
+  "run_name": "20251230_101454_ticket-17_baseline-suite-comparison",
+  "ticket_id": "ticket-17",
+  "started_at_utc": "2025-12-30T10:14:54Z",
+  "finished_at_utc": "2026-01-10T10:48:55Z",
+  "git_sha_before": "27326cf79c9ec8b936f0ce465b2067f8055aff30",
+  "git_sha_after": "37220dfd184db5ed529877427867573779e2dbb6",
+  "git_sha_after_ref": "HEAD",
+  "branch_name": "main",
+  "host_env_notes": "macOS 26.0.1 / python 3.12.2 (/Library/Frameworks/Python.framework/Versions/3.12/bin/python3)",
+  "dataset_id": "sample_flagship_artifact_2025-12-23T21-59-20Z-ba5b480 + sample_wfv_artifact_2025-12-23T18-39-59Z-82c14dc",
+  "config_paths": [
+    "configs/flagship_sample.yaml",
+    "configs/wfv_flagship_sample.yaml"
+  ],
+  "config_sha256": {
+    "configs/flagship_sample.yaml": "4aa74a687173e923ecafbf3795654bdffae88ac6c51404513b188b607ec82194",
+    "configs/wfv_flagship_sample.yaml": "137a5d67f45591af1d500af0d2e8576ee85b24dd03b9773ac7f50cb06ec1b2c1"
+  },
+  "artifact_paths": [
+    "artifacts/sample_flagship/2025-12-23T21-59-20Z-ba5b480/",
+    "artifacts/sample_wfv/2025-12-23T18-39-59Z-82c14dc/"
+  ],
+  "report_paths": [
+    "reports/summaries/flagship_mom.md",
+    "reports/summaries/flagship_mom_baselines.png",
+    "reports/summaries/flagship_mom_wfv.md",
+    "reports/summaries/flagship_mom_wfv_baselines.png"
+  ],
+  "web_sources": []
+}
+EOF_META
+make validate-runlogs
+cat <<'EOF_TESTS' > docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/TESTS.md
+# Tests
+
+- (accidental) `make test-fast` — failed (run-log validator): missing `RESULTS.md`, `TESTS.md`, `META.json` before logs were initialized.
+- `make test-fast` — failed: SyntaxError in `src/microalpha/reporting/baselines.py` (f-string typo).
+- `make validate-runlogs` — passed.
+- `make test-fast` — passed (126 tests). Warnings: pandas FutureWarnings (date_range freq='M'), ExecModelCfg.aln deprecation, analytics fillna deprecation.
+- `make validate-runlogs` — passed (post-merge run log update).
+EOF_TESTS

@@ -4,3 +4,4 @@
 - `make test-fast` — failed: SyntaxError in `src/microalpha/reporting/baselines.py` (f-string typo).
 - `make validate-runlogs` — passed.
 - `make test-fast` — passed (126 tests). Warnings: pandas FutureWarnings (date_range freq='M'), ExecModelCfg.aln deprecation, analytics fillna deprecation.
+- `make validate-runlogs` — passed (post-merge run log update).
