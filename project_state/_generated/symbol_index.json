@@ -208,6 +208,13 @@
           "BaseModel"
         ],
         "doc": "",
+        "name": "NonDegenerateCfg"
+      },
+      {
+        "bases": [
+          "BaseModel"
+        ],
+        "doc": "",
         "name": "WFVCfg"
       }
     ],
@@ -433,9 +440,28 @@
         "bases": [],
         "doc": "",
         "name": "Manifest"
+      },
+      {
+        "bases": [
+          "RuntimeError"
+        ],
+        "doc": "Raised when a manifest cannot be loaded safely.",
+        "name": "ManifestLoadError"
       }
     ],
     "functions": [
+      {
+        "async": false,
+        "doc": "Load a manifest JSON file and validate it is a JSON object.",
+        "name": "load_manifest_path",
+        "signature": "(path: str | Path)"
+      },
+      {
+        "async": false,
+        "doc": "Load a manifest.json from an artifact directory.",
+        "name": "load_manifest",
+        "signature": "(artifact_dir: str | Path, *, required: bool=True)"
+      },
       {
         "async": false,
         "doc": "Return ``(full_sha, short_sha)`` for the current Git HEAD.",
@@ -516,6 +542,42 @@
       }
     ],
     "module_doc": "Utility functions for computing portfolio performance metrics."
+  },
+  "src/microalpha/order_flow.py": {
+    "classes": [
+      {
+        "bases": [],
+        "doc": "Collect per-rebalance order flow diagnostics without affecting execution.",
+        "name": "OrderFlowDiagnostics"
+      }
+    ],
+    "functions": [
+      {
+        "async": false,
+        "doc": "",
+        "name": "_timestamp_to_date",
+        "signature": "(ts: int | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_signal_rebalance_key",
+        "signature": "(signal: SignalEvent | None, timestamp: int | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_new_entry",
+        "signature": "(key: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "infer_non_degenerate_reason",
+        "signature": "(payload: Mapping[str, Any] | None)"
+      }
+    ],
+    "module_doc": "Order flow diagnostics for post-signal execution tracing."
   },
   "src/microalpha/portfolio.py": {
     "classes": [
@@ -640,15 +702,271 @@
     ],
     "module_doc": "Analytics helpers for IC/IR curves, deciles, and rolling betas."
   },
+  "src/microalpha/reporting/baselines.py": {
+    "classes": [],
+    "functions": [
+      {
+        "async": false,
+        "doc": "",
+        "name": "load_baseline_status",
+        "signature": "(artifact_dir: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "load_baselines",
+        "signature": "(artifact_dir: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "compute_baselines",
+        "signature": "(artifact_dir: Path | str, *, force: bool=False)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "compute_baseline_metrics",
+        "signature": "(baselines: pd.DataFrame, *, flagship_metrics: Mapping[str, object] | None=None, hac_lags: int | None=None, periods_per_year: int=252, status: Mapping[str, Any] | None=None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "render_baseline_table",
+        "signature": "(metrics_df: pd.DataFrame)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "plot_baseline_overlay",
+        "signature": "(baselines: pd.DataFrame, output_path: Path, *, title: str='Cumulative Returns: Flagship vs Baselines')"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_metrics_from_returns",
+        "signature": "(returns: pd.Series, *, periods_per_year: int, hac_lags: int | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_resolve_config_path",
+        "signature": "(artifact_dir: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_load_config_payload",
+        "signature": "(config_path: Path | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_resolve_data_path",
+        "signature": "(config: Mapping[str, Any], config_path: Path | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_resolve_universe_path",
+        "signature": "(config: Mapping[str, Any], config_path: Path | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_resolve_path",
+        "signature": "(value: str, config_path: Path | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_load_universe",
+        "signature": "(path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_collect_universe_symbols",
+        "signature": "(universe: Mapping[pd.Timestamp, pd.DataFrame])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_load_price_panel",
+        "signature": "(data_path: Path, symbols: list[str], calendar: pd.DatetimeIndex)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_month_end_dates",
+        "signature": "(calendar: pd.DatetimeIndex)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_snapshot_for",
+        "signature": "(universe: Mapping[pd.Timestamp, pd.DataFrame], rebalance_date: pd.Timestamp)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_compute_eqw_returns",
+        "signature": "(returns: pd.DataFrame, universe: Mapping[pd.Timestamp, pd.DataFrame], rebalance_dates: list[pd.Timestamp], calendar: pd.DatetimeIndex)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_compute_momentum_returns",
+        "signature": "(prices: pd.DataFrame, returns: pd.DataFrame, universe: Mapping[pd.Timestamp, pd.DataFrame], rebalance_dates: list[pd.Timestamp], calendar: pd.DatetimeIndex, *, lookback_months: int, skip_months: int, long_short: bool)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_shift_month_end",
+        "signature": "(date: pd.Timestamp, months: int)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_calendar_on_or_before",
+        "signature": "(calendar: pd.DatetimeIndex, date: pd.Timestamp)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_attach_market_proxy",
+        "signature": "(baselines: pd.DataFrame, *, calendar: pd.DatetimeIndex, data_path: Path | None, status: dict[str, Any])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_resolve_market_proxy_path",
+        "signature": "(data_path: Path | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_load_proxy_returns",
+        "signature": "(path: Path, calendar: pd.DatetimeIndex)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_attach_cash_rf",
+        "signature": "(baselines: pd.DataFrame, *, calendar: pd.DatetimeIndex, data_path: Path | None, status: dict[str, Any])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_load_rf_series",
+        "signature": "(calendar: pd.DatetimeIndex, data_path: Path | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_enforce_columns",
+        "signature": "(df: pd.DataFrame)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_write_baselines",
+        "signature": "(df: pd.DataFrame, baselines_path: Path, status: Mapping[str, Any], status_path: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_write_missing_flagship_readme",
+        "signature": "(artifact_dir: Path, reason: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_format_metric",
+        "signature": "(value: object)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_format_pct",
+        "signature": "(value: object)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_format_turnover",
+        "signature": "(value: object)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_to_float",
+        "signature": "(value: object)"
+      }
+    ],
+    "module_doc": "Baseline suite computation and reporting helpers."
+  },
   "src/microalpha/reporting/factors.py": {
     "classes": [
       {
         "bases": [],
         "doc": "",
         "name": "FactorResult"
+      },
+      {
+        "bases": [],
+        "doc": "",
+        "name": "FactorRegressionMeta"
+      },
+      {
+        "bases": [],
+        "doc": "",
+        "name": "FactorRegressionOutput"
       }
     ],
     "functions": [
+      {
+        "async": false,
+        "doc": "",
+        "name": "_validate_datetime_index",
+        "signature": "(index: pd.DatetimeIndex, label: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_normalize_freq_label",
+        "signature": "(freq: str)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_label_from_timedelta",
+        "signature": "(delta: pd.Timedelta)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_infer_index_frequency",
+        "signature": "(index: pd.DatetimeIndex)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_compound_returns",
+        "signature": "(returns: pd.Series)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_resample_returns_to_factor_index",
+        "signature": "(returns: pd.Series, factor_index: pd.DatetimeIndex, rule: str | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "align_factor_panel",
+        "signature": "(returns: pd.Series, factors: pd.DataFrame, *, allow_resample: bool=False, resample_rule: str | None=None)"
+      },
       {
         "async": false,
         "doc": "",
@@ -677,13 +995,19 @@
         "async": false,
         "doc": "Run Carhart/FF5(+MOM) regressions with Newey-West errors.",
         "name": "compute_factor_regression",
-        "signature": "(equity_csv: Path, factor_csv: Path, model: str='ff3', hac_lags: int=5)"
+        "signature": "(equity_csv: Path, factor_csv: Path, model: str='ff3', hac_lags: int=5, *, allow_resample: bool=False, resample_rule: str | None=None)"
       },
       {
         "async": false,
         "doc": "",
         "name": "_format_markdown_table",
         "signature": "(results: Iterable[FactorResult])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_format_meta_line",
+        "signature": "(meta: FactorRegressionMeta)"
       },
       {
         "async": false,
@@ -784,6 +1108,12 @@
       {
         "async": false,
         "doc": "",
+        "name": "_error_summary",
+        "signature": "(error: str, *, n_obs: int, n_strategies: int, avg_block: int, num_bootstrap: int, diagnostics: list[str] | None=None)"
+      },
+      {
+        "async": false,
+        "doc": "",
         "name": "_coerce_numeric_frame",
         "signature": "(frame: pd.DataFrame)"
       },
@@ -862,6 +1192,12 @@
       {
         "async": false,
         "doc": "",
+        "name": "_render_non_degenerate",
+        "signature": "(manifest_payload: Mapping[str, object] | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
         "name": "_integrity_reasons",
         "signature": "(payload: Mapping[str, object])"
       },
@@ -928,6 +1264,18 @@
       {
         "async": false,
         "doc": "",
+        "name": "_render_baselines_section",
+        "signature": "(artifact_dir: Path, output_path: Path, metrics: Mapping[str, object])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_render_baseline_missing",
+        "signature": "(status: Mapping[str, object])"
+      },
+      {
+        "async": false,
+        "doc": "",
         "name": "_render_cost_breakdown",
         "signature": "(cost_path: Path)"
       },
@@ -935,6 +1283,12 @@
         "async": false,
         "doc": "",
         "name": "_to_float",
+        "signature": "(value: object)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_to_int",
         "signature": "(value: object)"
       },
       {
@@ -1083,6 +1437,12 @@
       {
         "async": false,
         "doc": "",
+        "name": "_render_non_degenerate",
+        "signature": "(manifest_payload: dict | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
         "name": "_format_currency",
         "signature": "(value: float)"
       },
@@ -1137,8 +1497,26 @@
       {
         "async": false,
         "doc": "",
+        "name": "_to_int",
+        "signature": "(value: object)"
+      },
+      {
+        "async": false,
+        "doc": "",
         "name": "_render_exposure_table",
         "signature": "(metrics_payload: dict)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_render_baseline_missing",
+        "signature": "(status: Mapping[str, object])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_build_baseline_section",
+        "signature": "(baselines: pd.DataFrame, status: Mapping[str, object], metrics_payload: Mapping[str, object], output_path: Path, overlay_path: Path | None, baselines_csv: Path)"
       },
       {
         "async": false,
@@ -1239,6 +1617,12 @@
       {
         "async": false,
         "doc": "",
+        "name": "_spa_failure_banner",
+        "signature": "(spa_status: str, spa_skip_reason: str | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
         "name": "_render_spa_placeholder",
         "signature": "(destination: Path, message: str)"
       },
@@ -1276,7 +1660,7 @@
         "async": false,
         "doc": "",
         "name": "_write_docs_results",
-        "signature": "(docs_path: Path, *, run_id: str, config_label: str, train_start: str, test_end: str, fold_count: int, testing_days: int | None, config_meta: dict[str, Any] | None, headline: HeadlineMetrics, metrics_payload: dict, cost_payload: dict | None, spa_payload: dict, spa_status: str, spa_skip_reason: str | None, factor_status: str, factor_skip_reason: str | None, factor_table_md: str, image_map: dict[str, Path], spa_md_copy: Path | None, degenerate_reasons: list[str], invalid_reasons: list[str], unsafe_lines: list[str] | None)"
+        "signature": "(docs_path: Path, *, run_id: str, config_label: str, train_start: str, test_end: str, fold_count: int, testing_days: int | None, config_meta: dict[str, Any] | None, headline: HeadlineMetrics, metrics_payload: dict, baselines: pd.DataFrame, baselines_status: dict[str, object], baselines_csv: Path, cost_payload: dict | None, spa_payload: dict, spa_status: str, spa_skip_reason: str | None, factor_status: str, factor_skip_reason: str | None, factor_table_md: str, image_map: dict[str, Path], spa_md_copy: Path | None, degenerate_reasons: list[str], invalid_reasons: list[str], unsafe_lines: list[str] | None)"
       },
       {
         "async": false,
@@ -1397,6 +1781,18 @@
         "doc": "",
         "name": "_update_manifest_integrity",
         "signature": "(artifacts_dir: Path, integrity_path: str, *, run_invalid: bool)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_update_manifest_order_flow",
+        "signature": "(artifacts_dir: Path, diagnostics_path: str, summary: Mapping[str, Any])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_persist_order_flow_diagnostics",
+        "signature": "(order_flow: OrderFlowDiagnostics, artifacts_dir: Path, *, filter_diagnostics: Mapping[str, Any] | None=None)"
       },
       {
         "async": false,
@@ -1559,6 +1955,18 @@
     "functions": [
       {
         "async": false,
+        "doc": "",
+        "name": "_non_degenerate_active",
+        "signature": "(cfg: NonDegenerateCfg | None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_non_degenerate_reasons",
+        "signature": "(portfolio: Portfolio, cfg: NonDegenerateCfg | None)"
+      },
+      {
+        "async": false,
         "doc": "Load a walk-forward validation configuration.",
         "name": "load_wfv_cfg",
         "signature": "(path: str)"
@@ -1573,13 +1981,13 @@
         "async": false,
         "doc": "",
         "name": "_optimise_parameters",
-        "signature": "(data_handler: DataHandler, train_start: pd.Timestamp, train_end: pd.Timestamp, strategy_class, param_grid: Mapping[str, Sequence[Any]], base_params: Dict[str, Any], cfg: BacktestCfg, rng: np.random.Generator, reality_cfg: RealityCheckCfg, symbol_meta: Mapping[str, Any] | None=None)"
+        "signature": "(data_handler: DataHandler, train_start: pd.Timestamp, train_end: pd.Timestamp, strategy_class, param_grid: Mapping[str, Sequence[Any]], base_params: Dict[str, Any], cfg: BacktestCfg, rng: np.random.Generator, reality_cfg: RealityCheckCfg, *, non_degenerate: NonDegenerateCfg | None=None, symbol_meta: Mapping[str, Any] | None=None)"
       },
       {
         "async": false,
         "doc": "",
         "name": "_build_portfolio",
-        "signature": "(data_handler, cfg: BacktestCfg, trade_logger: JsonlWriter | None=None, symbol_meta: Mapping[str, Any] | None=None)"
+        "signature": "(data_handler, cfg: BacktestCfg, trade_logger: JsonlWriter | None=None, symbol_meta: Mapping[str, Any] | None=None, order_flow: OrderFlowDiagnostics | None=None)"
       },
       {
         "async": false,
@@ -1616,6 +2024,12 @@
         "doc": "",
         "name": "_stable_metrics",
         "signature": "(metrics: Dict[str, Any])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "_finalize_order_flow",
+        "signature": "(order_flow: OrderFlowDiagnostics | None, filter_diagnostics: Mapping[str, Any] | None)"
       },
       {
         "async": false,
@@ -1769,6 +2183,126 @@
       }
     ],
     "module_doc": "Lightweight helpers for detecting local WRDS credentials and exports."
+  },
+  "tools/agentic/gpt_bundle.py": {
+    "classes": [],
+    "functions": [
+      {
+        "async": false,
+        "doc": "",
+        "name": "run",
+        "signature": "(cmd: list[str], cwd: Optional[Path]=None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "git_root",
+        "signature": "(start: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "ensure_repo_snapshot",
+        "signature": "(repo: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "list_changed_files",
+        "signature": "(repo: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "add_file_if_small",
+        "signature": "(z: zipfile.ZipFile, repo: Path, rel_path: str, max_bytes: int=120000)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "main",
+        "signature": "()"
+      }
+    ],
+    "module_doc": "gpt_bundle.py"
+  },
+  "tools/agentic/project_state_refresh.py": {
+    "classes": [],
+    "functions": [
+      {
+        "async": false,
+        "doc": "",
+        "name": "run",
+        "signature": "(cmd: list[str], cwd: Optional[Path]=None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "git_root",
+        "signature": "(start: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "ensure_templates",
+        "signature": "(project_state_dir: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "write_generated",
+        "signature": "(repo: Path, project_state_dir: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "zip_project_state",
+        "signature": "(repo: Path, project_state_dir: Path, out_zip: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "main",
+        "signature": "()"
+      }
+    ],
+    "module_doc": "project_state_refresh.py"
+  },
+  "tools/agentic/repo_snapshot.py": {
+    "classes": [],
+    "functions": [
+      {
+        "async": false,
+        "doc": "",
+        "name": "run",
+        "signature": "(cmd: list[str], cwd: Optional[Path]=None)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "git_root",
+        "signature": "(start: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "git_ls_files",
+        "signature": "(repo: Path)"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "guess_language_counts",
+        "signature": "(paths: Iterable[str])"
+      },
+      {
+        "async": false,
+        "doc": "",
+        "name": "main",
+        "signature": "()"
+      }
+    ],
+    "module_doc": "Create a deterministic, lightweight repo snapshot for GPT review."
   },
   "tools/build_project_state.py": {
     "classes": [],

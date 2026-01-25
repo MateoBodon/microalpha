@@ -24,9 +24,12 @@ All notable changes to this project will be documented in this file. The format 
 - ticket-05: deterministic runs index registry builder, Make target, and run registry documentation.
 - ticket-17: baseline suite computation with `baselines.csv`/status plus baseline comparison table + overlay plot in summary reports.
 - ticket-18: agentic system scaffold (PROJECT.md, agentic tools, and run-log templates).
+- ticket-22: WRDS resume metrics summary (`docs/results_wrds_resume.md`) for run `2026-01-25T21-01-51Z-4d08d18`.
+- ticket-23: holdout order-flow + filter diagnostics and a hard guardrail for zero-trade holdout runs.
+
 
 ### Changed
-- Walk-forward WRDS config aligned to universe coverage (2012–2024) and report pipeline now emits WRDS signals before analytics.
+- Walk-forward WRDS config aligned to available universe coverage (2013–2019) to restore non-degenerate holdout metrics.
 - WRDS flagship run now uses 3y/9m folds (21 folds), trimmed grid (top_frac × turnover only), higher turnover cap, and produces reproducible signals/analytics/factors/SPA assets for run `2025-11-12T18-50-58Z-b2eaf50` with docs, plots, and summaries updated in lockstep.
 - ticket-01: WRDS configs now surface gross leverage/single-name caps and borrow model; reporting now includes net/gross exposure + cost breakdown.
 - WRDS smoke report tolerates zero SPA comparator t-stats (smoke-only) to keep validation runs unblocked.

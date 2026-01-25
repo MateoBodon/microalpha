@@ -1,7 +1,7 @@
 <!--
-generated_at: 2025-12-23T22:01:33Z
-git_sha: ba5b48089091f6a858b065dd3a388b467dd67984
-branch: codex/ticket-04-leakage-tests-unsafe-manifest
+generated_at: 2026-01-25T23:23:20Z
+git_sha: 4d08d18202a411cd831efce739cd5cb37e6deb1e
+branch: codex/ticket-22-wrds-resume-metrics
 commands:
   - python3 tools/build_project_state.py
   - python3 tools/render_project_state_docs.py
@@ -10,7 +10,7 @@ commands:
 
 # Test Coverage
 
-- Test modules: 57
+- Test modules: 64
 - Marker config: `pytest.ini` defines `wrds` marker.
 - Primary commands: `pytest -q` or `make test`; WRDS tests via `make test-wrds`.
 
@@ -20,6 +20,7 @@ commands:
 - `tests/conftest.py`
 - `tests/test_allocators.py`
 - `tests/test_artifacts_schema.py`
+- `tests/test_baselines.py`
 - `tests/test_benchmarks.py`
 - `tests/test_borrow_costs.py`
 - `tests/test_build_wrds_signals.py`
@@ -29,11 +30,14 @@ commands:
 - `tests/test_cli_info.py`
 - `tests/test_data.py`
 - `tests/test_data_policy.py`
+- `tests/test_degeneracy_constraints.py`
 - `tests/test_determinism.py`
 - `tests/test_docs_links.py`
 - `tests/test_execution.py`
 - `tests/test_execution_models.py`
+- `tests/test_factor_alignment.py`
 - `tests/test_factor_regression.py`
+- `tests/test_flagship_filter_diagnostics.py`
 - `tests/test_flagship_momentum.py`
 - `tests/test_limit_order_execution.py`
 - `tests/test_lob.py`
@@ -46,6 +50,7 @@ commands:
 - `tests/test_multiasset_cs_momentum.py`
 - `tests/test_multiasset_data_handler.py`
 - `tests/test_no_lookahead.py`
+- `tests/test_order_flow_diagnostics.py`
 - `tests/test_pnl_attribution.py`
 - `tests/test_pnl_integrity.py`
 - `tests/test_portfolio_risk_caps.py`
@@ -62,7 +67,9 @@ commands:
 - `tests/test_risk_controls.py`
 - `tests/test_risk_stats.py`
 - `tests/test_runner_flagship.py`
+- `tests/test_runs_index.py`
 - `tests/test_slippage_models.py`
+- `tests/test_spa_regression_keyerror.py`
 - `tests/test_strategies.py`
 - `tests/test_time_ordering.py`
 - `tests/test_tplus1_execution.py`

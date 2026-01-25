@@ -671,6 +671,9 @@ def run_walk_forward(
     holdout_equity_path: str | None = None
     holdout_returns_path: str | None = None
     holdout_trades_path: str | None = None
+    holdout_order_flow_payload: Dict[str, Any] | None = None
+    holdout_order_flow_path: str | None = None
+    holdout_filter_diagnostics_path: str | None = None
     if holdout_start is not None and holdout_end is not None:
         if selected_params_full is None:
             if not selection_failure_reason:
@@ -712,11 +715,17 @@ def run_walk_forward(
             holdout_trade_logger = JsonlWriter(
                 str(artifacts_dir / "holdout_trades.jsonl")
             )
+            holdout_order_flow = (
+                OrderFlowDiagnostics()
+                if cfg.template.order_flow_diagnostics
+                else None
+            )
             holdout_portfolio = _build_portfolio(
                 data_handler,
                 cfg.template,
                 trade_logger=holdout_trade_logger,
                 symbol_meta=symbol_meta,
+                order_flow=holdout_order_flow,
             )
             if hasattr(holdout_strategy, "sector_map") and holdout_strategy.sector_map:
                 holdout_portfolio.sector_of.update(holdout_strategy.sector_map)
@@ -745,7 +754,36 @@ def run_walk_forward(
             holdout_trade_logger.close()
             holdout_trades_path = holdout_trade_logger.path
 
+            holdout_filter_diagnostics: Dict[str, Any] | None = None
+            if hasattr(holdout_strategy, "get_filter_diagnostics"):
+                try:
+                    holdout_filter_diagnostics = holdout_strategy.get_filter_diagnostics()
+                except Exception as exc:  # pragma: no cover - diagnostics should not fail the run
+                    holdout_filter_diagnostics = {
+                        "error": f"{type(exc).__name__}: {exc}",
+                    }
+            holdout_order_flow_payload = _finalize_order_flow(
+                holdout_order_flow, holdout_filter_diagnostics
+            )
+            if holdout_filter_diagnostics is not None:
+                holdout_filter_diagnostics_path = str(
+                    artifacts_dir / "holdout_filter_diagnostics.json"
+                )
+                with Path(holdout_filter_diagnostics_path).open(
+                    "w", encoding="utf-8"
+                ) as handle:
+                    json.dump(holdout_filter_diagnostics, handle, indent=2)
+            if holdout_order_flow_payload is not None:
+                holdout_order_flow_path = str(
+                    artifacts_dir / "holdout_order_flow_diagnostics.json"
+                )
+                with Path(holdout_order_flow_path).open(
+                    "w", encoding="utf-8"
+                ) as handle:
+                    json.dump(holdout_order_flow_payload, handle, indent=2)
+
             holdout_trades = getattr(holdout_portfolio, "trades", None) or []
+            holdout_num_trades = len(holdout_trades)
             holdout_slippage_total = 0.0
             for trade in holdout_trades:
                 try:
@@ -784,6 +822,37 @@ def run_walk_forward(
                         + ", ".join(holdout_integrity.reasons)
                     )
 
+            if holdout_num_trades == 0:
+                integrity_ok = False
+                integrity_checks.append(
+                    {
+                        "fold": None,
+                        "phase": "holdout",
+                        "ok": False,
+                        "reasons": ["holdout_num_trades == 0"],
+                        "details": {
+                            "num_trades": int(holdout_num_trades),
+                            "order_flow_summary": (
+                                holdout_order_flow_payload.get("summary", {})
+                                if holdout_order_flow_payload
+                                else {}
+                            ),
+                        },
+                    }
+                )
+                if run_mode == "headline":
+                    integrity_path = _persist_integrity_checks(
+                        artifacts_dir, integrity_ok, integrity_checks
+                    )
+                    _update_manifest_integrity(
+                        artifacts_dir,
+                        integrity_path,
+                        run_invalid=True,
+                    )
+                    raise ValueError(
+                        "Holdout produced zero trades; refusing to publish metrics."
+                    )
+
             holdout_metrics_raw = compute_metrics(
                 holdout_portfolio.equity_curve,
                 holdout_portfolio.total_turnover,
@@ -797,8 +866,6 @@ def run_walk_forward(
 
             holdout_total_commission = 0.0
             holdout_total_slippage = 0.0
-            holdout_trades = getattr(holdout_portfolio, "trades", None) or []
-            holdout_num_trades = len(holdout_trades)
             holdout_trade_notional = 0.0
             holdout_realized_pnl = 0.0
             holdout_win_trades = 0
@@ -886,6 +953,13 @@ def run_walk_forward(
                 "holdout_equity_curve_path": holdout_equity_path,
                 "holdout_returns_path": holdout_returns_path,
                 "holdout_trades_path": holdout_trades_path,
+                "holdout_order_flow_diagnostics_path": holdout_order_flow_path,
+                "holdout_order_flow_summary": (
+                    None
+                    if holdout_order_flow_payload is None
+                    else holdout_order_flow_payload.get("summary")
+                ),
+                "holdout_filter_diagnostics_path": holdout_filter_diagnostics_path,
             }
             holdout_manifest_path = str(artifacts_dir / "holdout_manifest.json")
             with Path(holdout_manifest_path).open("w", encoding="utf-8") as handle:
@@ -981,6 +1055,8 @@ def run_walk_forward(
         "selection_summary_path": selection_summary_path,
         "holdout_metrics_path": holdout_metrics_path,
         "holdout_manifest_path": holdout_manifest_path,
+        "holdout_order_flow_diagnostics_path": holdout_order_flow_path,
+        "holdout_filter_diagnostics_path": holdout_filter_diagnostics_path,
         "non_degenerate": non_degenerate_payload,
         "non_degenerate_excluded": int(total_excluded),
         "non_degenerate_failure_reason": selection_failure_reason,

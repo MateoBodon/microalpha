@@ -1,7 +1,7 @@
 <!--
-generated_at: 2025-12-23T22:01:33Z
-git_sha: ba5b48089091f6a858b065dd3a388b467dd67984
-branch: codex/ticket-04-leakage-tests-unsafe-manifest
+generated_at: 2026-01-25T23:23:20Z
+git_sha: 4d08d18202a411cd831efce739cd5cb37e6deb1e
+branch: codex/ticket-22-wrds-resume-metrics
 commands:
   - python3 tools/build_project_state.py
   - python3 tools/render_project_state_docs.py
@@ -93,6 +93,7 @@ commands:
 - WalkForwardWindow(BaseModel)
 - HoldoutWindow(BaseModel)
 - RealityCheckCfg(BaseModel)
+- NonDegenerateCfg(BaseModel)
 - WFVCfg(BaseModel)
 
 ### Functions
@@ -203,9 +204,12 @@ commands:
 ### Classes
 
 - Manifest
+- ManifestLoadError(RuntimeError) — Raised when a manifest cannot be loaded safely.
 
 ### Functions
 
+- load_manifest_path(path: str | Path) — Load a manifest JSON file and validate it is a JSON object.
+- load_manifest(artifact_dir: str | Path, *, required: bool=True) — Load a manifest.json from an artifact directory.
 - resolve_git_sha() — Return ``(full_sha, short_sha)`` for the current Git HEAD.
 - generate_run_id(short_sha: str, timestamp: Optional[datetime]=None) — Create a run identifier using a UTC timestamp and short SHA.
 - _resolve_distribution_version() — Resolve the installed distribution version for microalpha.
@@ -234,6 +238,19 @@ commands:
 ### Functions
 
 - compute_metrics(equity_records: Sequence[Mapping[str, float | int]], turnover: float, periods: int=252, trades: Optional[List[Mapping[str, Any]]]=None, benchmark_equity: Optional[Sequence[Mapping[str, float | int]]]=None, rf: float=0.0, hac_lags: int | None=None)
+
+## `src/microalpha/order_flow.py`
+
+### Classes
+
+- OrderFlowDiagnostics — Collect per-rebalance order flow diagnostics without affecting execution.
+
+### Functions
+
+- _timestamp_to_date(ts: int | None)
+- _signal_rebalance_key(signal: SignalEvent | None, timestamp: int | None)
+- _new_entry(key: str)
+- infer_non_degenerate_reason(payload: Mapping[str, Any] | None)
 
 ## `src/microalpha/portfolio.py`
 
@@ -279,6 +296,48 @@ commands:
 - generate_analytics(artifact_dir: Path, *, signals_path: Path | None=None, equity_path: Path | None=None, factor_path: Path | None=None, plots_dir: Path=PLOTS_DIR, analytics_dir: Path=ANALYTICS_DIR, ic_method: str='spearman', window: int=63, deciles: int=10)
 - _build_arg_parser()
 - main(argv: Sequence[str] | None=None)
+
+## `src/microalpha/reporting/baselines.py`
+
+### Classes
+
+- (none)
+
+### Functions
+
+- load_baseline_status(artifact_dir: Path)
+- load_baselines(artifact_dir: Path)
+- compute_baselines(artifact_dir: Path | str, *, force: bool=False)
+- compute_baseline_metrics(baselines: pd.DataFrame, *, flagship_metrics: Mapping[str, object] | None=None, hac_lags: int | None=None, periods_per_year: int=252, status: Mapping[str, Any] | None=None)
+- render_baseline_table(metrics_df: pd.DataFrame)
+- plot_baseline_overlay(baselines: pd.DataFrame, output_path: Path, *, title: str='Cumulative Returns: Flagship vs Baselines')
+- _metrics_from_returns(returns: pd.Series, *, periods_per_year: int, hac_lags: int | None)
+- _resolve_config_path(artifact_dir: Path)
+- _load_config_payload(config_path: Path | None)
+- _resolve_data_path(config: Mapping[str, Any], config_path: Path | None)
+- _resolve_universe_path(config: Mapping[str, Any], config_path: Path | None)
+- _resolve_path(value: str, config_path: Path | None)
+- _load_universe(path: Path)
+- _collect_universe_symbols(universe: Mapping[pd.Timestamp, pd.DataFrame])
+- _load_price_panel(data_path: Path, symbols: list[str], calendar: pd.DatetimeIndex)
+- _month_end_dates(calendar: pd.DatetimeIndex)
+- _snapshot_for(universe: Mapping[pd.Timestamp, pd.DataFrame], rebalance_date: pd.Timestamp)
+- _compute_eqw_returns(returns: pd.DataFrame, universe: Mapping[pd.Timestamp, pd.DataFrame], rebalance_dates: list[pd.Timestamp], calendar: pd.DatetimeIndex)
+- _compute_momentum_returns(prices: pd.DataFrame, returns: pd.DataFrame, universe: Mapping[pd.Timestamp, pd.DataFrame], rebalance_dates: list[pd.Timestamp], calendar: pd.DatetimeIndex, *, lookback_months: int, skip_months: int, long_short: bool)
+- _shift_month_end(date: pd.Timestamp, months: int)
+- _calendar_on_or_before(calendar: pd.DatetimeIndex, date: pd.Timestamp)
+- _attach_market_proxy(baselines: pd.DataFrame, *, calendar: pd.DatetimeIndex, data_path: Path | None, status: dict[str, Any])
+- _resolve_market_proxy_path(data_path: Path | None)
+- _load_proxy_returns(path: Path, calendar: pd.DatetimeIndex)
+- _attach_cash_rf(baselines: pd.DataFrame, *, calendar: pd.DatetimeIndex, data_path: Path | None, status: dict[str, Any])
+- _load_rf_series(calendar: pd.DatetimeIndex, data_path: Path | None)
+- _enforce_columns(df: pd.DataFrame)
+- _write_baselines(df: pd.DataFrame, baselines_path: Path, status: Mapping[str, Any], status_path: Path)
+- _write_missing_flagship_readme(artifact_dir: Path, reason: str)
+- _format_metric(value: object)
+- _format_pct(value: object)
+- _format_turnover(value: object)
+- _to_float(value: object)
 
 ## `src/microalpha/reporting/factors.py`
 
@@ -334,6 +393,7 @@ commands:
 ### Functions
 
 - _degenerate_summary(reason: str, *, n_obs: int, n_strategies: int, avg_block: int, num_bootstrap: int, diagnostics: list[str] | None=None)
+- _error_summary(error: str, *, n_obs: int, n_strategies: int, avg_block: int, num_bootstrap: int, diagnostics: list[str] | None=None)
 - _coerce_numeric_frame(frame: pd.DataFrame)
 - load_grid_returns(grid_path: Path)
 - _stationary_bootstrap_indices(n: int, avg_block: int, rng: np.random.Generator)
@@ -355,6 +415,7 @@ commands:
 - _load_integrity(artifact_dir: Path)
 - _load_manifest(artifact_dir: Path)
 - _unsafe_banner(manifest_payload: Mapping[str, object] | None)
+- _render_non_degenerate(manifest_payload: Mapping[str, object] | None)
 - _integrity_reasons(payload: Mapping[str, object])
 - _flatten_bootstrap(path: Path)
 - _format_pct(value: float | None)
@@ -366,8 +427,11 @@ commands:
 - _render_metric_table(metrics: Mapping[str, object])
 - _format_metric(label: str, value: object)
 - _render_exposure_summary(metrics: Mapping[str, object])
+- _render_baselines_section(artifact_dir: Path, output_path: Path, metrics: Mapping[str, object])
+- _render_baseline_missing(status: Mapping[str, object])
 - _render_cost_breakdown(cost_path: Path)
 - _to_float(value: object)
+- _to_int(value: object)
 - _resolve_trades_path(artifact_dir: Path)
 - _count_trades(path: Path)
 - _load_returns(artifact_dir: Path)
@@ -407,6 +471,7 @@ commands:
 - _load_integrity(artifact_dir: Path)
 - _integrity_reasons(payload: dict | None)
 - _unsafe_banner(manifest_payload: dict | None)
+- _render_non_degenerate(manifest_payload: dict | None)
 - _format_currency(value: float)
 - _format_human_currency(value: float | None)
 - _format_ratio(value: float | None)
@@ -416,7 +481,10 @@ commands:
 - _normalise_section(text: str)
 - _render_table(metrics: HeadlineMetrics)
 - _to_float(value: object)
+- _to_int(value: object)
 - _render_exposure_table(metrics_payload: dict)
+- _render_baseline_missing(status: Mapping[str, object])
+- _build_baseline_section(baselines: pd.DataFrame, status: Mapping[str, object], metrics_payload: Mapping[str, object], output_path: Path, overlay_path: Path | None, baselines_csv: Path)
 - _render_cost_breakdown(cost_payload: dict | None)
 - _has_trade_log(artifact_dir: Path)
 - _load_cost_payload(artifact_dir: Path)
@@ -433,13 +501,14 @@ commands:
 - _ensure_spa_payload(artifact_dir: Path, spa_json: Path | None, spa_md: Path | None)
 - _spa_skip_reason(spa_payload: dict)
 - _spa_status(spa_payload: dict)
+- _spa_failure_banner(spa_status: str, spa_skip_reason: str | None)
 - _render_spa_placeholder(destination: Path, message: str)
 - _render_spa_plot(spa_payload: dict, destination: Path, *, allow_zero: bool=False)
 - _resolve_trades_path(artifact_dir: Path)
 - _count_trades(path: Path)
 - _load_returns(artifact_dir: Path)
 - _detect_degenerate_reasons(metrics_payload: dict, artifact_dir: Path)
-- _write_docs_results(docs_path: Path, *, run_id: str, config_label: str, train_start: str, test_end: str, fold_count: int, testing_days: int | None, config_meta: dict[str, Any] | None, headline: HeadlineMetrics, metrics_payload: dict, cost_payload: dict | None, spa_payload: dict, spa_status: str, spa_skip_reason: str | None, factor_status: str, factor_skip_reason: str | None, factor_table_md: str, image_map: dict[str, Path], spa_md_copy: Path | None, degenerate_reasons: list[str], invalid_reasons: list[str], unsafe_lines: list[str] | None)
+- _write_docs_results(docs_path: Path, *, run_id: str, config_label: str, train_start: str, test_end: str, fold_count: int, testing_days: int | None, config_meta: dict[str, Any] | None, headline: HeadlineMetrics, metrics_payload: dict, baselines: pd.DataFrame, baselines_status: dict[str, object], baselines_csv: Path, cost_payload: dict | None, spa_payload: dict, spa_status: str, spa_skip_reason: str | None, factor_status: str, factor_skip_reason: str | None, factor_table_md: str, image_map: dict[str, Path], spa_md_copy: Path | None, degenerate_reasons: list[str], invalid_reasons: list[str], unsafe_lines: list[str] | None)
 - render_wrds_summary(artifact_dir: Path, output_path: Path, *, factors_md: Path | None=None, spa_json: Path | None=None, spa_md: Path | None=None, equity_image: Path | None=None, bootstrap_image: Path | None=None, docs_results: Path | None=None, docs_image_root: Path | None=None, analytics_plots: Path | None=None, metrics_json_out: Path | None=None, spa_json_out: Path | None=None, spa_md_out: Path | None=None, allow_zero_spa: bool=False)
 - _build_parser()
 - main(argv: Sequence[str] | None=None)
@@ -484,6 +553,8 @@ commands:
 - _persist_metrics(metrics: Dict[str, Any], artifacts_dir: Path, *, extra_metrics: Mapping[str, Any] | None=None)
 - _persist_integrity(result, artifacts_dir: Path)
 - _update_manifest_integrity(artifacts_dir: Path, integrity_path: str, *, run_invalid: bool)
+- _update_manifest_order_flow(artifacts_dir: Path, diagnostics_path: str, summary: Mapping[str, Any])
+- _persist_order_flow_diagnostics(order_flow: OrderFlowDiagnostics, artifacts_dir: Path, *, filter_diagnostics: Mapping[str, Any] | None=None)
 - persist_exposures(portfolio: Portfolio, artifacts_dir: Path, filename: str='exposures.csv', factor_filename: str='factor_exposure.csv')
 - _persist_bootstrap(metrics: Dict[str, Any], artifacts_dir: Path, *, periods: int=252, simulations: int=1024)
 - _stable_metrics(metrics: Dict[str, Any])
@@ -576,16 +647,19 @@ commands:
 
 ### Functions
 
+- _non_degenerate_active(cfg: NonDegenerateCfg | None)
+- _non_degenerate_reasons(portfolio: Portfolio, cfg: NonDegenerateCfg | None)
 - load_wfv_cfg(path: str) — Load a walk-forward validation configuration.
 - run_walk_forward(config_path: str, override_artifacts_dir: str | None=None, reality_check_method: str | None=None, reality_check_block_len: int | None=None)
-- _optimise_parameters(data_handler: DataHandler, train_start: pd.Timestamp, train_end: pd.Timestamp, strategy_class, param_grid: Mapping[str, Sequence[Any]], base_params: Dict[str, Any], cfg: BacktestCfg, rng: np.random.Generator, reality_cfg: RealityCheckCfg, symbol_meta: Mapping[str, Any] | None=None)
-- _build_portfolio(data_handler, cfg: BacktestCfg, trade_logger: JsonlWriter | None=None, symbol_meta: Mapping[str, Any] | None=None)
+- _optimise_parameters(data_handler: DataHandler, train_start: pd.Timestamp, train_end: pd.Timestamp, strategy_class, param_grid: Mapping[str, Sequence[Any]], base_params: Dict[str, Any], cfg: BacktestCfg, rng: np.random.Generator, reality_cfg: RealityCheckCfg, *, non_degenerate: NonDegenerateCfg | None=None, symbol_meta: Mapping[str, Any] | None=None)
+- _build_portfolio(data_handler, cfg: BacktestCfg, trade_logger: JsonlWriter | None=None, symbol_meta: Mapping[str, Any] | None=None, order_flow: OrderFlowDiagnostics | None=None)
 - _build_executor(data_handler, exec_cfg: ExecModelCfg, rng: np.random.Generator, symbol_meta: Mapping[str, Any] | None=None)
 - _spawn_rng(parent: np.random.Generator)
 - _collect_warmup_prices(data_handler: CsvDataHandler, train_end: pd.Timestamp, lookback: int)
 - _collect_cs_warmup_history(data_handler: MultiCsvDataHandler, train_start: pd.Timestamp, train_end: pd.Timestamp, symbols: Sequence[str])
 - _summarise_walkforward(equity_records: List[Dict[str, Any]], artifacts_dir: Path, total_turnover: float, hac_lags: int | None=None, extra_metrics: Mapping[str, Any] | None=None)
 - _stable_metrics(metrics: Dict[str, Any])
+- _finalize_order_flow(order_flow: OrderFlowDiagnostics | None, filter_diagnostics: Mapping[str, Any] | None)
 - _persist_integrity_checks(artifacts_dir: Path, overall_ok: bool, checks: Sequence[Mapping[str, Any]])
 - _update_manifest_integrity(artifacts_dir: Path, integrity_path: str, *, run_invalid: bool)
 - _build_grid_payload(entries: List[Dict[str, Any]])
@@ -619,6 +693,50 @@ commands:
 - wrds_status() — Structured status for debugging/logging (no secrets).
 - is_wrds_path(path: Path) — Return True if ``path`` resolves under WRDS_DATA_ROOT.
 - guard_no_wrds_copy(path: Path, *, operation: str='copy') — Raise if attempting to copy data directly from WRDS_DATA_ROOT.
+
+## `tools/agentic/gpt_bundle.py`
+
+### Classes
+
+- (none)
+
+### Functions
+
+- run(cmd: list[str], cwd: Optional[Path]=None)
+- git_root(start: Path)
+- ensure_repo_snapshot(repo: Path)
+- list_changed_files(repo: Path)
+- add_file_if_small(z: zipfile.ZipFile, repo: Path, rel_path: str, max_bytes: int=120000)
+- main()
+
+## `tools/agentic/project_state_refresh.py`
+
+### Classes
+
+- (none)
+
+### Functions
+
+- run(cmd: list[str], cwd: Optional[Path]=None)
+- git_root(start: Path)
+- ensure_templates(project_state_dir: Path)
+- write_generated(repo: Path, project_state_dir: Path)
+- zip_project_state(repo: Path, project_state_dir: Path, out_zip: Path)
+- main()
+
+## `tools/agentic/repo_snapshot.py`
+
+### Classes
+
+- (none)
+
+### Functions
+
+- run(cmd: list[str], cwd: Optional[Path]=None)
+- git_root(start: Path)
+- git_ls_files(repo: Path)
+- guess_language_counts(paths: Iterable[str])
+- main()
 
 ## `tools/build_project_state.py`
 

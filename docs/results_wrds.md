@@ -1,26 +1,42 @@
 # WRDS Walk-Forward Results (Flagship Momentum)
 
-> Latest run: **2025-12-26T17-21-39Z-75ce3c8** (`configs/wfv_flagship_wrds.yaml`, 2005-01-03 -> 2020-11-17, 20 folds with 252-day forward tests (~12.0 months))
+> Latest run: **2026-01-25T22-58-24Z-4d08d18** (`configs/wfv_flagship_wrds.yaml`, 2013-01-02 -> 2017-11-02, 4 folds with 252-day forward tests (~12.0 months))
 
 ## Performance Snapshot
 
 | Metric | Value |
 | --- | ---:|
-| Sharpe_HAC | 0.03 |
-| MAR | 0.01 |
-| Max Drawdown | 8.33% |
-| Turnover | $32.84MM |
-| Reality Check p-value | 0.996 |
-| SPA p-value | 0.031 |
+| Sharpe_HAC | 0.27 |
+| MAR | 0.21 |
+| Max Drawdown | 3.41% |
+| Turnover | $14.75MM |
+| Reality Check p-value | 0.988 |
+| SPA p-value | 0.015 |
+
+## Baselines
+
+| Series | Sharpe_HAC | MaxDD | CAGR | Turnover |
+| --- | ---:| ---:| ---:| ---:|
+| Flagship (net) | 0.27 | 3.41% | 0.72% | 14748925.2100 |
+| Equal-weight universe | 1.12 | 15.89% | 14.96% | 0.0000 |
+| Market proxy | 0.00 | 0.00% | 0.00% | 0.0000 |
+| Momentum 12-1 | 2.58 | 9.07% | 67.83% | 3.7500 |
+| Cash / RF | 0.00 | 0.00% | 0.00% | 0.0000 |
+
+![Baseline Overlay](img/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/wrds_flagship_baselines.png)
+
+- Baselines CSV: `../artifacts/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/baselines.csv`
+- Momentum baseline: lookback=12M skip=1M long_short=False
+- Turnover for baselines is unit-notional weight turnover; flagship uses reported total_turnover.
 
 ## Exposure Summary
 
 | Metric | Value |
 | --- | ---:|
-| Avg net exposure | 7.98% |
-| Avg gross exposure | 10.06% |
-| Max net exposure | 16.55% |
-| Max gross exposure | 16.55% |
+| Avg net exposure | 6.39% |
+| Avg gross exposure | 9.96% |
+| Max net exposure | 16.19% |
+| Max gross exposure | 16.19% |
 
 _Exposure time series is recorded in equity_curve.csv._
 
@@ -28,45 +44,46 @@ _Exposure time series is recorded in equity_curve.csv._
 
 | Category | Total |
 | --- | ---:|
-| Commission | $244 |
+| Commission | $125 |
 | Slippage | $0 |
 | Borrow | n/a |
-| Total | $244 |
+| Total | $125 |
 
 ## Key Visuals
 
-![Equity Curve](img/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/equity_curve.png)
+![Equity Curve](img/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/equity_curve.png)
 
-![Bootstrap Sharpe Histogram](img/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/bootstrap_hist.png)
+![Bootstrap Sharpe Histogram](img/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/bootstrap_hist.png)
 
-![SPA Comparator t-stats](img/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/spa_tstats.png)
+![SPA Comparator t-stats](img/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/spa_tstats.png)
 
-![IC / Rolling IR](img/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/2025-12-26T17-21-39Z-75ce3c8_ic_ir.png)
+![IC / Rolling IR](img/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/2026-01-25T22-58-24Z-4d08d18_ic_ir.png)
 
-![Decile Spreads](img/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/2025-12-26T17-21-39Z-75ce3c8_deciles.png)
+![Decile Spreads](img/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/2026-01-25T22-58-24Z-4d08d18_deciles.png)
 
-![Rolling FF5+MOM Betas](img/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/2025-12-26T17-21-39Z-75ce3c8_rolling_betas.png)
+![Rolling FF5+MOM Betas](img/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/2026-01-25T22-58-24Z-4d08d18_rolling_betas.png)
 
 ## SPA & Factor Highlights
 
-- Hansen SPA best model: **allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=2|top_frac=0.2000** with p-value **0.031** (2000 stationary bootstrap draws, block=63). See `reports/summaries/wrds_flagship_spa.md`.
+- Hansen SPA best model: **allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=1|top_frac=0.2000** with p-value **0.015** (2000 stationary bootstrap draws, block=63). See `reports/summaries/wrds_flagship_spa.md`.
 - FF5 + MOM regression (HAC lags=5):
 
 ```
 | Factor | Beta | t-stat |
 | --- | ---:| ---:|
-| Alpha | -0.0001 | -1.41 |
-| Mkt_RF | 0.1005 | 9.47 |
-| SMB | 0.0150 | 1.00 |
-| HML | -0.0467 | -2.22 |
-| RMW | -0.0178 | -0.62 |
-| CMA | -0.0050 | -0.13 |
-| MOM | 0.0469 | 3.79 |
+| Alpha | -0.0000 | -0.24 |
+| Mkt_RF | 0.0663 | 5.89 |
+| SMB | 0.0044 | 0.30 |
+| HML | 0.0256 | 1.04 |
+| RMW | -0.0251 | -1.46 |
+| CMA | -0.0769 | -3.70 |
+| MOM | 0.0413 | 3.89 |
+_Frequency: returns daily, factors daily; overlap 2015-01-29 to 2017-11-02; n_obs=698._
 ```
 
 ## Capacity & Turnover
 
-- Average daily turnover: ~$21.67K (total $32.84MM) across 1421 traded days.
+- Average daily turnover: ~$21.13K (total $14.75MM) across 670 traded days.
 - Portfolio heat cap enforced via max positions per sector and ADV floor; no guardrail breaches detected.
 
 ## Notes
@@ -76,4 +93,4 @@ _Exposure time series is recorded in equity_curve.csv._
 - Target turnover ≈ 3.00% of ADV with max 8 positions per sector.
 - Execution assumes TWAP slicing with linear+sqrt impact, 5 bps commissions, and borrow spread floor of 8 bps.
 
-Published artifacts (PNG/MD/JSON summaries) live under `docs/img/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8` and reports/summaries for reproducibility.
+Published artifacts (PNG/MD/JSON summaries) live under `docs/img/wrds_flagship/2026-01-25T22-58-24Z-4d08d18` and reports/summaries for reproducibility.

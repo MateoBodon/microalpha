@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 import pandas as pd
+import pytest
 import yaml
 
 from microalpha.events import SignalEvent
@@ -85,6 +86,14 @@ class HoldoutDirectionalStrategy:
         self.invested = True
         side = "LONG" if self.direction == "long" else "SHORT"
         return [SignalEvent(event.timestamp, self.symbol, side)]
+
+
+class HoldoutNoSignalStrategy:
+    def __init__(self, symbol: str, **_ignored):
+        self.symbol = symbol
+
+    def on_market(self, _event) -> list[SignalEvent]:
+        return []
 
 
 def _write_holdout_fixture(tmp_path: Path, include_holdout: bool = True) -> Path:
@@ -178,3 +187,22 @@ def test_holdout_window_does_not_overlap_selection(tmp_path: Path, monkeypatch) 
     for fold in result["folds"]:
         test_end = pd.Timestamp(fold["test_end"])
         assert test_end < holdout_start
+
+
+def test_holdout_zero_trades_guardrail(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setitem(
+        walkforward.STRATEGY_MAPPING,
+        "HoldoutNoSignalStrategy",
+        HoldoutNoSignalStrategy,
+    )
+    cfg_path = _write_holdout_fixture(tmp_path, include_holdout=True)
+    config = yaml.safe_load(cfg_path.read_text())
+    config["template"]["strategy"]["name"] = "HoldoutNoSignalStrategy"
+    config["template"]["run_mode"] = "headline"
+    cfg_path.write_text(yaml.safe_dump(config), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="Holdout produced zero trades"):
+        run_walk_forward(
+            str(cfg_path),
+            override_artifacts_dir=str(tmp_path / "artifacts_zero_trades"),
+        )

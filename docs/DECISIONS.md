@@ -30,3 +30,17 @@ Template:
 - Options considered: Use ticket-19a in run logs (would fail validation); map to ticket-19 and note the sub-ticket in docs.
 - Why: Keep validation/tests green while preserving traceability for the follow-on ticket.
 - Consequences: Run logs use ticket-19 naming; ticket-19a details live in docs/tickets and RESULTS notes.
+
+- Date: 2026-01-25
+- Decision: Use WRDS_DATA_ROOT=/srv/data/wrds/wrds for the WRDS run.
+- Context: The codex-worker mount at /srv/data/wrds contains the expected WRDS layout under a nested /wrds directory (crsp/, meta/, universes/), so configs could not find files at the top-level root.
+- Options considered: Update configs to add /wrds; create a symlink; point WRDS_DATA_ROOT to /srv/data/wrds/wrds.
+- Why: Avoids changing configs or dataset layout while matching the on-disk structure.
+- Consequences: Run logs and results explicitly record the nested WRDS_DATA_ROOT path.
+
+- Date: 2026-01-25
+- Decision: Align WRDS WFV/holdout windows to 2013-01-02 → 2019-12-31 based on available universe coverage.
+- Context: The WRDS universe file ends at 2019-12-31, so the prior 2021–2024 holdout window had no data and produced zero trades.
+- Options considered: Extend/re-export WRDS data; loosen filters; shift the WFV/holdout windows to the covered period.
+- Why: Shifting windows is the smallest change that restores non-degenerate holdout metrics without redesigning the strategy.
+- Consequences: Resume metrics now reference a 2018–2019 holdout; future data refreshes could expand the window.

@@ -1,0 +1,83 @@
+# Commands (in order)
+
+- ls
+- cat PROJECT.md
+- cat AGENTS.md
+- cat PROGRESS.md
+- cat docs/DOCS_AND_LOGGING_SYSTEM.md
+- rg -n "ticket-22" docs/CODEX_SPRINT_TICKETS.md
+- cat docs/CODEX_SPRINT_TICKETS.md
+- ls docs
+- ls docs/tickets
+- cat docs/tickets/README.md
+- cat Makefile
+- python3 - <<'PY' (print configs/wfv_flagship_wrds.yaml)
+- rg --files -g 'AGENTS.md'
+- cat /home/codex/.codex/skills/gpt-bundle/SKILL.md
+- date -u +"%Y%m%d_%H%M%S"
+- python3 - <<'PY' (insert ticket-22 into docs/CODEX_SPRINT_TICKETS.md)
+- cat <<'EOF' > docs/tickets/ticket-22_wrds_resume_metrics.md
+- git rev-parse HEAD
+- git rev-parse --abbrev-ref HEAD
+- git checkout -b codex/ticket-22-wrds-resume-metrics
+- date -u +"%Y-%m-%dT%H:%M:%SZ"
+- python3 --version
+- cat <<'EOF' > docs/prompts/20260125_205959_ticket-22_wrds-resume-metrics_ticket-22_wrds-resume-metrics.md
+- cat <<'EOF' > docs/agent_runs/20260125_205959_ticket-22_wrds-resume-metrics/PROMPT.md
+- cat <<'EOF' > docs/agent_runs/20260125_205959_ticket-22_wrds-resume-metrics/COMMANDS.md
+- cat <<'EOF' > docs/agent_runs/20260125_205959_ticket-22_wrds-resume-metrics/RESULTS.md
+- cat <<'EOF' > docs/agent_runs/20260125_205959_ticket-22_wrds-resume-metrics/TESTS.md
+- cat <<'EOF' > docs/agent_runs/20260125_205959_ticket-22_wrds-resume-metrics/META.json
+- WRDS_ENABLED=1 WRDS_DATA_ROOT=/srv/data/wrds make wfv-wrds (failed: microalpha not found)
+- ls src/microalpha
+- python3 - <<'PY' (print src/microalpha/cli.py)
+- ls -a
+- ls .venv/bin | head
+- ls .venv/bin | rg microalpha
+- PATH=.venv/bin:$PATH WRDS_ENABLED=1 WRDS_DATA_ROOT=/srv/data/wrds MPLCONFIGDIR=/tmp/matplotlib make wfv-wrds (failed: missing universe file)
+- ls /srv/data/wrds
+- ls /srv/data/wrds/wrds
+- PATH=.venv/bin:$PATH WRDS_ENABLED=1 WRDS_DATA_ROOT=/srv/data/wrds/wrds MPLCONFIGDIR=/tmp/matplotlib make wfv-wrds
+- ls artifacts/wrds_flagship | tail
+- ls artifacts/wrds_flagship/2026-01-25T21-01-51Z-4d08d18
+- ls artifacts/wrds_flagship/2026-01-25T21-01-31Z-4d08d18
+- ls artifacts/wrds_flagship/2026-01-25T21-01-51Z-4d08d18 | rg 'metrics|equity|returns|bootstrap'
+- ps -ef | rg 'microalpha wfv' | head
+- ls artifacts/wrds_flagship | tail -n 3
+- ls artifacts/wrds_flagship/2026-01-25T21-01-51Z-4d08d18 | rg 'metrics|equity|returns|bootstrap|holdout'
+- ps -p 81437 -o etime,pcpu,pmem,cmd
+- PATH=.venv/bin:$PATH WRDS_ENABLED=1 WRDS_DATA_ROOT=/srv/data/wrds/wrds MPLCONFIGDIR=/tmp/matplotlib make report-wrds
+- python3 - <<'PY' (read metrics/holdout/spa/reality_check)
+- python3 - <<'PY' (inspect reports/summaries/wrds_flagship_metrics.json)
+- python3 - <<'PY' (print key metrics)
+- python3 - <<'PY' (read holdout_manifest)
+- python3 - <<'PY' (read manifest selection window)
+- wc -l artifacts/wrds_flagship/2026-01-25T21-01-51Z-4d08d18/holdout_trades.jsonl
+- cat project_state/KNOWN_ISSUES.md
+- cat <<'EOF' > docs/results_wrds_resume.md
+- PATH=.venv/bin:$PATH make test-fast (failed: META.json missing git_shas)
+- cat <<'EOF' > docs/agent_runs/20260125_205959_ticket-22_wrds-resume-metrics/RESULTS.md
+- cat <<'EOF' > docs/agent_runs/20260125_205959_ticket-22_wrds-resume-metrics/TESTS.md
+- cat <<'EOF' >> docs/DECISIONS.md
+- python3 - <<'PY' (update PROGRESS.md)
+- python3 - <<'PY' (update CHANGELOG.md)
+- python3 - <<'PY' (update project_state/KNOWN_ISSUES.md)
+- head -n 20 docs/results_wrds.md
+- python3 - <<'PY' (sha256 configs/wfv_flagship_wrds.yaml)
+- python3 - <<'PY' (sha256 artifacts/.../wfv_flagship_wrds.yaml)
+- python3 - <<'PY' (read manifest config_sha256)
+- python3 - <<'PY' (sha256 config with WRDS_DATA_ROOT substitution)
+- ls reports/summaries | rg 'wrds_flagship'
+- ls docs/img/wrds_flagship | tail
+- PATH=.venv/bin:$PATH make check-data-policy
+- date -u +"%Y-%m-%dT%H:%M:%SZ"
+- python3 - <<'PY' (update META.json)
+- PATH=.venv/bin:$PATH make test-fast
+- cat <<'EOF' > docs/agent_runs/20260125_205959_ticket-22_wrds-resume-metrics/TESTS.md (update)
+- python3 tools/agentic/gpt_bundle.py --zip --ticket ticket-22_wrds_resume_metrics
+- python3 tools/agentic/gpt_bundle.py --zip --ticket ticket-22_wrds_resume_metrics
+- date -u +"%Y-%m-%dT%H:%M:%SZ"
+- python3 - <<'PY' (update META.json finished_at_utc)
+- git status --porcelain
+- git status --porcelain docs/prompts | head
+- rg -n "prompts" .gitignore

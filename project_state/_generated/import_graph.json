@@ -54,10 +54,14 @@
   "src/microalpha/metrics.py": [
     "microalpha.microalpha.risk_stats"
   ],
+  "src/microalpha/order_flow.py": [
+    "microalpha.microalpha.events"
+  ],
   "src/microalpha/portfolio.py": [
     "microalpha.microalpha.events",
     "microalpha.microalpha.logging",
-    "microalpha.microalpha.market_metadata"
+    "microalpha.microalpha.market_metadata",
+    "microalpha.microalpha.order_flow"
   ],
   "src/microalpha/reporting/__init__.py": [
     "microalpha.microalpha.summary",
@@ -65,6 +69,9 @@
     "microalpha.microalpha.wrds_summary"
   ],
   "src/microalpha/reporting/analytics.py": [],
+  "src/microalpha/reporting/baselines.py": [
+    "microalpha.risk_stats"
+  ],
   "src/microalpha/reporting/factors.py": [],
   "src/microalpha/reporting/robustness.py": [
     "microalpha.market_metadata",
@@ -72,10 +79,12 @@
   ],
   "src/microalpha/reporting/spa.py": [],
   "src/microalpha/reporting/summary.py": [
-    "microalpha.microalpha.reporting.factors"
+    "microalpha.microalpha.reporting.factors",
+    "microalpha.reporting.baselines"
   ],
   "src/microalpha/reporting/tearsheet.py": [],
   "src/microalpha/reporting/wrds_summary.py": [
+    "microalpha.reporting.baselines",
     "microalpha.reporting.robustness",
     "microalpha.reporting.spa",
     "microalpha.wrds"
@@ -98,6 +107,7 @@
     "microalpha.microalpha.manifest",
     "microalpha.microalpha.market_metadata",
     "microalpha.microalpha.metrics",
+    "microalpha.microalpha.order_flow",
     "microalpha.microalpha.portfolio",
     "microalpha.microalpha.risk",
     "microalpha.microalpha.slippage",
@@ -144,6 +154,7 @@
     "microalpha.microalpha.manifest",
     "microalpha.microalpha.market_metadata",
     "microalpha.microalpha.metrics",
+    "microalpha.microalpha.order_flow",
     "microalpha.microalpha.portfolio",
     "microalpha.microalpha.risk_stats",
     "microalpha.microalpha.runner",
@@ -154,6 +165,9 @@
     "microalpha.microalpha.strategies.mm"
   ],
   "src/microalpha/wrds/__init__.py": [],
+  "tools/agentic/gpt_bundle.py": [],
+  "tools/agentic/project_state_refresh.py": [],
+  "tools/agentic/repo_snapshot.py": [],
   "tools/build_project_state.py": [],
   "tools/gpt_bundle.py": [],
   "tools/render_project_state_docs.py": []

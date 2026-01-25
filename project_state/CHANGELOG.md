@@ -1,7 +1,7 @@
 <!--
-generated_at: 2025-12-23T22:01:33Z
-git_sha: ba5b48089091f6a858b065dd3a388b467dd67984
-branch: codex/ticket-04-leakage-tests-unsafe-manifest
+generated_at: 2026-01-25T23:23:20Z
+git_sha: 4d08d18202a411cd831efce739cd5cb37e6deb1e
+branch: codex/ticket-22-wrds-resume-metrics
 commands:
   - python3 tools/build_project_state.py
   - python3 tools/render_project_state_docs.py
@@ -31,9 +31,19 @@ All notable changes to this project will be documented in this file. The format 
 - ticket-12: WRDS_DATA_ROOT local-doc fallback (reads `docs/local/WRDS_DATA_ROOT.md` when env var is unset).
 - ticket-04: explicit unsafe execution opt-in with manifest flags (`unsafe_execution`, `unsafe_reasons`, `execution_alignment`) and report banners.
 - ticket-04: red-team leakage tests for future-dated signals and unsafe execution configs.
+- ticket-13: non-degenerate WFV selection constraints (min_trades/min_turnover) with manifest/report surfacing and WRDS configs updated.
+- ticket-13: flagship momentum filter diagnostics added to WFV grid exclusions/folds for per-rebalance coverage counts.
+- ticket-14: order-flow diagnostics capturing post-signal sizing/orders/broker/fills with per-rebalance payloads and WFV fold attachments.
+- ticket-16: run-log validator script + `make validate-runlogs` target to enforce META.json integrity.
+- ticket-05: deterministic runs index registry builder, Make target, and run registry documentation.
+- ticket-17: baseline suite computation with `baselines.csv`/status plus baseline comparison table + overlay plot in summary reports.
+- ticket-18: agentic system scaffold (PROJECT.md, agentic tools, and run-log templates).
+- ticket-22: WRDS resume metrics summary (`docs/results_wrds_resume.md`) for run `2026-01-25T21-01-51Z-4d08d18`.
+- ticket-23: holdout order-flow + filter diagnostics and a hard guardrail for zero-trade holdout runs.
+
 
 ### Changed
-- Walk-forward WRDS config aligned to universe coverage (2012–2024) and report pipeline now emits WRDS signals before analytics.
+- Walk-forward WRDS config aligned to available universe coverage (2013–2019) to restore non-degenerate holdout metrics.
 - WRDS flagship run now uses 3y/9m folds (21 folds), trimmed grid (top_frac × turnover only), higher turnover cap, and produces reproducible signals/analytics/factors/SPA assets for run `2025-11-12T18-50-58Z-b2eaf50` with docs, plots, and summaries updated in lockstep.
 - ticket-01: WRDS configs now surface gross leverage/single-name caps and borrow model; reporting now includes net/gross exposure + cost breakdown.
 - WRDS smoke report tolerates zero SPA comparator t-stats (smoke-only) to keep validation runs unblocked.
@@ -47,4 +57,13 @@ All notable changes to this project will be documented in this file. The format 
 - ticket-02: Walk-forward runs now support explicit holdout ranges with separate holdout artifacts, selection summaries, and OOS returns; WRDS/sample configs updated for holdout evaluation.
 - ticket-07: gpt-bundle now records commit ranges and verifies DIFF.patch against bundled files; holdout test now proves selection excludes holdout data.
 - ticket-09: gpt-bundle now validates META.json ticket ids against sprint tickets before bundling.
+- ticket-03: factor regression now enforces index alignment, requires explicit resampling for frequency mismatches, and reports frequency + sample size metadata (CLI includes resample flags).
 - ticket-04: engine rejects signals with timestamps that do not match the current market event.
+- ticket-14: weight-based sizing no longer falls back to default qty when weight rounds to zero; cap breaches clip weight-based orders instead of dropping, and diagnostics track clip counts.
+- ticket-15: SPA grid-returns loading reindexed to avoid KeyErrors; SPA outputs now include `spa_status`/`spa_error`, and WRDS summaries gate headline language when SPA fails.
+- gpt-bundle: allow optional `git_sha_after_ref` in META.json to derive diff ranges while keeping concrete git SHA metadata.
+- test-fast now includes run-log validation before pytest.
+- Cost sensitivity note now clarifies borrow costs are logged separately and not scaled.
+- ticket-19: cleaned scaffold residue and tracked agentic run logs + project_state indices.
+- ticket-19a: pandas 3 compatibility fixes for multi-asset timestamps and analytics timestamp filling.
+- ticket-19a: refreshed project_state indices, validated scaffold state, and recorded commit/run logs.

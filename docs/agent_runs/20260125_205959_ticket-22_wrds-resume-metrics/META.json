@@ -1,0 +1,32 @@
+{
+  "run_name": "20260125_205959_ticket-22_wrds-resume-metrics",
+  "ticket_id": "ticket-22",
+  "started_at_utc": "2026-01-25T21:00:53Z",
+  "finished_at_utc": "2026-01-25T21:42:37Z",
+  "git_sha_before": "4d08d18202a411cd831efce739cd5cb37e6deb1e",
+  "git_sha_after": "4d08d18202a411cd831efce739cd5cb37e6deb1e",
+  "branch_name": "codex/ticket-22-wrds-resume-metrics",
+  "host_env_notes": "Linux 6.8 / python 3.12.3 / venv .venv",
+  "dataset_id": "wrds_crsp_export_20251221_001618",
+  "config_paths": [
+    "configs/wfv_flagship_wrds.yaml"
+  ],
+  "config_sha256": {
+    "configs/wfv_flagship_wrds.yaml": "ef077baabca4bc6b4b8c88528cf059fe893c609238f33b2a85ae052c796bd632"
+  },
+  "artifact_paths": [
+    "artifacts/wrds_flagship/2026-01-25T21-01-51Z-4d08d18"
+  ],
+  "report_paths": [
+    "reports/summaries/wrds_flagship.md",
+    "reports/summaries/wrds_flagship_metrics.json",
+    "reports/summaries/wrds_flagship_spa.json",
+    "reports/summaries/wrds_flagship_spa.md",
+    "reports/summaries/wrds_flagship_factors.md",
+    "reports/summaries/wrds_flagship_baselines.png",
+    "docs/results_wrds.md",
+    "docs/results_wrds_resume.md",
+    "docs/img/wrds_flagship/2026-01-25T21-01-51Z-4d08d18"
+  ],
+  "web_sources": []
+}

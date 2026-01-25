@@ -1,7 +1,7 @@
 <!--
-generated_at: 2025-12-23T22:01:33Z
-git_sha: ba5b48089091f6a858b065dd3a388b467dd67984
-branch: codex/ticket-04-leakage-tests-unsafe-manifest
+generated_at: 2026-01-25T23:23:20Z
+git_sha: 4d08d18202a411cd831efce739cd5cb37e6deb1e
+branch: codex/ticket-22-wrds-resume-metrics
 commands:
   - python3 tools/build_project_state.py
   - python3 tools/render_project_state_docs.py
@@ -37,21 +37,20 @@ commands:
 
 ## WRDS results (docs/results_wrds.md)
 
-- Latest run: 2025-12-26T17-21-39Z-75ce3c8
+- Latest run: 2026-01-25T22-58-24Z-4d08d18
 - Snapshot:
-  - Sharpe_HAC: 0.03
-  - MAR: 0.01
-  - Max Drawdown: 8.33%
-  - Turnover: $32.84MM
-  - Reality Check p-value: 0.996
-  - SPA status: ok
-  - SPA p-value: 0.031
+  - Sharpe_HAC: 0.27
+  - MAR: 0.21
+  - Max Drawdown: 3.41%
+  - Turnover: $14.75MM
+  - Reality Check p-value: 0.988
+  - SPA p-value: 0.015
 - Report: `reports/summaries/wrds_flagship.md`
 
 
 ## WRDS smoke (docs/results_wrds_smoke.md)
 
-- Latest run: 2025-12-23T20-19-56Z-7ca855f
+- Latest run: 2025-12-24T05-15-43Z-559a99e
 - Snapshot:
   - Sharpe_HAC: 0.00
   - MAR: 0.00
@@ -65,17 +64,19 @@ commands:
 
 ## Latest progress (PROGRESS.md)
 
-- Date: 2025-12-23
-- Ticket-01: SPA/report robustness hardened + WRDS smoke/report rerun (Status: Done). Smoke run: `artifacts/wrds_flagship_smoke/2025-12-23T06-05-28Z-afe1765/`. Report run: `artifacts/wrds_flagship/2025-12-21T22-32-44Z-2b48ef7/`. Run log: `docs/agent_runs/20251222_200000_ticket-01_fix-spa-robustness/`.
-- Ticket-12: PnL integrity checks + same-day fill equity refresh + diagnostic tooling; sample WFV rerun and report generated. WRDS smoke rerun + report completed under `$WRDS_DATA_ROOT` (`artifacts/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f/`), integrity diagnostics OK. WRDS flagship rerun completed (`artifacts/wrds_flagship/2025-12-23T19-40-24Z-ff2979d/`); run remains degenerate (zero trades). Run log: `docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/`.
-- Ticket-04: Leakage guardrails added (signal timestamp invariant, unsafe execution opt-in + manifest fields, report unsafe banner) with red-team tests. Run log: `docs/agent_runs/20251223_214840_ticket-04_leakage-tests-unsafe-manifest/`.
+- Date: 2026-01-25
+- ### Done
+- - Ticket-19a: committed scaffold + project_state index refresh, ran project_state_refresh and test-fast, and logged the run under ticket-19 naming. Run log: `docs/agent_runs/20260125_191727_ticket-19_commit-and-validate-scaffold/`.
+- - Ticket-19a: created local venv, refreshed project_state, fixed pandas 3 compatibility in data/reporting, and ran `make test-fast` successfully. Run log: `docs/agent_runs/20260125_200424_ticket-19_commit-and-validate-scaffold-env/`.
+- - Ticket-22: WRDS holdout WFV + report run completed (holdout zero trades; inference fields computed on selection window). Artifacts: `artifacts/wrds_flagship/2026-01-25T21-01-51Z-4d08d18/`. Summary: `docs/results_wrds_resume.md`. Run log: `docs/agent_runs/20260125_205959_ticket-22_wrds-resume-metrics/`.
+- - Ticket-23: WRDS holdout WFV + report rerun with coverage-aligned windows; holdout now executes trades (non-degenerate). Artifacts: `artifacts/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/`. Summary: `docs/results_wrds_resume.md`. Run log: `docs/agent_runs/20260125_224419_ticket-23_wrds-holdout-nonzero-trades/`.
 
 
 ## Recent run logs (docs/agent_runs, last 3)
 
-- `20251222_191759_ticket-00_project_state_rebuild` — Regenerated `project_state/` docs and `_generated` indices using updated build/render scripts. (docs/agent_runs/20251222_191759_ticket-00_project_state_rebuild/RESULTS.md)
-- `20251222_200000_ticket-01_fix-spa-robustness` — docs/PLAN_OF_RECORD.md: SPA/reality-check must be present; if degenerate it must be labeled with a reason (no crashes, no silent skips). (docs/agent_runs/20251222_200000_ticket-01_fix-spa-robustness/RESULTS.md)
-- `20251223_080000_ticket-12_fix-wrds-pnl-integrity` — Fixed same-day fill equity snapshots by refreshing after fills and collapsing per-timestamp entries so trades/costs can’t leave a flat equity curve at run end. (docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/RESULTS.md)
+- `20260125_200424_ticket-19_commit-and-validate-scaffold-env` — Created `.venv` and installed dev dependencies for test execution. (docs/agent_runs/20260125_200424_ticket-19_commit-and-validate-scaffold-env/RESULTS.md)
+- `20260125_205959_ticket-22_wrds-resume-metrics` — Ran WRDS holdout WFV with `configs/wfv_flagship_wrds.yaml` using `WRDS_DATA_ROOT=/srv/data/wrds/wrds`; run_id `2026-01-25T21-01-51Z-4d08d18`. (docs/agent_runs/20260125_205959_ticket-22_wrds-resume-metrics/RESULTS.md)
+- `20260125_224419_ticket-23_wrds-holdout-nonzero-trades` — Added holdout diagnostics (order-flow + filter diagnostics) and a hard guardrail for zero-trade holdout runs in `src/microalpha/walkforward.py`. (docs/agent_runs/20260125_224419_ticket-23_wrds-holdout-nonzero-trades/RESULTS.md)
 
 
 Sources: `README.md`, `PROGRESS.md`, `docs/results_wrds.md`, `docs/results_wrds_smoke.md`, sample metrics under `artifacts/sample_flagship/`, `artifacts/sample_wfv/`, `artifacts/sample_wfv_holdout/`, and recent `docs/agent_runs/*/RESULTS.md`.

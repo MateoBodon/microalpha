@@ -1,1 +1,1 @@
-codex/ticket-19a-commit-and-validate-scaffold
+codex/ticket-22-wrds-resume-metrics

@@ -1,95 +1,1028 @@
-diff --git a/src/microalpha.egg-info/SOURCES.txt b/src/microalpha.egg-info/SOURCES.txt
-index 88ea8694..92ab54b0 100644
---- a/src/microalpha.egg-info/SOURCES.txt
-+++ b/src/microalpha.egg-info/SOURCES.txt
-@@ -12,11 +12,14 @@ src/microalpha/data.py
- src/microalpha/engine.py
- src/microalpha/events.py
- src/microalpha/execution.py
-+src/microalpha/execution_safety.py
-+src/microalpha/integrity.py
- src/microalpha/lob.py
- src/microalpha/logging.py
- src/microalpha/manifest.py
- src/microalpha/market_metadata.py
- src/microalpha/metrics.py
-+src/microalpha/order_flow.py
- src/microalpha/portfolio.py
- src/microalpha/risk.py
- src/microalpha/risk_stats.py
-@@ -37,10 +40,13 @@ src/microalpha.egg-info/top_level 2.txt
- src/microalpha.egg-info/top_level.txt
- src/microalpha/reporting/__init__.py
- src/microalpha/reporting/analytics.py
-+src/microalpha/reporting/baselines.py
- src/microalpha/reporting/factors.py
-+src/microalpha/reporting/robustness.py
- src/microalpha/reporting/spa.py
- src/microalpha/reporting/summary.py
- src/microalpha/reporting/tearsheet.py
-+src/microalpha/reporting/wrds_summary.py
- src/microalpha/strategies/breakout.py
- src/microalpha/strategies/cs_momentum.py
- src/microalpha/strategies/flagship_mom.py
-@@ -50,18 +56,24 @@ src/microalpha/strategies/mm.py
- src/microalpha/wrds/__init__.py
- tests/test_allocators.py
- tests/test_artifacts_schema.py
-+tests/test_baselines.py
- tests/test_benchmarks.py
- tests/test_borrow_costs.py
-+tests/test_build_wrds_signals.py
- tests/test_capital_and_slippage_integration.py
- tests/test_cfg_unify.py
- tests/test_cli_help.py
- tests/test_cli_info.py
- tests/test_data.py
-+tests/test_data_policy.py
-+tests/test_degeneracy_constraints.py
- tests/test_determinism.py
- tests/test_docs_links.py
- tests/test_execution.py
- tests/test_execution_models.py
-+tests/test_factor_alignment.py
- tests/test_factor_regression.py
-+tests/test_flagship_filter_diagnostics.py
- tests/test_flagship_momentum.py
- tests/test_limit_order_execution.py
- tests/test_lob.py
-@@ -74,7 +86,10 @@ tests/test_metrics_invariant.py
- tests/test_multiasset_cs_momentum.py
- tests/test_multiasset_data_handler.py
- tests/test_no_lookahead.py
-+tests/test_order_flow_diagnostics.py
- tests/test_pnl_attribution.py
-+tests/test_pnl_integrity.py
-+tests/test_portfolio_risk_caps.py
- tests/test_portfolio_risk_sizing.py
- tests/test_portfolio_turnover_cap.py
- tests/test_portfolio_weight_sizing.py
-@@ -82,16 +97,22 @@ tests/test_price_lookup.py
- tests/test_profile_output.py
- tests/test_reality_check_store.py
- tests/test_reporting_analytics.py
-+tests/test_reporting_robustness.py
- tests/test_reporting_spa.py
- tests/test_risk_and_slippage.py
- tests/test_risk_controls.py
- tests/test_risk_stats.py
- tests/test_runner_flagship.py
-+tests/test_runs_index.py
- tests/test_slippage_models.py
-+tests/test_spa_regression_keyerror.py
- tests/test_strategies.py
- tests/test_time_ordering.py
- tests/test_tplus1_execution.py
- tests/test_trades_jsonl.py
- tests/test_vwap_is.py
- tests/test_walkforward.py
--tests/test_wrds_detection.py
-\ No newline at end of file
-+tests/test_wrds_detection.py
-+tests/test_wrds_flagship_spec.py
-+tests/test_wrds_markers.py
-+tests/test_wrds_summary_render.py
-\ No newline at end of file
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 4a05a646..f51283bd 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -24,9 +24,12 @@ All notable changes to this project will be documented in this file. The format
+ - ticket-05: deterministic runs index registry builder, Make target, and run registry documentation.
+ - ticket-17: baseline suite computation with `baselines.csv`/status plus baseline comparison table + overlay plot in summary reports.
+ - ticket-18: agentic system scaffold (PROJECT.md, agentic tools, and run-log templates).
++- ticket-22: WRDS resume metrics summary (`docs/results_wrds_resume.md`) for run `2026-01-25T21-01-51Z-4d08d18`.
++- ticket-23: holdout order-flow + filter diagnostics and a hard guardrail for zero-trade holdout runs.
++
+ 
+ ### Changed
+-- Walk-forward WRDS config aligned to universe coverage (2012–2024) and report pipeline now emits WRDS signals before analytics.
++- Walk-forward WRDS config aligned to available universe coverage (2013–2019) to restore non-degenerate holdout metrics.
+ - WRDS flagship run now uses 3y/9m folds (21 folds), trimmed grid (top_frac × turnover only), higher turnover cap, and produces reproducible signals/analytics/factors/SPA assets for run `2025-11-12T18-50-58Z-b2eaf50` with docs, plots, and summaries updated in lockstep.
+ - ticket-01: WRDS configs now surface gross leverage/single-name caps and borrow model; reporting now includes net/gross exposure + cost breakdown.
+ - WRDS smoke report tolerates zero SPA comparator t-stats (smoke-only) to keep validation runs unblocked.
+diff --git a/PROGRESS.md b/PROGRESS.md
+index a95d833f..ce876c5c 100644
+--- a/PROGRESS.md
++++ b/PROGRESS.md
+@@ -74,3 +74,5 @@ Ticket-18: Installed agentic system scaffold, restored repo-specific docs, and g
+ ### Done
+ - Ticket-19a: committed scaffold + project_state index refresh, ran project_state_refresh and test-fast, and logged the run under ticket-19 naming. Run log: `docs/agent_runs/20260125_191727_ticket-19_commit-and-validate-scaffold/`.
+ - Ticket-19a: created local venv, refreshed project_state, fixed pandas 3 compatibility in data/reporting, and ran `make test-fast` successfully. Run log: `docs/agent_runs/20260125_200424_ticket-19_commit-and-validate-scaffold-env/`.
++- Ticket-22: WRDS holdout WFV + report run completed (holdout zero trades; inference fields computed on selection window). Artifacts: `artifacts/wrds_flagship/2026-01-25T21-01-51Z-4d08d18/`. Summary: `docs/results_wrds_resume.md`. Run log: `docs/agent_runs/20260125_205959_ticket-22_wrds-resume-metrics/`.
++- Ticket-23: WRDS holdout WFV + report rerun with coverage-aligned windows; holdout now executes trades (non-degenerate). Artifacts: `artifacts/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/`. Summary: `docs/results_wrds_resume.md`. Run log: `docs/agent_runs/20260125_224419_ticket-23_wrds-holdout-nonzero-trades/`.
+diff --git a/configs/wfv_flagship_wrds.yaml b/configs/wfv_flagship_wrds.yaml
+index 0ae202b8..f0c52d0a 100644
+--- a/configs/wfv_flagship_wrds.yaml
++++ b/configs/wfv_flagship_wrds.yaml
+@@ -63,14 +63,14 @@ template:
+     min_qty: 10
+ 
+ walkforward:
+-  start: "2005-01-03"
+-  end: "2020-12-31"
++  start: "2013-01-02"
++  end: "2017-12-29"
+   training_days: 756  # 36-month training window
+   testing_days: 252   # 12-month forward test
+ 
+ holdout:
+-  start: "2021-01-04"
+-  end: "2024-12-31"
++  start: "2018-01-02"
++  end: "2019-12-31"
+ 
+ grid:
+   lookback_months: [9, 12, 18]
+diff --git a/docs/CODEX_SPRINT_TICKETS.md b/docs/CODEX_SPRINT_TICKETS.md
+index 09c01fd4..c4c393c7 100644
+--- a/docs/CODEX_SPRINT_TICKETS.md
++++ b/docs/CODEX_SPRINT_TICKETS.md
+@@ -6,6 +6,63 @@
+ 
+ ---
+ 
++
++## ticket-23 — WRDS holdout nonzero trades (final holdout)
++
++**Goal (1 sentence):** Fix WRDS final-holdout degeneracy (zero trades) and produce resume-credible real-data holdout metrics with a committed run log + summary doc.
++
++**Status:** Done.
++
++**Why (ties to diagnosis):**
++- Current WRDS holdout window has zero trades; resume claims need a locked, non-degenerate holdout run.
++
++**Acceptance criteria (objective + falsifiable):**
++- WRDS final-holdout run produces `num_trades > 0` and non-NaN Sharpe/CAGR/MaxDD.
++- `docs/results_wrds_resume.md` includes run_id, date range, universe, net-of-costs note, and headline metrics.
++- Run log exists under `docs/agent_runs/<RUN_NAME>/` with required files and recorded artifact/report paths.
++- `make test-fast`, `make check-data-policy`, `WRDS_ENABLED=1 WRDS_DATA_ROOT=/srv/data/wrds/wrds make wfv-wrds`, and `WRDS_ENABLED=1 WRDS_DATA_ROOT=/srv/data/wrds/wrds make report-wrds` succeed.
++- WRDS_DATA_ROOT handling is consistent and documented.
++
++**Minimal tests/commands to run:**
++- `make test-fast`
++- `make check-data-policy`
++- `WRDS_ENABLED=1 WRDS_DATA_ROOT=/srv/data/wrds/wrds make wfv-wrds`
++- `WRDS_ENABLED=1 WRDS_DATA_ROOT=/srv/data/wrds/wrds make report-wrds`
++
++**End-of-ticket:**
++- **Tests run:** `make check-data-policy`; `make test-fast`.
++- **Artifacts/logs:** `artifacts/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/`; `docs/agent_runs/20260125_224419_ticket-23_wrds-holdout-nonzero-trades/`.
++- **Documentation updates:** `docs/results_wrds_resume.md`, `PROGRESS.md`, `CHANGELOG.md`, `project_state/KNOWN_ISSUES.md`, `project_state/CURRENT_RESULTS.md`, `docs/DECISIONS.md`.
++
++---
++
++## ticket-22 — WRDS resume metrics (holdout WFV + summary doc)
++
++**Goal (1 sentence):** Produce resume-credible WRDS/CRSP holdout metrics with an auditable run log and clean summary doc (no licensed data).
++
++**Status:** Planned.
++
++**Why (ties to diagnosis):**
++- Resume claims must be backed by a single, locked holdout run with reproducible artifacts and inference fields.
++
++**Acceptance criteria (objective + falsifiable):**
++- A new WRDS holdout WFV + report run completes using `$WRDS_DATA_ROOT`.
++- Run log exists under `docs/agent_runs/<RUN_NAME>/` with required files.
++- Summary doc (`docs/results_wrds_resume.md` or `docs/results_wrds.md`) includes: run_id, date range, universe, net-of-costs note, Sharpe_HAC, MaxDD, CAGR (if available), turnover, RealityCheck p, SPA p/status.
++- `make check-data-policy` and `make test-fast` pass.
++
++**Minimal tests/commands to run:**
++- `make test-fast`
++- `make check-data-policy`
++- `WRDS_ENABLED=1 WRDS_DATA_ROOT=/srv/data/wrds make wfv-wrds`
++- `WRDS_ENABLED=1 WRDS_DATA_ROOT=/srv/data/wrds make report-wrds`
++
++**End-of-ticket:**
++- **Tests run:** …
++- **Artifacts/logs:** …
++- **Documentation updates:** …
++
++---
+ ## ticket-01 — Tighten WRDS flagship risk/cost caps + add WRDS smoke run + publish result skeleton
+ 
+ **Goal (1 sentence):** Make the WRDS pipeline produce audit-grade artifacts under explicit risk/cost caps, with a required WRDS “smoke” run and report outputs.
+diff --git a/docs/DECISIONS.md b/docs/DECISIONS.md
+index 59ad7049..5d6b8d70 100644
+--- a/docs/DECISIONS.md
++++ b/docs/DECISIONS.md
+@@ -30,3 +30,17 @@ Template:
+ - Options considered: Use ticket-19a in run logs (would fail validation); map to ticket-19 and note the sub-ticket in docs.
+ - Why: Keep validation/tests green while preserving traceability for the follow-on ticket.
+ - Consequences: Run logs use ticket-19 naming; ticket-19a details live in docs/tickets and RESULTS notes.
++
++- Date: 2026-01-25
++- Decision: Use WRDS_DATA_ROOT=/srv/data/wrds/wrds for the WRDS run.
++- Context: The codex-worker mount at /srv/data/wrds contains the expected WRDS layout under a nested /wrds directory (crsp/, meta/, universes/), so configs could not find files at the top-level root.
++- Options considered: Update configs to add /wrds; create a symlink; point WRDS_DATA_ROOT to /srv/data/wrds/wrds.
++- Why: Avoids changing configs or dataset layout while matching the on-disk structure.
++- Consequences: Run logs and results explicitly record the nested WRDS_DATA_ROOT path.
++
++- Date: 2026-01-25
++- Decision: Align WRDS WFV/holdout windows to 2013-01-02 → 2019-12-31 based on available universe coverage.
++- Context: The WRDS universe file ends at 2019-12-31, so the prior 2021–2024 holdout window had no data and produced zero trades.
++- Options considered: Extend/re-export WRDS data; loosen filters; shift the WFV/holdout windows to the covered period.
++- Why: Shifting windows is the smallest change that restores non-degenerate holdout metrics without redesigning the strategy.
++- Consequences: Resume metrics now reference a 2018–2019 holdout; future data refreshes could expand the window.
+diff --git a/docs/results_wrds.md b/docs/results_wrds.md
+index 27b3e86b..b9822a4f 100644
+--- a/docs/results_wrds.md
++++ b/docs/results_wrds.md
+@@ -1,26 +1,42 @@
+ # WRDS Walk-Forward Results (Flagship Momentum)
+ 
+-> Latest run: **2025-12-26T17-21-39Z-75ce3c8** (`configs/wfv_flagship_wrds.yaml`, 2005-01-03 -> 2020-11-17, 20 folds with 252-day forward tests (~12.0 months))
++> Latest run: **2026-01-25T22-58-24Z-4d08d18** (`configs/wfv_flagship_wrds.yaml`, 2013-01-02 -> 2017-11-02, 4 folds with 252-day forward tests (~12.0 months))
+ 
+ ## Performance Snapshot
+ 
+ | Metric | Value |
+ | --- | ---:|
+-| Sharpe_HAC | 0.03 |
+-| MAR | 0.01 |
+-| Max Drawdown | 8.33% |
+-| Turnover | $32.84MM |
+-| Reality Check p-value | 0.996 |
+-| SPA p-value | 0.031 |
++| Sharpe_HAC | 0.27 |
++| MAR | 0.21 |
++| Max Drawdown | 3.41% |
++| Turnover | $14.75MM |
++| Reality Check p-value | 0.988 |
++| SPA p-value | 0.015 |
++
++## Baselines
++
++| Series | Sharpe_HAC | MaxDD | CAGR | Turnover |
++| --- | ---:| ---:| ---:| ---:|
++| Flagship (net) | 0.27 | 3.41% | 0.72% | 14748925.2100 |
++| Equal-weight universe | 1.12 | 15.89% | 14.96% | 0.0000 |
++| Market proxy | 0.00 | 0.00% | 0.00% | 0.0000 |
++| Momentum 12-1 | 2.58 | 9.07% | 67.83% | 3.7500 |
++| Cash / RF | 0.00 | 0.00% | 0.00% | 0.0000 |
++
++![Baseline Overlay](img/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/wrds_flagship_baselines.png)
++
++- Baselines CSV: `../artifacts/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/baselines.csv`
++- Momentum baseline: lookback=12M skip=1M long_short=False
++- Turnover for baselines is unit-notional weight turnover; flagship uses reported total_turnover.
+ 
+ ## Exposure Summary
+ 
+ | Metric | Value |
+ | --- | ---:|
+-| Avg net exposure | 7.98% |
+-| Avg gross exposure | 10.06% |
+-| Max net exposure | 16.55% |
+-| Max gross exposure | 16.55% |
++| Avg net exposure | 6.39% |
++| Avg gross exposure | 9.96% |
++| Max net exposure | 16.19% |
++| Max gross exposure | 16.19% |
+ 
+ _Exposure time series is recorded in equity_curve.csv._
+ 
+@@ -28,45 +44,46 @@ _Exposure time series is recorded in equity_curve.csv._
+ 
+ | Category | Total |
+ | --- | ---:|
+-| Commission | $244 |
++| Commission | $125 |
+ | Slippage | $0 |
+ | Borrow | n/a |
+-| Total | $244 |
++| Total | $125 |
+ 
+ ## Key Visuals
+ 
+-![Equity Curve](img/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/equity_curve.png)
++![Equity Curve](img/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/equity_curve.png)
+ 
+-![Bootstrap Sharpe Histogram](img/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/bootstrap_hist.png)
++![Bootstrap Sharpe Histogram](img/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/bootstrap_hist.png)
+ 
+-![SPA Comparator t-stats](img/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/spa_tstats.png)
++![SPA Comparator t-stats](img/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/spa_tstats.png)
+ 
+-![IC / Rolling IR](img/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/2025-12-26T17-21-39Z-75ce3c8_ic_ir.png)
++![IC / Rolling IR](img/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/2026-01-25T22-58-24Z-4d08d18_ic_ir.png)
+ 
+-![Decile Spreads](img/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/2025-12-26T17-21-39Z-75ce3c8_deciles.png)
++![Decile Spreads](img/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/2026-01-25T22-58-24Z-4d08d18_deciles.png)
+ 
+-![Rolling FF5+MOM Betas](img/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/2025-12-26T17-21-39Z-75ce3c8_rolling_betas.png)
++![Rolling FF5+MOM Betas](img/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/2026-01-25T22-58-24Z-4d08d18_rolling_betas.png)
+ 
+ ## SPA & Factor Highlights
+ 
+-- Hansen SPA best model: **allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=2|top_frac=0.2000** with p-value **0.031** (2000 stationary bootstrap draws, block=63). See `reports/summaries/wrds_flagship_spa.md`.
++- Hansen SPA best model: **allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=1|top_frac=0.2000** with p-value **0.015** (2000 stationary bootstrap draws, block=63). See `reports/summaries/wrds_flagship_spa.md`.
+ - FF5 + MOM regression (HAC lags=5):
+ 
+ ```
+ | Factor | Beta | t-stat |
+ | --- | ---:| ---:|
+-| Alpha | -0.0001 | -1.41 |
+-| Mkt_RF | 0.1005 | 9.47 |
+-| SMB | 0.0150 | 1.00 |
+-| HML | -0.0467 | -2.22 |
+-| RMW | -0.0178 | -0.62 |
+-| CMA | -0.0050 | -0.13 |
+-| MOM | 0.0469 | 3.79 |
++| Alpha | -0.0000 | -0.24 |
++| Mkt_RF | 0.0663 | 5.89 |
++| SMB | 0.0044 | 0.30 |
++| HML | 0.0256 | 1.04 |
++| RMW | -0.0251 | -1.46 |
++| CMA | -0.0769 | -3.70 |
++| MOM | 0.0413 | 3.89 |
++_Frequency: returns daily, factors daily; overlap 2015-01-29 to 2017-11-02; n_obs=698._
+ ```
+ 
+ ## Capacity & Turnover
+ 
+-- Average daily turnover: ~$21.67K (total $32.84MM) across 1421 traded days.
++- Average daily turnover: ~$21.13K (total $14.75MM) across 670 traded days.
+ - Portfolio heat cap enforced via max positions per sector and ADV floor; no guardrail breaches detected.
+ 
+ ## Notes
+@@ -76,4 +93,4 @@ _Exposure time series is recorded in equity_curve.csv._
+ - Target turnover ≈ 3.00% of ADV with max 8 positions per sector.
+ - Execution assumes TWAP slicing with linear+sqrt impact, 5 bps commissions, and borrow spread floor of 8 bps.
+ 
+-Published artifacts (PNG/MD/JSON summaries) live under `docs/img/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8` and reports/summaries for reproducibility.
++Published artifacts (PNG/MD/JSON summaries) live under `docs/img/wrds_flagship/2026-01-25T22-58-24Z-4d08d18` and reports/summaries for reproducibility.
+diff --git a/project_state/CURRENT_RESULTS.md b/project_state/CURRENT_RESULTS.md
+index a11cca5a..6c373f97 100644
+--- a/project_state/CURRENT_RESULTS.md
++++ b/project_state/CURRENT_RESULTS.md
+@@ -1,10 +1,9 @@
+ <!--
+-generated_at: 2025-12-23T22:01:33Z
+-git_sha: ba5b48089091f6a858b065dd3a388b467dd67984
+-branch: codex/ticket-04-leakage-tests-unsafe-manifest
+-commands:
+-  - python3 tools/build_project_state.py
+-  - python3 tools/render_project_state_docs.py
++generated_at: 2026-01-25T23:16:08Z
++git_sha: 4d08d18202a411cd831efce739cd5cb37e6deb1e
++branch: codex/ticket-22-wrds-resume-metrics
++notes:
++  - Manual refresh of WRDS results + progress for ticket-23 (full project_state rebuild not run).
+ -->
+ 
+ 
+@@ -37,15 +36,15 @@ commands:
+ 
+ ## WRDS results (docs/results_wrds.md)
+ 
+-- Latest run: 2025-12-26T17-21-39Z-75ce3c8
++- Latest run: 2026-01-25T22-58-24Z-4d08d18
+ - Snapshot:
+-  - Sharpe_HAC: 0.03
+-  - MAR: 0.01
+-  - Max Drawdown: 8.33%
+-  - Turnover: $32.84MM
+-  - Reality Check p-value: 0.996
++  - Sharpe_HAC: 0.27
++  - MAR: 0.21
++  - Max Drawdown: 3.41%
++  - Turnover: $14.75MM
++  - Reality Check p-value: 0.988
+   - SPA status: ok
+-  - SPA p-value: 0.031
++  - SPA p-value: 0.015
+ - Report: `reports/summaries/wrds_flagship.md`
+ 
+ 
+@@ -65,10 +64,8 @@ commands:
+ 
+ ## Latest progress (PROGRESS.md)
+ 
+-- Date: 2025-12-23
+-- Ticket-01: SPA/report robustness hardened + WRDS smoke/report rerun (Status: Done). Smoke run: `artifacts/wrds_flagship_smoke/2025-12-23T06-05-28Z-afe1765/`. Report run: `artifacts/wrds_flagship/2025-12-21T22-32-44Z-2b48ef7/`. Run log: `docs/agent_runs/20251222_200000_ticket-01_fix-spa-robustness/`.
+-- Ticket-12: PnL integrity checks + same-day fill equity refresh + diagnostic tooling; sample WFV rerun and report generated. WRDS smoke rerun + report completed under `$WRDS_DATA_ROOT` (`artifacts/wrds_flagship_smoke/2025-12-23T20-19-56Z-7ca855f/`), integrity diagnostics OK. WRDS flagship rerun completed (`artifacts/wrds_flagship/2025-12-23T19-40-24Z-ff2979d/`); run remains degenerate (zero trades). Run log: `docs/agent_runs/20251223_080000_ticket-12_fix-wrds-pnl-integrity/`.
+-- Ticket-04: Leakage guardrails added (signal timestamp invariant, unsafe execution opt-in + manifest fields, report unsafe banner) with red-team tests. Run log: `docs/agent_runs/20251223_214840_ticket-04_leakage-tests-unsafe-manifest/`.
++- Date: 2026-01-25
++- Ticket-23: WRDS holdout WFV + report rerun with coverage-aligned windows; holdout now executes trades (non-degenerate). Artifacts: `artifacts/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/`. Summary: `docs/results_wrds_resume.md`. Run log: `docs/agent_runs/20260125_224419_ticket-23_wrds-holdout-nonzero-trades/`.
+ 
+ 
+ ## Recent run logs (docs/agent_runs, last 3)
+diff --git a/project_state/KNOWN_ISSUES.md b/project_state/KNOWN_ISSUES.md
+index f3bb1283..5aee783d 100644
+--- a/project_state/KNOWN_ISSUES.md
++++ b/project_state/KNOWN_ISSUES.md
+@@ -22,3 +22,4 @@ commands:
+ - From `PROGRESS.md`: Ticket-13: WRDS smoke + flagship reruns under `$WRDS_DATA_ROOT` still fail non-degenerate constraints (zero trades); all candidates rejected. Smoke artifacts: `artifacts/wrds_flagship_smoke/2025-12-26T06-19-16Z-364496b/`. Flagship artifacts: `artifacts/wrds_flagship/2025-12-26T06-20-30Z-364496b/`. Run log: `docs/agent_runs/20251226_023453_ticket-13_fix-wrds-degeneracy/`.
+ - From `PROGRESS.md`: Ticket-13: Filter diagnostics show universe filters pass and sleeve selections are produced, yet trades remain zero; suspected blockage is downstream sizing/risk caps (e.g., `max_single_name_weight`) but needs confirmation. Debug artifacts: `artifacts/wrds_flagship_debug/2025-12-26T07-00-41Z-d4c8edf/`. Run log: `docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/`.
+ - Ticket-14: Order-flow diagnostics confirmed weight-based orders were being hard-rejected by `max_single_name_weight`/`max_exposure`, collapsing WFV to zero trades. Fix now clips weight-based orders to caps (no threshold loosening) and avoids default-qty fallback when weight sizing rounds to zero. Debug WFV now executes trades; full WRDS flagship rerun still pending. Run log: `docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/`. Artifacts: `artifacts/wrds_flagship_debug/2025-12-26T09-44-24Z-695a387/`.
++- RESOLVED (ticket-23): WRDS holdout zero trades traced to universe coverage ending 2019-12-31. Fix: align WFV/holdout windows to 2013–2019 and add holdout order-flow diagnostics + zero-trade guardrail. Holdout metrics now execute trades in run `2026-01-25T22-58-24Z-4d08d18`.
+diff --git a/reports/summaries/wrds_flagship.md b/reports/summaries/wrds_flagship.md
+index 9ecd64c0..c4975ef0 100644
+--- a/reports/summaries/wrds_flagship.md
++++ b/reports/summaries/wrds_flagship.md
+@@ -2,27 +2,43 @@
+ 
+ ## Selection Constraints
+ 
+-- Non-degenerate: min_trades >= 1 (excluded 268 candidate(s) during selection)
++- Non-degenerate: min_trades >= 1 (excluded 0 candidate(s) during selection)
+ 
+ ## Headline Metrics
+ 
+ | Metric | Value |
+ | --- | ---:|
+-| Sharpe_HAC | 0.03 |
+-| MAR | 0.01 |
+-| MaxDD | 8.33% |
+-| Turnover | $32,836,267 |
+-| RealityCheck_p_value | 0.996 |
+-| SPA_p_value | 0.031 |
++| Sharpe_HAC | 0.27 |
++| MAR | 0.21 |
++| MaxDD | 3.41% |
++| Turnover | $14,748,925 |
++| RealityCheck_p_value | 0.988 |
++| SPA_p_value | 0.015 |
++
++## Baselines
++
++| Series | Sharpe_HAC | MaxDD | CAGR | Turnover |
++| --- | ---:| ---:| ---:| ---:|
++| Flagship (net) | 0.27 | 3.41% | 0.72% | 14748925.2100 |
++| Equal-weight universe | 1.12 | 15.89% | 14.96% | 0.0000 |
++| Market proxy | 0.00 | 0.00% | 0.00% | 0.0000 |
++| Momentum 12-1 | 2.58 | 9.07% | 67.83% | 3.7500 |
++| Cash / RF | 0.00 | 0.00% | 0.00% | 0.0000 |
++
++![Baseline Overlay](wrds_flagship_baselines.png)
++
++- Baselines CSV: `../../artifacts/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/baselines.csv`
++- Momentum baseline: lookback=12M skip=1M long_short=False
++- Turnover for baselines is unit-notional weight turnover; flagship uses reported total_turnover.
+ 
+ ## Exposure Summary
+ 
+ | Metric | Value |
+ | --- | ---:|
+-| Avg net exposure | 7.98% |
+-| Avg gross exposure | 10.06% |
+-| Max net exposure | 16.55% |
+-| Max gross exposure | 16.55% |
++| Avg net exposure | 6.39% |
++| Avg gross exposure | 9.96% |
++| Max net exposure | 16.19% |
++| Max gross exposure | 16.19% |
+ 
+ _Exposure time series is recorded in equity_curve.csv._
+ 
+@@ -30,60 +46,61 @@ _Exposure time series is recorded in equity_curve.csv._
+ 
+ | Category | Total |
+ | --- | ---:|
+-| Commission | $244 |
++| Commission | $125 |
+ | Slippage | $0 |
+ | Borrow | n/a |
+-| Total | $244 |
++| Total | $125 |
+ 
+ ## Visuals
+ 
+-![Equity Curve](../../docs/img/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/equity_curve.png)
++![Equity Curve](../../docs/img/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/equity_curve.png)
+ 
+-![Bootstrap Sharpe Histogram](../../docs/img/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/bootstrap_hist.png)
++![Bootstrap Sharpe Histogram](../../docs/img/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/bootstrap_hist.png)
+ 
+-![SPA Comparator t-stats](../../docs/img/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/spa_tstats.png)
++![SPA Comparator t-stats](../../docs/img/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/spa_tstats.png)
+ 
+ ## Hansen SPA Summary
+ 
+-- **Best model:** allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=2|top_frac=0.2000
+-- **Observed max t-stat:** 2.487
+-- **p-value:** 0.031
++- **Best model:** allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=1|top_frac=0.2000
++- **Observed max t-stat:** 2.248
++- **p-value:** 0.015
+ - **Bootstrap draws:** 2000 (avg block 63)
+ 
+ | Comparator | Mean Diff | t-stat |
+ | --- | ---:| ---:|
+-| allocator_kwargs={'risk_model': 'equal'}|lookback_months=12|skip_months=1|top_frac=0.2000 | 0.0000 | 0.91 |
+-| allocator_kwargs={'risk_model': 'equal'}|lookback_months=12|skip_months=1|top_frac=0.3000 | 0.0000 | 0.91 |
+-| allocator_kwargs={'risk_model': 'equal'}|lookback_months=12|skip_months=2|top_frac=0.2000 | 0.0000 | 1.94 |
+-| allocator_kwargs={'risk_model': 'equal'}|lookback_months=12|skip_months=2|top_frac=0.3000 | 0.0000 | 1.94 |
+-| allocator_kwargs={'risk_model': 'equal'}|lookback_months=18|skip_months=1|top_frac=0.2000 | 0.0000 | 1.39 |
+-| allocator_kwargs={'risk_model': 'equal'}|lookback_months=18|skip_months=1|top_frac=0.3000 | 0.0000 | 1.39 |
+-| allocator_kwargs={'risk_model': 'equal'}|lookback_months=18|skip_months=2|top_frac=0.2000 | 0.0000 | 1.81 |
+-| allocator_kwargs={'risk_model': 'equal'}|lookback_months=18|skip_months=2|top_frac=0.3000 | 0.0000 | 1.81 |
+-| allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=1|top_frac=0.2000 | 0.0000 | 0.31 |
+-| allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=1|top_frac=0.3000 | 0.0000 | 0.31 |
+-| allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=2|top_frac=0.3000 | 0.0000 | 0.00 |
+-| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=12|skip_months=1|top_frac=0.2000 | 0.0000 | 1.45 |
+-| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=12|skip_months=1|top_frac=0.3000 | 0.0000 | 1.45 |
+-| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=12|skip_months=2|top_frac=0.2000 | 0.0000 | 2.49 |
+-| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=12|skip_months=2|top_frac=0.3000 | 0.0000 | 2.49 |
+-| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=18|skip_months=1|top_frac=0.2000 | 0.0000 | 1.83 |
+-| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=18|skip_months=1|top_frac=0.3000 | 0.0000 | 1.83 |
+-| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=18|skip_months=2|top_frac=0.2000 | 0.0000 | 2.05 |
+-| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=18|skip_months=2|top_frac=0.3000 | 0.0000 | 2.05 |
+-| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=9|skip_months=1|top_frac=0.2000 | 0.0000 | 0.13 |
+-| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=9|skip_months=1|top_frac=0.3000 | 0.0000 | 0.13 |
+-| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=9|skip_months=2|top_frac=0.2000 | 0.0000 | 1.92 |
+-| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=9|skip_months=2|top_frac=0.3000 | 0.0000 | 1.92 |
++| allocator_kwargs={'risk_model': 'equal'}|lookback_months=12|skip_months=1|top_frac=0.2000 | 0.0000 | 1.36 |
++| allocator_kwargs={'risk_model': 'equal'}|lookback_months=12|skip_months=1|top_frac=0.3000 | 0.0000 | 1.36 |
++| allocator_kwargs={'risk_model': 'equal'}|lookback_months=12|skip_months=2|top_frac=0.2000 | 0.0000 | 0.88 |
++| allocator_kwargs={'risk_model': 'equal'}|lookback_months=12|skip_months=2|top_frac=0.3000 | 0.0000 | 0.88 |
++| allocator_kwargs={'risk_model': 'equal'}|lookback_months=18|skip_months=1|top_frac=0.2000 | 0.0000 | 1.73 |
++| allocator_kwargs={'risk_model': 'equal'}|lookback_months=18|skip_months=1|top_frac=0.3000 | 0.0000 | 1.73 |
++| allocator_kwargs={'risk_model': 'equal'}|lookback_months=18|skip_months=2|top_frac=0.2000 | 0.0000 | 1.53 |
++| allocator_kwargs={'risk_model': 'equal'}|lookback_months=18|skip_months=2|top_frac=0.3000 | 0.0000 | 1.53 |
++| allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=1|top_frac=0.3000 | 0.0000 | 0.00 |
++| allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=2|top_frac=0.2000 | 0.0000 | 0.96 |
++| allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=2|top_frac=0.3000 | 0.0000 | 0.96 |
++| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=12|skip_months=1|top_frac=0.2000 | 0.0000 | 1.36 |
++| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=12|skip_months=1|top_frac=0.3000 | 0.0000 | 1.36 |
++| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=12|skip_months=2|top_frac=0.2000 | 0.0000 | 0.88 |
++| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=12|skip_months=2|top_frac=0.3000 | 0.0000 | 0.88 |
++| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=18|skip_months=1|top_frac=0.2000 | 0.0000 | 1.73 |
++| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=18|skip_months=1|top_frac=0.3000 | 0.0000 | 1.73 |
++| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=18|skip_months=2|top_frac=0.2000 | 0.0001 | 2.25 |
++| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=18|skip_months=2|top_frac=0.3000 | 0.0001 | 2.25 |
++| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=9|skip_months=1|top_frac=0.2000 | 0.0000 | 1.08 |
++| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=9|skip_months=1|top_frac=0.3000 | 0.0000 | 1.08 |
++| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=9|skip_months=2|top_frac=0.2000 | 0.0000 | 0.96 |
++| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=9|skip_months=2|top_frac=0.3000 | 0.0000 | 0.96 |
+ 
+ ## Factor Attribution (FF5+MOM)
+ 
+ | Factor | Beta | t-stat |
+ | --- | ---:| ---:|
+-| Alpha | -0.0001 | -1.41 |
+-| Mkt_RF | 0.1005 | 9.47 |
+-| SMB | 0.0150 | 1.00 |
+-| HML | -0.0467 | -2.22 |
+-| RMW | -0.0178 | -0.62 |
+-| CMA | -0.0050 | -0.13 |
+-| MOM | 0.0469 | 3.79 |
++| Alpha | -0.0000 | -0.24 |
++| Mkt_RF | 0.0663 | 5.89 |
++| SMB | 0.0044 | 0.30 |
++| HML | 0.0256 | 1.04 |
++| RMW | -0.0251 | -1.46 |
++| CMA | -0.0769 | -3.70 |
++| MOM | 0.0413 | 3.89 |
++_Frequency: returns daily, factors daily; overlap 2015-01-29 to 2017-11-02; n_obs=698._
+diff --git a/reports/summaries/wrds_flagship_factors.md b/reports/summaries/wrds_flagship_factors.md
+index cb5ee169..3fa24ed9 100644
+--- a/reports/summaries/wrds_flagship_factors.md
++++ b/reports/summaries/wrds_flagship_factors.md
+@@ -1,9 +1,10 @@
+ | Factor | Beta | t-stat |
+ | --- | ---:| ---:|
+-| Alpha | -0.0001 | -1.41 |
+-| Mkt_RF | 0.1005 | 9.47 |
+-| SMB | 0.0150 | 1.00 |
+-| HML | -0.0467 | -2.22 |
+-| RMW | -0.0178 | -0.62 |
+-| CMA | -0.0050 | -0.13 |
+-| MOM | 0.0469 | 3.79 |
++| Alpha | -0.0000 | -0.24 |
++| Mkt_RF | 0.0663 | 5.89 |
++| SMB | 0.0044 | 0.30 |
++| HML | 0.0256 | 1.04 |
++| RMW | -0.0251 | -1.46 |
++| CMA | -0.0769 | -3.70 |
++| MOM | 0.0413 | 3.89 |
++_Frequency: returns daily, factors daily; overlap 2015-01-29 to 2017-11-02; n_obs=698._
+diff --git a/reports/summaries/wrds_flagship_metrics.json b/reports/summaries/wrds_flagship_metrics.json
+index c4daf907..549d64d3 100644
+--- a/reports/summaries/wrds_flagship_metrics.json
++++ b/reports/summaries/wrds_flagship_metrics.json
+@@ -1,38 +1,38 @@
+ {
+-  "sharpe_ratio": 0.03160770657156203,
+-  "sortino_ratio": 0.023933122268335535,
+-  "max_drawdown": 0.08333206879980044,
+-  "max_drawdown_duration": 697,
+-  "cagr": 0.00045001206775951985,
+-  "calmar_ratio": 0.0054002267583280915,
++  "sharpe_ratio": 0.27180565457036393,
++  "sortino_ratio": 0.20656634302349197,
++  "max_drawdown": 0.03408901931647942,
++  "max_drawdown_duration": 309,
++  "cagr": 0.007179988214360611,
++  "calmar_ratio": 0.21062466325892923,
+   "alpha": 0.0,
+   "beta": 0.0,
+   "information_ratio": 0.0,
+-  "ann_vol": 0.040422477002784916,
+-  "avg_exposure": 0.07981243825535322,
+-  "avg_gross_exposure": 0.10058974066772731,
+-  "max_gross_exposure": 0.16552116333885866,
+-  "max_net_exposure": 0.16552116333885866,
+-  "exposure_std": 0.06684723769360078,
+-  "gross_exposure_std": 0.03965413301808452,
+-  "total_turnover": 32836266.723699994,
+-  "turnover_per_day": 21674.103447986796,
+-  "traded_days": 1421,
+-  "num_trades": 138,
+-  "avg_trade_notional": 237943.96176594205,
+-  "win_rate": 0.421875,
+-  "total_realized_pnl": -598505.6442649211,
+-  "final_equity": 15040627.237000003,
+-  "sharpe_ratio_se": 0.38226562531292246,
+-  "sharpe_ratio_tstat": 0.08268519186282569,
+-  "sharpe_ratio_ci_low": -0.7176329190417661,
+-  "sharpe_ratio_ci_high": 0.78084833218489,
++  "ann_vol": 0.027748713434583856,
++  "avg_exposure": 0.06385896799765901,
++  "avg_gross_exposure": 0.09962330939506898,
++  "max_gross_exposure": 0.161928485789306,
++  "max_net_exposure": 0.161928485789306,
++  "exposure_std": 0.059843807431183754,
++  "gross_exposure_std": 0.04221845878888296,
++  "total_turnover": 14748925.21,
++  "turnover_per_day": 21130.265343839543,
++  "traded_days": 670,
++  "num_trades": 64,
++  "avg_trade_notional": 230451.95640624998,
++  "win_rate": 0.4482758620689655,
++  "total_realized_pnl": -363231.07879186294,
++  "final_equity": 15300210.293,
++  "sharpe_ratio_se": 0.5986666318596654,
++  "sharpe_ratio_tstat": 0.45401838035642916,
++  "sharpe_ratio_ci_low": -0.9015809438745801,
++  "sharpe_ratio_ci_high": 1.445192253015308,
+   "sharpe_hac_lags": 10.0,
+-  "reality_check_p_value": 0.9959020489755123,
+-  "bootstrap_samples": 20000,
++  "reality_check_p_value": 0.9881309345327336,
++  "bootstrap_samples": 8000,
+   "borrow_cost_total": 0.0,
+-  "commission_total": 243.65150000000008,
++  "commission_total": 124.68350000000004,
+   "slippage_total": 0.0,
+-  "run_id": "2025-12-26T17-21-39Z-75ce3c8",
++  "run_id": "2026-01-25T22-58-24Z-4d08d18",
+   "spa_status": "ok"
+ }
+diff --git a/reports/summaries/wrds_flagship_spa.json b/reports/summaries/wrds_flagship_spa.json
+index 97ebd66b..880e5286 100644
+--- a/reports/summaries/wrds_flagship_spa.json
++++ b/reports/summaries/wrds_flagship_spa.json
+@@ -3,131 +3,129 @@
+   "spa_status": "ok",
+   "reason": null,
+   "spa_error": null,
+-  "best_model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=2|top_frac=0.2000",
+-  "p_value": 0.031,
+-  "observed_stat": 2.486875754900995,
++  "best_model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=1|top_frac=0.2000",
++  "p_value": 0.015,
++  "observed_stat": 2.247575132087314,
+   "num_bootstrap": 2000,
+   "avg_block": 63,
+   "candidate_stats": [
+     {
+       "model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=12|skip_months=1|top_frac=0.2000",
+-      "mean_diff": 1.028686249493156e-05,
+-      "t_stat": 0.9137487253655038
++      "mean_diff": 2.7578712191061597e-05,
++      "t_stat": 1.3606179741543074
+     },
+     {
+       "model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=12|skip_months=1|top_frac=0.3000",
+-      "mean_diff": 1.028686249493156e-05,
+-      "t_stat": 0.9137487253655038
++      "mean_diff": 2.7578712191061597e-05,
++      "t_stat": 1.3606179741543074
+     },
+     {
+       "model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=12|skip_months=2|top_frac=0.2000",
+-      "mean_diff": 2.0372054289507772e-05,
+-      "t_stat": 1.9361506148170848
++      "mean_diff": 1.7189137278228428e-05,
++      "t_stat": 0.8777131268677788
+     },
+     {
+       "model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=12|skip_months=2|top_frac=0.3000",
+-      "mean_diff": 2.0372054289507772e-05,
+-      "t_stat": 1.9361506148170848
++      "mean_diff": 1.7189137278228428e-05,
++      "t_stat": 0.8777131268677788
+     },
+     {
+       "model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=18|skip_months=1|top_frac=0.2000",
+-      "mean_diff": 2.1414122215683475e-05,
+-      "t_stat": 1.3868830577850753
++      "mean_diff": 4.3903205873992655e-05,
++      "t_stat": 1.7336466590285458
+     },
+     {
+       "model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=18|skip_months=1|top_frac=0.3000",
+-      "mean_diff": 2.1414122215683475e-05,
+-      "t_stat": 1.3868830577850753
++      "mean_diff": 4.3903205873992655e-05,
++      "t_stat": 1.7336466590285458
+     },
+     {
+       "model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=18|skip_months=2|top_frac=0.2000",
+-      "mean_diff": 2.779324930881555e-05,
+-      "t_stat": 1.8057929334680696
++      "mean_diff": 3.834930135903596e-05,
++      "t_stat": 1.528198637331956
+     },
+     {
+       "model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=18|skip_months=2|top_frac=0.3000",
+-      "mean_diff": 2.779324930881555e-05,
+-      "t_stat": 1.8057929334680696
++      "mean_diff": 3.834930135903596e-05,
++      "t_stat": 1.528198637331956
+     },
+     {
+-      "model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=1|top_frac=0.2000",
+-      "mean_diff": 2.9180012266743965e-06,
+-      "t_stat": 0.3067718877574386
++      "model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=1|top_frac=0.3000",
++      "mean_diff": 0.0,
++      "t_stat": 0.0
+     },
+     {
+-      "model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=1|top_frac=0.3000",
+-      "mean_diff": 2.9180012266743965e-06,
+-      "t_stat": 0.3067718877574386
++      "model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=2|top_frac=0.2000",
++      "mean_diff": 1.3379423826096059e-05,
++      "t_stat": 0.9602570701385226
+     },
+     {
+       "model": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=2|top_frac=0.3000",
+-      "mean_diff": 0.0,
+-      "t_stat": 0.0
++      "mean_diff": 1.3379423826096059e-05,
++      "t_stat": 0.9602570701385226
+     },
+     {
+       "model": "allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=12|skip_months=1|top_frac=0.2000",
+-      "mean_diff": 1.8884651649753073e-05,
+-      "t_stat": 1.4522649244165096
++      "mean_diff": 2.7578712191061597e-05,
++      "t_stat": 1.3606179741543074
+     },
+     {
+       "model": "allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=12|skip_months=1|top_frac=0.3000",
+-      "mean_diff": 1.8884651649753073e-05,
+-      "t_stat": 1.4522649244165096
++      "mean_diff": 2.7578712191061597e-05,
++      "t_stat": 1.3606179741543074
+     },
+     {
+       "model": "allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=12|skip_months=2|top_frac=0.2000",
+-      "mean_diff": 2.9479966769247505e-05,
+-      "t_stat": 2.486875754900995
++      "mean_diff": 1.7189137278228428e-05,
++      "t_stat": 0.8777131268677788
+     },
+     {
+       "model": "allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=12|skip_months=2|top_frac=0.3000",
+-      "mean_diff": 2.9479966769247505e-05,
+-      "t_stat": 2.486875754900995
++      "mean_diff": 1.7189137278228428e-05,
++      "t_stat": 0.8777131268677788
+     },
+     {
+       "model": "allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=18|skip_months=1|top_frac=0.2000",
+-      "mean_diff": 2.829931554365544e-05,
+-      "t_stat": 1.829116572513054
++      "mean_diff": 4.3903205873992655e-05,
++      "t_stat": 1.7336466590285458
+     },
+     {
+       "model": "allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=18|skip_months=1|top_frac=0.3000",
+-      "mean_diff": 2.829931554365544e-05,
+-      "t_stat": 1.829116572513054
++      "mean_diff": 4.3903205873992655e-05,
++      "t_stat": 1.7336466590285458
+     },
+     {
+       "model": "allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=18|skip_months=2|top_frac=0.2000",
+-      "mean_diff": 3.1480677039263266e-05,
+-      "t_stat": 2.0536548348026678
++      "mean_diff": 5.4938090483365485e-05,
++      "t_stat": 2.247575132087314
+     },
+     {
+       "model": "allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=18|skip_months=2|top_frac=0.3000",
+-      "mean_diff": 3.1480677039263266e-05,
+-      "t_stat": 2.0536548348026678
++      "mean_diff": 5.4938090483365485e-05,
++      "t_stat": 2.247575132087314
+     },
+     {
+       "model": "allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=9|skip_months=1|top_frac=0.2000",
+-      "mean_diff": 1.1012859622577645e-06,
+-      "t_stat": 0.12860670052776055
++      "mean_diff": 1.1340223519048795e-05,
++      "t_stat": 1.0800735273857012
+     },
+     {
+       "model": "allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=9|skip_months=1|top_frac=0.3000",
+-      "mean_diff": 1.1012859622577645e-06,
+-      "t_stat": 0.12860670052776055
++      "mean_diff": 1.1340223519048795e-05,
++      "t_stat": 1.0800735273857012
+     },
+     {
+       "model": "allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=9|skip_months=2|top_frac=0.2000",
+-      "mean_diff": 1.9388115694382237e-05,
+-      "t_stat": 1.9179995652513249
++      "mean_diff": 1.3379423826096059e-05,
++      "t_stat": 0.9602570701385226
+     },
+     {
+       "model": "allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=9|skip_months=2|top_frac=0.3000",
+-      "mean_diff": 1.9388115694382237e-05,
+-      "t_stat": 1.9179995652513249
++      "mean_diff": 1.3379423826096059e-05,
++      "t_stat": 0.9602570701385226
+     }
+   ],
+-  "n_obs": 4129,
++  "n_obs": 2089,
+   "n_strategies": 24,
+-  "diagnostics": [
+-    "dropped 666 rows with NaN/inf values"
+-  ]
++  "diagnostics": []
+ }
+diff --git a/reports/summaries/wrds_flagship_spa.md b/reports/summaries/wrds_flagship_spa.md
+index 022e6b44..dd4113fe 100644
+--- a/reports/summaries/wrds_flagship_spa.md
++++ b/reports/summaries/wrds_flagship_spa.md
+@@ -1,32 +1,32 @@
+ # Hansen SPA Summary
+ 
+-- **Best model:** allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=2|top_frac=0.2000
+-- **Observed max t-stat:** 2.487
+-- **p-value:** 0.031
++- **Best model:** allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=1|top_frac=0.2000
++- **Observed max t-stat:** 2.248
++- **p-value:** 0.015
+ - **Bootstrap draws:** 2000 (avg block 63)
+ 
+ | Comparator | Mean Diff | t-stat |
+ | --- | ---:| ---:|
+-| allocator_kwargs={'risk_model': 'equal'}|lookback_months=12|skip_months=1|top_frac=0.2000 | 0.0000 | 0.91 |
+-| allocator_kwargs={'risk_model': 'equal'}|lookback_months=12|skip_months=1|top_frac=0.3000 | 0.0000 | 0.91 |
+-| allocator_kwargs={'risk_model': 'equal'}|lookback_months=12|skip_months=2|top_frac=0.2000 | 0.0000 | 1.94 |
+-| allocator_kwargs={'risk_model': 'equal'}|lookback_months=12|skip_months=2|top_frac=0.3000 | 0.0000 | 1.94 |
+-| allocator_kwargs={'risk_model': 'equal'}|lookback_months=18|skip_months=1|top_frac=0.2000 | 0.0000 | 1.39 |
+-| allocator_kwargs={'risk_model': 'equal'}|lookback_months=18|skip_months=1|top_frac=0.3000 | 0.0000 | 1.39 |
+-| allocator_kwargs={'risk_model': 'equal'}|lookback_months=18|skip_months=2|top_frac=0.2000 | 0.0000 | 1.81 |
+-| allocator_kwargs={'risk_model': 'equal'}|lookback_months=18|skip_months=2|top_frac=0.3000 | 0.0000 | 1.81 |
+-| allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=1|top_frac=0.2000 | 0.0000 | 0.31 |
+-| allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=1|top_frac=0.3000 | 0.0000 | 0.31 |
+-| allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=2|top_frac=0.3000 | 0.0000 | 0.00 |
+-| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=12|skip_months=1|top_frac=0.2000 | 0.0000 | 1.45 |
+-| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=12|skip_months=1|top_frac=0.3000 | 0.0000 | 1.45 |
+-| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=12|skip_months=2|top_frac=0.2000 | 0.0000 | 2.49 |
+-| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=12|skip_months=2|top_frac=0.3000 | 0.0000 | 2.49 |
+-| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=18|skip_months=1|top_frac=0.2000 | 0.0000 | 1.83 |
+-| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=18|skip_months=1|top_frac=0.3000 | 0.0000 | 1.83 |
+-| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=18|skip_months=2|top_frac=0.2000 | 0.0000 | 2.05 |
+-| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=18|skip_months=2|top_frac=0.3000 | 0.0000 | 2.05 |
+-| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=9|skip_months=1|top_frac=0.2000 | 0.0000 | 0.13 |
+-| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=9|skip_months=1|top_frac=0.3000 | 0.0000 | 0.13 |
+-| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=9|skip_months=2|top_frac=0.2000 | 0.0000 | 1.92 |
+-| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=9|skip_months=2|top_frac=0.3000 | 0.0000 | 1.92 |
++| allocator_kwargs={'risk_model': 'equal'}|lookback_months=12|skip_months=1|top_frac=0.2000 | 0.0000 | 1.36 |
++| allocator_kwargs={'risk_model': 'equal'}|lookback_months=12|skip_months=1|top_frac=0.3000 | 0.0000 | 1.36 |
++| allocator_kwargs={'risk_model': 'equal'}|lookback_months=12|skip_months=2|top_frac=0.2000 | 0.0000 | 0.88 |
++| allocator_kwargs={'risk_model': 'equal'}|lookback_months=12|skip_months=2|top_frac=0.3000 | 0.0000 | 0.88 |
++| allocator_kwargs={'risk_model': 'equal'}|lookback_months=18|skip_months=1|top_frac=0.2000 | 0.0000 | 1.73 |
++| allocator_kwargs={'risk_model': 'equal'}|lookback_months=18|skip_months=1|top_frac=0.3000 | 0.0000 | 1.73 |
++| allocator_kwargs={'risk_model': 'equal'}|lookback_months=18|skip_months=2|top_frac=0.2000 | 0.0000 | 1.53 |
++| allocator_kwargs={'risk_model': 'equal'}|lookback_months=18|skip_months=2|top_frac=0.3000 | 0.0000 | 1.53 |
++| allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=1|top_frac=0.3000 | 0.0000 | 0.00 |
++| allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=2|top_frac=0.2000 | 0.0000 | 0.96 |
++| allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=2|top_frac=0.3000 | 0.0000 | 0.96 |
++| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=12|skip_months=1|top_frac=0.2000 | 0.0000 | 1.36 |
++| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=12|skip_months=1|top_frac=0.3000 | 0.0000 | 1.36 |
++| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=12|skip_months=2|top_frac=0.2000 | 0.0000 | 0.88 |
++| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=12|skip_months=2|top_frac=0.3000 | 0.0000 | 0.88 |
++| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=18|skip_months=1|top_frac=0.2000 | 0.0000 | 1.73 |
++| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=18|skip_months=1|top_frac=0.3000 | 0.0000 | 1.73 |
++| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=18|skip_months=2|top_frac=0.2000 | 0.0001 | 2.25 |
++| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=18|skip_months=2|top_frac=0.3000 | 0.0001 | 2.25 |
++| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=9|skip_months=1|top_frac=0.2000 | 0.0000 | 1.08 |
++| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=9|skip_months=1|top_frac=0.3000 | 0.0000 | 1.08 |
++| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=9|skip_months=2|top_frac=0.2000 | 0.0000 | 0.96 |
++| allocator_kwargs={'risk_model': 'risk_parity'}|lookback_months=9|skip_months=2|top_frac=0.3000 | 0.0000 | 0.96 |
+diff --git a/src/microalpha/walkforward.py b/src/microalpha/walkforward.py
+index e10bfe6f..157dc0e4 100644
+--- a/src/microalpha/walkforward.py
++++ b/src/microalpha/walkforward.py
+@@ -671,6 +671,9 @@ def run_walk_forward(
+     holdout_equity_path: str | None = None
+     holdout_returns_path: str | None = None
+     holdout_trades_path: str | None = None
++    holdout_order_flow_payload: Dict[str, Any] | None = None
++    holdout_order_flow_path: str | None = None
++    holdout_filter_diagnostics_path: str | None = None
+     if holdout_start is not None and holdout_end is not None:
+         if selected_params_full is None:
+             if not selection_failure_reason:
+@@ -712,11 +715,17 @@ def run_walk_forward(
+             holdout_trade_logger = JsonlWriter(
+                 str(artifacts_dir / "holdout_trades.jsonl")
+             )
++            holdout_order_flow = (
++                OrderFlowDiagnostics()
++                if cfg.template.order_flow_diagnostics
++                else None
++            )
+             holdout_portfolio = _build_portfolio(
+                 data_handler,
+                 cfg.template,
+                 trade_logger=holdout_trade_logger,
+                 symbol_meta=symbol_meta,
++                order_flow=holdout_order_flow,
+             )
+             if hasattr(holdout_strategy, "sector_map") and holdout_strategy.sector_map:
+                 holdout_portfolio.sector_of.update(holdout_strategy.sector_map)
+@@ -745,7 +754,36 @@ def run_walk_forward(
+             holdout_trade_logger.close()
+             holdout_trades_path = holdout_trade_logger.path
+ 
++            holdout_filter_diagnostics: Dict[str, Any] | None = None
++            if hasattr(holdout_strategy, "get_filter_diagnostics"):
++                try:
++                    holdout_filter_diagnostics = holdout_strategy.get_filter_diagnostics()
++                except Exception as exc:  # pragma: no cover - diagnostics should not fail the run
++                    holdout_filter_diagnostics = {
++                        "error": f"{type(exc).__name__}: {exc}",
++                    }
++            holdout_order_flow_payload = _finalize_order_flow(
++                holdout_order_flow, holdout_filter_diagnostics
++            )
++            if holdout_filter_diagnostics is not None:
++                holdout_filter_diagnostics_path = str(
++                    artifacts_dir / "holdout_filter_diagnostics.json"
++                )
++                with Path(holdout_filter_diagnostics_path).open(
++                    "w", encoding="utf-8"
++                ) as handle:
++                    json.dump(holdout_filter_diagnostics, handle, indent=2)
++            if holdout_order_flow_payload is not None:
++                holdout_order_flow_path = str(
++                    artifacts_dir / "holdout_order_flow_diagnostics.json"
++                )
++                with Path(holdout_order_flow_path).open(
++                    "w", encoding="utf-8"
++                ) as handle:
++                    json.dump(holdout_order_flow_payload, handle, indent=2)
++
+             holdout_trades = getattr(holdout_portfolio, "trades", None) or []
++            holdout_num_trades = len(holdout_trades)
+             holdout_slippage_total = 0.0
+             for trade in holdout_trades:
+                 try:
+@@ -784,6 +822,37 @@ def run_walk_forward(
+                         + ", ".join(holdout_integrity.reasons)
+                     )
+ 
++            if holdout_num_trades == 0:
++                integrity_ok = False
++                integrity_checks.append(
++                    {
++                        "fold": None,
++                        "phase": "holdout",
++                        "ok": False,
++                        "reasons": ["holdout_num_trades == 0"],
++                        "details": {
++                            "num_trades": int(holdout_num_trades),
++                            "order_flow_summary": (
++                                holdout_order_flow_payload.get("summary", {})
++                                if holdout_order_flow_payload
++                                else {}
++                            ),
++                        },
++                    }
++                )
++                if run_mode == "headline":
++                    integrity_path = _persist_integrity_checks(
++                        artifacts_dir, integrity_ok, integrity_checks
++                    )
++                    _update_manifest_integrity(
++                        artifacts_dir,
++                        integrity_path,
++                        run_invalid=True,
++                    )
++                    raise ValueError(
++                        "Holdout produced zero trades; refusing to publish metrics."
++                    )
++
+             holdout_metrics_raw = compute_metrics(
+                 holdout_portfolio.equity_curve,
+                 holdout_portfolio.total_turnover,
+@@ -797,8 +866,6 @@ def run_walk_forward(
+ 
+             holdout_total_commission = 0.0
+             holdout_total_slippage = 0.0
+-            holdout_trades = getattr(holdout_portfolio, "trades", None) or []
+-            holdout_num_trades = len(holdout_trades)
+             holdout_trade_notional = 0.0
+             holdout_realized_pnl = 0.0
+             holdout_win_trades = 0
+@@ -886,6 +953,13 @@ def run_walk_forward(
+                 "holdout_equity_curve_path": holdout_equity_path,
+                 "holdout_returns_path": holdout_returns_path,
+                 "holdout_trades_path": holdout_trades_path,
++                "holdout_order_flow_diagnostics_path": holdout_order_flow_path,
++                "holdout_order_flow_summary": (
++                    None
++                    if holdout_order_flow_payload is None
++                    else holdout_order_flow_payload.get("summary")
++                ),
++                "holdout_filter_diagnostics_path": holdout_filter_diagnostics_path,
+             }
+             holdout_manifest_path = str(artifacts_dir / "holdout_manifest.json")
+             with Path(holdout_manifest_path).open("w", encoding="utf-8") as handle:
+@@ -981,6 +1055,8 @@ def run_walk_forward(
+         "selection_summary_path": selection_summary_path,
+         "holdout_metrics_path": holdout_metrics_path,
+         "holdout_manifest_path": holdout_manifest_path,
++        "holdout_order_flow_diagnostics_path": holdout_order_flow_path,
++        "holdout_filter_diagnostics_path": holdout_filter_diagnostics_path,
+         "non_degenerate": non_degenerate_payload,
+         "non_degenerate_excluded": int(total_excluded),
+         "non_degenerate_failure_reason": selection_failure_reason,
+diff --git a/tests/test_walkforward.py b/tests/test_walkforward.py
+index e2349914..56f4041e 100644
+--- a/tests/test_walkforward.py
++++ b/tests/test_walkforward.py
+@@ -4,6 +4,7 @@ import json
+ from pathlib import Path
+ 
+ import pandas as pd
++import pytest
+ import yaml
+ 
+ from microalpha.events import SignalEvent
+@@ -87,6 +88,14 @@ class HoldoutDirectionalStrategy:
+         return [SignalEvent(event.timestamp, self.symbol, side)]
+ 
+ 
++class HoldoutNoSignalStrategy:
++    def __init__(self, symbol: str, **_ignored):
++        self.symbol = symbol
++
++    def on_market(self, _event) -> list[SignalEvent]:
++        return []
++
++
+ def _write_holdout_fixture(tmp_path: Path, include_holdout: bool = True) -> Path:
+     data_dir = tmp_path / "data"
+     data_dir.mkdir(parents=True, exist_ok=True)
+@@ -178,3 +187,22 @@ def test_holdout_window_does_not_overlap_selection(tmp_path: Path, monkeypatch)
+     for fold in result["folds"]:
+         test_end = pd.Timestamp(fold["test_end"])
+         assert test_end < holdout_start
++
++
++def test_holdout_zero_trades_guardrail(tmp_path: Path, monkeypatch) -> None:
++    monkeypatch.setitem(
++        walkforward.STRATEGY_MAPPING,
++        "HoldoutNoSignalStrategy",
++        HoldoutNoSignalStrategy,
++    )
++    cfg_path = _write_holdout_fixture(tmp_path, include_holdout=True)
++    config = yaml.safe_load(cfg_path.read_text())
++    config["template"]["strategy"]["name"] = "HoldoutNoSignalStrategy"
++    config["template"]["run_mode"] = "headline"
++    cfg_path.write_text(yaml.safe_dump(config), encoding="utf-8")
++
++    with pytest.raises(ValueError, match="Holdout produced zero trades"):
++        run_walk_forward(
++            str(cfg_path),
++            override_artifacts_dir=str(tmp_path / "artifacts_zero_trades"),
++        )

@@ -6,6 +6,63 @@
 
 ---
 
+
+## ticket-23 — WRDS holdout nonzero trades (final holdout)
+
+**Goal (1 sentence):** Fix WRDS final-holdout degeneracy (zero trades) and produce resume-credible real-data holdout metrics with a committed run log + summary doc.
+
+**Status:** Done.
+
+**Why (ties to diagnosis):**
+- Current WRDS holdout window has zero trades; resume claims need a locked, non-degenerate holdout run.
+
+**Acceptance criteria (objective + falsifiable):**
+- WRDS final-holdout run produces `num_trades > 0` and non-NaN Sharpe/CAGR/MaxDD.
+- `docs/results_wrds_resume.md` includes run_id, date range, universe, net-of-costs note, and headline metrics.
+- Run log exists under `docs/agent_runs/<RUN_NAME>/` with required files and recorded artifact/report paths.
+- `make test-fast`, `make check-data-policy`, `WRDS_ENABLED=1 WRDS_DATA_ROOT=/srv/data/wrds/wrds make wfv-wrds`, and `WRDS_ENABLED=1 WRDS_DATA_ROOT=/srv/data/wrds/wrds make report-wrds` succeed.
+- WRDS_DATA_ROOT handling is consistent and documented.
+
+**Minimal tests/commands to run:**
+- `make test-fast`
+- `make check-data-policy`
+- `WRDS_ENABLED=1 WRDS_DATA_ROOT=/srv/data/wrds/wrds make wfv-wrds`
+- `WRDS_ENABLED=1 WRDS_DATA_ROOT=/srv/data/wrds/wrds make report-wrds`
+
+**End-of-ticket:**
+- **Tests run:** `make check-data-policy`; `make test-fast`.
+- **Artifacts/logs:** `artifacts/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/`; `docs/agent_runs/20260125_224419_ticket-23_wrds-holdout-nonzero-trades/`.
+- **Documentation updates:** `docs/results_wrds_resume.md`, `PROGRESS.md`, `CHANGELOG.md`, `project_state/KNOWN_ISSUES.md`, `project_state/CURRENT_RESULTS.md`, `docs/DECISIONS.md`.
+
+---
+
+## ticket-22 — WRDS resume metrics (holdout WFV + summary doc)
+
+**Goal (1 sentence):** Produce resume-credible WRDS/CRSP holdout metrics with an auditable run log and clean summary doc (no licensed data).
+
+**Status:** Planned.
+
+**Why (ties to diagnosis):**
+- Resume claims must be backed by a single, locked holdout run with reproducible artifacts and inference fields.
+
+**Acceptance criteria (objective + falsifiable):**
+- A new WRDS holdout WFV + report run completes using `$WRDS_DATA_ROOT`.
+- Run log exists under `docs/agent_runs/<RUN_NAME>/` with required files.
+- Summary doc (`docs/results_wrds_resume.md` or `docs/results_wrds.md`) includes: run_id, date range, universe, net-of-costs note, Sharpe_HAC, MaxDD, CAGR (if available), turnover, RealityCheck p, SPA p/status.
+- `make check-data-policy` and `make test-fast` pass.
+
+**Minimal tests/commands to run:**
+- `make test-fast`
+- `make check-data-policy`
+- `WRDS_ENABLED=1 WRDS_DATA_ROOT=/srv/data/wrds make wfv-wrds`
+- `WRDS_ENABLED=1 WRDS_DATA_ROOT=/srv/data/wrds make report-wrds`
+
+**End-of-ticket:**
+- **Tests run:** …
+- **Artifacts/logs:** …
+- **Documentation updates:** …
+
+---
 ## ticket-01 — Tighten WRDS flagship risk/cost caps + add WRDS smoke run + publish result skeleton
 
 **Goal (1 sentence):** Make the WRDS pipeline produce audit-grade artifacts under explicit risk/cost caps, with a required WRDS “smoke” run and report outputs.

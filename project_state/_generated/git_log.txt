@@ -1,4 +1,5 @@
-175d0be5 (HEAD -> codex/ticket-19a-commit-and-validate-scaffold) ticket-19: update run log commands
+4d08d182 (HEAD -> codex/ticket-22-wrds-resume-metrics, codex/ticket-19a-commit-and-validate-scaffold) ticket-19: pandas 3 compat fixes + env setup
+175d0be5 ticket-19: update run log commands
 dd22320d ticket-19: commit scaffold validation artifacts
 f5a6ea99 (origin/main, origin/HEAD, main, codex/ticket-19-finish-agentic-scaffold-cleanup) ticket-19: log merge/push commands
 089c40fc ticket-19: finish agentic scaffold cleanup
@@ -47,4 +48,3 @@ c9060097 ticket-15: record bundle path in run log
 26418566 ticket-15: switch meta sha to branch ref
 d8db2da0 ticket-15: correct run meta sha
 797d895f ticket-15: finalize run meta sha
-db51d31c ticket-15: refresh WRDS SPA reports and logs

@@ -1295,6 +1295,11 @@ docs/agent_runs/20260125_191727_ticket-19_commit-and-validate-scaffold/META.json
 docs/agent_runs/20260125_191727_ticket-19_commit-and-validate-scaffold/PROMPT.md
 docs/agent_runs/20260125_191727_ticket-19_commit-and-validate-scaffold/RESULTS.md
 docs/agent_runs/20260125_191727_ticket-19_commit-and-validate-scaffold/TESTS.md
+docs/agent_runs/20260125_200424_ticket-19_commit-and-validate-scaffold-env/COMMANDS.md
+docs/agent_runs/20260125_200424_ticket-19_commit-and-validate-scaffold-env/META.json
+docs/agent_runs/20260125_200424_ticket-19_commit-and-validate-scaffold-env/PROMPT.md
+docs/agent_runs/20260125_200424_ticket-19_commit-and-validate-scaffold-env/RESULTS.md
+docs/agent_runs/20260125_200424_ticket-19_commit-and-validate-scaffold-env/TESTS.md
 docs/api.md
 docs/benchmarks.md
 docs/data_sp500.md
@@ -1393,6 +1398,7 @@ docs/prompts/20251229_173759_ticket-05_runs-index-registry_ticket-05_runs-index-
 docs/prompts/20251230_082853_ticket-03_factor-regression-alignment_ticket-03_factor-regression-alignment.md
 docs/prompts/20260124_235038_ticket-19_finish-agentic-scaffold-cleanup_ticket-19_finish-agentic-scaffold-cleanup.md
 docs/prompts/20260125_191727_ticket-19_commit-and-validate-scaffold_ticket-19_commit-and-validate-scaffold.md
+docs/prompts/20260125_200424_ticket-19_commit-and-validate-scaffold-env_ticket-19_commit-and-validate-scaffold-env.md
 docs/reproducibility.md
 docs/results_wrds.md
 docs/results_wrds_smoke.md

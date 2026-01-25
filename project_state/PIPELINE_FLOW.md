@@ -1,7 +1,7 @@
 <!--
-generated_at: 2025-12-23T22:01:33Z
-git_sha: ba5b48089091f6a858b065dd3a388b467dd67984
-branch: codex/ticket-04-leakage-tests-unsafe-manifest
+generated_at: 2026-01-25T23:23:20Z
+git_sha: 4d08d18202a411cd831efce739cd5cb37e6deb1e
+branch: codex/ticket-22-wrds-resume-metrics
 commands:
   - python3 tools/build_project_state.py
   - python3 tools/render_project_state_docs.py
@@ -29,10 +29,12 @@ commands:
 - `report-wfv`
 - `report-wrds`
 - `report-wrds-smoke`
+- `runs-index`
 - `sample`
 - `test`
 - `test-fast`
 - `test-wrds`
+- `validate-runlogs`
 - `wfv`
 - `wfv-wrds`
 - `wfv-wrds-smoke`

@@ -8,10 +8,12 @@ report
 report-wfv
 report-wrds
 report-wrds-smoke
+runs-index
 sample
 test
 test-fast
 test-wrds
+validate-runlogs
 wfv
 wfv-wrds
 wfv-wrds-smoke
