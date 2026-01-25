@@ -1,18 +1,20 @@
-## codex/ticket-19-finish-agentic-scaffold-cleanup
+## codex/ticket-19a-commit-and-validate-scaffold
  M .gitignore
  M CHANGELOG.md
  M PROGRESS.md
- M docs/CODEX_SPRINT_TICKETS.md
-?? PROJECT.md
-?? project_state/BACKLOG.md
-?? project_state/README.md
-?? project_state/RUNBOOK.md
-?? project_state/_generated/dependency_hints.txt
-?? project_state/_generated/git_branch.txt
-?? project_state/_generated/git_diff.patch
-?? project_state/_generated/git_diff_cached.patch
-?? project_state/_generated/git_head.txt
-?? project_state/_generated/git_log.txt
-?? project_state/_generated/git_ls_files.txt
-?? project_state/_generated/git_status.txt
-?? tools/agentic/
+ M docs/DECISIONS.md
+ M project_state/_generated/git_branch.txt
+ M project_state/_generated/git_diff.patch
+ M project_state/_generated/git_head.txt
+ M project_state/_generated/git_log.txt
+ M project_state/_generated/git_ls_files.txt
+ M project_state/_generated/git_status.txt
+?? docs/NOW.md
+?? docs/RUNBOOK.md
+?? docs/TICKETS.md
+?? docs/agent_runs/20260125_191727_ticket-19_commit-and-validate-scaffold/
+?? docs/gpt_outputs/01-10-26prompt1-diagnosis.md
+?? docs/gpt_outputs/12-22-25prompt1-diagnosis.md
+?? docs/img/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8/
+?? docs/img/wrds_flagship_smoke/2025-12-23T06-05-28Z-afe1765/
+?? docs/tickets/ticket-19a_commit-and-validate-scaffold.md

@@ -68,3 +68,8 @@ Ticket-18: Installed agentic system scaffold, restored repo-specific docs, and g
 
 ### Done
 - Ticket-19: Agentic scaffold cleanup (removed bootstrap residue, unignored run logs and project_state indices). Run log: `docs/agent_runs/20260124_235038_ticket-19_finish-agentic-scaffold-cleanup/`.
+
+## 2026-01-25
+
+### Done
+- Ticket-19a: committed scaffold + project_state index refresh, ran project_state_refresh and test-fast, and logged the run under ticket-19 naming. Run log: `docs/agent_runs/20260125_191727_ticket-19_commit-and-validate-scaffold/`.

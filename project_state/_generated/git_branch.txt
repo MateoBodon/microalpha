@@ -1,1 +1,1 @@
-codex/ticket-19-finish-agentic-scaffold-cleanup
+codex/ticket-19a-commit-and-validate-scaffold
