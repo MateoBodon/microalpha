@@ -4,7 +4,7 @@
   "started_at_utc": "2026-01-25T22:44:19Z",
   "finished_at_utc": "2026-01-25T23:16:08Z",
   "git_sha_before": "4d08d18202a411cd831efce739cd5cb37e6deb1e",
-  "git_sha_after": "4d08d18202a411cd831efce739cd5cb37e6deb1e",
+  "git_sha_after": "fdc3bca456559b6f3c51b59b950b4d26cdf7bf3c",
   "branch_name": "codex/ticket-22-wrds-resume-metrics",
   "host_env_notes": "Linux 6.8.0-90-generic / python 3.12.3 / venv .venv",
   "dataset_id": "wrds_crsp_export_20251221_v1",

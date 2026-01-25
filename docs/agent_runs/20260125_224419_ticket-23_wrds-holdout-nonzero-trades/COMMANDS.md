@@ -95,3 +95,7 @@
 93. `python3 tools/agentic/gpt_bundle.py --zip --ticket ticket-23_wrds_holdout_nonzero_trades`
 94. `python3 - <<'PY' ... PY` (append gpt_bundle path to META.json)
 95. `git status -sb`
+96. `git add -A`
+97. `git status -sb`
+98. `git commit -m "ticket-23: refresh WRDS holdout and project_state" -m "Tests: make check-data-policy; make test-fast" -m "Artifacts: artifacts/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/; docs/_bundles/project_state_20260125_232239.zip; docs/_bundles/gpt_bundle_20260125_232413_ticket-23_wrds_holdout_nonzero_trades.zip" -m "Docs: docs/results_wrds_resume.md; docs/results_wrds.md; PROGRESS.md; CHANGELOG.md; project_state/CURRENT_RESULTS.md; project_state/KNOWN_ISSUES.md; docs/agent_runs/20260125_224419_ticket-23_wrds-holdout-nonzero-trades/*"`
+99. `python3 - <<'PY' ... PY` (update META.json git_sha_after to fdc3bca4)
