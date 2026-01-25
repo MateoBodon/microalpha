@@ -2,7 +2,7 @@
   "run_name": "20260124_235038_ticket-19_finish-agentic-scaffold-cleanup",
   "ticket_id": "ticket-19",
   "started_at_utc": "2026-01-24T23:50:38Z",
-  "finished_at_utc": "2026-01-25T00:08:28Z",
+  "finished_at_utc": "2026-01-25T02:17:36Z",
   "git_sha_before": "06820ff88bc4f196e6ef2537f72c65db4addeb03",
   "git_sha_after": "06820ff88bc4f196e6ef2537f72c65db4addeb03",
   "branch_name": "codex/ticket-19-finish-agentic-scaffold-cleanup",

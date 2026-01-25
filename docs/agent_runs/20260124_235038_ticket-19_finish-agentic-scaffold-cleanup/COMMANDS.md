@@ -81,3 +81,6 @@ git add .gitignore CHANGELOG.md PROGRESS.md
 git add -f docs/CODEX_SPRINT_TICKETS.md
 git add PROJECT.md project_state/BACKLOG.md project_state/README.md project_state/RUNBOOK.md project_state/_generated/dependency_hints.txt project_state/_generated/git_branch.txt project_state/_generated/git_diff.patch project_state/_generated/git_diff_cached.patch project_state/_generated/git_head.txt project_state/_generated/git_log.txt project_state/_generated/git_ls_files.txt project_state/_generated/git_status.txt tools/agentic
 git add -f docs/DECISIONS.md docs/tickets/README.md docs/tickets/ticket-19_finish-agentic-scaffold-cleanup.md docs/agent_runs/20251222_200000_ticket-01_fix-spa-robustness docs/agent_runs/20260110_110259_ticket-18_agentic-scaffold-bootstrap docs/agent_runs/20260124_235038_ticket-19_finish-agentic-scaffold-cleanup docs/prompts/20260124_235038_ticket-19_finish-agentic-scaffold-cleanup_ticket-19_finish-agentic-scaffold-cleanup.md
+git checkout main
+git merge --ff-only codex/ticket-19-finish-agentic-scaffold-cleanup
+git push origin main
