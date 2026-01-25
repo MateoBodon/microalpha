@@ -5,6 +5,7 @@
 - Added scaffold docs and analysis artifacts that were previously untracked due to local excludes (docs/NOW.md, docs/RUNBOOK.md, docs/TICKETS.md, gpt_outputs, WRDS report images).
 - Refreshed project_state indices and produced `docs/_bundles/project_state_20260125_192752.zip`.
 - Updated `.gitignore` to ignore `docs/local/` (WRDS_DATA_ROOT note) while keeping run logs and project_state indices trackable.
+- GPT bundle generated at `docs/_bundles/gpt_bundle_20260125_193052_ticket-19a_commit-and-validate-scaffold.zip`.
 
 ## Files touched (high level)
 - `.gitignore`

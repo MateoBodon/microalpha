@@ -44,6 +44,18 @@ RUN_NAME="20260125_191727_ticket-19_commit-and-validate-scaffold"; cat <<'EOF' >
 RUN_NAME="20260125_191727_ticket-19_commit-and-validate-scaffold"; cat <<'EOF' > "docs/agent_runs/${RUN_NAME}/TESTS.md"
 RUN_NAME="20260125_191727_ticket-19_commit-and-validate-scaffold"; cat <<'EOF' > "docs/agent_runs/${RUN_NAME}/META.json"
 python3 scripts/validate_run_logs.py
+git status --porcelain -uall
+git add .gitignore CHANGELOG.md PROGRESS.md docs/DECISIONS.md docs/NOW.md docs/RUNBOOK.md docs/TICKETS.md docs/agent_runs/20260125_191727_ticket-19_commit-and-validate-scaffold docs/gpt_outputs/01-10-26prompt1-diagnosis.md docs/gpt_outputs/12-22-25prompt1-diagnosis.md docs/img/wrds_flagship/2025-12-26T17-21-39Z-75ce3c8 docs/img/wrds_flagship_smoke/2025-12-23T06-05-28Z-afe1765 docs/tickets/ticket-19a_commit-and-validate-scaffold.md project_state/_generated
+git add -f docs/prompts/20260125_191727_ticket-19_commit-and-validate-scaffold_ticket-19_commit-and-validate-scaffold.md
+git status --porcelain -uall
+git diff --cached --stat
+git commit -m "ticket-19: commit scaffold validation artifacts" -m "Tests: make test-fast (failed: make not installed); pytest -q (failed: pytest missing); python3 scripts/validate_run_logs.py (passed); python3 tools/agentic/project_state_refresh.py --zip (passed)" -m "Artifacts: docs/_bundles/project_state_20260125_192752.zip" -m "Docs: docs/agent_runs/20260125_191727_ticket-19_commit-and-validate-scaffold/, docs/tickets/ticket-19a_commit-and-validate-scaffold.md"
+git config user.name "Codex"
+git config user.email "codex@local"
+git commit -m "ticket-19: commit scaffold validation artifacts" -m "Tests: make test-fast (failed: make not installed); pytest -q (failed: pytest missing); python3 scripts/validate_run_logs.py (passed); python3 tools/agentic/project_state_refresh.py --zip (passed)" -m "Artifacts: docs/_bundles/project_state_20260125_192752.zip" -m "Docs: docs/agent_runs/20260125_191727_ticket-19_commit-and-validate-scaffold/, docs/tickets/ticket-19a_commit-and-validate-scaffold.md"
+git status --porcelain
+python3 tools/agentic/gpt_bundle.py --zip --ticket ticket-19a_commit-and-validate-scaffold
+git status --porcelain
 pytest -q
 python3 -m pytest -q
 date -u +"%Y-%m-%dT%H:%M:%SZ"
