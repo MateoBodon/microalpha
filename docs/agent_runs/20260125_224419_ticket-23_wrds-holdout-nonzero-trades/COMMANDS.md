@@ -101,3 +101,5 @@
 99. `python3 - <<'PY' ... PY` (update META.json git_sha_after to fdc3bca4)
 100. `git add docs/agent_runs/20260125_224419_ticket-23_wrds-holdout-nonzero-trades/COMMANDS.md docs/agent_runs/20260125_224419_ticket-23_wrds-holdout-nonzero-trades/META.json`
 101. `git commit -m "ticket-23: finalize run log metadata" -m "Tests: not run (last: make check-data-policy; make test-fast)" -m "Artifacts: none" -m "Docs: docs/agent_runs/20260125_224419_ticket-23_wrds-holdout-nonzero-trades/COMMANDS.md; docs/agent_runs/20260125_224419_ticket-23_wrds-holdout-nonzero-trades/META.json"`
+102. `git checkout main`
+103. `git merge codex/ticket-22-wrds-resume-metrics`
