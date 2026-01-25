@@ -59,3 +59,12 @@ Ticket-05: Added deterministic runs index registry script, Make target, tests, a
 
 Ticket-03: Factor regression alignment + explicit return resampling, frequency/n_obs reporting, and alignment tests. Run log: `docs/agent_runs/20251230_082853_ticket-03_factor-regression-alignment/`.
 Ticket-17: Baseline suite + comparison reporting (Status: Done). Run log: `docs/agent_runs/20251230_101454_ticket-17_baseline-suite-comparison/`.
+
+## 2026-01-10
+
+Ticket-18: Installed agentic system scaffold, restored repo-specific docs, and generated initial project_state.zip. Run log: `docs/agent_runs/20260110_110259_ticket-18_agentic-scaffold-bootstrap/`.
+
+## 2026-01-24
+
+### Done
+- Ticket-19: Agentic scaffold cleanup (removed bootstrap residue, unignored run logs and project_state indices). Run log: `docs/agent_runs/20260124_235038_ticket-19_finish-agentic-scaffold-cleanup/`.

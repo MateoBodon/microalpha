@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file. The format 
 - ticket-16: run-log validator script + `make validate-runlogs` target to enforce META.json integrity.
 - ticket-05: deterministic runs index registry builder, Make target, and run registry documentation.
 - ticket-17: baseline suite computation with `baselines.csv`/status plus baseline comparison table + overlay plot in summary reports.
+- ticket-18: agentic system scaffold (PROJECT.md, agentic tools, and run-log templates).
 
 ### Changed
 - Walk-forward WRDS config aligned to universe coverage (2012–2024) and report pipeline now emits WRDS signals before analytics.
@@ -46,3 +47,4 @@ All notable changes to this project will be documented in this file. The format 
 - gpt-bundle: allow optional `git_sha_after_ref` in META.json to derive diff ranges while keeping concrete git SHA metadata.
 - test-fast now includes run-log validation before pytest.
 - Cost sensitivity note now clarifies borrow costs are logged separately and not scaled.
+- ticket-19: cleaned scaffold residue and tracked agentic run logs + project_state indices.

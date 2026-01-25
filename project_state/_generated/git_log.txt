@@ -1,0 +1,50 @@
+06820ff8 (HEAD -> codex/ticket-19-finish-agentic-scaffold-cleanup, origin/main, origin/HEAD, main) ticket-17: fix run log command order
+ca7e4db7 ticket-17: sync run log commands post-merge
+fc52ea9e ticket-17: update run log post-merge
+37220dfd Merge branch 'codex/ticket-17-baseline-suite-comparison'
+6226f907 (codex/ticket-17-baseline-suite-comparison) ticket-17: update run log command history
+289f4699 ticket-17: sync run log commands
+1a4d14ec ticket-17: update run log commands
+73aa9298 ticket-17: update run log tests
+738673b5 ticket-17: fix borrow note + update wfv report
+a19a620f ticket-17: finalize run log commands
+31cb6ac1 ticket-17: update reports and run logs
+fff2544d ticket-17: add baseline suite and tests
+60e379ea ticket-17: add ticket-17 definition
+27326cf7 ticket-03: record final bundle
+d1c9e349 ticket-03: log push command
+8a549a8a ticket-03: record post-merge bundle
+f3456247 (codex/ticket-03-factor-regression-alignment) ticket-03: sync commands log
+21963339 ticket-03: update sprint status + logs
+a9e976ea ticket-03: record bundle command
+94c5ebba ticket-03: finalize commands log
+920f015b ticket-03: add run logs
+50d86c22 ticket-03: update report + living docs
+3a626c20 ticket-03: enforce factor alignment + meta
+8e72c249 (codex/ticket-05-runs-index-registry) ticket-05: update run log commands
+5a685d47 ticket-05: update data policy allowlist and run log
+148b663a ticket-05: add run logs and prompt
+43c018f3 ticket-05: document run registry and add runs index
+403d231d ticket-05: add runs index builder and tests
+ac61ea9d ticket-16: post-merge run log updates
+e258a3b0 (codex/ticket-16-runlog-json-integrity) ticket-16: finalize run log commands
+c10763dc ticket-16: update run log commands
+557e38a1 ticket-16: fix run log SHA for bundling
+19175f0d ticket-16: docs and run log updates
+c8cc410c ticket-16: repair broken META.json entries
+2c46d9b9 ticket-16: add run-log validator + Make target
+02bb3b20 ticket-15: record post-merge bundle
+e9dcf948 ticket-15: merge fix spa keyerror
+4f4ca87c (codex/ticket-15-fix-spa-keyerror) ticket-15: extend run command log
+34416fb4 ticket-15: update run command log
+c35d79e8 ticket-15: finalize git_sha_after
+1c86c6a5 ticket-15: enable gpt-bundle ref + update logs
+c9060097 ticket-15: record bundle path in run log
+26418566 ticket-15: switch meta sha to branch ref
+d8db2da0 ticket-15: correct run meta sha
+797d895f ticket-15: finalize run meta sha
+db51d31c ticket-15: refresh WRDS SPA reports and logs
+999441de ticket-15: fix SPA grid loading and error status
+12b63a22 ticket-14: finalize merge log commands
+2db2b36c ticket-14: update merge run log
+143495d2 ticket-14: log merge to main

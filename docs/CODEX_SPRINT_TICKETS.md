@@ -201,6 +201,55 @@
 
 ---
 
+## ticket-18 — Agentic system scaffold bootstrap
+
+**Goal (1 sentence):** Install the Agentic System Kit scaffold, preserve repo-specific docs, and generate the initial `project_state.zip`.
+
+**Why (ties to diagnosis):**
+- Future Codex/GPT runs need consistent run logs, prompts, and project-state bundles.
+
+**Acceptance criteria (objective + falsifiable):**
+- `AGENTS.md`, `PROJECT.md`, and `PROGRESS.md` updated with repo-specific info.
+- `tools/agentic/` scripts present and usable.
+- `python3 tools/agentic/project_state_refresh.py --zip` produces a zip bundle.
+- Run log exists under `docs/agent_runs/<RUN_NAME>/` with required files.
+
+**Minimal tests/commands to run:**
+- `python3 tools/agentic/project_state_refresh.py --zip`
+- `make test-fast`
+
+**End-of-ticket:**
+- **Tests run:** …
+- **Artifacts/logs:** …
+- **Documentation updates:** …
+
+---
+
+## ticket-19 — Finish agentic scaffold cleanup
+
+**Goal (1 sentence):** Remove bootstrap residue, track agentic scaffold files, and keep run logs + project_state indices visible to git.
+
+**Why (ties to diagnosis):**
+- Audit artifacts and scaffold files must be versioned to keep runs reproducible.
+
+**Acceptance criteria (objective + falsifiable):**
+- No stray `.bak` or `.append` files remain.
+- `.gitignore` does not ignore `docs/agent_runs/**` or `project_state/_generated/**`.
+- `tools/agentic/`, `PROJECT.md`, and `project_state/{README,RUNBOOK,BACKLOG}.md` are tracked.
+- `python3 tools/agentic/project_state_refresh.py --zip` succeeds.
+- `make test-fast` passes.
+
+**Minimal tests/commands to run:**
+- `python3 tools/agentic/project_state_refresh.py --zip`
+- `make test-fast`
+
+**End-of-ticket:**
+- **Tests run:** …
+- **Artifacts/logs:** …
+- **Documentation updates:** …
+
+---
+
 ## ticket-03 — Fix factor regression alignment + document true factor frequency
 
 **Goal (1 sentence):** Make factor regression frequency-safe (no silent misalignment) and ensure docs match reality.

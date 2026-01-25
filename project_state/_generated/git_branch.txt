@@ -1,0 +1,1 @@
+codex/ticket-19-finish-agentic-scaffold-cleanup

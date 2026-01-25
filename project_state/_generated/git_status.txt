@@ -1,0 +1,18 @@
+## codex/ticket-19-finish-agentic-scaffold-cleanup
+ M .gitignore
+ M CHANGELOG.md
+ M PROGRESS.md
+ M docs/CODEX_SPRINT_TICKETS.md
+?? PROJECT.md
+?? project_state/BACKLOG.md
+?? project_state/README.md
+?? project_state/RUNBOOK.md
+?? project_state/_generated/dependency_hints.txt
+?? project_state/_generated/git_branch.txt
+?? project_state/_generated/git_diff.patch
+?? project_state/_generated/git_diff_cached.patch
+?? project_state/_generated/git_head.txt
+?? project_state/_generated/git_log.txt
+?? project_state/_generated/git_ls_files.txt
+?? project_state/_generated/git_status.txt
+?? tools/agentic/
