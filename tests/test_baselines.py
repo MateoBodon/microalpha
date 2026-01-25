@@ -38,7 +38,7 @@ def test_momentum_baseline_no_lookahead(tmp_path: Path) -> None:
     artifact_dir.mkdir()
     data_dir.mkdir()
 
-    dates = pd.date_range("2020-02-29", "2021-04-30", freq="M")
+    dates = pd.date_range("2020-02-29", "2021-04-30", freq="ME")
     symbols = ["ALFA", "BETA"]
 
     universe_path = tmp_path / "universe.csv"
@@ -80,7 +80,7 @@ def test_baselines_schema_stable(tmp_path: Path) -> None:
     artifact_dir.mkdir()
     data_dir.mkdir()
 
-    dates = pd.date_range("2021-01-31", "2021-06-30", freq="M")
+    dates = pd.date_range("2021-01-31", "2021-06-30", freq="ME")
     symbols = ["ALFA"]
 
     universe_path = tmp_path / "universe.csv"

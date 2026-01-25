@@ -162,7 +162,7 @@ def load_equity_returns(equity_csv: Path) -> pd.Series:
     timestamps = pd.to_datetime(df["timestamp"], errors="coerce")
     if timestamps.isna().all():
         timestamps = pd.to_datetime(df["timestamp"], unit="ns", errors="coerce")
-    timestamps = timestamps.fillna(method="ffill")
+    timestamps = timestamps.ffill()
     series = pd.Series(df["returns"].astype(float).to_numpy(), index=timestamps)
     series = series.loc[~series.index.duplicated(keep="last")]
     series.name = "returns"

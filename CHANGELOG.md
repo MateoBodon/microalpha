@@ -48,4 +48,5 @@ All notable changes to this project will be documented in this file. The format 
 - test-fast now includes run-log validation before pytest.
 - Cost sensitivity note now clarifies borrow costs are logged separately and not scaled.
 - ticket-19: cleaned scaffold residue and tracked agentic run logs + project_state indices.
+- ticket-19a: pandas 3 compatibility fixes for multi-asset timestamps and analytics timestamp filling.
 - ticket-19a: refreshed project_state indices, validated scaffold state, and recorded commit/run logs.

@@ -195,7 +195,9 @@ class MultiCsvDataHandler(DataHandler):
 
     def _iter_union_index(self) -> Iterator[pd.Timestamp]:
         arrays = [
-            df.index.view("i8") for df in self.frames.values() if df is not None
+            df.index.astype("datetime64[ns]").view("i8")
+            for df in self.frames.values()
+            if df is not None
         ]
         for ts_int in self._merge_timestamp_arrays(arrays):
             yield pd.Timestamp(ts_int, unit="ns")
@@ -218,7 +220,7 @@ class MultiCsvDataHandler(DataHandler):
             df = self.frames.get(sym)
             if df is None or df.empty:
                 continue
-            timestamps = df.index.view("i8")
+            timestamps = df.index.astype("datetime64[ns]").view("i8")
             prices = df["close"].to_numpy(dtype=float)
             states[sym] = _SymbolState(timestamps=timestamps, prices=prices)
         return states
