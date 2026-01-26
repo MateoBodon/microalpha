@@ -47,3 +47,11 @@ Commands executed (in order):
 45. `date -u "+%Y-%m-%dT%H:%M:%SZ"`
 46. `cat <<'EOF' > docs/agent_runs/20260126_023947_ticket-24b_finalize-wrds-refresh/META.json`
 47. `cat <<'EOF' > docs/agent_runs/20260126_023947_ticket-24b_finalize-wrds-refresh/RESULTS.md`
+48. `git checkout -b codex/ticket-24-finalize-wrds-refresh`
+49. `git add docs/agent_runs/20260126_000243_ticket-00_project-state-refresh docs/agent_runs/20260126_011723_ticket-24_wrds-resume-metrics-refresh docs/agent_runs/20260126_023947_ticket-24b_finalize-wrds-refresh docs/img/wrds_flagship/2026-01-26T01-22-23Z-e76eb4d docs/tickets/TICKET-24_wrds-resume-metrics-refresh.md docs/tickets/TICKET-24b_finalize-wrds-refresh.md docs/prompts/20260126_023947_ticket-24b_finalize-wrds-refresh.md docs/CODEX_SPRINT_TICKETS.md PROGRESS.md docs/DECISIONS.md`
+50. `git status -sb`
+51. `git add -f docs/prompts/20260126_023947_ticket-24b_finalize-wrds-refresh.md`
+52. `git status -sb`
+53. `git commit -m "ticket-24: finalize wrds refresh logs" -m "Tests: source .venv/bin/activate && make test-fast && make check-data-policy && pytest -q tests/test_docs_links.py && make validate-runlogs" -m "Artifacts: docs/img/wrds_flagship/2026-01-26T01-22-23Z-e76eb4d/; docs/_bundles/gpt_bundle_20260126_024758_TICKET-24b_finalize-wrds-refresh.zip" -m "Docs: docs/agent_runs/20260126_000243_ticket-00_project-state-refresh/; docs/agent_runs/20260126_011723_ticket-24_wrds-resume-metrics-refresh/; docs/agent_runs/20260126_023947_ticket-24b_finalize-wrds-refresh/; docs/CODEX_SPRINT_TICKETS.md; PROGRESS.md; docs/DECISIONS.md; docs/tickets/TICKET-24_wrds-resume-metrics-refresh.md; docs/tickets/TICKET-24b_finalize-wrds-refresh.md; docs/prompts/20260126_023947_ticket-24b_finalize-wrds-refresh.md"`
+54. `git status -sb`
+55. `git diff -- docs/agent_runs/20260126_023947_ticket-24b_finalize-wrds-refresh/COMMANDS.md`
