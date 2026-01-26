@@ -1,22 +1,2 @@
-## main...origin/main
- M PROGRESS.md
- M docs/CODEX_SPRINT_TICKETS.md
- M docs/results_wrds.md
- M project_state/BACKLOG.md
- M project_state/KNOWN_ISSUES.md
- M project_state/OPEN_QUESTIONS.md
- M project_state/ROADMAP.md
- M project_state/RUNBOOK.md
- M project_state/_generated/git_branch.txt
- M project_state/_generated/git_diff.patch
- M project_state/_generated/git_head.txt
- M project_state/_generated/git_log.txt
- M project_state/_generated/git_ls_files.txt
- M project_state/_generated/git_status.txt
- M reports/summaries/wrds_flagship.md
- M reports/summaries/wrds_flagship_metrics.json
-?? docs/agent_runs/20260126_000243_ticket-00_project-state-refresh/
-?? docs/agent_runs/20260126_011723_ticket-24_wrds-resume-metrics-refresh/
-?? docs/gpt_outputs/mi01-25-26prompt1-diagnosis.md
-?? docs/img/wrds_flagship/2026-01-26T01-22-23Z-e76eb4d/
-?? docs/tickets/TICKET-24_wrds-resume-metrics-refresh.md
+## main...origin/main [ahead 1]
+?? tmp/

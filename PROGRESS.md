@@ -87,3 +87,4 @@ Ticket-18: Installed agentic system scaffold, restored repo-specific docs, and g
 - Ticket-24c: shipped WRDS refresh outputs (docs/project_state/run logs/images), validated gates, and generated a GPT bundle. Run log: `docs/agent_runs/20260126_034509_ticket-24c_ship-wrds-refresh/`.
 - Ticket-24d: finalized WRDS refresh doc/run log shipment to main, validated gates, and generated a GPT bundle. Run log: `docs/agent_runs/20260126_151214_ticket-24d_ship-wrds-refresh-to-main/`.
 - Ticket-24d: aligned tracking-policy wording in ticket docs, refreshed sprint ticket entry, reran gates, and regenerated the GPT bundle. Run log: `docs/agent_runs/20260126_151214_ticket-24d_ship-wrds-refresh-to-main/`.
+- Ticket-26: logged gpt_bundle dirty-tree safety + repo hygiene, ignored local tmp dirty marker, and prepped main for push. Run log: `docs/agent_runs/20260126_223149_ticket-26_git-hygiene-push/`.

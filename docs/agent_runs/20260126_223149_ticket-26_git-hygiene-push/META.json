@@ -1,0 +1,30 @@
+{
+  "run_name": "20260126_223149_ticket-26_git-hygiene-push",
+  "ticket_id": "ticket-26",
+  "started_at_utc": "2026-01-26T22:34:50Z",
+  "finished_at_utc": "2026-01-26T22:38:13Z",
+  "git_sha_before": "70ae6d3924d50b91b9e094140b33c6fc74766100",
+  "git_sha_after": "70ae6d3924d50b91b9e094140b33c6fc74766100",
+  "branch_name": "codex/ticket-26-git-hygiene-push",
+  "host_env_notes": "Linux 6.8.0-90-generic / Python 3.12.3 / venv .venv",
+  "dataset_id": "docs_only",
+  "config_paths": [],
+  "config_sha256": {},
+  "artifact_paths": [
+    "docs/agent_runs/20260126_223149_ticket-26_git-hygiene-push/"
+  ],
+  "report_paths": [
+    ".gitignore",
+    "docs/CODEX_SPRINT_TICKETS.md",
+    "PROGRESS.md",
+    "CHANGELOG.md",
+    "project_state/_generated/git_diff.patch",
+    "project_state/_generated/git_head.txt",
+    "project_state/_generated/git_log.txt",
+    "project_state/_generated/git_ls_files.txt",
+    "project_state/_generated/git_status.txt",
+    "docs/prompts/20260126_223149_ticket-26_git-hygiene-push.md",
+    "docs/agent_runs/20260126_223149_ticket-26_git-hygiene-push/"
+  ],
+  "web_sources": []
+}

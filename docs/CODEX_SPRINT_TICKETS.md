@@ -6,6 +6,32 @@
 
 ---
 
+## ticket-26 — gpt_bundle dirty-tree safety + repo hygiene
+
+**Goal (1 sentence):** Ensure gpt_bundle safely stashes dirty worktrees and push a clean, audited main state to origin.
+
+**Status:** Done.
+
+**Why (ties to diagnosis):**
+- Bundling should remain audit-safe even when the worktree is dirty; a clean main keeps handoffs reproducible.
+
+**Acceptance criteria (objective + falsifiable):**
+- gpt_bundle stashes/restores dirty worktrees unless `--no-stash` is set (covered by tests).
+- Dirty-tree test exists and passes (`tests/test_gpt_bundle_dirty.py`).
+- Repo status is clean on `main` after commit and push to `origin`.
+- Run log exists under `docs/agent_runs/<RUN_NAME>/` with required files.
+
+**Minimal tests/commands to run:**
+- `pytest -q tests/test_gpt_bundle_dirty.py`
+- `git status -sb`
+
+**End-of-ticket:**
+- **Tests run:** Not run (cleanup/push only; dirty-tree pytest already captured in the ticket-26 commit).
+- **Artifacts/logs:** `docs/agent_runs/20260126_223149_ticket-26_git-hygiene-push/`.
+- **Documentation updates:** `docs/CODEX_SPRINT_TICKETS.md`, `PROGRESS.md`, `CHANGELOG.md`, `docs/prompts/20260126_223149_ticket-26_git-hygiene-push.md`, `docs/agent_runs/20260126_223149_ticket-26_git-hygiene-push/`.
+
+---
+
 ## ticket-24 — WRDS resume metrics refresh (flagship rerun)
 
 **Goal (1 sentence):** Rerun WRDS flagship on codex-worker (AX162-S) and refresh resume-facing real-data metrics docs from the new artifacts.
