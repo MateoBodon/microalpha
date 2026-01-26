@@ -67,6 +67,38 @@
 ---
 
 
+
+## ticket-24d — Ship WRDS refresh to main (docs/logs/images)
+
+**Goal (1 sentence):** Complete ticket-24c by committing any remaining WRDS refresh docs/run logs/images, merging to main, and pushing a clean audited state.
+
+**Status:** Done.
+
+**Why (ties to diagnosis):**
+- Ensure the latest WRDS refresh outputs are fully tracked and audit-ready on main.
+
+**Acceptance criteria (objective + falsifiable):**
+- WRDS docs consistently reference run `2026-01-26T01-22-23Z-e76eb4d`.
+- `project_state` snapshot reflects the same run_id.
+- Required run logs + ticket docs are tracked and `make validate-runlogs` passes.
+- `make check-data-policy` passes with zero WRDS raw files staged.
+- `pytest -q tests/test_docs_links.py` passes.
+- Branch merged to `origin/main`; git status clean on main.
+- `gpt_bundle.zip` produced for ticket-24d.
+
+**Minimal tests/commands to run:**
+- `make validate-runlogs`
+- `make check-data-policy`
+- `pytest -q tests/test_docs_links.py`
+- `make test-fast`
+
+**End-of-ticket:**
+- **Tests run:** `source .venv/bin/activate && make validate-runlogs && make check-data-policy && pytest -q tests/test_docs_links.py && make test-fast`.
+- **Artifacts/logs:** `docs/agent_runs/20260126_151214_ticket-24d_ship-wrds-refresh-to-main/`; `docs/img/wrds_flagship/2026-01-26T01-22-23Z-e76eb4d/`; `docs/_bundles/gpt_bundle_20260126_151835_TICKET-24d_ship-wrds-refresh-to-main.zip`.
+- **Documentation updates:** `docs/CODEX_SPRINT_TICKETS.md`, `PROGRESS.md`, `CHANGELOG.md`, `docs/DECISIONS.md`, `docs/tickets/TICKET-24d_ship-wrds-refresh-to-main.md`, `docs/prompts/20260126_151214_ticket-24d_ship-wrds-refresh-to-main.md`, `docs/agent_runs/20260126_151214_ticket-24d_ship-wrds-refresh-to-main/`.
+
+---
+
 ## ticket-23 — WRDS holdout nonzero trades (final holdout)
 
 **Goal (1 sentence):** Fix WRDS final-holdout degeneracy (zero trades) and produce resume-credible real-data holdout metrics with a committed run log + summary doc.

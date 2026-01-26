@@ -58,3 +58,11 @@ Template:
 - Options considered: Use ticket-24c in META.json (fails validation); map to ticket-24 and document the suffix elsewhere.
 - Why: Keeps `make validate-runlogs` green while preserving traceability through the run name and ticket file.
 - Consequences: Run logs reference ticket-24 for validation; ticket-24c details live in `docs/tickets/TICKET-24c_ship-wrds-refresh.md`.
+
+
+- Date: 2026-01-26
+- Decision: Use ticket-24 in META.json for the ticket-24d run log.
+- Context: The run-log validator only accepts ticket-XX IDs, while this follow-on work uses a ticket-24d label.
+- Options considered: Use ticket-24d in META.json (fails validation); map to ticket-24 and document the suffix elsewhere.
+- Why: Keeps `make validate-runlogs` green while preserving traceability through the run name and ticket file.
+- Consequences: Run logs reference ticket-24 for validation; ticket-24d details live in `docs/tickets/TICKET-24d_ship-wrds-refresh-to-main.md`.
