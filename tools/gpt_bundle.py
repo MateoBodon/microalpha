@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import re
@@ -18,6 +19,97 @@ def _env(name: str) -> str:
     if not value:
         raise SystemExit(f"{name} must be set")
     return value
+
+
+def _git_status_porcelain() -> str:
+    try:
+        return subprocess.check_output(
+            ["git", "status", "--porcelain"], text=True, stderr=subprocess.STDOUT
+        )
+    except subprocess.CalledProcessError as exc:
+        raise SystemExit(f"Failed to read git status: {exc.output}") from exc
+
+
+def _stash_push(label: str) -> str:
+    try:
+        subprocess.check_output(
+            ["git", "stash", "push", "-u", "-m", label], text=True, stderr=subprocess.STDOUT
+        )
+    except subprocess.CalledProcessError as exc:
+        raise SystemExit(f"Failed to stash worktree: {exc.output}") from exc
+
+    try:
+        entry = subprocess.check_output(
+            ["git", "stash", "list", "-1"], text=True, stderr=subprocess.STDOUT
+        ).strip()
+    except subprocess.CalledProcessError as exc:
+        raise SystemExit(f"Failed to read stash list: {exc.output}") from exc
+    if not entry:
+        raise SystemExit("Expected a stash entry after git stash push, but none found.")
+    ref = entry.split(":", 1)[0].strip()
+    if not ref.startswith("stash@{"):
+        raise SystemExit(f"Unexpected stash ref format: {entry}")
+    return ref
+
+
+def _restore_stash(stash_ref: str, status_before: str) -> None:
+    result = subprocess.run(
+        ["git", "stash", "apply", "--index", stash_ref],
+        text=True,
+        capture_output=True,
+    )
+    status_after = _git_status_porcelain()
+    if result.returncode != 0 or status_after != status_before:
+        message = "\n".join(
+            [
+                "Failed to restore stashed changes cleanly after bundling.",
+                f"stash ref: {stash_ref}",
+                "stdout:",
+                result.stdout.strip(),
+                "stderr:",
+                result.stderr.strip(),
+                "status before:",
+                status_before.strip(),
+                "status after:",
+                status_after.strip(),
+                "",
+                "Your stash has NOT been dropped. Inspect with:",
+                "  git stash list",
+                f"  git stash show -p {stash_ref}",
+            ]
+        ).strip()
+        raise SystemExit(message)
+
+    try:
+        subprocess.check_output(
+            ["git", "stash", "drop", stash_ref], text=True, stderr=subprocess.STDOUT
+        )
+    except subprocess.CalledProcessError as exc:
+        raise SystemExit(f"Failed to drop stash {stash_ref}: {exc.output}") from exc
+
+
+def _prepare_worktree(label: str, no_stash: bool) -> tuple[str, str | None, bool]:
+    status_before = _git_status_porcelain()
+    dirty = bool(status_before.strip())
+    stash_ref = None
+    if dirty:
+        if no_stash:
+            raise SystemExit(
+                "Dirty worktree detected and --no-stash specified. "
+                "Commit, stash, or clean changes before running gpt-bundle."
+            )
+        stash_ref = _stash_push(label)
+        status_after = _git_status_porcelain()
+        if status_after.strip():
+            raise SystemExit(
+                "Expected clean worktree after stash, but changes remain:\n"
+                f"{status_after}"
+            )
+    return status_before, stash_ref, dirty
+
+
+def _bundle_root() -> Path:
+    return Path("artifacts") / "_local" / "gpt_bundles"
 
 
 def _copy_path(src: Path, dest_root: Path, missing: list[str]) -> None:
@@ -141,20 +233,14 @@ def _write_commits(stage: Path, base: str, head: str, source: str) -> None:
     (stage / "COMMITS.txt").write_text(payload, encoding="utf-8")
 
 
-def _require_clean_worktree() -> None:
-    try:
-        status = subprocess.check_output(
-            ["git", "status", "--porcelain"], text=True, stderr=subprocess.STDOUT
-        )
-    except subprocess.CalledProcessError as exc:
-        raise SystemExit(f"Failed to read git status: {exc.output}") from exc
-    if status.strip():
-        raise SystemExit(
-            "Refusing to bundle: git worktree is dirty.\n"
-            "Commit, stash, or clean changes before running gpt-bundle.\n"
-            "git status --porcelain output:\n"
-            f"{status}"
-        )
+def _parse_args() -> argparse.Namespace:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument(
+        "--no-stash",
+        action="store_true",
+        help="Disable auto-stash; fail if the worktree is dirty.",
+    )
+    return ap.parse_args()
 
 
 def _collect_check_files(stage: Path, run_name: str) -> list[Path]:
@@ -255,6 +341,7 @@ def _verify_patch_matches(
 
 
 def main() -> None:
+    args = _parse_args()
     ticket = _env("TICKET")
     run_name = _env("RUN_NAME")
     run_dir = Path("docs/agent_runs") / run_name
@@ -264,58 +351,69 @@ def main() -> None:
         meta_path, Path("docs/CODEX_SPRINT_TICKETS.md"), expected_ticket=ticket
     )
     _require_results_ready(results_path)
-    _require_clean_worktree()
+
+    status_before, stash_ref, dirty = _prepare_worktree(
+        label=f"temp: gpt_bundle {ticket} {run_name}",
+        no_stash=args.no_stash,
+    )
+    print(f"Dirty worktree detected: {'yes' if dirty else 'no'}")
+    print(f"Stash used: {'yes' if stash_ref else 'no'}")
 
     timestamp = os.environ.get("BUNDLE_TIMESTAMP") or time.strftime(
         "%Y-%m-%dT%H-%M-%SZ", time.gmtime()
     )
-    bundle_dir = Path("docs/gpt_bundles")
+    bundle_dir = _bundle_root()
     bundle_dir.mkdir(parents=True, exist_ok=True)
     stage = bundle_dir / f".staging_{timestamp}_{ticket}_{run_name}"
     if stage.exists():
         shutil.rmtree(stage)
     stage.mkdir(parents=True, exist_ok=True)
 
-    missing: list[str] = []
-    required = [
-        Path("AGENTS.md"),
-        Path("docs/PLAN_OF_RECORD.md"),
-        Path("docs/DOCS_AND_LOGGING_SYSTEM.md"),
-        Path("docs/CODEX_SPRINT_TICKETS.md"),
-        Path("PROGRESS.md"),
-        Path("project_state/CURRENT_RESULTS.md"),
-        Path("project_state/KNOWN_ISSUES.md"),
-        Path("project_state/CONFIG_REFERENCE.md"),
-        Path(f"docs/agent_runs/{run_name}"),
-    ]
+    try:
+        missing: list[str] = []
+        required = [
+            Path("AGENTS.md"),
+            Path("docs/PLAN_OF_RECORD.md"),
+            Path("docs/DOCS_AND_LOGGING_SYSTEM.md"),
+            Path("docs/CODEX_SPRINT_TICKETS.md"),
+            Path("PROGRESS.md"),
+            Path("project_state/CURRENT_RESULTS.md"),
+            Path("project_state/KNOWN_ISSUES.md"),
+            Path("project_state/CONFIG_REFERENCE.md"),
+            Path(f"docs/agent_runs/{run_name}"),
+        ]
 
-    for item in required:
-        _copy_path(item, stage, missing)
+        for item in required:
+            _copy_path(item, stage, missing)
 
-    diff_path = stage / "DIFF.patch"
-    last_commit_path = stage / "LAST_COMMIT.txt"
+        diff_path = stage / "DIFF.patch"
+        last_commit_path = stage / "LAST_COMMIT.txt"
 
-    base, head, source = _derive_diff_range(meta_path)
-    _write_commits(stage, base, head, source)
-    diff_cmd = ["git", "diff", f"{base}..{head}"]
-    diff_text = subprocess.check_output(diff_cmd, text=True, stderr=subprocess.STDOUT)
-    diff_path.write_text(diff_text, encoding="utf-8")
-    _verify_patch_matches(diff_path, stage, base, head, run_name)
+        base, head, source = _derive_diff_range(meta_path)
+        _write_commits(stage, base, head, source)
+        diff_cmd = ["git", "diff", f"{base}..{head}"]
+        diff_text = subprocess.check_output(diff_cmd, text=True, stderr=subprocess.STDOUT)
+        diff_path.write_text(diff_text, encoding="utf-8")
+        _verify_patch_matches(diff_path, stage, base, head, run_name)
 
-    last_commit = subprocess.check_output(
-        ["git", "log", "-1", "--pretty=format:%H%n%an%n%ad%n%s"],
-        text=True,
-    )
-    last_commit_path.write_text(last_commit + "\n", encoding="utf-8")
+        last_commit = subprocess.check_output(
+            ["git", "log", "-1", "--pretty=format:%H%n%an%n%ad%n%s"],
+            text=True,
+        )
+        last_commit_path.write_text(last_commit + "\n", encoding="utf-8")
 
-    bundle_path = bundle_dir / f"{timestamp}_{ticket}_{run_name}.zip"
-    with zipfile.ZipFile(bundle_path, "w", compression=zipfile.ZIP_DEFLATED) as zf:
-        for file in stage.rglob("*"):
-            if file.is_file():
-                zf.write(file, file.relative_to(stage))
+        bundle_path = bundle_dir / f"{timestamp}_{ticket}_{run_name}.zip"
+        with zipfile.ZipFile(bundle_path, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+            for file in stage.rglob("*"):
+                if file.is_file():
+                    zf.write(file, file.relative_to(stage))
+    finally:
+        if stage.exists():
+            shutil.rmtree(stage)
+        if stash_ref:
+            _restore_stash(stash_ref, status_before)
 
-    shutil.rmtree(stage)
-    print(bundle_path)
+    print(f"Bundle path: {bundle_path}")
     if missing:
         message = "Missing bundle items: " + ", ".join(missing)
         print(message)
