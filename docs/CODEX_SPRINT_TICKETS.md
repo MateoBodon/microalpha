@@ -6,6 +6,38 @@
 
 ---
 
+## ticket-24 — WRDS resume metrics refresh (flagship rerun)
+
+**Goal (1 sentence):** Rerun WRDS flagship on codex-worker (AX162-S) and refresh resume-facing real-data metrics docs from the new artifacts.
+
+**Status:** Done.
+
+**Why (ties to diagnosis):**
+- Resume-facing metrics must reflect the latest real-data flagship run with auditable artifacts.
+
+**Acceptance criteria (objective + falsifiable):**
+- New artifacts exist at `artifacts/wrds_flagship/<RUN_ID>/`.
+- `docs/results_wrds_resume.md` references `<RUN_ID>`, git SHA, exact commands, and headline metrics with clear labeling.
+- `project_state/CURRENT_RESULTS.md` updated to the same `<RUN_ID>` and snapshot.
+- Run log exists under `docs/agent_runs/<RUN_NAME>/` with required files and recorded artifact/report paths.
+- `make check-data-policy` and `make validate-runlogs` pass.
+- No WRDS raw files staged/committed.
+
+**Minimal tests/commands to run:**
+- `make test-fast`
+- `make check-data-policy`
+- `WRDS_ENABLED=1 WRDS_DATA_ROOT=/srv/data/wrds make wrds-flagship`
+- `WRDS_ENABLED=1 WRDS_DATA_ROOT=/srv/data/wrds make report-wrds`
+- `make validate-runlogs`
+- `python3 tools/agentic/project_state_refresh.py --zip`
+
+**End-of-ticket:**
+- **Tests run:** `make test-fast`; `make check-data-policy`; `WRDS_ENABLED=1 WRDS_DATA_ROOT=/srv/data/wrds/wrds make wrds-flagship`; `WRDS_ENABLED=1 WRDS_DATA_ROOT=/srv/data/wrds/wrds make report-wrds`; `make validate-runlogs`; `pytest -q tests/test_docs_links.py`; `python3 tools/agentic/project_state_refresh.py --zip`.
+- **Artifacts/logs:** `artifacts/wrds_flagship/2026-01-26T01-22-23Z-e76eb4d/`; `docs/agent_runs/20260126_011723_ticket-24_wrds-resume-metrics-refresh/`; `docs/_bundles/project_state_20260126_013606.zip`; `docs/_bundles/gpt_bundle_20260126_014244_TICKET-24_wrds-resume-metrics-refresh.zip`.
+- **Documentation updates:** `docs/results_wrds.md`, `docs/results_wrds_resume.md`, `reports/summaries/wrds_flagship.md`, `project_state/CURRENT_RESULTS.md`, `PROGRESS.md`, `docs/agent_runs/20260126_011723_ticket-24_wrds-resume-metrics-refresh/`, `docs/img/wrds_flagship/2026-01-26T01-22-23Z-e76eb4d/`.
+
+---
+
 
 ## ticket-23 — WRDS holdout nonzero trades (final holdout)
 

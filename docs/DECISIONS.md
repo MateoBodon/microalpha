@@ -44,3 +44,10 @@ Template:
 - Options considered: Extend/re-export WRDS data; loosen filters; shift the WFV/holdout windows to the covered period.
 - Why: Shifting windows is the smallest change that restores non-degenerate holdout metrics without redesigning the strategy.
 - Consequences: Resume metrics now reference a 2018–2019 holdout; future data refreshes could expand the window.
+
+- Date: 2026-01-26
+- Decision: Use ticket-24 in META.json for the ticket-24b run log.
+- Context: The run-log validator only accepts ticket-XX IDs, while this follow-on work uses a ticket-24b label.
+- Options considered: Use ticket-24b in META.json (fails validation); map to ticket-24 and document the suffix elsewhere.
+- Why: Keeps `make validate-runlogs` green while preserving traceability through the run name and ticket file.
+- Consequences: Run logs reference ticket-24 for validation; ticket-24b details live in `docs/tickets/TICKET-24b_finalize-wrds-refresh.md`.

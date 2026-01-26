@@ -77,3 +77,10 @@ Ticket-18: Installed agentic system scaffold, restored repo-specific docs, and g
 - Ticket-22: WRDS holdout WFV + report run completed (holdout zero trades; inference fields computed on selection window). Artifacts: `artifacts/wrds_flagship/2026-01-25T21-01-51Z-4d08d18/`. Summary: `docs/results_wrds_resume.md`. Run log: `docs/agent_runs/20260125_205959_ticket-22_wrds-resume-metrics/`.
 - Ticket-23: WRDS holdout WFV + report rerun with coverage-aligned windows; holdout now executes trades (non-degenerate). Artifacts: `artifacts/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/`. Summary: `docs/results_wrds_resume.md`. Run log: `docs/agent_runs/20260125_224419_ticket-23_wrds-holdout-nonzero-trades/`.
 - Ticket-23: Project_state indices + docs rebuilt and zip created (`docs/_bundles/project_state_20260125_232239.zip`). Run log: `docs/agent_runs/20260125_224419_ticket-23_wrds-holdout-nonzero-trades/`.
+
+## 2026-01-26
+
+### Done
+- Ticket-00: refreshed project_state runbook + backlog/roadmap/known-issues/open-questions, regenerated `_generated/` metadata, and created a new project_state bundle (`docs/_bundles/project_state_20260126_001303.zip`). Run log: `docs/agent_runs/20260126_000243_ticket-00_project-state-refresh/`.
+- Ticket-24: WRDS flagship rerun completed with local exports at `/srv/data/wrds/wrds`; resume metrics refreshed. Artifacts: `artifacts/wrds_flagship/2026-01-26T01-22-23Z-e76eb4d/`. Run log: `docs/agent_runs/20260126_011723_ticket-24_wrds-resume-metrics-refresh/`.
+- Ticket-24b: finalized WRDS refresh tracking (run logs + images + gate checks) and logged validation tests. Run log: `docs/agent_runs/20260126_023947_ticket-24b_finalize-wrds-refresh/`.
