@@ -38,6 +38,34 @@
 
 ---
 
+## ticket-24c — Ship WRDS refresh outputs (docs/logs/images)
+
+**Goal (1 sentence):** Stage, commit, and push the WRDS refresh outputs so resume metrics remain auditably current.
+
+**Status:** Done.
+
+**Why (ties to diagnosis):**
+- Ensure the latest WRDS refresh outputs are fully tracked and verifiable.
+
+**Acceptance criteria (objective + falsifiable):**
+- Docs/results and project_state references consistently point to `2026-01-26T01-22-23Z-e76eb4d`.
+- Required run logs and WRDS images are tracked and pass run-log/data-policy/link validation.
+- `gpt_bundle.zip` generated for ticket-24c.
+- Git status clean on `main` after commit and push.
+
+**Minimal tests/commands to run:**
+- `make test-fast`
+- `make check-data-policy`
+- `pytest -q tests/test_docs_links.py`
+- `make validate-runlogs`
+
+**End-of-ticket:**
+- **Tests run:** `source .venv/bin/activate && make test-fast`; `make check-data-policy`; `pytest -q tests/test_docs_links.py`; `make validate-runlogs`.
+- **Artifacts/logs:** `docs/agent_runs/20260126_034509_ticket-24c_ship-wrds-refresh/`; `docs/agent_runs/20260126_000243_ticket-00_project-state-refresh/`; `docs/agent_runs/20260126_011723_ticket-24_wrds-resume-metrics-refresh/`; `docs/agent_runs/20260126_023947_ticket-24b_finalize-wrds-refresh/`; `docs/img/wrds_flagship/2026-01-26T01-22-23Z-e76eb4d/`; `docs/_bundles/gpt_bundle_20260126_035231_TICKET-24c_ship-wrds-refresh.zip`.
+- **Documentation updates:** `docs/results_wrds.md`, `docs/results_wrds_resume.md`, `reports/summaries/wrds_flagship.md`, `reports/summaries/wrds_flagship_metrics.json`, `project_state/BACKLOG.md`, `project_state/CURRENT_RESULTS.md`, `project_state/KNOWN_ISSUES.md`, `project_state/OPEN_QUESTIONS.md`, `project_state/ROADMAP.md`, `project_state/RUNBOOK.md`, `project_state/_generated/git_branch.txt`, `project_state/_generated/git_diff.patch`, `project_state/_generated/git_head.txt`, `project_state/_generated/git_log.txt`, `project_state/_generated/git_ls_files.txt`, `project_state/_generated/git_status.txt`, `PROGRESS.md`, `CHANGELOG.md`, `docs/DECISIONS.md`, `docs/tickets/TICKET-24c_ship-wrds-refresh.md`, `docs/prompts/20260126_034509_ticket-24c_ship-wrds-refresh.md`, `docs/gpt_outputs/mi01-25-26prompt1-diagnosis.md`.
+
+---
+
 
 ## ticket-23 — WRDS holdout nonzero trades (final holdout)
 

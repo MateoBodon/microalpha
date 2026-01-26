@@ -27,7 +27,7 @@
 
 ![Baseline Overlay](wrds_flagship_baselines.png)
 
-- Baselines CSV: `../../artifacts/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/baselines.csv`
+- Baselines CSV: `../../artifacts/wrds_flagship/2026-01-26T01-22-23Z-e76eb4d/baselines.csv`
 - Momentum baseline: lookback=12M skip=1M long_short=False
 - Turnover for baselines is unit-notional weight turnover; flagship uses reported total_turnover.
 
@@ -53,11 +53,11 @@ _Exposure time series is recorded in equity_curve.csv._
 
 ## Visuals
 
-![Equity Curve](../../docs/img/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/equity_curve.png)
+![Equity Curve](../../docs/img/wrds_flagship/2026-01-26T01-22-23Z-e76eb4d/equity_curve.png)
 
-![Bootstrap Sharpe Histogram](../../docs/img/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/bootstrap_hist.png)
+![Bootstrap Sharpe Histogram](../../docs/img/wrds_flagship/2026-01-26T01-22-23Z-e76eb4d/bootstrap_hist.png)
 
-![SPA Comparator t-stats](../../docs/img/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/spa_tstats.png)
+![SPA Comparator t-stats](../../docs/img/wrds_flagship/2026-01-26T01-22-23Z-e76eb4d/spa_tstats.png)
 
 ## Hansen SPA Summary
 

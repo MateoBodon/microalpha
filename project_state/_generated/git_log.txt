@@ -1,7 +1,12 @@
-4d08d182 (HEAD -> codex/ticket-22-wrds-resume-metrics, codex/ticket-19a-commit-and-validate-scaffold) ticket-19: pandas 3 compat fixes + env setup
+e76eb4d5 (HEAD -> main, origin/main, origin/HEAD) ticket-23: log push command
+091d1426 ticket-23: log merge to main
+182a0f08 (codex/ticket-22-wrds-resume-metrics) ticket-23: log run commands
+e7106a58 ticket-23: finalize run log metadata
+fdc3bca4 ticket-23: refresh WRDS holdout and project_state
+4d08d182 (codex/ticket-19a-commit-and-validate-scaffold) ticket-19: pandas 3 compat fixes + env setup
 175d0be5 ticket-19: update run log commands
 dd22320d ticket-19: commit scaffold validation artifacts
-f5a6ea99 (origin/main, origin/HEAD, main, codex/ticket-19-finish-agentic-scaffold-cleanup) ticket-19: log merge/push commands
+f5a6ea99 (codex/ticket-19-finish-agentic-scaffold-cleanup) ticket-19: log merge/push commands
 089c40fc ticket-19: finish agentic scaffold cleanup
 06820ff8 ticket-17: fix run log command order
 ca7e4db7 ticket-17: sync run log commands post-merge
@@ -43,8 +48,3 @@ e9dcf948 ticket-15: merge fix spa keyerror
 4f4ca87c (codex/ticket-15-fix-spa-keyerror) ticket-15: extend run command log
 34416fb4 ticket-15: update run command log
 c35d79e8 ticket-15: finalize git_sha_after
-1c86c6a5 ticket-15: enable gpt-bundle ref + update logs
-c9060097 ticket-15: record bundle path in run log
-26418566 ticket-15: switch meta sha to branch ref
-d8db2da0 ticket-15: correct run meta sha
-797d895f ticket-15: finalize run meta sha

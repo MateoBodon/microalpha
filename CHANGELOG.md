@@ -53,3 +53,4 @@ All notable changes to this project will be documented in this file. The format 
 - ticket-19: cleaned scaffold residue and tracked agentic run logs + project_state indices.
 - ticket-19a: pandas 3 compatibility fixes for multi-asset timestamps and analytics timestamp filling.
 - ticket-19a: refreshed project_state indices, validated scaffold state, and recorded commit/run logs.
+- ticket-24c: shipped WRDS refresh outputs so resume metrics/docs/report images reference run `2026-01-26T01-22-23Z-e76eb4d`.

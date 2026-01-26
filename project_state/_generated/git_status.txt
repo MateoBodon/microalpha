@@ -1,24 +1,22 @@
-## codex/ticket-22-wrds-resume-metrics
- M CHANGELOG.md
+## main...origin/main
  M PROGRESS.md
- M configs/wfv_flagship_wrds.yaml
  M docs/CODEX_SPRINT_TICKETS.md
- M docs/DECISIONS.md
  M docs/results_wrds.md
- M project_state/CURRENT_RESULTS.md
+ M project_state/BACKLOG.md
  M project_state/KNOWN_ISSUES.md
+ M project_state/OPEN_QUESTIONS.md
+ M project_state/ROADMAP.md
+ M project_state/RUNBOOK.md
+ M project_state/_generated/git_branch.txt
+ M project_state/_generated/git_diff.patch
+ M project_state/_generated/git_head.txt
+ M project_state/_generated/git_log.txt
+ M project_state/_generated/git_ls_files.txt
+ M project_state/_generated/git_status.txt
  M reports/summaries/wrds_flagship.md
- M reports/summaries/wrds_flagship_factors.md
  M reports/summaries/wrds_flagship_metrics.json
- M reports/summaries/wrds_flagship_spa.json
- M reports/summaries/wrds_flagship_spa.md
- M src/microalpha/walkforward.py
- M tests/test_walkforward.py
-?? docs/agent_runs/20260125_205959_ticket-22_wrds-resume-metrics/
-?? docs/agent_runs/20260125_224419_ticket-23_wrds-holdout-nonzero-trades/
-?? docs/img/wrds_flagship/2026-01-25T21-01-51Z-4d08d18/
-?? docs/img/wrds_flagship/2026-01-25T22-58-24Z-4d08d18/
-?? docs/results_wrds_resume.md
-?? docs/tickets/ticket-22_wrds_resume_metrics.md
-?? docs/tickets/ticket-23_wrds_holdout_nonzero_trades.md
-?? reports/summaries/wrds_flagship_baselines.png
+?? docs/agent_runs/20260126_000243_ticket-00_project-state-refresh/
+?? docs/agent_runs/20260126_011723_ticket-24_wrds-resume-metrics-refresh/
+?? docs/gpt_outputs/mi01-25-26prompt1-diagnosis.md
+?? docs/img/wrds_flagship/2026-01-26T01-22-23Z-e76eb4d/
+?? docs/tickets/TICKET-24_wrds-resume-metrics-refresh.md
