@@ -8,6 +8,7 @@ Complete ticket-24c by committing any remaining WRDS refresh docs/run logs/image
 - Add any missing run logs and WRDS report images tied to the WRDS refresh.
 - Do **not** change strategy logic.
 - Do **not** commit `artifacts/` contents or WRDS raw exports.
+- Do **not** commit scratch outputs (`reports/_runs/`, `artifacts/_local/`); curated results, if needed, must live under `docs/artifacts/` with a manifest.
 - Generate a `gpt_bundle.zip` for this ticket.
 
 ## Acceptance Criteria
@@ -27,3 +28,4 @@ Complete ticket-24c by committing any remaining WRDS refresh docs/run logs/image
 
 ## Notes
 - This ticket only ships documentation and audit artifacts; no strategy logic changes.
+- Tracking policy reminder: curated results belong in `docs/artifacts/` (with manifest) and scratch output stays untracked.

@@ -1,4 +1,5 @@
 Results:
-- Added ticket-24d docs (ticket file + prompt capture) and run log updates; refreshed sprint ticket registry, PROGRESS, CHANGELOG, and DECISIONS to document the WRDS refresh shipment tied to run `2026-01-26T01-22-23Z-e76eb4d`.
-- Generated GPT bundle at `docs/_bundles/gpt_bundle_20260126_151835_TICKET-24d_ship-wrds-refresh-to-main.zip`.
-- No strategy logic changes; no `artifacts/` or raw WRDS exports were added.
+- Aligned ticket-24d documentation with tracking policy (scratch output exclusions and `docs/artifacts/` requirement) and recorded the decision in `docs/DECISIONS.md`.
+- Updated sprint ticket entries (filled ticket-24 placeholders, refreshed ticket-24d end-of-ticket details) and appended a PROGRESS bullet.
+- Reran required gates and regenerated the GPT bundle at `docs/_bundles/gpt_bundle_20260126_204751_TICKET-24d_ship-wrds-refresh-to-main.zip`.
+- No strategy logic changes; no scratch outputs or raw WRDS exports were added.

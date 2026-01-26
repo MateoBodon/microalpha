@@ -66,3 +66,27 @@ Commands executed (in order):
 64. `git merge --ff-only codex/ticket-24d-ship-wrds-refresh-to-main`
 65. `git push origin main`
 66. `git status -sb`
+67. `cat docs/agent_runs/20260126_151214_ticket-24d_ship-wrds-refresh-to-main/COMMANDS.md`
+68. `cat docs/agent_runs/20260126_151214_ticket-24d_ship-wrds-refresh-to-main/TESTS.md`
+69. `sed -n '20,100p' docs/CODEX_SPRINT_TICKETS.md`
+70. `sed -n '100,170p' docs/CODEX_SPRINT_TICKETS.md`
+71. `sed -n '1,220p' scripts/validate_run_logs.py`
+72. `sed -n '60,120p' PROGRESS.md`
+73. `cd /home/codex/repos/microalpha && make test-fast && make check-data-policy && pytest -q tests/test_docs_links.py && make validate-runlogs && git status -sb`
+74. `cd /home/codex/repos/microalpha && source .venv/bin/activate && make test-fast && make check-data-policy && pytest -q tests/test_docs_links.py && make validate-runlogs && git status -sb`
+75. `cd /home/codex/repos/microalpha && python3 tools/agentic/gpt_bundle.py --zip --ticket TICKET-24d_ship-wrds-refresh-to-main`
+76. `cd /home/codex/repos/microalpha && git rev-parse --abbrev-ref HEAD && git rev-parse HEAD && git rev-parse origin/main`
+77. `cd /home/codex/repos/microalpha && git fetch origin`
+78. `cd /home/codex/repos/microalpha && git checkout -b codex/ticket-24d-ship-wrds-refresh-to-main origin/main`
+79. `cd /home/codex/repos/microalpha && git rev-parse codex/ticket-24d-ship-wrds-refresh-to-main && git merge-base codex/ticket-24d-ship-wrds-refresh-to-main origin/main`
+80. `cd /home/codex/repos/microalpha && git checkout codex/ticket-24d-ship-wrds-refresh-to-main`
+81. `cd /home/codex/repos/microalpha && git stash push -m "ticket-24d-docs"`
+82. `cd /home/codex/repos/microalpha && git checkout codex/ticket-24d-ship-wrds-refresh-to-main`
+83. `cd /home/codex/repos/microalpha && git stash pop`
+84. `cd /home/codex/repos/microalpha && git rev-parse HEAD`
+85. `date -u "+%Y-%m-%dT%H:%M:%SZ"`
+86. `ls -la docs/_bundles | tail -n 5`
+87. `ls -la docs/_bundles | rg "gpt_bundle_20260126_204214"`
+88. `date -u "+%Y-%m-%dT%H:%M:%SZ"`
+89. `cd /home/codex/repos/microalpha && python3 tools/agentic/gpt_bundle.py --zip --ticket TICKET-24d_ship-wrds-refresh-to-main`
+90. `date -u "+%Y-%m-%dT%H:%M:%SZ"`

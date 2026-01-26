@@ -66,3 +66,10 @@ Template:
 - Options considered: Use ticket-24d in META.json (fails validation); map to ticket-24 and document the suffix elsewhere.
 - Why: Keeps `make validate-runlogs` green while preserving traceability through the run name and ticket file.
 - Consequences: Run logs reference ticket-24 for validation; ticket-24d details live in `docs/tickets/TICKET-24d_ship-wrds-refresh-to-main.md`.
+
+- Date: 2026-01-26
+- Decision: Explicitly align ticket-24d documentation with tracking policy output zones.
+- Context: Ticket-24d is a documentation-only shipment; tracking policy forbids committing scratch outputs and requires curated results in `docs/artifacts/`.
+- Options considered: Leave wording as-is; update ticket docs to state canonical output zones and scratch exclusions.
+- Why: Prevents ambiguity about where results can be committed and keeps audit docs consistent with `TRACKING_POLICY.md`.
+- Consequences: Ticket-24d notes now state scratch output exclusions and the `docs/artifacts/` requirement for curated results.

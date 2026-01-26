@@ -16,10 +16,10 @@
 - Resume-facing metrics must reflect the latest real-data flagship run with auditable artifacts.
 
 **Acceptance criteria (objective + falsifiable):**
-- New artifacts exist at `artifacts/wrds_flagship/<RUN_ID>/`.
-- `docs/results_wrds_resume.md` references `<RUN_ID>`, git SHA, exact commands, and headline metrics with clear labeling.
-- `project_state/CURRENT_RESULTS.md` updated to the same `<RUN_ID>` and snapshot.
-- Run log exists under `docs/agent_runs/<RUN_NAME>/` with required files and recorded artifact/report paths.
+- New artifacts exist at `artifacts/wrds_flagship/2026-01-26T01-22-23Z-e76eb4d/`.
+- `docs/results_wrds_resume.md` references `2026-01-26T01-22-23Z-e76eb4d`, git SHA, exact commands, and headline metrics with clear labeling.
+- `project_state/CURRENT_RESULTS.md` updated to `2026-01-26T01-22-23Z-e76eb4d` and snapshot.
+- Run log exists under `docs/agent_runs/20260126_011723_ticket-24_wrds-resume-metrics-refresh/` with required files and recorded artifact/report paths.
 - `make check-data-policy` and `make validate-runlogs` pass.
 - No WRDS raw files staged/committed.
 
@@ -93,9 +93,9 @@
 - `make test-fast`
 
 **End-of-ticket:**
-- **Tests run:** `source .venv/bin/activate && make validate-runlogs && make check-data-policy && pytest -q tests/test_docs_links.py && make test-fast`.
-- **Artifacts/logs:** `docs/agent_runs/20260126_151214_ticket-24d_ship-wrds-refresh-to-main/`; `docs/img/wrds_flagship/2026-01-26T01-22-23Z-e76eb4d/`; `docs/_bundles/gpt_bundle_20260126_151835_TICKET-24d_ship-wrds-refresh-to-main.zip`.
-- **Documentation updates:** `docs/CODEX_SPRINT_TICKETS.md`, `PROGRESS.md`, `CHANGELOG.md`, `docs/DECISIONS.md`, `docs/tickets/TICKET-24d_ship-wrds-refresh-to-main.md`, `docs/prompts/20260126_151214_ticket-24d_ship-wrds-refresh-to-main.md`, `docs/agent_runs/20260126_151214_ticket-24d_ship-wrds-refresh-to-main/`.
+- **Tests run:** `cd /home/codex/repos/microalpha && source .venv/bin/activate && make test-fast && make check-data-policy && pytest -q tests/test_docs_links.py && make validate-runlogs && git status -sb`.
+- **Artifacts/logs:** `docs/agent_runs/20260126_151214_ticket-24d_ship-wrds-refresh-to-main/`; `docs/img/wrds_flagship/2026-01-26T01-22-23Z-e76eb4d/` (doc assets); `docs/_bundles/gpt_bundle_20260126_204751_TICKET-24d_ship-wrds-refresh-to-main.zip` (review bundle).
+- **Documentation updates:** `docs/CODEX_SPRINT_TICKETS.md`, `PROGRESS.md`, `docs/DECISIONS.md`, `docs/tickets/TICKET-24d_ship-wrds-refresh-to-main.md`, `docs/agent_runs/20260126_151214_ticket-24d_ship-wrds-refresh-to-main/`.
 
 ---
 
