@@ -1,0 +1,39 @@
+{
+  "artifact_paths": [
+    "artifacts/_local/20260127_044219_ticket-28_wrds-dataset-id/wrds_flagship/2026-01-27T04-47-22Z-31fe553/",
+    "artifacts/_local/20260127_044219_ticket-28_wrds-dataset-id/analytics/",
+    "docs/artifacts/resume/wrds/2026-01-27T04-47-22Z-31fe553/"
+  ],
+  "branch_name": "main",
+  "config_paths": [
+    "configs/wfv_flagship_wrds.yaml"
+  ],
+  "config_sha256": {
+    "configs/wfv_flagship_wrds.yaml": "e1be72d6b77367ad02cade13df5ca141b02a66e3ba9d9f4d44bab7cddd2e12e7"
+  },
+  "dataset_id": "wrds_crsp_export_20251221_v1",
+  "finished_at_utc": "2026-01-27T05:14:11Z",
+  "git_sha_after": "31fe55320b5bdf3fdea386de98e627ad15290d0c",
+  "git_sha_before": "31fe55320b5bdf3fdea386de98e627ad15290d0c",
+  "host_env_notes": "Linux 6.8.0-90-generic / python 3.12.3 / venv: .venv",
+  "report_paths": [
+    "reports/_runs/20260127_044219_ticket-28_wrds-dataset-id/wrds_flagship.md",
+    "reports/_runs/20260127_044219_ticket-28_wrds-dataset-id/wrds_flagship_metrics.json",
+    "reports/_runs/20260127_044219_ticket-28_wrds-dataset-id/wrds_flagship_spa.json",
+    "reports/_runs/20260127_044219_ticket-28_wrds-dataset-id/wrds_flagship_spa.md",
+    "docs/results_wrds.md",
+    "docs/results_wrds_resume.md",
+    "docs/artifacts/resume/wrds/2026-01-27T04-47-22Z-31fe553/metrics.json",
+    "docs/artifacts/resume/wrds/2026-01-27T04-47-22Z-31fe553/snippet.md"
+  ],
+  "run_name": "20260127_044219_ticket-28_wrds-dataset-id",
+  "started_at_utc": "2026-01-27T04:42:28Z",
+  "ticket_id": "ticket-28",
+  "web_sources": [],
+  "wrds": {
+    "data_root": "/srv/data/wrds/wrds",
+    "dataset_id": "wrds_crsp_export_20251221_v1",
+    "dataset_id_source": "env:WRDS_DATASET_ID",
+    "export_manifest": "/srv/data/wrds/wrds/manifests/20251221_001618/manifest.json"
+  }
+}

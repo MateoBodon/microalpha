@@ -1,0 +1,36 @@
+{
+  "run_id": "2026-02-16T22-33-46Z-8d90621",
+  "config_path": "configs/wfv_flagship_wrds_sweep35.yaml",
+  "dataset_id": "wrds_crsp_export_20251221_v1",
+  "wrds_data_root": "/srv/data/wrds/wrds",
+  "artifact_dir": "artifacts/_local/20260216_223228_ticket-35_wrds-micro-sweep/wrds_flagship/2026-02-16T22-33-46Z-8d90621",
+  "report_path": "reports/_runs/20260216_223228_ticket-35_wrds-micro-sweep/wrds_flagship.md",
+  "selection_window": {
+    "start": "2013-01-02",
+    "end": "2017-12-29"
+  },
+  "holdout_window": {
+    "start": "2018-01-02",
+    "end": "2019-12-31"
+  },
+  "metrics": {
+    "sharpe_hac": 0.5875715961156329,
+    "sharpe_hac_lags": 10.0,
+    "max_drawdown": 0.013826944655017756,
+    "max_drawdown_pct": 1.3826944655017757,
+    "calmar_ratio": 0.6376352419783264,
+    "cagr": 0.008816547200923175,
+    "turnover": 6123392.880000001,
+    "turnover_per_day": 12173.743300198808,
+    "trades": 31,
+    "reality_check_p_value": 0.9405297351324338,
+    "spa_p_value": null
+  },
+  "sources": {
+    "manifest": "artifacts/_local/20260216_223228_ticket-35_wrds-micro-sweep/wrds_flagship/2026-02-16T22-33-46Z-8d90621/manifest.json",
+    "metrics": "artifacts/_local/20260216_223228_ticket-35_wrds-micro-sweep/wrds_flagship/2026-02-16T22-33-46Z-8d90621/metrics.json",
+    "holdout_metrics": "artifacts/_local/20260216_223228_ticket-35_wrds-micro-sweep/wrds_flagship/2026-02-16T22-33-46Z-8d90621/holdout_metrics.json",
+    "reality_check": "artifacts/_local/20260216_223228_ticket-35_wrds-micro-sweep/wrds_flagship/2026-02-16T22-33-46Z-8d90621/reality_check.json",
+    "spa": ""
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "run_name": "20260127_024404_ticket-00_agentic-bootstrap-refresh",
+  "ticket_id": "ticket-00",
+  "started_at_utc": "2026-01-27T01:41:16Z",
+  "finished_at_utc": "2026-01-27T01:47:46Z",
+  "git_sha_before": "31fe55320b5bdf3fdea386de98e627ad15290d0c",
+  "git_sha_after": "31fe55320b5bdf3fdea386de98e627ad15290d0c",
+  "branch_name": "main",
+  "host_env_notes": "Linux 6.8.0-90-generic / Python 3.12.3 / no venv",
+  "dataset_id": "docs_only",
+  "config_paths": [],
+  "config_sha256": {},
+  "artifact_paths": [
+    "artifacts/_local/project_state_bundles/project_state_20260127_014248.zip"
+  ],
+  "report_paths": [],
+  "web_sources": []
+}

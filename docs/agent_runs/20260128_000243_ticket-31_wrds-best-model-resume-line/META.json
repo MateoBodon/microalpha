@@ -1,0 +1,29 @@
+{
+  "run_name": "20260128_000243_ticket-31_wrds-best-model-resume-line",
+  "ticket_id": "ticket-31",
+  "started_at_utc": "2026-01-28T00:02:43Z",
+  "finished_at_utc": "2026-01-28T00:56:40Z",
+  "git_sha_before": "b0fe4de1748e6548b023141d33c3e8c97058a4cb",
+  "git_sha_after": "b0fe4de1748e6548b023141d33c3e8c97058a4cb",
+  "branch_name": "codex/ticket-28-ship-ticket-28-cleanly",
+  "host_env_notes": "Linux 6.8.0-90-generic / python 3.12.3 / no venv",
+  "dataset_id": "wrds_crsp_export_20251221_v1",
+  "wrds": {
+    "dataset_id": "wrds_crsp_export_20251221_v1",
+    "data_root": "/srv/data/wrds/wrds",
+    "dataset_id_source": "env:WRDS_DATASET_ID",
+    "export_manifest": "/srv/data/wrds/wrds/manifests/20251221_001618/manifest.json"
+  },
+  "config_paths": [
+    "configs/wfv_flagship_wrds.yaml"
+  ],
+  "config_sha256": {
+    "configs/wfv_flagship_wrds.yaml": "1e15555f18a45dcc1c97c76a4fcee1d4eaa03ab656e695a0a8e3b4ea49e15175"
+  },
+  "artifact_paths": [
+    "docs/artifacts/resume/wrds/2026-01-27T04-47-22Z-31fe553/",
+    "artifacts/_local/gpt_bundles/gpt_bundle_20260128_005616_ticket-ticket-31.zip"
+  ],
+  "report_paths": [],
+  "web_sources": []
+}

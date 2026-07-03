@@ -1,7 +1,7 @@
 <!--
-generated_at: 2026-01-26T01:36:06Z
-git_sha: e76eb4d576ccbbe4c9af89e8eb9142ea6858a56d
-branch: main
+generated_at: 2026-02-16T23:31:49Z
+git_sha: 8d906214609106197b7e5a9cfbf08a9a5f021380
+branch: codex/ticket-36-ship-ticket-35-cleanly
 commands:
   - python3 tools/agentic/project_state_refresh.py --zip
 -->
@@ -36,15 +36,26 @@ commands:
 
 ## WRDS results (docs/results_wrds.md)
 
-- Latest run: 2026-01-26T01-22-23Z-e76eb4d
-- Snapshot:
-  - Sharpe_HAC: 0.27
-  - MAR: 0.21
-  - Max Drawdown: 3.41%
-  - Turnover: $14.75MM
-  - Reality Check p-value: 0.988
-  - SPA p-value: 0.015
-- Report: `reports/summaries/wrds_flagship.md`
+- Latest run: 2026-02-16T22-33-46Z-8d90621
+- Snapshot (overall WFV OOS):
+  - Sharpe_HAC: 0.24
+  - MAR: 0.14
+  - Max Drawdown: 5.32%
+  - Turnover: $15.66MM
+  - Reality Check p-value: 0.889
+- Holdout snapshot (resume rule window 2018-01-02 to 2019-12-31):
+  - Sharpe_HAC: 0.588
+  - MAR: 0.64
+  - Max Drawdown: 1.38%
+  - Turnover: $6.12MM
+  - Trades: 31
+  - Reality Check p-value: 0.941
+  - SPA p-value: n/a
+- Dataset ID: `wrds_crsp_export_20251221_v1`
+- Report: `reports/_runs/20260216_223228_ticket-35_wrds-micro-sweep/wrds_flagship.md`
+- Resume summary: `docs/artifacts/resume/wrds/2026-02-16T22-33-46Z-8d90621/`
+- Real-data leaderboard (artifact scan; no rerun): `docs/artifacts/resume/wrds/leaderboard/leaderboard.md`
+- Best resume line (window=holdout-only, pre-registered holdout Sharpe rule): `docs/artifacts/resume/wrds/leaderboard/resume_line_best.md`
 
 
 ## WRDS smoke (docs/results_wrds_smoke.md)
@@ -63,16 +74,17 @@ commands:
 
 ## Latest progress (PROGRESS.md)
 
-- Date: 2026-01-26
+- Date: 2026-02-16
 - ### Done
-- - Ticket-24: WRDS flagship rerun completed with local exports at `/srv/data/wrds/wrds`; resume metrics refreshed. Artifacts: `artifacts/wrds_flagship/2026-01-26T01-22-23Z-e76eb4d/`. Run log: `docs/agent_runs/20260126_011723_ticket-24_wrds-resume-metrics-refresh/`.
+- - Ticket-35: ran a pre-registered 9-combo WRDS micro-sweep and promoted run `2026-02-16T22-33-46Z-8d90621` as the new best provenance-complete holdout resume line (Sharpe_HAC 0.588, MaxDD 1.38%, 31 trades). Run log: `docs/agent_runs/20260216_223228_ticket-35_wrds-micro-sweep/`.
+- - Ticket-36: shipped ticket-35 deliverables as tracked files, fixed ticket-36 run-log schema to unblock validation gates, and prepared clean-bundle regeneration evidence. Run log: `docs/agent_runs/20260216_232907_ticket-ticket-36/`.
 
 
 ## Recent run logs (docs/agent_runs, last 3)
 
-- `20260126_011723_ticket-24_wrds-resume-metrics-refresh` — Reran WRDS flagship + report with `WRDS_DATA_ROOT=/srv/data/wrds/wrds` and refreshed resume metrics. (docs/agent_runs/20260126_011723_ticket-24_wrds-resume-metrics-refresh/RESULTS.md)
-- `20260125_224419_ticket-23_wrds-holdout-nonzero-trades` — Added holdout diagnostics (order-flow + filter diagnostics) and a hard guardrail for zero-trade holdout runs in `src/microalpha/walkforward.py`. (docs/agent_runs/20260125_224419_ticket-23_wrds-holdout-nonzero-trades/RESULTS.md)
-- `20260125_205959_ticket-22_wrds-resume-metrics` — Ran WRDS holdout WFV with `configs/wfv_flagship_wrds.yaml` using `WRDS_DATA_ROOT=/srv/data/wrds/wrds`; run_id `2026-01-25T21-01-51Z-4d08d18`. (docs/agent_runs/20260125_205959_ticket-22_wrds-resume-metrics/RESULTS.md)
+- `20260216_232907_ticket-ticket-36` — Shipped ticket-35 deliverables into tracked state, repaired run-log schema debt for ticket-36, and prepared clean-bundle regeneration with explicit gate runs. (docs/agent_runs/20260216_232907_ticket-ticket-36/RESULTS.md)
+- `20260216_223228_ticket-35_wrds-micro-sweep` — Executed pre-registered WRDS sweep (`<=12` combos), generated local WRDS report, and promoted run `2026-02-16T22-33-46Z-8d90621` as the top eligible holdout resume row. (docs/agent_runs/20260216_223228_ticket-35_wrds-micro-sweep/RESULTS.md)
+- `20260216_212201_ticket-34_ship-ticket-33-cleanly-and-unblock-make-test-fast` — Shipped ticket-33 leaderboard deliverables, repaired run-log schema metadata, and made `make test-fast` pass. (docs/agent_runs/20260216_212201_ticket-34_ship-ticket-33-cleanly-and-unblock-make-test-fast/RESULTS.md)
 
 
 Sources: `README.md`, `PROGRESS.md`, `docs/results_wrds.md`, `docs/results_wrds_smoke.md`, sample metrics under `artifacts/sample_flagship/`, `artifacts/sample_wfv/`, `artifacts/sample_wfv_holdout/`, and recent `docs/agent_runs/*/RESULTS.md`.

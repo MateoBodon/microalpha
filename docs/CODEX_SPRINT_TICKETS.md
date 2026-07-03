@@ -6,6 +6,199 @@
 
 ---
 
+## ticket-36 — Ship ticket-35 deliverables cleanly (commit + clean bundle)
+
+**Goal (1 sentence):** Commit all ticket-35 outputs as tracked files and regenerate a clean GPT bundle so reviewers can verify changes from `DIFF.patch`.
+
+**Status:** Done.
+
+**Why (ties to diagnosis):**
+- Ticket-35 generated materially better WRDS holdout metrics, but artifacts were left untracked in a dirty worktree and absent from bundle evidence.
+
+**Acceptance criteria (objective + falsifiable):**
+- Required ticket-35 outputs are committed and appear in commit-range `DIFF.patch`.
+- `project_state/CURRENT_RESULTS.md` header metadata is internally consistent with ticket-35 content.
+- `make check-data-policy` and `make test-fast` pass.
+- Regenerated bundle metadata shows `git_dirty: false` and `GIT_LOG.txt` includes the ticket-36 ship commit.
+
+**Minimal tests/commands to run:**
+- `python3 tools/agentic/validate_runlog.py --run-name 20260216_223228_ticket-35_wrds-micro-sweep`
+- `python3 tools/agentic/validate_runlog.py --run-name 20260216_232907_ticket-ticket-36`
+- `python3 scripts/wrds_leaderboard.py --out docs/artifacts/resume/wrds/leaderboard/leaderboard.csv`
+- `make check-data-policy`
+- `make test-fast`
+
+**End-of-ticket:**
+- **Tests run:** `python3 tools/agentic/validate_runlog.py --run-name 20260216_223228_ticket-35_wrds-micro-sweep`; `python3 tools/agentic/validate_runlog.py --run-name 20260216_232907_ticket-ticket-36`; `python3 scripts/wrds_leaderboard.py --out docs/artifacts/resume/wrds/leaderboard/leaderboard.csv`; `source .venv/bin/activate && make check-data-policy`; `source .venv/bin/activate && make test-fast` (pass, `128 passed / 1 skipped`).
+- **Artifacts/logs:** `configs/wfv_flagship_wrds_sweep35.yaml`; `docs/artifacts/resume/wrds/2026-02-16T22-33-46Z-8d90621/`; `docs/artifacts/resume/wrds/leaderboard/`; `docs/agent_runs/20260216_223228_ticket-35_wrds-micro-sweep/`; `docs/agent_runs/20260216_232907_ticket-ticket-36/`; `docs/prompts/20260216_223228_ticket-35_wrds-micro-sweep.md`; `docs/prompts/20260216_232907_ticket-ticket-36_ship-ticket-35-cleanly.md`.
+- **Documentation updates:** `project_state/CURRENT_RESULTS.md`; `PROGRESS.md`; `CHANGELOG.md`; `docs/CODEX_SPRINT_TICKETS.md`; `scripts/data_policy_allowlist.txt`; `project_state/_generated/`.
+
+## ticket-35 — WRDS micro-sweep for stronger resume metrics (pre-registered)
+
+**Goal (1 sentence):** Run a bounded, pre-registered WRDS walk-forward micro-sweep and publish the best provenance-complete holdout resume line plus refreshed leaderboard artifacts.
+
+**Status:** Done.
+
+**Why (ties to diagnosis):**
+- The prior leaderboard had only one eligible provenance-complete WRDS row, so improving resume-defensible real-data metrics required generating new runs with fixed winner criteria.
+
+**Acceptance criteria (objective + falsifiable):**
+- Pre-registration (fixed holdout window, winner rule, knobs, and combo cap `<=12`) exists in run log before execution.
+- Local-only sweep outputs exist under `artifacts/_local/<RUN_NAME>/...` and report output exists under `reports/_runs/<RUN_NAME>/...`.
+- Resume-safe tracked artifacts exist under `docs/artifacts/resume/wrds/<BEST_RUN_ID>/` with `metrics.json`, `manifest_excerpt.json`, and `snippet.md`.
+- Leaderboard outputs are refreshed (`leaderboard.csv`, `leaderboard.md`, `resume_line_best.md`) and point to the best eligible run under the pre-registered rule.
+- `make test-fast` passes.
+
+**Minimal tests/commands to run:**
+- `python3 tools/agentic/validate_runlog.py --run-name 20260216_223228_ticket-35_wrds-micro-sweep`
+- `python3 scripts/wrds_leaderboard.py --help`
+- `python3 scripts/wrds_leaderboard.py --out docs/artifacts/resume/wrds/leaderboard/leaderboard.csv`
+- `make test-fast`
+
+**End-of-ticket:**
+- **Tests run:** `python3 tools/agentic/validate_runlog.py --run-name 20260216_223228_ticket-35_wrds-micro-sweep`; `python3 scripts/wrds_leaderboard.py --help`; `python3 scripts/wrds_leaderboard.py --out docs/artifacts/resume/wrds/leaderboard/leaderboard.csv`; `source .venv/bin/activate && make check-data-policy`; `source .venv/bin/activate && make test-fast`.
+- **Artifacts/logs:** `configs/wfv_flagship_wrds_sweep35.yaml`; `docs/artifacts/resume/wrds/2026-02-16T22-33-46Z-8d90621/`; `docs/artifacts/resume/wrds/leaderboard/`; `docs/agent_runs/20260216_223228_ticket-35_wrds-micro-sweep/`; `reports/_runs/20260216_223228_ticket-35_wrds-micro-sweep/wrds_flagship.md`.
+- **Documentation updates:** `project_state/CURRENT_RESULTS.md`; `PROGRESS.md`; `CHANGELOG.md`; `docs/prompts/20260216_223228_ticket-35_wrds-micro-sweep.md`; `scripts/data_policy_allowlist.txt`.
+
+## ticket-34 — Ship ticket-33 cleanly and unblock make test-fast
+
+**Goal (1 sentence):** Ship ticket-33 WRDS leaderboard deliverables in a clean commit and fix run-log schema debt so `make test-fast` is green.
+
+**Status:** Done.
+
+**Why (ties to diagnosis):**
+- Ticket-33 artifacts were present locally but untracked/uncommitted, so bundle evidence could not prove acceptance criteria.
+- `make test-fast` failed on malformed `docs/agent_runs/20260216_025221_ticket-ticket-32b/META.json`, leaving repo gates red.
+
+**Acceptance criteria (objective + falsifiable):**
+- `DIFF.patch` includes ticket-33 deliverables (`scripts/wrds_leaderboard.py`, leaderboard artifacts, prompt capture, run log, pointer docs).
+- Clean bundle metadata (`git_dirty: false`) and bundle payload contains ticket-33 deliverables.
+- `make test-fast` passes after run-log schema repair.
+- `project_state/CURRENT_RESULTS.md` header metadata is refreshed and internally consistent with current run context.
+
+**Minimal tests/commands to run:**
+- `python3 tools/agentic/validate_runlog.py --run-name 20260216_033516_ticket-33_wrds-realdata-leaderboard`
+- `python3 tools/agentic/validate_runlog.py --run-name 20260216_212201_ticket-34_ship-ticket-33-cleanly-and-unblock-make-test-fast`
+- `python3 scripts/wrds_leaderboard.py --help`
+- `python3 scripts/wrds_leaderboard.py --out docs/artifacts/resume/wrds/leaderboard/leaderboard.csv`
+- `make test-fast`
+
+**End-of-ticket:**
+- **Tests run:** `python3 tools/agentic/validate_runlog.py --run-name 20260216_033516_ticket-33_wrds-realdata-leaderboard`; `python3 tools/agentic/validate_runlog.py --run-name 20260216_212201_ticket-34_ship-ticket-33-cleanly-and-unblock-make-test-fast`; `python3 scripts/wrds_leaderboard.py --help`; `python3 scripts/wrds_leaderboard.py --out docs/artifacts/resume/wrds/leaderboard/leaderboard.csv`; `PATH=/home/codex/repos/microalpha/.venv/bin:$PATH make test-fast` (pass, 128 passed / 1 skipped).
+- **Artifacts/logs:** `scripts/wrds_leaderboard.py`; `docs/artifacts/resume/wrds/leaderboard/leaderboard.csv`; `docs/artifacts/resume/wrds/leaderboard/leaderboard.md`; `docs/artifacts/resume/wrds/leaderboard/resume_line_best.md`; `docs/prompts/20260216_033516_ticket-33_wrds-realdata-leaderboard.md`; `docs/agent_runs/20260216_033516_ticket-33_wrds-realdata-leaderboard/`; `docs/agent_runs/20260216_212201_ticket-34_ship-ticket-33-cleanly-and-unblock-make-test-fast/`.
+- **Documentation updates:** `PROGRESS.md`; `CHANGELOG.md`; `docs/CODEX_SPRINT_TICKETS.md`; `project_state/CURRENT_RESULTS.md`; `scripts/data_policy_allowlist.txt`.
+
+## ticket-33 — WRDS real-data leaderboard + best resume line
+
+**Goal (1 sentence):** Build a provenance-complete WRDS real-data leaderboard from existing artifacts and publish one best resume line using a pre-registered holdout-first rule.
+
+**Status:** Done.
+
+**Why (ties to diagnosis):**
+- Resume metrics should be sourced from artifact-backed real-data runs with explicit run_id/dataset_id provenance and explicit window labeling.
+
+**Acceptance criteria (objective + falsifiable):**
+- New run log under `docs/agent_runs/<RUN_NAME>/` with required files and pre-registered selection rule.
+- New tracked leaderboard artifacts:
+  - `docs/artifacts/resume/wrds/leaderboard/leaderboard.csv`
+  - `docs/artifacts/resume/wrds/leaderboard/leaderboard.md`
+- New tracked best-line artifact:
+  - `docs/artifacts/resume/wrds/leaderboard/resume_line_best.md`
+- Best-line artifact includes explicit window label and `run_id` + `dataset_id`.
+- `project_state/CURRENT_RESULTS.md` references the new leaderboard and best-line path.
+
+**Minimal tests/commands to run:**
+- `python3 tools/agentic/validate_runlog.py --run-name <RUN_NAME>`
+- `python3 scripts/wrds_leaderboard.py --help`
+- `python3 scripts/wrds_leaderboard.py --out docs/artifacts/resume/wrds/leaderboard/leaderboard.csv`
+- `make test-fast` (document blocker if pre-existing run-log debt prevents pass)
+
+**End-of-ticket:**
+- **Tests run:** `python3 tools/agentic/validate_runlog.py --run-name 20260216_033516_ticket-33_wrds-realdata-leaderboard`; `python3 scripts/wrds_leaderboard.py --help`; `python3 scripts/wrds_leaderboard.py --out docs/artifacts/resume/wrds/leaderboard/leaderboard.csv`; `PATH=/home/codex/repos/microalpha/.venv/bin:$PATH make test-fast` (fails due pre-existing `docs/agent_runs/20260216_025221_ticket-ticket-32b/META.json` schema errors).
+- **Artifacts/logs:** `docs/artifacts/resume/wrds/leaderboard/leaderboard.csv`, `docs/artifacts/resume/wrds/leaderboard/leaderboard.md`, `docs/artifacts/resume/wrds/leaderboard/resume_line_best.md`, `docs/agent_runs/20260216_033516_ticket-33_wrds-realdata-leaderboard/`.
+- **Documentation updates:** `project_state/CURRENT_RESULTS.md`, `PROGRESS.md`, `CHANGELOG.md`, `docs/prompts/20260216_033516_ticket-33_wrds-realdata-leaderboard.md`, `docs/agent_runs/20260216_033516_ticket-33_wrds-realdata-leaderboard/`, `docs/CODEX_SPRINT_TICKETS.md`.
+
+## ticket-32 — WRDS resume line window choice (overall vs holdout)
+
+**Goal (1 sentence):** Publish one best-defensible WRDS resume line by explicitly choosing either overall WFV OOS or holdout-only reporting.
+
+**Status:** Done.
+
+**Why (ties to diagnosis):**
+- Resume claims should prefer the most leakage-resistant reporting window and label that window explicitly.
+
+**Acceptance criteria (objective + falsifiable):**
+- New run log under `docs/agent_runs/<RUN_NAME>/` documenting the chosen window and rationale with exact source paths.
+- New tracked snippet under `docs/artifacts/resume/wrds/2026-01-27T04-47-22Z-31fe553/`:
+  - `resume_line_overall_oos.md` if overall is chosen, and/or
+  - `resume_line_holdout.md` if holdout is chosen.
+- Snippet includes explicit window label plus `run_id` and `dataset_id`.
+- No bulky outputs committed.
+
+**Minimal tests/commands to run:**
+- None (artifact extraction + documentation only).
+
+**End-of-ticket:**
+- **Tests run:** Not run (artifact extraction + docs only).
+- **Artifacts/logs:** `docs/artifacts/resume/wrds/2026-01-27T04-47-22Z-31fe553/resume_line_holdout.md`, `docs/agent_runs/20260216_021416_ticket-32_wrds-resume-line-window-choice/`.
+- **Documentation updates:** `docs/tickets/TICKET-32_wrds_resume_line_pick-the-best-defensible-metric.md`, `docs/prompts/20260216_021416_ticket-32_wrds-resume-line-window-choice.md`, `docs/agent_runs/20260216_021416_ticket-32_wrds-resume-line-window-choice/`, `PROGRESS.md`, `CHANGELOG.md`, `docs/CODEX_SPRINT_TICKETS.md`.
+
+## ticket-31 — WRDS best-model resume line from SPA outputs
+
+**Goal (1 sentence):** Extract the best model’s holdout metrics from existing SPA/grid outputs and publish a resume-ready line without re-running WFV.
+
+**Status:** Done.
+
+**Why (ties to diagnosis):**
+- Resume claims must be tied to the best model selection and existing SPA/RealityCheck outputs, without re-running WRDS.
+
+**Acceptance criteria (objective + falsifiable):**
+- New run log under `docs/agent_runs/<RUN_NAME>/` with required files.
+- New artifacts under `docs/artifacts/resume/wrds/2026-01-27T04-47-22Z-31fe553/`:
+  - `best_model_metrics.json` (best config id + Sharpe/MaxDD/MAR/turnover + SPA/RC p-values + dataset_id)
+  - `best_model_snippet.md` (resume line)
+- No bulky files committed; parsing scratch stays in `artifacts/_local/<RUN_NAME>/` or `reports/_runs/<RUN_NAME>/`.
+
+**Minimal tests/commands to run:**
+- None (data extraction only).
+
+**End-of-ticket:**
+- **Tests run:** Not run (data extraction only).
+- **Artifacts/logs:** `docs/artifacts/resume/wrds/2026-01-27T04-47-22Z-31fe553/best_model_metrics.json`, `docs/artifacts/resume/wrds/2026-01-27T04-47-22Z-31fe553/best_model_snippet.md`, `docs/agent_runs/20260128_000243_ticket-31_wrds-best-model-resume-line/`.
+- **Documentation updates:** `docs/tickets/TICKET-31_wrds_best-real-data-resume-line_from_spa.md`, `docs/prompts/20260128_000243_ticket-31_wrds-best-model-resume-line.md`, `docs/agent_runs/20260128_000243_ticket-31_wrds-best-model-resume-line/`, `PROGRESS.md`, `CHANGELOG.md`, `docs/CODEX_SPRINT_TICKETS.md`.
+
+## ticket-28 — Pin WRDS dataset_id + refresh real-data resume metrics
+
+**Goal (1 sentence):** Refresh the flagship WRDS walk-forward run and make the resume snippet reproducible by pinning a canonical WRDS dataset_id.
+
+**Status:** Done.
+
+**Why (ties to diagnosis):**
+- Resume metrics must be traceable to a specific WRDS export/schema for defensible claims.
+
+**Acceptance criteria (objective + falsifiable):**
+- `docs/wrds.md` documents the canonical WRDS dataset_id + export layout.
+- `configs/wfv_flagship_wrds.yaml` references the pinned dataset_id.
+- WRDS run manifest includes dataset_id.
+- Run log `META.json` includes `wrds.dataset_id` + `wrds.data_root`.
+- Resume metrics snippet written under `docs/artifacts/resume/wrds/<RUN_ID>/`.
+- `project_state/CURRENT_RESULTS.md` updated to the new run_id + summary path.
+
+**Minimal tests/commands to run:**
+- `make test-fast`
+- `make check-data-policy`
+- `make validate-runlogs`
+- `WRDS_DATA_ROOT=... make test-wrds` (if available)
+- `WRDS_DATA_ROOT=... microalpha wfv --config configs/wfv_flagship_wrds.yaml --out <artifacts_dir>`
+- `python3 reports/render_wrds_flagship.py <artifact_dir> ...` (run-scoped output)
+
+**End-of-ticket:**
+- **Tests run:** `make test-fast`; `make check-data-policy`; `make validate-runlogs`; `WRDS_DATA_ROOT=/srv/data/wrds/wrds make test-wrds`.
+- **Artifacts/logs:** `artifacts/_local/20260127_044219_ticket-28_wrds-dataset-id/wrds_flagship/2026-01-27T04-47-22Z-31fe553/`; `reports/_runs/20260127_044219_ticket-28_wrds-dataset-id/`; `docs/artifacts/resume/wrds/2026-01-27T04-47-22Z-31fe553/`; `docs/agent_runs/20260127_044219_ticket-28_wrds-dataset-id/`.
+- **Documentation updates:** `docs/wrds.md`, `docs/DOCS_AND_LOGGING_SYSTEM.md`, `configs/wfv_flagship_wrds.yaml`, `docs/results_wrds.md`, `docs/results_wrds_resume.md`, `project_state/CURRENT_RESULTS.md`, `project_state/OPEN_QUESTIONS.md`, `project_state/BACKLOG.md`, `PROGRESS.md`, `CHANGELOG.md`, `docs/tickets/TICKET-28_pin-wrds-dataset-id.md`, `docs/prompts/20260127_044219_ticket-28_wrds-dataset-id_ticket-28_wrds-dataset-id.md`, `docs/agent_runs/20260127_044219_ticket-28_wrds-dataset-id/`, `docs/artifacts/resume/wrds/2026-01-27T04-47-22Z-31fe553/`.
+
+---
+
 ## ticket-26 — gpt_bundle dirty-tree safety + repo hygiene
 
 **Goal (1 sentence):** Ensure gpt_bundle safely stashes dirty worktrees and push a clean, audited main state to origin.

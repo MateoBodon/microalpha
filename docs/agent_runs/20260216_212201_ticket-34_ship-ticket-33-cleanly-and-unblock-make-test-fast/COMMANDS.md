@@ -1,0 +1,26 @@
+# Commands
+
+- `git status --short`
+  - Confirmed ticket-33 deliverables were untracked and pointer docs were modified but uncommitted.
+- `python3 tools/agentic/runlog_init.py --ticket "ticket-34" --summary "Ship ticket-33 leaderboard cleanly and unblock make test-fast" --run-name "20260216_212201_ticket-34_ship-ticket-33-cleanly-and-unblock-make-test-fast"`
+  - Initialized shipping run log.
+- `sha256sum configs/wfv_flagship_wrds.yaml`
+  - Captured config hash used in META schema fields.
+- `python3 tools/agentic/validate_runlog.py --run-name 20260216_033516_ticket-33_wrds-realdata-leaderboard`
+  - Passed.
+- `python3 tools/agentic/validate_runlog.py --run-name 20260216_212201_ticket-34_ship-ticket-33-cleanly-and-unblock-make-test-fast`
+  - Passed.
+- `python3 scripts/wrds_leaderboard.py --help`
+  - Passed.
+- `python3 scripts/wrds_leaderboard.py --out docs/artifacts/resume/wrds/leaderboard/leaderboard.csv`
+  - Rewrote leaderboard CSV/MD and best-line artifacts.
+- `PATH=/home/codex/repos/microalpha/.venv/bin:$PATH make test-fast`
+  - First run: run-log validation passed, pytest failed at `tests/test_data_policy.py` for non-allowlisted resume aggregates.
+- Edited `scripts/data_policy_allowlist.txt`
+  - Added explicit allowlist entries for license-safe WRDS resume aggregates used in docs artifacts.
+- `PATH=/home/codex/repos/microalpha/.venv/bin:$PATH make test-fast`
+  - Passed (`128 passed, 1 skipped`).
+- `python3 tools/agentic/project_state_refresh.py --zip`
+  - Created local project_state bundle under `artifacts/_local/project_state_bundles/` to refresh handoff context.
+- `PATH=/home/codex/repos/microalpha/.venv/bin:$PATH make test-fast`
+  - Final confirmation pass after all doc/run-log updates (`128 passed, 1 skipped`).

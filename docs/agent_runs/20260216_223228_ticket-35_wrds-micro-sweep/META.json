@@ -1,0 +1,35 @@
+{
+  "run_name": "20260216_223228_ticket-35_wrds-micro-sweep",
+  "ticket_id": "ticket-35",
+  "started_at_utc": "2026-02-16T22:32:29Z",
+  "finished_at_utc": "2026-02-16T22:46:09Z",
+  "git_sha_before": "8d906214609106197b7e5a9cfbf08a9a5f021380",
+  "git_sha_after": "8d906214609106197b7e5a9cfbf08a9a5f021380",
+  "branch_name": "codex/ticket-31-wrds-best-model-resume-line",
+  "host_env_notes": "Linux-6.8.0-90-generic-x86_64-with-glibc2.39 / Python 3.12.3 / venv .venv",
+  "dataset_id": "wrds_crsp_export_20251221_v1",
+  "wrds": {
+    "dataset_id": "wrds_crsp_export_20251221_v1",
+    "data_root": "/srv/data/wrds/wrds",
+    "dataset_id_source": "config:wrds.dataset_id",
+    "export_manifest": "/srv/data/wrds/wrds/manifests/20251221_001618/manifest.json"
+  },
+  "config_paths": [
+    "configs/wfv_flagship_wrds_sweep35.yaml"
+  ],
+  "config_sha256": {
+    "configs/wfv_flagship_wrds_sweep35.yaml": "5fb44d31684945aabad4132d4f7f5cd4eee9c83cfa61a8f8ecf55a0748755493"
+  },
+  "artifact_paths": [
+    "artifacts/_local/20260216_223228_ticket-35_wrds-micro-sweep/wrds_flagship/2026-02-16T22-33-46Z-8d90621",
+    "docs/artifacts/resume/wrds/2026-02-16T22-33-46Z-8d90621",
+    "docs/artifacts/resume/wrds/leaderboard"
+  ],
+  "report_paths": [
+    "reports/_runs/20260216_223228_ticket-35_wrds-micro-sweep/wrds_flagship.md"
+  ],
+  "web_sources": [],
+  "run_id": "2026-02-16T22-33-46Z-8d90621",
+  "summary": "WRDS micro-sweep for improved holdout metrics + resume snippet",
+  "prompt_path": "docs/prompts/20260216_223228_ticket-35_wrds-micro-sweep.md"
+}

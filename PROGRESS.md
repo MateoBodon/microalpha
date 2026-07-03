@@ -88,3 +88,25 @@ Ticket-18: Installed agentic system scaffold, restored repo-specific docs, and g
 - Ticket-24d: finalized WRDS refresh doc/run log shipment to main, validated gates, and generated a GPT bundle. Run log: `docs/agent_runs/20260126_151214_ticket-24d_ship-wrds-refresh-to-main/`.
 - Ticket-24d: aligned tracking-policy wording in ticket docs, refreshed sprint ticket entry, reran gates, and regenerated the GPT bundle. Run log: `docs/agent_runs/20260126_151214_ticket-24d_ship-wrds-refresh-to-main/`.
 - Ticket-26: logged gpt_bundle dirty-tree safety + repo hygiene, ignored local tmp dirty marker, and prepped main for push. Run log: `docs/agent_runs/20260126_223149_ticket-26_git-hygiene-push/`.
+
+## 2026-01-27
+
+### Done
+- Setup: refreshed agentic tools (tools-only bootstrap) and created a project_state bundle at `artifacts/_local/project_state_bundles/project_state_20260127_014248.zip`. Run log: `docs/agent_runs/20260127_024404_ticket-00_agentic-bootstrap-refresh/`.
+- Ticket-28: pinned WRDS dataset_id (`wrds_crsp_export_20251221_v1`), reran WRDS flagship WFV + report under `artifacts/_local/20260127_044219_ticket-28_wrds-dataset-id/`, and published resume metrics artifact. Run log: `docs/agent_runs/20260127_044219_ticket-28_wrds-dataset-id/`.
+- Ticket-28: shipped tracked deliverables (run log, resume artifacts, manifest excerpt), cleaned stray backups, and refreshed project_state metadata. Run log: `docs/agent_runs/20260127_230441_ticket-28_ship-ticket-28-cleanly/`.
+
+## 2026-01-28
+
+### Done
+- Ticket-31: extracted best-model holdout metrics from existing WRDS SPA outputs and published resume artifacts under `docs/artifacts/resume/wrds/2026-01-27T04-47-22Z-31fe553/`. Run log: `docs/agent_runs/20260128_000243_ticket-31_wrds-best-model-resume-line/`.
+
+## 2026-02-16
+
+### Done
+- Ticket-32: selected holdout-only as the single best-defensible WRDS resume window (vs overall WFV OOS), and published a labeled resume snippet at `docs/artifacts/resume/wrds/2026-01-27T04-47-22Z-31fe553/resume_line_holdout.md`. Run log: `docs/agent_runs/20260216_021416_ticket-32_wrds-resume-line-window-choice/`.
+- Ticket-32b: shipped ticket-32 deliverables in a clean commit, validated run logs, and regenerated a clean GPT bundle for review. Run log: `docs/agent_runs/20260216_025221_ticket-ticket-32b/`.
+- Ticket-33: built a WRDS real-data leaderboard from existing artifact metrics and published a best provenance-complete resume line at `docs/artifacts/resume/wrds/leaderboard/resume_line_best.md` (explicit holdout-only window, run_id, dataset_id). Run log: `docs/agent_runs/20260216_033516_ticket-33_wrds-realdata-leaderboard/`.
+- Ticket-34: shipped ticket-33 leaderboard deliverables in a tracked commit-ready state, fixed run-log schema debt in `docs/agent_runs/20260216_025221_ticket-ticket-32b/META.json`, and restored green `make test-fast` gates. Run log: `docs/agent_runs/20260216_212201_ticket-34_ship-ticket-33-cleanly-and-unblock-make-test-fast/`.
+- Ticket-35: executed a pre-registered WRDS micro-sweep (`9` combos), generated local-only artifacts/reports, promoted resume-safe artifacts for run `2026-02-16T22-33-46Z-8d90621`, and refreshed WRDS leaderboard outputs (`leaderboard.csv`, `leaderboard.md`, `resume_line_best.md`). Run log: `docs/agent_runs/20260216_223228_ticket-35_wrds-micro-sweep/`.
+- Ticket-36: shipped ticket-35 deliverables as tracked files, repaired ticket-36 run-log schema, refreshed project-state metadata pointers, and prepared a clean bundle regeneration path. Run log: `docs/agent_runs/20260216_232907_ticket-ticket-36/`.

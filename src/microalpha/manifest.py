@@ -34,6 +34,7 @@ class Manifest:
     unsafe_reasons: list[str] = field(default_factory=list)
     execution_alignment: dict[str, Any] = field(default_factory=dict)
     config_summary: dict[str, Any] = field(default_factory=dict)
+    wrds: dict[str, Any] | None = None
 
 
 class ManifestLoadError(RuntimeError):
@@ -132,6 +133,7 @@ def build(
     unsafe_execution: bool = False,
     unsafe_reasons: list[str] | None = None,
     execution_alignment: Mapping[str, Any] | None = None,
+    wrds: Mapping[str, Any] | None = None,
 ) -> Manifest:
     """Construct a manifest and synchronise global RNG state."""
 
@@ -158,6 +160,7 @@ def build(
         unsafe_reasons=list(unsafe_reasons or []),
         execution_alignment=dict(execution_alignment or {}),
         config_summary=dict(config_summary or {}),
+        wrds=dict(wrds) if wrds else None,
     )
 
 

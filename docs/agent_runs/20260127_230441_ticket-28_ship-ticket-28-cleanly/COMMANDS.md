@@ -1,0 +1,61 @@
+# Commands
+
+Log commands that materially change state or produce results.
+
+- (shell) ls
+- (shell) git status --porcelain
+- (shell) rg --files -g 'AGENTS.md'
+- (shell) sed -n '1,200p' docs/DOCS_AND_LOGGING_SYSTEM.md
+- (shell) sed -n '1,200p' TRACKING_POLICY.md
+- (shell) sed -n '1,200p' /home/codex/.codex/skills/runlog-init/SKILL.md
+- (shell) date -u +%Y%m%d_%H%M%S
+- (shell) sed -n '1,200p' tools/agentic/runlog_init.py
+- (shell) python3 tools/agentic/runlog_init.py --ticket "ticket-28" --summary "Ship Ticket-28 deliverables cleanly, add manifest provenance evidence, refresh project_state" --run-name "20260127_230441_ticket-28_ship-ticket-28-cleanly"
+- (shell) git status -sb
+- (shell) ls -la docs/artifacts
+- (shell) ls -la docs/artifacts/resume/wrds
+- (shell) ls -la docs/artifacts/resume/wrds/2026-01-27T04-47-22Z-31fe553
+- (shell) cat docs/artifacts/resume/wrds/2026-01-27T04-47-22Z-31fe553/metrics.json
+- (shell) ls -la artifacts/_local/20260127_044219_ticket-28_wrds-dataset-id/wrds_flagship/2026-01-27T04-47-22Z-31fe553 | head
+- (shell) python - <<'PY' ... PY  # inspect manifest keys + wrds block
+- (shell) sed -n '1,200p' .gitignore
+- (shell) git diff -- .gitignore
+- (shell) ls -la docs | head
+- (shell) ls -la docs | rg prompts
+- (shell) rg --files -g '*.bak.*' -g '*.append'
+- (shell) rg --files -g '*.bak.*' -g '*.append' | xargs rm -f
+- (shell) git status -sb
+- (shell) rg -n "docs/gpt_bundles|docs/prompts|docs/local" .gitignore
+- (edit) apply_patch .gitignore (stop ignoring docs/prompts)
+- (shell) python - <<'PY' ... PY  # create docs/artifacts/resume/wrds/.../manifest_excerpt.json
+- (edit) apply_patch docs/agent_runs/20260127_044219_ticket-28_wrds-dataset-id/RESULTS.md (add manifest excerpt output)
+- (shell) rg -n "ticket-28" docs/CODEX_SPRINT_TICKETS.md
+- (shell) ls -la docs/prompts
+- (shell) sed -n '1,200p' tools/agentic/README.md
+- (shell) python3 tools/agentic/project_state_refresh.py --help
+- (shell) sed -n '1,200p' tools/agentic/validate_runlog.py
+- (shell) sed -n '1,200p' docs/agent_runs/20260127_044219_ticket-28_wrds-dataset-id/RESULTS.md
+- (shell) cat > docs/prompts/20260127_230441_ticket-28_ship-ticket-28-cleanly.md <<'EOF' ... EOF
+- (shell) cat > docs/agent_runs/20260127_230441_ticket-28_ship-ticket-28-cleanly/PROMPT.md <<'EOF' ... EOF
+- (shell) date -u +%Y-%m-%dT%H:%M:%SZ
+- (shell) git rev-parse HEAD
+- (shell) python3 tools/agentic/project_state_refresh.py
+- (edit) apply_patch project_state/CURRENT_RESULTS.md (refresh header metadata)
+- (shell) git checkout -b codex/ticket-28-ship-ticket-28-cleanly
+- (shell) python - <<'PY' ... PY  # sha256 configs/wfv_flagship_wrds.yaml
+- (shell) uname -sr
+- (shell) python -V
+- (shell) date -u +%Y-%m-%dT%H:%M:%SZ
+- (shell) python - <<'PY' ... PY  # write META.json
+- (shell) python3 tools/agentic/validate_runlog.py --run-name 20260127_230441_ticket-28_ship-ticket-28-cleanly
+- (shell) python3 tools/agentic/gpt_bundle.py --help
+- (shell) rg --files -g 'project_state_generate.py' -g 'project_state/generate.py' tools
+- (shell) sed -n '1,80p' project_state/CURRENT_RESULTS.md
+- (shell) sed -n '1,240p' tools/agentic/project_state_refresh.py
+- (shell) find docs/prompts -name '*.bak.*' -delete
+- (shell) git status -sb  # repeated checks during cleanup
+- (shell) git add TRACKING_POLICY.md docs/agent_runs/20260127_024404_ticket-00_agentic-bootstrap-refresh docs/agent_runs/20260127_044219_ticket-28_wrds-dataset-id docs/agent_runs/20260127_230441_ticket-28_ship-ticket-28-cleanly docs/artifacts/resume/wrds/2026-01-27T04-47-22Z-31fe553 docs/gpt_outputs/README.md docs/gpt_outputs/mi01-26-26prompt1-diagnosis.md docs/prompts docs/tickets/TICKET-28_pin-wrds-dataset-id.md reports/_runs/README.md tools/agentic/runlog_init.py tools/agentic/ticket_new.py tools/agentic/validate_runlog.py
+- (shell) git add -u
+- (shell) python3 tools/agentic/gpt_bundle.py --ticket ticket-28 --run-name 20260127_230441_ticket-28_ship-ticket-28-cleanly
+- (shell) date -u +%Y-%m-%dT%H:%M:%SZ
+- (shell) python - <<'PY' ... PY  # update META.json finished_at_utc

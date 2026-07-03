@@ -1,0 +1,9 @@
+{
+  "run_id": "2026-01-27T04-47-22Z-31fe553",
+  "wrds": {
+    "data_root": "/srv/data/wrds/wrds",
+    "dataset_id": "wrds_crsp_export_20251221_v1",
+    "dataset_id_source": "env:WRDS_DATASET_ID",
+    "export_manifest": "/srv/data/wrds/wrds/manifests/20251221_001618/manifest.json"
+  }
+}

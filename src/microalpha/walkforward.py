@@ -60,6 +60,7 @@ from .strategies.cs_momentum import CrossSectionalMomentum
 from .strategies.flagship_mom import FlagshipMomentumStrategy
 from .strategies.meanrev import MeanReversionStrategy
 from .strategies.mm import NaiveMarketMakingStrategy
+from .wrds import wrds_provenance
 
 STRATEGY_MAPPING = {
     "MeanReversionStrategy": MeanReversionStrategy,
@@ -221,6 +222,7 @@ def run_walk_forward(
         effective_cfg["artifacts_dir"] = override_artifacts_dir
 
     run_id, artifacts_dir = prepare_artifacts_dir(cfg_path, effective_cfg, base_run_id)
+    wrds_payload = wrds_provenance(raw_config)
     manifest = build_manifest(
         cfg.template.seed,
         str(cfg_path),
@@ -231,6 +233,7 @@ def run_walk_forward(
         unsafe_execution=unsafe_execution,
         unsafe_reasons=unsafe_reasons,
         execution_alignment=exec_alignment,
+        wrds=wrds_payload,
     )
     write_manifest(manifest, str(artifacts_dir))
     persist_config(cfg_path, artifacts_dir)

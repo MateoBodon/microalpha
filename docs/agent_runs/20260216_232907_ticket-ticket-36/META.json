@@ -1,0 +1,30 @@
+{
+  "run_name": "20260216_232907_ticket-ticket-36",
+  "ticket_id": "ticket-36",
+  "started_at_utc": "2026-02-16T23:29:07Z",
+  "finished_at_utc": "2026-02-16T23:35:10Z",
+  "git_sha_before": "8d906214609106197b7e5a9cfbf08a9a5f021380",
+  "git_sha_after": "8d906214609106197b7e5a9cfbf08a9a5f021380",
+  "branch_name": "codex/ticket-36-ship-ticket-35-cleanly",
+  "host_env_notes": "codex-worker / python 3.12.3 / venv .venv",
+  "dataset_id": "wrds_crsp_export_20251221_v1",
+  "config_paths": [
+    "configs/wfv_flagship_wrds_sweep35.yaml"
+  ],
+  "config_sha256": {
+    "configs/wfv_flagship_wrds_sweep35.yaml": "5fb44d31684945aabad4132d4f7f5cd4eee9c83cfa61a8f8ecf55a0748755493"
+  },
+  "artifact_paths": [
+    "docs/artifacts/resume/wrds/2026-02-16T22-33-46Z-8d90621/",
+    "docs/artifacts/resume/wrds/leaderboard/",
+    "docs/agent_runs/20260216_223228_ticket-35_wrds-micro-sweep/",
+    "docs/agent_runs/20260216_232907_ticket-ticket-36/",
+    "docs/prompts/20260216_223228_ticket-35_wrds-micro-sweep.md",
+    "docs/prompts/20260216_232907_ticket-ticket-36_ship-ticket-35-cleanly.md"
+  ],
+  "report_paths": [
+    "reports/_runs/20260216_223228_ticket-35_wrds-micro-sweep/wrds_flagship.md"
+  ],
+  "web_sources": [],
+  "summary": "Ship ticket-35 deliverables in a clean commit and regenerate a clean bundle with auditable DIFF evidence."
+}

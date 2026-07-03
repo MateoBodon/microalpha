@@ -1,5 +1,10 @@
-70ae6d39 (HEAD -> main) ticket-26: make gpt_bundle dirty-tree safe
-49b30d12 (origin/main, origin/HEAD, codex/ticket-24d-ship-wrds-refresh-to-main) ticket-24: align ticket-24d docs and runlog
+8d906214 (HEAD -> codex/ticket-36-ship-ticket-35-cleanly, codex/ticket-31-wrds-best-model-resume-line) ticket-34: ship ticket-33 leaderboard and unblock test-fast
+cf9dc96f ticket-32: ship ticket-32 deliverables cleanly
+4cb27f8f ticket-31: ship WRDS best-model resume deliverables
+b0fe4de1 (codex/ticket-28-ship-ticket-28-cleanly) ticket-28: ship ticket-28 deliverables cleanly
+31fe5532 (origin/main, origin/HEAD, main, codex/ticket-26-git-hygiene-push) ticket-26: log gpt_bundle dirty-tree cleanup
+70ae6d39 ticket-26: make gpt_bundle dirty-tree safe
+49b30d12 (codex/ticket-24d-ship-wrds-refresh-to-main) ticket-24: align ticket-24d docs and runlog
 55076597 ticket-24: ship wrds refresh to main
 6e7d2fcf (codex/ticket-24-finalize-wrds-refresh) ticket-24c: ship wrds refresh outputs
 de27d4f5 ticket-24: update run log commands
@@ -43,8 +48,3 @@ a9e976ea ticket-03: record bundle command
 43c018f3 ticket-05: document run registry and add runs index
 403d231d ticket-05: add runs index builder and tests
 ac61ea9d ticket-16: post-merge run log updates
-e258a3b0 (codex/ticket-16-runlog-json-integrity) ticket-16: finalize run log commands
-c10763dc ticket-16: update run log commands
-557e38a1 ticket-16: fix run log SHA for bundling
-19175f0d ticket-16: docs and run log updates
-c8cc410c ticket-16: repair broken META.json entries

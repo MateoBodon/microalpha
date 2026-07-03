@@ -1,0 +1,1 @@
+WRDS/CRSP flagship momentum (best-model holdout 2018-2019): Sharpe_HAC 0.140, MaxDD 3.49%, MAR 0.09, turnover $5.22MM; RealityCheck p=0.988, SPA p=0.015. Dataset wrds_crsp_export_20251221_v1 (run 2026-01-27T04-47-22Z-31fe553).

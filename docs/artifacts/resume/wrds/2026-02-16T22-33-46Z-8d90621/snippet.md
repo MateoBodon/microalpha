@@ -1,0 +1,1 @@
+WRDS/CRSP flagship momentum (window=holdout-only, 2018-01-02 to 2019-12-31): Sharpe_HAC 0.588, CAGR 0.88%, MaxDD 1.38%, MAR 0.64, turnover $6.12MM (31 trades), RealityCheck p=0.941, SPA p=n/a. run_id=2026-02-16T22-33-46Z-8d90621; dataset_id=wrds_crsp_export_20251221_v1; config=configs/wfv_flagship_wrds_sweep35.yaml.

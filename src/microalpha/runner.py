@@ -62,7 +62,7 @@ from .strategies.cs_momentum import CrossSectionalMomentum
 from .strategies.flagship_momentum import FlagshipMomentumStrategy
 from .strategies.meanrev import MeanReversionStrategy
 from .strategies.mm import NaiveMarketMakingStrategy
-from .wrds import guard_no_wrds_copy
+from .wrds import guard_no_wrds_copy, wrds_provenance
 
 STRATEGY_MAPPING = {
     "MeanReversionStrategy": MeanReversionStrategy,
@@ -114,6 +114,7 @@ def run_from_config(
         config["artifacts_dir"] = override_artifacts_dir
 
     run_id, artifacts_dir = prepare_artifacts_dir(cfg_path, config, base_run_id)
+    wrds_payload = wrds_provenance(config)
     manifest = build_manifest(
         cfg.seed,
         str(cfg_path),
@@ -124,6 +125,7 @@ def run_from_config(
         unsafe_execution=unsafe_execution,
         unsafe_reasons=unsafe_reasons,
         execution_alignment=exec_alignment,
+        wrds=wrds_payload,
     )
     root_rng = np.random.default_rng(manifest.seed)
     write_manifest(manifest, str(artifacts_dir))

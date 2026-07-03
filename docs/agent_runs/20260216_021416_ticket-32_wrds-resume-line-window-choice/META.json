@@ -1,0 +1,33 @@
+{
+  "run_name": "20260216_021416_ticket-32_wrds-resume-line-window-choice",
+  "ticket_id": "ticket-32",
+  "started_at_utc": "2026-02-16T02:14:16Z",
+  "finished_at_utc": "2026-02-16T02:26:55Z",
+  "git_sha_before": "4cb27f8ff0d442d911bec9942e14d237961eb12d",
+  "git_sha_after": "4cb27f8ff0d442d911bec9942e14d237961eb12d",
+  "branch_name": "codex/ticket-31-wrds-best-model-resume-line",
+  "host_env_notes": "Linux-6.8.0-90-generic-x86_64-with-glibc2.39 / python 3.12.3 / no venv",
+  "dataset_id": "wrds_crsp_export_20251221_v1",
+  "wrds": {
+    "dataset_id": "wrds_crsp_export_20251221_v1",
+    "data_root": "/srv/data/wrds/wrds",
+    "dataset_id_source": "env:WRDS_DATASET_ID",
+    "export_manifest": "/srv/data/wrds/wrds/manifests/20251221_001618/manifest.json"
+  },
+  "config_paths": [
+    "configs/wfv_flagship_wrds.yaml"
+  ],
+  "config_sha256": {
+    "configs/wfv_flagship_wrds.yaml": "1e15555f18a45dcc1c97c76a4fcee1d4eaa03ab656e695a0a8e3b4ea49e15175"
+  },
+  "artifact_paths": [
+    "docs/artifacts/resume/wrds/2026-01-27T04-47-22Z-31fe553/resume_line_holdout.md",
+    "artifacts/_local/20260127_044219_ticket-28_wrds-dataset-id/wrds_flagship/2026-01-27T04-47-22Z-31fe553/manifest.json",
+    "artifacts/_local/20260127_044219_ticket-28_wrds-dataset-id/wrds_flagship/2026-01-27T04-47-22Z-31fe553/holdout_manifest.json",
+    "artifacts/_local/20260127_044219_ticket-28_wrds-dataset-id/wrds_flagship/2026-01-27T04-47-22Z-31fe553/holdout_metrics.json",
+    "artifacts/_local/20260127_044219_ticket-28_wrds-dataset-id/wrds_flagship/2026-01-27T04-47-22Z-31fe553/metrics.json",
+    "artifacts/_local/gpt_bundles/gpt_bundle_20260216_022630_ticket-ticket-32.zip"
+  ],
+  "report_paths": [],
+  "web_sources": []
+}

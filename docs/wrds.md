@@ -4,6 +4,47 @@ Microalpha can operate directly on WRDS-hosted CRSP equities data. This guide de
 expected directory layout, mandatory columns, and the licensing caveats you must observe before
 pointing the engine at production-quality datasets.
 
+## Canonical export + dataset_id (required for resume-grade runs)
+
+Resume-facing WRDS runs must be pinned to a canonical export id so the metrics are reproducible.
+We use the convention:
+
+- `wrds_crsp_export_<asof_YYYYMMDD>_vN`
+
+Where `<asof_YYYYMMDD>` is the export "as-of" date (latest trading day included) and `vN` is
+the schema/version integer. The current canonical export is:
+
+- **dataset_id:** `wrds_crsp_export_20251221_v1`
+- **export manifest:** `${WRDS_DATA_ROOT}/manifests/20251221_001618/manifest.json`
+
+Provide the dataset id to runs in one of these ways (highest priority first):
+
+1. Environment variable: `WRDS_DATASET_ID=wrds_crsp_export_20251221_v1`
+2. Config metadata: `wrds.dataset_id` in `configs/wfv_flagship_wrds.yaml`
+3. Version file: create `WRDS_EXPORT_VERSION.txt` at `WRDS_DATA_ROOT` with the dataset id on the
+   first non-comment line (supports `dataset_id=...` or `dataset_id: ...`).
+
+This repo records the dataset id in:
+- `docs/agent_runs/<RUN_NAME>/META.json` (`wrds.dataset_id`, `wrds.data_root`)
+- `artifacts/.../manifest.json` (`wrds.dataset_id`)
+
+## Required WRDS_DATA_ROOT layout
+
+Your WRDS export root **must** contain the files used by the flagship configs:
+
+```
+WRDS_DATA_ROOT/
+  crsp/
+    daily_csv/                # per-symbol price files
+  meta/
+    crsp_security_metadata.csv
+  universes/
+    flagship_sector_neutral.csv
+  manifests/
+    <export_id>/manifest.json  # WRDS export manifest (recommended)
+  WRDS_EXPORT_VERSION.txt      # dataset_id (recommended)
+```
+
 ## Data Layout
 
 Set the `template.data_path` field in ``configs/wfv_flagship_wrds.yaml`` to a directory containing per-symbol pricing files exported from WRDS/CRSP. Each file can be CSV

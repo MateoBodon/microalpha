@@ -2,6 +2,10 @@
 
 artifacts_dir: "artifacts/wrds_flagship"
 
+wrds:
+  dataset_id: "wrds_crsp_export_20251221_v1"
+  export_manifest: "${WRDS_DATA_ROOT}/manifests/20251221_001618/manifest.json"
+
 template:
   data_path: "${WRDS_DATA_ROOT}/crsp/daily_csv"
   meta_path: "${WRDS_DATA_ROOT}/meta/crsp_security_metadata.csv"

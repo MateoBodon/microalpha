@@ -1,2 +1,14 @@
-## main...origin/main [ahead 1]
-?? tmp/
+## codex/ticket-36-ship-ticket-35-cleanly
+ M CHANGELOG.md
+ M PROGRESS.md
+ M docs/CODEX_SPRINT_TICKETS.md
+ M docs/artifacts/resume/wrds/leaderboard/leaderboard.csv
+ M docs/artifacts/resume/wrds/leaderboard/leaderboard.md
+ M docs/artifacts/resume/wrds/leaderboard/resume_line_best.md
+ M project_state/CURRENT_RESULTS.md
+ M scripts/data_policy_allowlist.txt
+?? configs/wfv_flagship_wrds_sweep35.yaml
+?? docs/agent_runs/20260216_223228_ticket-35_wrds-micro-sweep/
+?? docs/agent_runs/20260216_232907_ticket-ticket-36/
+?? docs/artifacts/resume/wrds/2026-02-16T22-33-46Z-8d90621/
+?? docs/prompts/20260216_223228_ticket-35_wrds-micro-sweep.md

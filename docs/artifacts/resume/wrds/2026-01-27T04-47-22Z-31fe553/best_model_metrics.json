@@ -1,0 +1,23 @@
+{
+  "run_id": "2026-01-27T04-47-22Z-31fe553",
+  "dataset_id": "wrds_crsp_export_20251221_v1",
+  "best_model_id": "allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=1|top_frac=0.2000",
+  "metrics": {
+    "sharpe_hac": 0.13975452703852675,
+    "max_drawdown": 0.0348623233588061,
+    "max_drawdown_pct": 3.49,
+    "mar": 0.08819077790113683,
+    "turnover": 5217706.87,
+    "turnover_per_day": 10373.174691848906,
+    "reality_check_p_value": 0.9881309345327336,
+    "spa_p_value": 0.015,
+    "spa_status": "ok"
+  },
+  "sources": {
+    "manifest": "artifacts/_local/20260127_044219_ticket-28_wrds-dataset-id/wrds_flagship/2026-01-27T04-47-22Z-31fe553/manifest.json",
+    "holdout_manifest": "artifacts/_local/20260127_044219_ticket-28_wrds-dataset-id/wrds_flagship/2026-01-27T04-47-22Z-31fe553/holdout_manifest.json",
+    "holdout_metrics": "artifacts/_local/20260127_044219_ticket-28_wrds-dataset-id/wrds_flagship/2026-01-27T04-47-22Z-31fe553/holdout_metrics.json",
+    "metrics": "artifacts/_local/20260127_044219_ticket-28_wrds-dataset-id/wrds_flagship/2026-01-27T04-47-22Z-31fe553/metrics.json",
+    "spa": "artifacts/_local/20260127_044219_ticket-28_wrds-dataset-id/wrds_flagship/2026-01-27T04-47-22Z-31fe553/spa.json"
+  }
+}

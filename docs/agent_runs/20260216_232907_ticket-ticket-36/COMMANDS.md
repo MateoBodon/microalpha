@@ -1,0 +1,27 @@
+# Commands
+
+- `python3 tools/agentic/runlog_init.py --ticket "ticket-36" --summary "Ship ticket-35 deliverables cleanly (commit + clean bundle)"`
+  - Initialized ship run log at `docs/agent_runs/20260216_232907_ticket-ticket-36/`.
+- `git switch -c codex/ticket-36-ship-ticket-35-cleanly`
+  - Created ticket-36 feature branch from `8d906214609106197b7e5a9cfbf08a9a5f021380`.
+- `python3 tools/agentic/project_state_refresh.py --zip`
+  - Emitted refreshed project-state bundle: `artifacts/_local/project_state_bundles/project_state_20260216_232940.zip`.
+- `python3 tools/agentic/validate_runlog.py --run-name 20260216_223228_ticket-35_wrds-micro-sweep`
+  - Passed.
+- `python3 scripts/wrds_leaderboard.py --out docs/artifacts/resume/wrds/leaderboard/leaderboard.csv`
+  - Rebuilt leaderboard outputs and best-line snippet to include the new best eligible holdout row.
+- `make check-data-policy`
+  - Passed.
+- `make test-fast`
+  - First attempt failed due missing required `META.json` schema fields in `docs/agent_runs/20260216_232907_ticket-ticket-36/META.json`.
+- Edited ship-run docs (`PROMPT.md`, `COMMANDS.md`, `RESULTS.md`, `TESTS.md`, `META.json`) and `docs/CODEX_SPRINT_TICKETS.md`
+  - Added required metadata fields and ticket-36 tracker section so run-log validation can pass.
+- `python3 tools/agentic/validate_runlog.py --run-name 20260216_232907_ticket-ticket-36`
+  - Passed.
+- `make test-fast`
+  - Second attempt passed (`128 passed, 1 skipped`) after run-log schema fix.
+- Final gate confirmation after docs normalization:
+  - `python3 tools/agentic/validate_runlog.py --run-name 20260216_223228_ticket-35_wrds-micro-sweep` (pass)
+  - `python3 tools/agentic/validate_runlog.py --run-name 20260216_232907_ticket-ticket-36` (pass)
+  - `make check-data-policy` (pass)
+  - `make test-fast` (pass, `128 passed, 1 skipped`)

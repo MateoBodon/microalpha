@@ -1,0 +1,32 @@
+{
+  "run_name": "20260216_033516_ticket-33_wrds-realdata-leaderboard",
+  "ticket_id": "ticket-33",
+  "started_at_utc": "2026-02-16T03:35:16Z",
+  "finished_at_utc": "2026-02-16T03:41:57Z",
+  "git_sha_before": "cf9dc96f769600703c806b4e9ad26214806d7638",
+  "git_sha_after": "cf9dc96f769600703c806b4e9ad26214806d7638",
+  "branch_name": "codex/ticket-31-wrds-best-model-resume-line",
+  "host_env_notes": "codex-worker / python 3.12.3 / venv .venv",
+  "dataset_id": "wrds_crsp_export_20251221_v1",
+  "wrds": {
+    "dataset_id": "wrds_crsp_export_20251221_v1",
+    "data_root": "/srv/data/wrds/wrds",
+    "dataset_id_source": "manifest.wrds.dataset_id",
+    "export_manifest": "/srv/data/wrds/wrds/manifests/20251221_001618/manifest.json"
+  },
+  "config_paths": [
+    "configs/wfv_flagship_wrds.yaml"
+  ],
+  "config_sha256": {
+    "configs/wfv_flagship_wrds.yaml": "1e15555f18a45dcc1c97c76a4fcee1d4eaa03ab656e695a0a8e3b4ea49e15175"
+  },
+  "artifact_paths": [
+    "docs/artifacts/resume/wrds/leaderboard/leaderboard.csv",
+    "docs/artifacts/resume/wrds/leaderboard/leaderboard.md",
+    "docs/artifacts/resume/wrds/leaderboard/resume_line_best.md",
+    "artifacts/_local/20260127_044219_ticket-28_wrds-dataset-id/wrds_flagship/2026-01-27T04-47-22Z-31fe553"
+  ],
+  "report_paths": [],
+  "web_sources": [],
+  "summary": "Build WRDS leaderboard and pick best resume line from existing artifacts"
+}

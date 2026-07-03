@@ -1,0 +1,21 @@
+{
+  "run_id": "2026-02-16T22-33-46Z-8d90621",
+  "dataset_id": "wrds_crsp_export_20251221_v1",
+  "dataset_id_source": "config:wrds.dataset_id",
+  "config_path": "configs/wfv_flagship_wrds_sweep35.yaml",
+  "config_sha256": "caa000f5e885c0e7f566e435fb94a6632c19bb37282c5a36c0fe4b47a6cb7260",
+  "selection_window": {
+    "start": "2013-01-02",
+    "end": "2017-12-29"
+  },
+  "holdout_window": {
+    "start": "2018-01-02",
+    "end": "2019-12-31"
+  },
+  "wrds": {
+    "data_root": "/srv/data/wrds/wrds",
+    "dataset_id": "wrds_crsp_export_20251221_v1",
+    "dataset_id_source": "config:wrds.dataset_id",
+    "export_manifest": "/srv/data/wrds/wrds/manifests/20251221_001618/manifest.json"
+  }
+}

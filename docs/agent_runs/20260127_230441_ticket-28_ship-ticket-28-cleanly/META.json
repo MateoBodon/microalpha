@@ -1,0 +1,34 @@
+{
+  "artifact_paths": [
+    "docs/artifacts/resume/wrds/2026-01-27T04-47-22Z-31fe553/",
+    "docs/artifacts/resume/wrds/2026-01-27T04-47-22Z-31fe553/manifest_excerpt.json",
+    "docs/artifacts/resume/wrds/2026-01-27T04-47-22Z-31fe553/metrics.json",
+    "docs/artifacts/resume/wrds/2026-01-27T04-47-22Z-31fe553/snippet.md"
+  ],
+  "branch_name": "codex/ticket-28-ship-ticket-28-cleanly",
+  "config_paths": [
+    "configs/wfv_flagship_wrds.yaml"
+  ],
+  "config_sha256": {
+    "configs/wfv_flagship_wrds.yaml": "1e15555f18a45dcc1c97c76a4fcee1d4eaa03ab656e695a0a8e3b4ea49e15175"
+  },
+  "dataset_id": "wrds_crsp_export_20251221_v1",
+  "finished_at_utc": "2026-01-27T23:18:46Z",
+  "git_sha_after": "31fe55320b5bdf3fdea386de98e627ad15290d0c",
+  "git_sha_before": "31fe55320b5bdf3fdea386de98e627ad15290d0c",
+  "host_env_notes": "Linux 6.8.0-90-generic / python 3.12.3 / venv: (none)",
+  "report_paths": [
+    "project_state/CURRENT_RESULTS.md",
+    "PROGRESS.md"
+  ],
+  "run_name": "20260127_230441_ticket-28_ship-ticket-28-cleanly",
+  "started_at_utc": "2026-01-27T23:06:35Z",
+  "ticket_id": "ticket-28",
+  "web_sources": [],
+  "wrds": {
+    "data_root": "/srv/data/wrds/wrds",
+    "dataset_id": "wrds_crsp_export_20251221_v1",
+    "dataset_id_source": "env:WRDS_DATASET_ID",
+    "export_manifest": "/srv/data/wrds/wrds/manifests/20251221_001618/manifest.json"
+  }
+}

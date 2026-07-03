@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ## [Unreleased]
 ### Added
+- Agentic System Kit v2 tracking policy (`TRACKING_POLICY.md`) plus helper scripts (`runlog_init.py`, `ticket_new.py`, `validate_runlog.py`).
 - Repository guardrails: pytest marker config, WRDS detection helpers, log fan-out to `artifacts/logs/`.
 - Pre-commit automation (black, isort, ruff, detect-secrets) plus tightened `.gitignore`.
 - WRDS-focused Makefile targets, CHANGELOG bootstrap, and CI/docs placeholders for analytics & reporting.
@@ -26,9 +27,16 @@ All notable changes to this project will be documented in this file. The format 
 - ticket-18: agentic system scaffold (PROJECT.md, agentic tools, and run-log templates).
 - ticket-22: WRDS resume metrics summary (`docs/results_wrds_resume.md`) for run `2026-01-25T21-01-51Z-4d08d18`.
 - ticket-23: holdout order-flow + filter diagnostics and a hard guardrail for zero-trade holdout runs.
+- ticket-28: WRDS dataset_id provenance recorded in manifests + run logs, with canonical export documented in `docs/wrds.md`.
+- ticket-31: best-model WRDS resume metrics snippet + JSON extracted from SPA/holdout outputs for run `2026-01-27T04-47-22Z-31fe553`.
+- ticket-32: single-window WRDS resume snippet with explicit holdout-only labeling (`resume_line_holdout.md`) for run `2026-01-27T04-47-22Z-31fe553`.
+- ticket-33: WRDS real-data leaderboard artifacts (`leaderboard.csv`, `leaderboard.md`) and best-line snippet (`resume_line_best.md`) with explicit holdout window and run_id/dataset_id provenance.
+- ticket-34: shipped ticket-33 leaderboard deliverables (script + artifacts + prompt/run logs) so they are reviewable in `DIFF.patch`.
+- ticket-35: WRDS micro-sweep config `configs/wfv_flagship_wrds_sweep35.yaml` and promoted resume-safe artifact set for run `2026-02-16T22-33-46Z-8d90621` (`metrics.json`, `manifest_excerpt.json`, `snippet.md`).
 
 
 ### Changed
+- Refreshed agentic tooling and .gitignore scaffold via tools-only bootstrap.
 - Walk-forward WRDS config aligned to available universe coverage (2013–2019) to restore non-degenerate holdout metrics.
 - WRDS flagship run now uses 3y/9m folds (21 folds), trimmed grid (top_frac × turnover only), higher turnover cap, and produces reproducible signals/analytics/factors/SPA assets for run `2025-11-12T18-50-58Z-b2eaf50` with docs, plots, and summaries updated in lockstep.
 - ticket-01: WRDS configs now surface gross leverage/single-name caps and borrow model; reporting now includes net/gross exposure + cost breakdown.
@@ -56,3 +64,7 @@ All notable changes to this project will be documented in this file. The format 
 - ticket-19a: refreshed project_state indices, validated scaffold state, and recorded commit/run logs.
 - ticket-24c: shipped WRDS refresh outputs so resume metrics/docs/report images reference run `2026-01-26T01-22-23Z-e76eb4d`.
 - ticket-24d: finalized WRDS refresh audit docs/run logs and bundle for run `2026-01-26T01-22-23Z-e76eb4d`.
+- ticket-28: pinned WRDS export metadata in `configs/wfv_flagship_wrds.yaml` and generated resume artifacts under `docs/artifacts/resume/wrds/<RUN_ID>/`.
+- ticket-34: repaired `docs/agent_runs/20260216_025221_ticket-ticket-32b/META.json` to satisfy run-log schema validation and updated data-policy allowlist for license-safe resume aggregates so `make test-fast` passes.
+- ticket-35: refreshed WRDS leaderboard outputs with a new best eligible holdout row (`run_id=2026-02-16T22-33-46Z-8d90621`, Sharpe_HAC `0.588`) and generalized data-policy allowlist globs for resume aggregate JSON files.
+- ticket-36: shipped ticket-35 deliverables into tracked state, added ticket-36 shipping run logs/prompt capture, and corrected `project_state/CURRENT_RESULTS.md` header metadata for current branch/SHA consistency.

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Final
+from typing import Any, Final, Iterable, Mapping, Tuple
 
 WRDS_HOST: Final[str] = "wrds-pgdata.wharton.upenn.edu"
 WRDS_PORT: Final[int] = 9737
@@ -107,6 +107,102 @@ def get_wrds_data_root() -> Path | None:
     return _load_local_wrds_data_root()
 
 
+def _iter_string_values(value: Any) -> Iterable[str]:
+    if isinstance(value, str):
+        yield value
+    elif isinstance(value, Mapping):
+        for item in value.values():
+            yield from _iter_string_values(item)
+    elif isinstance(value, (list, tuple, set)):
+        for item in value:
+            yield from _iter_string_values(item)
+
+
+def _config_mentions_wrds(config: Mapping[str, Any] | None) -> bool:
+    if not config:
+        return False
+    if "wrds" in config:
+        return True
+    for text in _iter_string_values(config):
+        if "WRDS_DATA_ROOT" in text:
+            return True
+        lowered = text.lower()
+        if "/wrds/" in lowered or lowered.endswith("/wrds"):
+            return True
+    return False
+
+
+def _parse_dataset_id_line(line: str) -> str | None:
+    stripped = line.strip()
+    if not stripped or stripped.startswith("#"):
+        return None
+    lowered = stripped.lower()
+    if lowered.startswith("dataset_id"):
+        _, _, remainder = stripped.partition("=")
+        if not remainder:
+            _, _, remainder = stripped.partition(":")
+        candidate = remainder.strip()
+        return candidate or None
+    return stripped
+
+
+def _dataset_id_from_version_file(root: Path) -> Tuple[str | None, str | None]:
+    version_path = root / "WRDS_EXPORT_VERSION.txt"
+    if not version_path.exists():
+        return None, None
+    try:
+        for line in version_path.read_text(encoding="utf-8").splitlines():
+            candidate = _parse_dataset_id_line(line)
+            if candidate:
+                return candidate, f"file:{version_path}"
+    except OSError:
+        return None, None
+    return None, None
+
+
+def resolve_wrds_dataset_id(config: Mapping[str, Any] | None = None) -> Tuple[str | None, str | None]:
+    env_id = (os.getenv("WRDS_DATASET_ID") or "").strip()
+    if env_id:
+        return env_id, "env:WRDS_DATASET_ID"
+    if config:
+        wrds_cfg = config.get("wrds") if isinstance(config, Mapping) else None
+        if isinstance(wrds_cfg, Mapping):
+            cfg_id = str(wrds_cfg.get("dataset_id") or "").strip()
+            if cfg_id:
+                return cfg_id, "config:wrds.dataset_id"
+    root = get_wrds_data_root()
+    if root is not None:
+        dataset_id, source = _dataset_id_from_version_file(root)
+        if dataset_id:
+            return dataset_id, source
+    return None, None
+
+
+def wrds_provenance(config: Mapping[str, Any] | None = None) -> dict[str, Any] | None:
+    if config is not None and not _config_mentions_wrds(config):
+        return None
+    dataset_id, dataset_source = resolve_wrds_dataset_id(config)
+    data_root = get_wrds_data_root()
+    if dataset_id is None and data_root is None:
+        return None
+    payload: dict[str, Any] = {}
+    if dataset_id:
+        payload["dataset_id"] = dataset_id
+    if dataset_source:
+        payload["dataset_id_source"] = dataset_source
+    if data_root:
+        payload["data_root"] = str(data_root)
+        version_path = data_root / "WRDS_EXPORT_VERSION.txt"
+        if version_path.exists():
+            payload["export_version_path"] = str(version_path)
+    if config and isinstance(config.get("wrds"), Mapping):
+        wrds_cfg = config["wrds"]
+        export_manifest = wrds_cfg.get("export_manifest") or wrds_cfg.get("manifest_path")
+        if export_manifest:
+            payload["export_manifest"] = os.path.expandvars(str(export_manifest))
+    return payload
+
+
 def has_wrds_data(min_entries: int = 1) -> bool:
     """Return True if WRDS_DATA_ROOT exists and looks non-empty."""
 
@@ -165,6 +261,8 @@ __all__ = [
     "WRDS_PORT",
     "guard_no_wrds_copy",
     "get_wrds_data_root",
+    "resolve_wrds_dataset_id",
+    "wrds_provenance",
     "has_pgpass_credentials",
     "has_wrds_credentials",
     "has_wrds_data",
