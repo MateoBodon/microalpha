@@ -110,3 +110,8 @@ Ticket-18: Installed agentic system scaffold, restored repo-specific docs, and g
 - Ticket-34: shipped ticket-33 leaderboard deliverables in a tracked commit-ready state, fixed run-log schema debt in `docs/agent_runs/20260216_025221_ticket-ticket-32b/META.json`, and restored green `make test-fast` gates. Run log: `docs/agent_runs/20260216_212201_ticket-34_ship-ticket-33-cleanly-and-unblock-make-test-fast/`.
 - Ticket-35: executed a pre-registered WRDS micro-sweep (`9` combos), generated local-only artifacts/reports, promoted resume-safe artifacts for run `2026-02-16T22-33-46Z-8d90621`, and refreshed WRDS leaderboard outputs (`leaderboard.csv`, `leaderboard.md`, `resume_line_best.md`). Run log: `docs/agent_runs/20260216_223228_ticket-35_wrds-micro-sweep/`.
 - Ticket-36: shipped ticket-35 deliverables as tracked files, repaired ticket-36 run-log schema, refreshed project-state metadata pointers, and prepared a clean bundle regeneration path. Run log: `docs/agent_runs/20260216_232907_ticket-ticket-36/`.
+
+## 2026-02-17
+
+### Done
+- Ticket-37: ran canonical public mini-panel WFV (`configs/wfv_flagship_public.yaml`), generated local report artifacts, and promoted tracked resume-safe public artifacts under `docs/artifacts/resume/public/2026-02-17T01-02-27Z-98beced/` plus `docs/artifacts/resume/public/resume_line_best.md`; reproduced run is explicitly degenerate (`0` trades) and supersedes older unlinked resume numbers. Run log: `docs/agent_runs/20260217_010106_ticket-37_public-mini-panel-resume-metrics/`.

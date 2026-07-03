@@ -1,0 +1,33 @@
+{
+  "run_id": "2026-02-17T01-02-27Z-98beced",
+  "dataset_id": "public_mini_panel_repo_36b421820251",
+  "dataset_id_source": "derived:sha256(data/public/meta_public.csv + universe_public.csv + prices/*.csv)",
+  "dataset_inputs_sha256": {
+    "combined_sha256": "36b421820251df7938c89d67588956792ae3dd6495d4d69849e2b7b52ccf7852",
+    "data/public/meta_public.csv": "8c45c96f22d3e69a294f132042c20da9ccd352a653f755c9aa0dd896fd20dc2a",
+    "data/public/universe_public.csv": "a281329f377607d71e3a9d3fa1435ae17f8000b8c52c250ce992308d8f1bdcb6",
+    "data/public/prices/AAPL.csv": "1faeb4c90a32fc8b68d98ff0ae7557850104a5eb2f8197003f63a0b5da5b7521",
+    "data/public/prices/AMZN.csv": "9cc6b4ac74cdc8442efe5ff2871cc9b7ea77532772bfef698670e7cf8326bcf0",
+    "data/public/prices/GOOGL.csv": "dc9e08b23f84dfb3ee4c784159621c321563720ab6bc48a03ef35d191da313a9",
+    "data/public/prices/MSFT.csv": "4bbcc9cb219e2f2b86c8620c0c32f27ad5a303a07ed4fbb3196667b1898fb069",
+    "data/public/prices/NVDA.csv": "54dae76dd2d54eb56ac9330bd73e3a2bbd8e9a00822554cf81af0777adcb17e3",
+    "data/public/prices/TSLA.csv": "21ebe604e67d7ae94e3bcdd700a40578c83345dcad91eff7952b7c10ce5b0da1"
+  },
+  "config_path": "configs/wfv_flagship_public.yaml",
+  "config_sha256_manifest": "d6cfdda3e570c1e96cd31d6d165b915370cb1fd711768ebe8a4f317a4afb0b11",
+  "config_sha256_file": "e5ccee187a582855650b9d088919d3a2cc6302fb85bcc54429960ee4e476de4f",
+  "selection_window": {
+    "start": "2024-01-02",
+    "end": "2024-01-12"
+  },
+  "sources": {
+    "manifest": "artifacts/_local/20260217_010106_ticket-37_public-mini-panel-resume-metrics/wfv_flagship_public/2026-02-17T01-02-27Z-98beced/manifest.json",
+    "metrics": "artifacts/_local/20260217_010106_ticket-37_public-mini-panel-resume-metrics/wfv_flagship_public/2026-02-17T01-02-27Z-98beced/metrics.json",
+    "reality_check": "artifacts/_local/20260217_010106_ticket-37_public-mini-panel-resume-metrics/wfv_flagship_public/2026-02-17T01-02-27Z-98beced/reality_check.json",
+    "report": "reports/_runs/20260217_010106_ticket-37_public-mini-panel-resume-metrics/wfv_flagship_public.md"
+  },
+  "notes": [
+    "No raw price panel rows are copied into this tracked artifact.",
+    "Run marked degenerate by report due to zero executed trades."
+  ]
+}

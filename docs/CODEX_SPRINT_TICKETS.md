@@ -6,6 +6,39 @@
 
 ---
 
+## ticket-37 — Public mini-panel resume metrics (audit-linked)
+
+**Goal (1 sentence):** Reproduce the canonical public mini-panel WFV resume line and ship audit-linked, resume-safe tracked artifacts with run_id/config provenance.
+
+**Status:** Done (run degenerate; resume line updated to reproduced values).
+
+**Why (ties to diagnosis):**
+- Public mini-panel resume claims were not previously shipped as run_id-linked tracked artifacts.
+- Canonical config execution was blocked by a stale public universe schema lacking required `date` column.
+
+**Acceptance criteria (objective + falsifiable):**
+- New run log exists at `docs/agent_runs/20260217_010106_ticket-37_public-mini-panel-resume-metrics/` with required files.
+- Local-only outputs exist under:
+  - `artifacts/_local/20260217_010106_ticket-37_public-mini-panel-resume-metrics/wfv_flagship_public/`
+  - `reports/_runs/20260217_010106_ticket-37_public-mini-panel-resume-metrics/wfv_flagship_public.md`
+- Tracked resume-safe artifacts exist under:
+  - `docs/artifacts/resume/public/2026-02-17T01-02-27Z-98beced/`
+  - `docs/artifacts/resume/public/resume_line_best.md`
+- `project_state/CURRENT_RESULTS.md` includes a Public mini-panel subsection pointing to the new artifacts.
+- `make check-data-policy` and `make test-fast` pass.
+
+**Minimal tests/commands to run:**
+- `python3 tools/agentic/validate_runlog.py --run-name 20260217_010106_ticket-37_public-mini-panel-resume-metrics`
+- `source .venv/bin/activate && MPLCONFIGDIR=/tmp/matplotlib microalpha wfv --config configs/wfv_flagship_public.yaml --out artifacts/_local/20260217_010106_ticket-37_public-mini-panel-resume-metrics/wfv_flagship_public`
+- `source .venv/bin/activate && MPLCONFIGDIR=/tmp/matplotlib microalpha report --artifact-dir artifacts/_local/20260217_010106_ticket-37_public-mini-panel-resume-metrics/wfv_flagship_public/2026-02-17T01-02-27Z-98beced --summary-out reports/_runs/20260217_010106_ticket-37_public-mini-panel-resume-metrics/wfv_flagship_public.md`
+- `source .venv/bin/activate && make check-data-policy`
+- `source .venv/bin/activate && make test-fast`
+
+**End-of-ticket:**
+- **Tests run:** `python3 tools/agentic/validate_runlog.py --run-name 20260217_010106_ticket-37_public-mini-panel-resume-metrics`; `source .venv/bin/activate && MPLCONFIGDIR=/tmp/matplotlib microalpha wfv --config configs/wfv_flagship_public.yaml --out artifacts/_local/20260217_010106_ticket-37_public-mini-panel-resume-metrics/wfv_flagship_public`; `source .venv/bin/activate && MPLCONFIGDIR=/tmp/matplotlib microalpha report --artifact-dir artifacts/_local/20260217_010106_ticket-37_public-mini-panel-resume-metrics/wfv_flagship_public/2026-02-17T01-02-27Z-98beced --summary-out reports/_runs/20260217_010106_ticket-37_public-mini-panel-resume-metrics/wfv_flagship_public.md`; `source .venv/bin/activate && make check-data-policy`; `source .venv/bin/activate && make test-fast`.
+- **Artifacts/logs:** `docs/agent_runs/20260217_010106_ticket-37_public-mini-panel-resume-metrics/`; `docs/prompts/20260217_010106_ticket-37_public-mini-panel-resume-metrics.md`; `docs/artifacts/resume/public/2026-02-17T01-02-27Z-98beced/`; `docs/artifacts/resume/public/resume_line_best.md`; `artifacts/_local/20260217_010106_ticket-37_public-mini-panel-resume-metrics/`; `reports/_runs/20260217_010106_ticket-37_public-mini-panel-resume-metrics/wfv_flagship_public.md`.
+- **Documentation updates:** `project_state/CURRENT_RESULTS.md`; `PROGRESS.md`; `CHANGELOG.md`; `docs/CODEX_SPRINT_TICKETS.md`.
+
 ## ticket-36 — Ship ticket-35 deliverables cleanly (commit + clean bundle)
 
 **Goal (1 sentence):** Commit all ticket-35 outputs as tracked files and regenerate a clean GPT bundle so reviewers can verify changes from `DIFF.patch`.

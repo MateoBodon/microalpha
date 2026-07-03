@@ -1,6 +1,6 @@
 <!--
-generated_at: 2026-02-16T23:31:49Z
-git_sha: 8d906214609106197b7e5a9cfbf08a9a5f021380
+generated_at: 2026-02-17T01:04:53Z
+git_sha: 98beced67a7acfc6b5d9c8d51b2859b1a12dd44f
 branch: codex/ticket-36-ship-ticket-35-cleanly
 commands:
   - python3 tools/agentic/project_state_refresh.py --zip
@@ -32,6 +32,22 @@ commands:
 - Holdout Max DD: 9.36%
 - Holdout Turnover: $5,417,903.30
 
+
+## Public mini-panel (resume artifact-backed)
+
+- Latest run: `2026-02-17T01-02-27Z-98beced`
+- Window: WFV OOS (`2024-01-02` to `2024-01-12`)
+- Snapshot:
+  - Sharpe_HAC: 0.000
+  - Max Drawdown: 0.00%
+  - CAGR: 0.00%
+  - Reality Check p-value: 1.000
+  - Trades: 0 (degenerate run)
+- Canonical resume line: `docs/artifacts/resume/public/resume_line_best.md`
+- Resume artifact directory: `docs/artifacts/resume/public/2026-02-17T01-02-27Z-98beced/`
+- Config: `configs/wfv_flagship_public.yaml`
+- Dataset ID: `public_mini_panel_repo_36b421820251`
+- Local report: `reports/_runs/20260217_010106_ticket-37_public-mini-panel-resume-metrics/wfv_flagship_public.md`
 
 
 ## WRDS results (docs/results_wrds.md)
@@ -74,17 +90,18 @@ commands:
 
 ## Latest progress (PROGRESS.md)
 
-- Date: 2026-02-16
+- Date: 2026-02-17
 - ### Done
+- - Ticket-37: reproduced the canonical public mini-panel WFV run and promoted audit-linked resume-safe artifacts under `docs/artifacts/resume/public/2026-02-17T01-02-27Z-98beced/`; run is explicitly marked degenerate (`0` trades). Run log: `docs/agent_runs/20260217_010106_ticket-37_public-mini-panel-resume-metrics/`.
 - - Ticket-35: ran a pre-registered 9-combo WRDS micro-sweep and promoted run `2026-02-16T22-33-46Z-8d90621` as the new best provenance-complete holdout resume line (Sharpe_HAC 0.588, MaxDD 1.38%, 31 trades). Run log: `docs/agent_runs/20260216_223228_ticket-35_wrds-micro-sweep/`.
 - - Ticket-36: shipped ticket-35 deliverables as tracked files, fixed ticket-36 run-log schema to unblock validation gates, and prepared clean-bundle regeneration evidence. Run log: `docs/agent_runs/20260216_232907_ticket-ticket-36/`.
 
 
 ## Recent run logs (docs/agent_runs, last 3)
 
+- `20260217_010106_ticket-37_public-mini-panel-resume-metrics` — Ran the canonical public mini-panel WFV config, generated local report artifacts, and promoted tracked resume-safe public metrics/snippet artifacts for run `2026-02-17T01-02-27Z-98beced` (degenerate: 0 trades). (docs/agent_runs/20260217_010106_ticket-37_public-mini-panel-resume-metrics/RESULTS.md)
 - `20260216_232907_ticket-ticket-36` — Shipped ticket-35 deliverables into tracked state, repaired run-log schema debt for ticket-36, and prepared clean-bundle regeneration with explicit gate runs. (docs/agent_runs/20260216_232907_ticket-ticket-36/RESULTS.md)
 - `20260216_223228_ticket-35_wrds-micro-sweep` — Executed pre-registered WRDS sweep (`<=12` combos), generated local WRDS report, and promoted run `2026-02-16T22-33-46Z-8d90621` as the top eligible holdout resume row. (docs/agent_runs/20260216_223228_ticket-35_wrds-micro-sweep/RESULTS.md)
-- `20260216_212201_ticket-34_ship-ticket-33-cleanly-and-unblock-make-test-fast` — Shipped ticket-33 leaderboard deliverables, repaired run-log schema metadata, and made `make test-fast` pass. (docs/agent_runs/20260216_212201_ticket-34_ship-ticket-33-cleanly-and-unblock-make-test-fast/RESULTS.md)
 
 
 Sources: `README.md`, `PROGRESS.md`, `docs/results_wrds.md`, `docs/results_wrds_smoke.md`, sample metrics under `artifacts/sample_flagship/`, `artifacts/sample_wfv/`, `artifacts/sample_wfv_holdout/`, and recent `docs/agent_runs/*/RESULTS.md`.

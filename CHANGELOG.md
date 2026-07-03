@@ -33,6 +33,7 @@ All notable changes to this project will be documented in this file. The format 
 - ticket-33: WRDS real-data leaderboard artifacts (`leaderboard.csv`, `leaderboard.md`) and best-line snippet (`resume_line_best.md`) with explicit holdout window and run_id/dataset_id provenance.
 - ticket-34: shipped ticket-33 leaderboard deliverables (script + artifacts + prompt/run logs) so they are reviewable in `DIFF.patch`.
 - ticket-35: WRDS micro-sweep config `configs/wfv_flagship_wrds_sweep35.yaml` and promoted resume-safe artifact set for run `2026-02-16T22-33-46Z-8d90621` (`metrics.json`, `manifest_excerpt.json`, `snippet.md`).
+- ticket-37: public mini-panel resume artifact set for run `2026-02-17T01-02-27Z-98beced` (`docs/artifacts/resume/public/<RUN_ID>/metrics.json`, `manifest_excerpt.json`, `snippet.md`) plus canonical `docs/artifacts/resume/public/resume_line_best.md`.
 
 
 ### Changed
@@ -68,3 +69,4 @@ All notable changes to this project will be documented in this file. The format 
 - ticket-34: repaired `docs/agent_runs/20260216_025221_ticket-ticket-32b/META.json` to satisfy run-log schema validation and updated data-policy allowlist for license-safe resume aggregates so `make test-fast` passes.
 - ticket-35: refreshed WRDS leaderboard outputs with a new best eligible holdout row (`run_id=2026-02-16T22-33-46Z-8d90621`, Sharpe_HAC `0.588`) and generalized data-policy allowlist globs for resume aggregate JSON files.
 - ticket-36: shipped ticket-35 deliverables into tracked state, added ticket-36 shipping run logs/prompt capture, and corrected `project_state/CURRENT_RESULTS.md` header metadata for current branch/SHA consistency.
+- ticket-37: refreshed `data/public/universe_public.csv` to include required dated universe fields for canonical public WFV execution and updated `project_state/CURRENT_RESULTS.md` with audit-linked public mini-panel pointers.

@@ -1,0 +1,1 @@
+Public mini-panel (window=WFV OOS, 2024-01-02 to 2024-01-12): Sharpe_HAC 0.000, MaxDD 0.00%, CAGR 0.00%, RealityCheck p=1.000 (degenerate: 0 trades). run_id=2026-02-17T01-02-27Z-98beced; config_path=configs/wfv_flagship_public.yaml; dataset_id=public_mini_panel_repo_36b421820251.

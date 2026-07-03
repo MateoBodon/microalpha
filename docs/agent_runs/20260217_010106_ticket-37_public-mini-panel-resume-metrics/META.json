@@ -1,0 +1,30 @@
+{
+  "run_name": "20260217_010106_ticket-37_public-mini-panel-resume-metrics",
+  "ticket_id": "ticket-37",
+  "started_at_utc": "2026-02-17T01:01:06Z",
+  "finished_at_utc": "2026-02-17T01:07:32Z",
+  "git_sha_before": "98beced67a7acfc6b5d9c8d51b2859b1a12dd44f",
+  "git_sha_after": "98beced67a7acfc6b5d9c8d51b2859b1a12dd44f",
+  "branch_name": "codex/ticket-36-ship-ticket-35-cleanly",
+  "host_env_notes": "codex-worker / python 3.12.3 / venv .venv / MPLCONFIGDIR=/tmp/matplotlib",
+  "dataset_id": "public_mini_panel_repo_36b421820251",
+  "config_paths": [
+    "configs/wfv_flagship_public.yaml"
+  ],
+  "config_sha256": {
+    "configs/wfv_flagship_public.yaml": "e5ccee187a582855650b9d088919d3a2cc6302fb85bcc54429960ee4e476de4f"
+  },
+  "artifact_paths": [
+    "data/public/universe_public.csv",
+    "artifacts/_local/20260217_010106_ticket-37_public-mini-panel-resume-metrics/wfv_flagship_public/2026-02-17T01-02-27Z-98beced/",
+    "docs/artifacts/resume/public/2026-02-17T01-02-27Z-98beced/",
+    "docs/artifacts/resume/public/resume_line_best.md",
+    "docs/agent_runs/20260217_010106_ticket-37_public-mini-panel-resume-metrics/",
+    "docs/prompts/20260217_010106_ticket-37_public-mini-panel-resume-metrics.md"
+  ],
+  "report_paths": [
+    "reports/_runs/20260217_010106_ticket-37_public-mini-panel-resume-metrics/wfv_flagship_public.md"
+  ],
+  "web_sources": [],
+  "summary": "Public mini-panel WFV resume metrics (audit-linked); canonical run reproduced and shipped with audit-linked resume-safe artifacts."
+}
