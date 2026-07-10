@@ -4,6 +4,7 @@
 .mypy_cache/
 dist/
 build/
+site/
 *.egg-info/
 __pycache__/
 src/**/__pycache__/
@@ -75,6 +76,9 @@ artifacts/_local/**
 
 reports/_runs/**
 !reports/_runs/README.md
+
+reports/_bundles/**
+!reports/_bundles/README.md
 
 .cache/**
 tmp/**

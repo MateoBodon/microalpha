@@ -1,5 +1,10 @@
 # CODEX SPRINT TICKETS — microalpha (Next Sprint)
 
+> AI Project OS v2 note (2026-07-03): this file is a historical legacy sprint
+> ledger. Current ticket inventory and proposed next work live in
+> `docs/strategy/TICKET_LEDGER.md`. The pre-v2 copy is archived under
+> `docs/_archive/pre_ai_os_v2/20260703/`.
+
 **Sprint objective (1–2 weeks):** Produce one *resume-credible* real-data demo run pipeline: tightened risk/cost caps, baseline comparison, and auditable artifacts/logs.
 
 **Ground-truth diagnosis input:** see `docs/gpt_outputs/` (Prompt‑1 output) — validity first.

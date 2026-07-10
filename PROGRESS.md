@@ -115,3 +115,8 @@ Ticket-18: Installed agentic system scaffold, restored repo-specific docs, and g
 
 ### Done
 - Ticket-37: ran canonical public mini-panel WFV (`configs/wfv_flagship_public.yaml`), generated local report artifacts, and promoted tracked resume-safe public artifacts under `docs/artifacts/resume/public/2026-02-17T01-02-27Z-98beced/` plus `docs/artifacts/resume/public/resume_line_best.md`; reproduced run is explicitly degenerate (`0` trades) and supersedes older unlinked resume numbers. Run log: `docs/agent_runs/20260217_010106_ticket-37_public-mini-panel-resume-metrics/`.
+
+## 2026-07-03
+
+### Done
+- T-000: installed AI Project OS v2 canonical docs under `docs/strategy/`, added `project_state/STATE_INDEX.md`, refreshed `project_state/RUNBOOK.md`, added validation and claims/evidence maps, indexed/copied pre-v2 docs under `docs/_archive/pre_ai_os_v2/20260703/`, and added `tools/agentic/ai_os_v2_bundle.py` for state/review bundles. Run log: `reports/_runs/20260703_172217_T-000_install_ai_project_os_v2/`.

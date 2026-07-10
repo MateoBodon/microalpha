@@ -21,6 +21,10 @@ Small, deterministic helper scripts that standardize the agentic workflow across
   Ensures `project_state/` exists and emits `project_state/_generated` git metadata.
   Optionally creates a `project_state_*.zip` under `artifacts/_local/project_state_bundles/`.
 
+- `ai_os_v2_bundle.py`
+  Creates the AI Project OS v2 pre-install archive index/manifest and generates
+  `project_state_audit` and `review` context bundles under `reports/_bundles/`.
+
 - `repo_snapshot.py`  
   Generates a lightweight repo snapshot markdown file at `docs/_generated/repo_snapshot.md`.
 

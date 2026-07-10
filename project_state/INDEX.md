@@ -8,7 +8,12 @@ commands:
 -->
 
 
-# Project State Index
+# Legacy Project State Index
+
+> AI Project OS v2 note (2026-07-03): this file is retained for historical
+> compatibility with the older project_state scaffold. The canonical current
+> state map is `project_state/STATE_INDEX.md`; the pre-v2 version of this file
+> is preserved under `docs/_archive/pre_ai_os_v2/20260703/`.
 
 ## How to read this folder
 

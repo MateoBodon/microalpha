@@ -16,8 +16,9 @@ test:
 	pytest -vv --maxfail=1 --durations=25
 
 test-fast:
-	python3 scripts/validate_run_logs.py
-	pytest -q
+	PYTHONPATH=src:$$PYTHONPATH python3 -c "import pathlib, sys, microalpha; path = pathlib.Path(microalpha.__file__).resolve(); root = (pathlib.Path.cwd() / 'src').resolve(); print(f'microalpha_import_path={path}'); sys.exit(0 if root in path.parents else f'imported non-local microalpha: {path}')"
+	PYTHONPATH=src:$$PYTHONPATH python3 scripts/validate_run_logs.py
+	PYTHONPATH=src:$$PYTHONPATH pytest -q
 
 test-wrds:
 	pytest -m wrds -vv --maxfail=1 --durations=25

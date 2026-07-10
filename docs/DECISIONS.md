@@ -1,5 +1,10 @@
 # DECISIONS
 
+> AI Project OS v2 note (2026-07-03): this pre-v2 decision log is preserved for
+> history. Current durable decisions live in `docs/strategy/DECISIONS.md`, and
+> the pre-v2 copy is archived under
+> `docs/_archive/pre_ai_os_v2/20260703/`.
+
 Record non-obvious decisions. Keep it short.
 
 Template:

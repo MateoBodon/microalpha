@@ -38,6 +38,10 @@ These are allowed top-level scratch zones. Put new large outputs here.
 - `reports/_runs/`  
   Run-scoped bulky outputs (one folder per run).
 
+- `reports/_bundles/`
+  Generated context/review/state bundle zips. Keep the README tracked; leave
+  generated zips ignored unless a release/audit explicitly asks to track one.
+
 - `docs/_generated/`, `docs/_bundles/`, `project_state/_generated/`  
   Rebuildable generated files (unless your project intentionally tracks some of them).
 
@@ -57,6 +61,7 @@ New output directories must include a run name in the path, e.g.:
 - `docs/agent_runs/<RUN_NAME>/...` (logs; tracked)
 - `docs/artifacts/<topic>/<date>/...` (curated; tracked)
 - `reports/_runs/<RUN_NAME>/...` (bulky; ignored)
+- `reports/_bundles/<BUNDLE_NAME>.zip` (context bundles; ignored)
 - `artifacts/_local/<RUN_NAME>/...` (local; ignored)
 
 ### Never depend on `.git/info/exclude`

@@ -1,5 +1,10 @@
 # DOCS + LOGGING SYSTEM — microalpha
 
+> AI Project OS v2 note (2026-07-03): this pre-v2 documentation/logging system
+> is preserved for history. Current AI OS v2 operating docs live in
+> `AGENTS.md`, `docs/strategy/`, `project_state/RUNBOOK.md`, and
+> `project_state/VALIDATION_MATRIX.md`.
+
 **Goal:** Make this repo *self-auditing* so we can defend every result in an interview:
 - what ran
 - with which config

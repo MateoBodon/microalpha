@@ -1,44 +1,87 @@
-# PROJECT.md
+# microalpha Project
 
-## Project Profile
-- Name: microalpha
-- One-liner: Leakage-safe, event-driven backtesting engine with walk-forward cross-validation and reporting.
-- Type: research/trading
-- Risk tier: high
-- Primary languages: Python
-- External dependencies / services: WRDS/CRSP exports (optional), MkDocs (docs site)
+last_updated: 2026-07-03
+updated_by: Codex T-000
+source_event: AI Project OS v2 installation
 
-## Goals (what “done” looks like)
-- Leakage-safe backtesting and walk-forward validation with reproducible artifacts.
-- Sample/public data runs plus an optional WRDS pipeline for real data.
-- Report generation (plots + Markdown summaries) suitable for audit/review.
+## What This Repo Is
 
-## Non-goals (explicitly out of scope)
-- Live trading execution or brokerage integration.
-- Guaranteed alpha discovery or performance claims.
+microalpha is a Python quant/research repository for leakage-safe, event-driven
+backtesting and walk-forward validation. It combines:
 
-## Current state
-- What works: sample/public configs, WFV runs, reporting, docs + tests.
-- What’s missing: real-data runs require local WRDS exports and credentials.
-- What’s broken: see `project_state/KNOWN_ISSUES.md` for open issues.
-- Biggest risks: leakage/survivorship bias, missing WRDS data, misreported results.
+- an event-driven backtest engine;
+- strategy/config plumbing for sample, public, and WRDS/CRSP workflows;
+- reporting utilities for metrics, plots, factor analytics, SPA/reality checks,
+  and resume-safe result summaries;
+- tests and data-policy checks intended to protect chronology, reproducibility,
+  and licensed-data boundaries.
 
-## Quickstart (how to run)
-- `python -m venv .venv && source .venv/bin/activate && pip install -e '.[dev]'`
-- `make sample && make report`
-- `make wfv && make report-wfv`
-- `pytest -q`
+The project is best understood as a research infrastructure and evidence system,
+not as a live trading system.
 
-## Architecture (high-level)
-- Modules: `src/microalpha/` (engine, data, strategies, reporting, CLI).
-- Data flow: DataHandler -> Engine -> Strategy -> Portfolio -> Broker -> Trades.
-- Key invariants: strict chronology, t+1 execution, point-in-time universe.
+## What This Repo Is Not
 
-## Constraints / preferences
-- Performance constraints: deterministic runs; prefer reproducible pipelines.
-- Safety constraints: leakage-safe evaluation; no raw WRDS data in repo.
-- Style constraints: `black`, `isort`, `ruff`.
+- It is not a broker or live-execution platform.
+- It does not guarantee alpha discovery.
+- It should not make external-facing performance claims unless the claim is
+  linked to an artifact, command, config, dataset id, and validation evidence.
+- It should not expose raw WRDS/CRSP exports or other restricted data.
 
-## Links
-- Docs: `README.md`, `docs/` (MkDocs site).
-- Issues: GitHub Issues (if enabled).
+## Audience
+
+- Human owner/reviewer deciding strategy and claim boundaries.
+- GPT 5.5 Pro Extended for strategic resets and long-horizon planning.
+- GPT 5.5 Thinking Heavy / Extra High for sprint selection and review.
+- Codex for implementation, validation, documentation, and bundle generation.
+
+## Current State
+
+- Sample and public-data workflows are present and testable without WRDS.
+- WRDS workflows exist but require local licensed exports via `WRDS_DATA_ROOT`.
+- The current result/evidence surface is summarized in
+  `project_state/CURRENT_RESULTS.md` and `project_state/CLAIMS_AND_EVIDENCE.md`.
+- Historical run logs, prompts, GPT outputs, and older project-state docs were
+  indexed under `docs/_archive/pre_ai_os_v2/20260703/`.
+- AI Project OS v2 canonical strategy docs now live under `docs/strategy/`.
+
+## High-Level Layout
+
+| Path | Purpose |
+|---|---|
+| `src/microalpha/` | package code: engine, data, execution, portfolio, risk, strategies, reporting |
+| `configs/` | reproducible YAML configs for sample, public, WRDS, and sweep workflows |
+| `tests/` | validation suite for chronology, reporting, configs, data policy, bundles, and CLI behavior |
+| `docs/` | MkDocs content, historical run logs/prompts, curated resume artifacts, strategy docs |
+| `docs/strategy/` | AI Project OS v2 canonical goals, plan, risks, decisions, tickets, carryover |
+| `project_state/` | factual repo state, runbook, validation matrix, claims/evidence |
+| `reports/` | report scripts, summaries, run-scoped outputs, and bundle output zone |
+| `artifacts/` | committed sample artifacts and ignored local/generated run artifacts |
+| `data/`, `data_sp500/` | bundled sample/public data and larger local data panels |
+| `tools/agentic/` | deterministic helper scripts for run logs, state refresh, and bundles |
+
+## Success Definition
+
+Near-term success is a Pro-reviewed strategy package that separates validated
+repo facts from historical context and selects the next high-leverage work
+frontier. Longer-term success is a defensible, reproducible research engine
+where every performance/result claim is artifact-backed, costs/baselines are
+present, and leakage/survivorship risks are actively guarded.
+
+## Non-Negotiable Constraints
+
+- No raw WRDS exports in bundles or git.
+- No lookahead, leakage, or same-tick unsafe claims in headline results.
+- No performance claims without evidence links and caveats.
+- No stale archived doc should be treated as current truth.
+- Product behavior should not change during documentation/tooling tickets unless
+  explicitly required and validated.
+
+## Canonical Current Docs
+
+- Agent rules: `AGENTS.md`
+- Strategy memory: `docs/strategy/`
+- Current state map: `project_state/STATE_INDEX.md`
+- Commands: `project_state/RUNBOOK.md`
+- Validation meaning: `project_state/VALIDATION_MATRIX.md`
+- Claims/evidence: `project_state/CLAIMS_AND_EVIDENCE.md`
+- Chronological log: `PROGRESS.md`

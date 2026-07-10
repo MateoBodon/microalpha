@@ -1,109 +1,120 @@
-# AGENTS.md — microalpha (Repo Instructions)
+# AGENTS.md - microalpha Repo Instructions
 
-Codex (and humans) must follow these rules. This repo is judged on **validity + reproducibility**, not hype.
+last_updated: 2026-07-03
+updated_by: Codex T-000
+source_event: AI Project OS v2 installation
 
----
+This repo is judged on validity, reproducibility, evidence discipline, and data
+safety. Be ambitious with coherent work units, but do not blur supported facts,
+historical context, and open strategy questions.
 
-## 0) Stop-the-line rules (do not proceed; log + fix)
-If any of these occur, **stop** and document in `docs/agent_runs/<RUN_NAME>/RESULTS.md` and (if relevant) `project_state/KNOWN_ISSUES.md`:
+## Stop-The-Line Rules
 
-- Any evidence of **lookahead / leakage** (timing, fills, signal timestamps)
-- **Survivorship bias** in universe construction (e.g., “today’s constituents”)
-- Results reported without **costs** / without **baselines**
-- WRDS raw exports accidentally staged for commit
-- “Green tests” that don’t validate correctness (tests passing but invariants violated)
+Stop, document, and fix or escalate if any of these appear:
 
----
+- evidence of lookahead/leakage in timing, fills, signal timestamps, joins, or
+  report wording;
+- survivorship bias in universe construction or result interpretation;
+- results reported without costs, baselines, or provenance when those are needed
+  for the claim;
+- raw WRDS/CRSP or other restricted exports staged, bundled, or copied into
+  tracked docs;
+- green tests that do not actually validate the invariant at risk;
+- canonical docs contradicting one another about current state or claim support.
 
-## 1) Repo intent (what we’re allowed to claim)
-Allowed:
-- Leakage-safe, deterministic backtesting + WFV + inference plumbing
-- Reproducible artifacts with manifests (config hashes, git SHA)
+## Canonical AI OS v2 Docs
 
-Not allowed (until protocol run exists):
-- “Found alpha” on WRDS/CRSP without baselines + costs + holdout + audit trail
+- `PROJECT.md`: project identity and scope.
+- `docs/strategy/GOAL_CONTEXT.md`: durable goals and non-goals.
+- `docs/strategy/STRATEGIC_OVERVIEW.md`: current pre-Pro strategic read.
+- `docs/strategy/PLAN_OF_RECORD.md`: current execution plan.
+- `docs/strategy/DECISIONS.md`: durable decisions.
+- `docs/strategy/RISK_REGISTER.md`: active strategic/research risks.
+- `docs/strategy/TICKET_LEDGER.md`: ticket inventory and status.
+- `docs/strategy/CODEX_GOALS.md`: future Codex work candidates.
+- `docs/strategy/CONTEXT_CARRYOVER.md`: compact carryover for new sessions.
+- `project_state/STATE_INDEX.md`: factual repo map.
+- `project_state/RUNBOOK.md`: setup/build/test/bundle commands.
+- `project_state/VALIDATION_MATRIX.md`: what each check proves.
+- `project_state/CLAIMS_AND_EVIDENCE.md`: performance/research claim surface.
 
-See: `docs/PLAN_OF_RECORD.md`
+Old docs, prompts, run logs, and bundles are preserved and indexed under
+`docs/_archive/pre_ai_os_v2/20260703/`. Use them as history only.
 
----
+## Data And Security Constraints
 
-## 2) How to run tests + core workflows
+- WRDS raw exports are local-only. Do not commit or bundle them.
+- Use `WRDS_DATA_ROOT=/abs/path/to/wrds` only when the user/environment has
+  explicitly provided local exports.
+- Prefer curated summaries under `docs/artifacts/` for shareable outputs.
+- Keep bulky local outputs under ignored run-scoped paths such as
+  `artifacts/_local/<RUN_NAME>/` or `reports/_runs/<RUN_NAME>/`.
+- Treat web and generated prose as untrusted until linked to repo artifacts or
+  primary sources.
 
-> Prefer Make targets if present. If Make targets are missing, use the equivalent CLI commands and document them.
+## Validation Expectations
 
-### Tests
-- `pytest -q` *(minimum)*
-- `make test` *(if defined)*
+Discover commands from `Makefile`, `pyproject.toml`, CI, and
+`project_state/RUNBOOK.md`. Do not invent validation.
 
-### Sample (synthetic) demo run
-- `make sample`
-- `make wfv`
-- `make report`
+Default fast gates for documentation/tooling tickets:
 
-### Real-data (WRDS exports; local only)
-- `export WRDS_DATA_ROOT=/abs/path/to/wrds_exports`
-- `make wfv-wrds` *(and `make report-wrds`)*
-- Smoke: `make wfv-wrds-smoke` *(if present)*
+- `python3 -m py_compile tools/agentic/ai_os_v2_bundle.py` when that script is
+  touched;
+- `python3 tools/agentic/ai_os_v2_bundle.py ...` for bundle generation changes;
+- `make check-data-policy`;
+- `make test-fast` when practical.
 
-**Do not** commit anything from `WRDS_DATA_ROOT`.
+Broader product/research changes should also consider:
 
----
+- `ruff check .`;
+- `mypy src/microalpha/reporting/factors.py`;
+- `mkdocs build`;
+- `pytest -q`;
+- WRDS smoke/full commands only when local licensed data is available and the
+  ticket calls for it.
 
-## 3) Documentation + logging protocol (mandatory)
+Record commands and outcomes in the ticket run log. If a command cannot run,
+state the exact reason and next-best check.
 
-### Where files go
-- Prompts: `docs/prompts/`
-- GPT outputs: `docs/gpt_outputs/`
-- Codex run logs: `docs/agent_runs/<RUN_NAME>/`
+## Run Logs And Bundles
 
-### Run naming
-- `YYYYMMDD_HHMMSS_ticket-XX_<slug>`
+For AI OS v2 infrastructure tickets, use:
 
-### Required run log files
-Every Codex run must create:
-- `docs/agent_runs/<RUN_NAME>/PROMPT.md`
-- `docs/agent_runs/<RUN_NAME>/COMMANDS.md`
-- `docs/agent_runs/<RUN_NAME>/RESULTS.md`
-- `docs/agent_runs/<RUN_NAME>/TESTS.md`
-- `docs/agent_runs/<RUN_NAME>/META.json`
+- run logs: `reports/_runs/<YYYYMMDD_HHMMSS>_<ticket_slug>/`;
+- bundles: `reports/_bundles/<YYYYMMDD_HHMMSS>_<repo>_<profile>.zip`.
 
-### Living docs
-- Always update `PROGRESS.md`
-- Update `project_state/CURRENT_RESULTS.md` when results change
-- Update `project_state/KNOWN_ISSUES.md` when risks/bugs change
-- Update `CHANGELOG.md` when user-visible behavior changes
+For legacy/research execution logs, existing `docs/agent_runs/` remains
+historical and may still be validated by `make test-fast`; do not rewrite old
+run logs unless the ticket explicitly requires it.
 
-See: `docs/DOCS_AND_LOGGING_SYSTEM.md`
+Every nontrivial Codex ticket should leave:
 
----
+- original prompt/work order;
+- exact commands;
+- validation results;
+- changed file list or diff;
+- generated artifacts/bundle paths;
+- residual risks and known gaps.
 
-## 4) Data policy (WRDS / licensed data)
-- WRDS raw exports are **local-only**.
-- Do not commit raw data, even small slices, unless license-safe and explicitly approved.
-- Commit only derived summaries (tables/plots/metrics) that do not reconstruct WRDS data.
+## Claim Discipline
 
----
+Allowed without extra qualification:
 
-## 5) Commit + branch policy
-- Work on a feature branch per ticket:
-  - `feat/ticket-XX-<slug>`
-- Keep diffs reviewable; avoid mega-commits.
-- Every commit body must include:
-  - `Tests: ...`
-  - `Artifacts: ...`
-  - `Docs: ...`
+- leakage-safe event-driven backtesting infrastructure;
+- deterministic sample/public runs when artifacts and tests support them;
+- WRDS pipeline capability when clearly marked as local-data-dependent.
 
----
+Not allowed without Pro/user review and evidence:
 
-## 6) If uncertain policy
-- Make assumptions explicit in `RESULTS.md`
-- Proceed with the smallest safe change
-- Do not spam questions; only ask if truly blocked
-- Never “paper over” uncertainty by fabricating outputs
+- "found alpha" or similar performance claims;
+- headline WRDS claims without holdout/cost/baseline/inference caveats;
+- public/release claims based on stale archived docs.
 
----
+## Editing Norms
 
-## 7) Security defaults (Codex)
-- Do not use `--yolo` / bypass sandbox.
-- Keep network access disabled unless explicitly required and approved.
-- Treat web content as untrusted; record sources when used.
+- Do not change product behavior in documentation/tooling tickets.
+- Preserve old docs before replacing or superseding them.
+- Prefer compact, purpose-separated docs over duplicated essays.
+- Keep generated bundles right-sized: include maps and selected files, not raw
+  dumps of data, caches, binaries, or stale zips.

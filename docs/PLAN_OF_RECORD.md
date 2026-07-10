@@ -1,5 +1,10 @@
 # PLAN OF RECORD — microalpha
 
+> AI Project OS v2 note (2026-07-03): this pre-v2 plan is preserved for
+> historical context. The canonical current plan is
+> `docs/strategy/PLAN_OF_RECORD.md`, and the pre-v2 copy is archived under
+> `docs/_archive/pre_ai_os_v2/20260703/`.
+
 ## What this repo is trying to prove (core claim)
 - microalpha is a **leakage-safe**, **deterministic**, **event-driven** backtesting + **walk-forward** research system that produces **audit-grade artifacts** (manifest, configs, trade logs, reports).
 - Secondary claim (only after validity is locked): the repo can run a **bias-aware** evaluation of a pre-specified equity strategy on **real WRDS/CRSP data**. This is *not* an “alpha discovery” claim by default.
