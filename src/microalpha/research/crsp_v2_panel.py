@@ -205,10 +205,12 @@ def build_monthly_panel(
 
     ``stage='selection'`` never opens final-holdout daily partitions and only
     materializes side-table rows that match opened daily rows through the
-    validation cutoff. The side tables are gzip CSVs, so their unpartitioned
-    source bytes are necessarily scanned to apply that filter; the receipt says
-    so explicitly. ``stage='final'`` requires a protocol-bound frozen model
-    receipt before any final-holdout daily partition is opened.
+    validation cutoff. The CIZ daily row is the authoritative point-in-time
+    source; ``stocknames_v2`` is used only to audit date coverage and overlapping
+    history. The side tables are gzip CSVs, so their unpartitioned source bytes
+    are necessarily scanned to apply that filter; the receipt says so explicitly.
+    ``stage='final'`` requires a protocol-bound frozen model receipt before any
+    final-holdout daily partition is opened.
     """
 
     if stage not in {"selection", "final"}:
@@ -384,36 +386,51 @@ def build_monthly_panel(
                         AND coalesce(n.nameenddt, DATE '9999-12-31')
               )
             """)
-        bad_name_matches = connection.execute("""
-            SELECT count(*) FROM (
-                SELECT d.permno, d.date, count(n.permno) AS matches
+        name_match_summary = connection.execute("""
+            SELECT
+                count(*) FILTER (WHERE source_matches = 0) AS missing_rows,
+                count(*) FILTER (WHERE source_matches > 1) AS ambiguous_rows,
+                count(DISTINCT permno) FILTER (
+                    WHERE source_matches = 0
+                ) AS missing_permnos,
+                min(date) FILTER (WHERE source_matches = 0) AS first_missing_date,
+                max(date) FILTER (WHERE source_matches = 0) AS last_missing_date,
+                max(source_matches) AS maximum_matches
+            FROM (
+                SELECT d.permno, d.date, count(n.permno) AS source_matches
                 FROM daily d
                 LEFT JOIN names n
                   ON d.permno = n.permno
-                 AND d.date BETWEEN n.namedt AND coalesce(n.nameenddt, DATE '9999-12-31')
+                 AND d.date BETWEEN n.namedt
+                     AND coalesce(n.nameenddt, DATE '9999-12-31')
                 WHERE coalesce(d.dlydelflg, 'N') <> 'Y'
                 GROUP BY d.permno, d.date
-                HAVING count(n.permno) <> 1
-            )
-            """).fetchone()[0]
-        if bad_name_matches:
+            ) match_counts
+            """).fetchone()
+        missing_name_matches = int(name_match_summary[0])
+        ambiguous_name_matches = int(name_match_summary[1])
+        maximum_name_matches = int(name_match_summary[5])
+        if missing_name_matches:
             raise CRSPV2Error(
-                f"Point-in-time stocknames match failed for {bad_name_matches} rows"
+                "Point-in-time stocknames coverage failed: "
+                f"missing_rows={missing_name_matches}, "
+                f"affected_permnos={int(name_match_summary[2])}, "
+                f"date_range={name_match_summary[3]}..{name_match_summary[4]}"
             )
 
         connection.execute("""
             CREATE TEMP VIEW daily_resolved AS
             SELECT
                 d.permno,
-                coalesce(n.permco, d.permco) AS permco,
-                coalesce(n.siccd, d.siccd) AS siccd,
-                coalesce(n.sharetype, d.sharetype) AS sharetype,
-                coalesce(n.securitytype, d.securitytype) AS securitytype,
-                coalesce(n.securitysubtype, d.securitysubtype) AS securitysubtype,
-                coalesce(n.usincflg, d.usincflg) AS usincflg,
-                coalesce(n.primaryexch, d.primaryexch) AS primaryexch,
-                coalesce(n.conditionaltype, d.conditionaltype) AS conditionaltype,
-                coalesce(n.tradingstatusflg, d.tradingstatusflg) AS tradingstatusflg,
+                d.permco,
+                d.siccd,
+                d.sharetype,
+                d.securitytype,
+                d.securitysubtype,
+                d.usincflg,
+                d.primaryexch,
+                d.conditionaltype,
+                d.tradingstatusflg,
                 d.date,
                 d.dlydelflg,
                 d.price,
@@ -425,12 +442,8 @@ def build_monthly_panel(
                 d.bid,
                 d.ask,
                 d.open,
-                coalesce(n.ticker, d.ticker) AS ticker
+                d.ticker
             FROM daily d
-            LEFT JOIN names n
-              ON coalesce(d.dlydelflg, 'N') <> 'Y'
-             AND d.permno = n.permno
-             AND d.date BETWEEN n.namedt AND coalesce(n.nameenddt, DATE '9999-12-31')
             """)
 
         connection.execute(f"""
@@ -505,7 +518,9 @@ def build_monthly_panel(
                 (SELECT max(deldlydt) FROM delists) AS max_deldlydt,
                 (SELECT count(*) FROM delists
                     WHERE deldlydt > DATE {_sql_literal(validation_end)})
-                    AS post_validation_delist_rows
+                    AS post_validation_delist_rows,
+                {ambiguous_name_matches} AS overlapping_name_history_daily_rows,
+                {maximum_name_matches} AS maximum_date_valid_name_matches
             """).fetchone()
 
         connection.execute("""
@@ -662,6 +677,13 @@ def build_monthly_panel(
                 ),
                 "max_effective_nameenddt": (
                     None if access_summary[4] is None else str(access_summary[4])
+                ),
+                "daily_rows_without_date_valid_name": missing_name_matches,
+                "daily_rows_with_overlapping_name_history": int(access_summary[9]),
+                "maximum_date_valid_name_matches": int(access_summary[10]),
+                "attribute_resolution": (
+                    "CIZ daily row is authoritative; stocknames_v2 is a "
+                    "date-coverage and overlap audit only"
                 ),
             },
             "stkdelists": {
