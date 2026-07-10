@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import subprocess
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Mapping
@@ -148,6 +150,48 @@ def _git_sha() -> str:
         return "unknown"
 
 
+def _require_new_artifact_paths(output_path: Path, manifest_path: Path) -> None:
+    """Fail closed before work if either final artifact name is already occupied."""
+
+    occupied = [
+        str(path)
+        for path in (output_path, manifest_path)
+        if os.path.lexists(path)
+    ]
+    if occupied:
+        raise CRSPV2Error(
+            "Refusing to overwrite existing panel artifacts: " + ", ".join(occupied)
+        )
+
+
+def _publish_artifact_pair_no_clobber(
+    staged_output: Path,
+    output_path: Path,
+    staged_manifest: Path,
+    manifest_path: Path,
+) -> None:
+    """Publish two same-filesystem artifacts without replacing either target."""
+
+    published: list[tuple[Path, Path]] = []
+    try:
+        for source, destination in (
+            (staged_output, output_path),
+            (staged_manifest, manifest_path),
+        ):
+            os.link(source, destination)
+            published.append((source, destination))
+    except OSError as exc:
+        for source, destination in reversed(published):
+            try:
+                if destination.exists() and os.path.samefile(source, destination):
+                    destination.unlink()
+            except OSError:
+                pass
+        raise CRSPV2Error(
+            "Panel artifact pair could not be published without clobbering"
+        ) from exc
+
+
 def build_monthly_panel(
     protocol_path: str | Path,
     output_path: str | Path,
@@ -159,9 +203,12 @@ def build_monthly_panel(
 ) -> dict[str, Any]:
     """Build a derived monthly panel without exposing raw licensed rows.
 
-    ``stage='selection'`` physically excludes final-holdout partitions from the
-    DuckDB input list. ``stage='final'`` requires a protocol-bound frozen model
-    receipt before any holdout file is opened.
+    ``stage='selection'`` never opens final-holdout daily partitions and only
+    materializes side-table rows that match opened daily rows through the
+    validation cutoff. The side tables are gzip CSVs, so their unpartitioned
+    source bytes are necessarily scanned to apply that filter; the receipt says
+    so explicitly. ``stage='final'`` requires a protocol-bound frozen model
+    receipt before any final-holdout daily partition is opened.
     """
 
     if stage not in {"selection", "final"}:
@@ -169,7 +216,10 @@ def build_monthly_panel(
     protocol_path = Path(protocol_path).expanduser().resolve()
     protocol = load_protocol(protocol_path)
     protocol_digest = protocol_sha256(protocol_path)
-    audit = audit_source_protocol(protocol_path)
+    output_path = Path(output_path).expanduser().resolve()
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    manifest_path = output_path.with_suffix(output_path.suffix + ".manifest.json")
+    _require_new_artifact_paths(output_path, manifest_path)
     frozen_model: dict[str, Any] | None = None
     if stage == "final":
         if frozen_model_path is None:
@@ -179,8 +229,16 @@ def build_monthly_panel(
             protocol=protocol,
             expected_protocol_sha256=protocol_digest,
         )
+    audit = audit_source_protocol(protocol_path)
 
-    validation_end_year = int(str(protocol["windows"]["validation"]["end"])[:4])
+    selection_start = str(protocol["windows"]["warmup"]["start"])
+    validation_end = str(protocol["windows"]["validation"]["end"])
+    validation_end_year = int(validation_end[:4])
+    materialization_end = (
+        validation_end
+        if stage == "selection"
+        else str(protocol["windows"]["final_holdout"]["end"])
+    )
     source_paths = list(audit["primary"]["paths"])
     if stage == "selection":
         source_paths = [
@@ -202,8 +260,12 @@ def build_monthly_panel(
     delists_path = side_paths["stkdelists"]["path"]
     rules = protocol["universe"]["filters_at_formation_date"]
 
-    output_path = Path(output_path).expanduser().resolve()
-    output_path.parent.mkdir(parents=True, exist_ok=True)
+    staging_directory = tempfile.TemporaryDirectory(
+        prefix=f".{output_path.name}.staging-", dir=output_path.parent
+    )
+    staging_root = Path(staging_directory.name)
+    staged_output_path = staging_root / output_path.name
+    staged_manifest_path = staging_root / manifest_path.name
     if temp_directory is None:
         temp_directory = output_path.parent / "_duckdb_tmp"
     temp_directory = Path(temp_directory).expanduser().resolve()
@@ -224,18 +286,6 @@ def build_monthly_panel(
             )
             """)
         connection.execute(f"""
-            CREATE TEMP VIEW names_raw AS
-            SELECT * FROM read_csv(
-                {_sql_literal(names_path)}, header=true, all_varchar=true
-            )
-            """)
-        connection.execute(f"""
-            CREATE TEMP VIEW delists_raw AS
-            SELECT * FROM read_csv(
-                {_sql_literal(delists_path)}, header=true, all_varchar=true
-            )
-            """)
-        connection.execute("""
             CREATE TEMP TABLE daily AS
             SELECT
                 try_cast(permno AS BIGINT) AS permno,
@@ -263,6 +313,9 @@ def build_monthly_panel(
             FROM daily_raw
             WHERE try_cast(permno AS BIGINT) IS NOT NULL
               AND try_cast(dlycaldt AS DATE) IS NOT NULL
+              AND try_cast(dlycaldt AS DATE) BETWEEN
+                  DATE {_sql_literal(selection_start)}
+                  AND DATE {_sql_literal(materialization_end)}
             """)
         duplicate_daily = connection.execute("""
             SELECT count(*) FROM (
@@ -275,24 +328,61 @@ def build_monthly_panel(
         if duplicate_daily:
             raise CRSPV2Error("CRSP-v2 daily permno/date keys are not unique")
 
-        connection.execute("""
+        effective_name_end = (
+            "least(coalesce(n.nameenddt, DATE '9999-12-31'), "
+            f"DATE {_sql_literal(validation_end)})"
+            if stage == "selection"
+            else "n.nameenddt"
+        )
+        connection.execute(f"""
             CREATE TEMP TABLE names AS
+            WITH parsed AS (
+                SELECT
+                    try_cast(permno AS BIGINT) AS permno,
+                    try_cast(permco AS BIGINT) AS permco,
+                    try_cast(namedt AS DATE) AS namedt,
+                    try_cast(nameenddt AS DATE) AS nameenddt,
+                    ticker,
+                    primaryexch,
+                    conditionaltype,
+                    tradingstatusflg,
+                    sharetype,
+                    securitytype,
+                    securitysubtype,
+                    usincflg,
+                    try_cast(siccd AS INTEGER) AS siccd
+                FROM read_csv(
+                    {_sql_literal(names_path)}, header=true, all_varchar=true
+                )
+            )
             SELECT
-                try_cast(permno AS BIGINT) AS permno,
-                try_cast(permco AS BIGINT) AS permco,
-                try_cast(namedt AS DATE) AS namedt,
-                try_cast(nameenddt AS DATE) AS nameenddt,
-                ticker,
-                primaryexch,
-                conditionaltype,
-                tradingstatusflg,
-                sharetype,
-                securitytype,
-                securitysubtype,
-                usincflg,
-                try_cast(siccd AS INTEGER) AS siccd
-            FROM names_raw
-            WHERE try_cast(permno AS BIGINT) IS NOT NULL
+                n.permno,
+                n.permco,
+                n.namedt,
+                {effective_name_end} AS nameenddt,
+                n.ticker,
+                n.primaryexch,
+                n.conditionaltype,
+                n.tradingstatusflg,
+                n.sharetype,
+                n.securitytype,
+                n.securitysubtype,
+                n.usincflg,
+                n.siccd
+            FROM parsed n
+            WHERE n.permno IS NOT NULL
+              AND n.namedt IS NOT NULL
+              AND n.namedt <= DATE {_sql_literal(materialization_end)}
+              AND coalesce(n.nameenddt, DATE '9999-12-31') >=
+                  DATE {_sql_literal(selection_start)}
+              AND EXISTS (
+                  SELECT 1
+                  FROM daily d
+                  WHERE coalesce(d.dlydelflg, 'N') <> 'Y'
+                    AND d.permno = n.permno
+                    AND d.date BETWEEN n.namedt
+                        AND coalesce(n.nameenddt, DATE '9999-12-31')
+              )
             """)
         bad_name_matches = connection.execute("""
             SELECT count(*) FROM (
@@ -343,16 +433,27 @@ def build_monthly_panel(
              AND d.date BETWEEN n.namedt AND coalesce(n.nameenddt, DATE '9999-12-31')
             """)
 
-        connection.execute("""
+        connection.execute(f"""
             CREATE TEMP TABLE delists AS
-            SELECT
-                try_cast(permno AS BIGINT) AS permno,
-                try_cast(deldlydt AS DATE) AS deldlydt,
-                try_cast(delret AS DOUBLE) AS delret,
-                delretmisstype
-            FROM delists_raw
-            WHERE try_cast(permno AS BIGINT) IS NOT NULL
-              AND try_cast(deldlydt AS DATE) IS NOT NULL
+            WITH parsed AS (
+                SELECT
+                    try_cast(permno AS BIGINT) AS permno,
+                    try_cast(deldlydt AS DATE) AS deldlydt,
+                    try_cast(delret AS DOUBLE) AS delret,
+                    delretmisstype
+                FROM read_csv(
+                    {_sql_literal(delists_path)}, header=true, all_varchar=true
+                )
+            )
+            SELECT x.*
+            FROM parsed x
+            JOIN daily d
+              ON d.dlydelflg = 'Y'
+             AND d.permno = x.permno
+             AND d.date = x.deldlydt
+            WHERE x.permno IS NOT NULL
+              AND x.deldlydt BETWEEN DATE {_sql_literal(selection_start)}
+                  AND DATE {_sql_literal(materialization_end)}
             """)
         duplicate_delists = connection.execute("""
             SELECT count(*) FROM (
@@ -387,6 +488,25 @@ def build_monthly_panel(
             raise CRSPV2Error(
                 f"CIZ/stkdelists reconciliation failed for {delisting_mismatches} rows"
             )
+        access_summary = connection.execute(f"""
+            SELECT
+                (SELECT count(*) FROM daily) AS daily_rows,
+                (SELECT count(*) FROM daily
+                    WHERE date > DATE {_sql_literal(validation_end)})
+                    AS post_validation_daily_rows,
+                (SELECT count(*) FROM names) AS name_rows,
+                (SELECT max(namedt) FROM names) AS max_namedt,
+                (SELECT max(nameenddt) FROM names) AS max_nameenddt,
+                (SELECT count(*) FROM names
+                    WHERE namedt > DATE {_sql_literal(validation_end)}
+                       OR nameenddt > DATE {_sql_literal(validation_end)})
+                    AS post_validation_name_rows,
+                (SELECT count(*) FROM delists) AS delist_rows,
+                (SELECT max(deldlydt) FROM delists) AS max_deldlydt,
+                (SELECT count(*) FROM delists
+                    WHERE deldlydt > DATE {_sql_literal(validation_end)})
+                    AS post_validation_delist_rows
+            """).fetchone()
 
         connection.execute("""
             CREATE TEMP VIEW daily_features AS
@@ -476,15 +596,13 @@ def build_monthly_panel(
             FROM monthly
             """)
 
-        if output_path.exists():
-            output_path.unlink()
         connection.execute(f"""
             COPY (
                 SELECT * FROM monthly_panel
                 WHERE split <> 'outside'
                   {"AND split <> 'final_holdout'" if stage == "selection" else ""}
                 ORDER BY formation_date, permno
-            ) TO {_sql_literal(output_path)}
+            ) TO {_sql_literal(staged_output_path)}
             (FORMAT PARQUET, COMPRESSION ZSTD, ROW_GROUP_SIZE 100000)
             """)
         summary_row = connection.execute(f"""
@@ -495,13 +613,12 @@ def build_monthly_panel(
                 max(formation_date) AS max_date,
                 count(*) FILTER (WHERE eligible_at_formation) AS eligible_rows,
                 sum(delisting_pseudo_days) AS delisting_pseudo_days
-            FROM read_parquet({_sql_literal(output_path)})
+            FROM read_parquet({_sql_literal(staged_output_path)})
             """).fetchone()
     finally:
         connection.close()
 
-    output_digest = sha256_file(output_path)
-    manifest_path = output_path.with_suffix(output_path.suffix + ".manifest.json")
+    output_digest = sha256_file(staged_output_path)
     manifest_payload: dict[str, Any] = {
         "schema_version": "microalpha-derived-crsp-v2-panel/v1",
         "created_at_utc": datetime.now(timezone.utc).isoformat(),
@@ -515,13 +632,51 @@ def build_monthly_panel(
         "source_partition_count": len(source_paths),
         "source_partitions": source_paths,
         "holdout_headers_verified": True,
-        "holdout_outcome_rows_read": stage == "final",
+        "access_contract": {
+            "primary_holdout_partitions_opened_for_outcome_rows": any(
+                int(Path(path).parent.name.split("=")[1]) > validation_end_year
+                for path in source_paths
+            ),
+            "primary_post_validation_rows_materialized": int(access_summary[1]),
+            "side_table_source_layout": "unpartitioned_gzip_csv",
+            "side_table_source_bytes_scan_scope": "full_files_for_date_key_filter",
+            "side_table_materialization_end": materialization_end,
+            "post_validation_stocknames_rows_materialized": int(access_summary[5]),
+            "post_validation_delisting_rows_materialized": int(access_summary[8]),
+            "stage_access_summary": (
+                "No final-holdout daily partition is opened beyond permitted header "
+                "verification; unpartitioned side-table files are scanned, but only "
+                "rows matching opened daily rows through the validation cutoff are "
+                "materialized, checked, reconciled, or used."
+                if stage == "selection"
+                else "The protocol-bound frozen-model receipt was validated before "
+                "final-holdout daily outcome rows and matching side-table rows were "
+                "materialized."
+            ),
+        },
+        "side_table_materialization": {
+            "stocknames_v2": {
+                "rows": int(access_summary[2]),
+                "max_namedt": (
+                    None if access_summary[3] is None else str(access_summary[3])
+                ),
+                "max_effective_nameenddt": (
+                    None if access_summary[4] is None else str(access_summary[4])
+                ),
+            },
+            "stkdelists": {
+                "rows": int(access_summary[6]),
+                "max_deldlydt": (
+                    None if access_summary[7] is None else str(access_summary[7])
+                ),
+            },
+        },
         "frozen_model": frozen_model,
         "git_sha": _git_sha(),
         "output": {
             "path": str(output_path),
             "sha256": output_digest,
-            "size_bytes": output_path.stat().st_size,
+            "size_bytes": staged_output_path.stat().st_size,
             "rows": int(summary_row[0]),
             "permnos": int(summary_row[1]),
             "min_date": str(summary_row[2]),
@@ -531,13 +686,19 @@ def build_monthly_panel(
         },
         "return_semantics": "CIZ dlyret used once; stkdelists is reconciliation-only",
     }
-    manifest_path.write_text(
+    staged_manifest_path.write_text(
         json.dumps(manifest_payload, indent=2, sort_keys=True), encoding="utf-8"
     )
+    manifest_digest = hashlib.sha256(staged_manifest_path.read_bytes()).hexdigest()
+    _publish_artifact_pair_no_clobber(
+        staged_output_path,
+        output_path,
+        staged_manifest_path,
+        manifest_path,
+    )
     manifest_payload["manifest_path"] = str(manifest_path)
-    manifest_payload["manifest_sha256"] = hashlib.sha256(
-        manifest_path.read_bytes()
-    ).hexdigest()
+    manifest_payload["manifest_sha256"] = manifest_digest
+    staging_directory.cleanup()
     return manifest_payload
 
 

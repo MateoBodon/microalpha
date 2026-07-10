@@ -588,9 +588,10 @@ def industry_neutral_weights(
     volatility_column: str = "volatility_126d",
     sleeve_fraction: float = 0.10,
     target_gross: float = 1.0,
+    max_industry_gross_weight: float,
     max_single_name_weight: float | None = None,
 ) -> pd.Series:
-    """Construct exactly industry-neutral long/short target weights."""
+    """Construct industry-neutral weights under required name/industry caps."""
 
     required = {"permno", "industry", score_column}
     if missing := required.difference(snapshot.columns):
@@ -603,6 +604,10 @@ def industry_neutral_weights(
         raise CRSPV2Error(f"Snapshot missing {volatility_column}")
     if not 0.0 < sleeve_fraction <= 0.5:
         raise CRSPV2Error("sleeve_fraction must be in (0, 0.5]")
+    if target_gross <= 0.0:
+        raise CRSPV2Error("target_gross must be positive")
+    if max_industry_gross_weight <= 0.0:
+        raise CRSPV2Error("max_industry_gross_weight must be positive")
     if max_single_name_weight is not None and max_single_name_weight <= 0.0:
         raise CRSPV2Error("max_single_name_weight must be positive")
 
@@ -621,10 +626,18 @@ def industry_neutral_weights(
     if not groups:
         raise CRSPV2Error("No industry contains enough securities for two sleeves")
 
-    total_eligible = sum(count for _, _, _, count in groups)
+    industry_allocations = _capped_allocation(
+        pd.Series(
+            {industry: float(count) for industry, _, _, count in groups},
+            dtype=float,
+        ),
+        total=target_gross,
+        cap=max_industry_gross_weight,
+        cap_label="Industry gross",
+    )
     weights: dict[Any, float] = {}
-    for _, longs, shorts, count in groups:
-        industry_gross = target_gross * count / total_eligible
+    for industry, longs, shorts, _ in groups:
+        industry_gross = float(industry_allocations.loc[industry])
         for sleeve, sign in ((longs, 1.0), (shorts, -1.0)):
             if weighting == "equal":
                 raw = pd.Series(1.0, index=sleeve.index)
@@ -637,6 +650,7 @@ def industry_neutral_weights(
                 raw,
                 total=industry_gross * 0.5,
                 cap=max_single_name_weight,
+                cap_label="Single-name",
             )
             for row_index, weight in allocation.items():
                 permno = sleeve.loc[row_index, "permno"]
@@ -649,6 +663,11 @@ def industry_neutral_weights(
     industry_net = result.groupby(industry_by_permno.reindex(result.index)).sum()
     if not np.allclose(industry_net.to_numpy(), 0.0, atol=1e-12):
         raise CRSPV2Error("Constructed weights are not industry neutral")
+    industry_gross = result.abs().groupby(
+        industry_by_permno.reindex(result.index)
+    ).sum()
+    if industry_gross.max() > max_industry_gross_weight + 1e-12:
+        raise CRSPV2Error("Constructed weights exceed the industry gross cap")
     if max_single_name_weight is not None and result.abs().max() > (
         max_single_name_weight + 1e-12
     ):
@@ -661,6 +680,7 @@ def _capped_allocation(
     *,
     total: float,
     cap: float | None,
+    cap_label: str,
 ) -> pd.Series:
     """Normalize positive scores to a target, redistributing any capped excess."""
 
@@ -670,7 +690,7 @@ def _capped_allocation(
     if cap is None:
         return values / values.sum() * total
     if len(values) * cap + 1e-12 < total:
-        raise CRSPV2Error("Single-name cap is infeasible for the selected sleeve")
+        raise CRSPV2Error(f"{cap_label} cap is infeasible for the allocation")
 
     allocation = pd.Series(0.0, index=values.index)
     remaining = values.index

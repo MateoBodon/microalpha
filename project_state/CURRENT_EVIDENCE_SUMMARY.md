@@ -12,7 +12,7 @@ started.
 - Protocol: `docs/strategy/MICROALPHA_FLAGSHIP_20260710.yaml`
 - Protocol ID: `crsp-v2-industry-neutral-momentum-20260710`
 - Protocol SHA256:
-  `b51d50ccfcf1cc368558d49afc5bd9386120efe92bdd03a7d43d7791be971743`
+  `f88df6c93d3a83ddf76be6e198fc567122f18b39204b8565290e09969f1af75e`
 - Real-data scope: CRSP CIZ `dsf_v2`, 2005-2025, 40,402,817 daily rows,
   point-in-time `stocknames_v2`, `stkdelists`, CRSP DSI, and manifest-bound Ken
   French factor/momentum files.
@@ -38,19 +38,25 @@ but every item used by this protocol is independently `ok` and path-bound.
 The adapter now:
 
 - physically omits post-2022 partitions from selection-stage DuckDB inputs;
+- truthfully records that unpartitioned gzip side tables require full-file byte
+  scans, while materializing and reconciling only rows matching opened daily
+  rows through the stage cutoff;
 - requires a protocol-hash-bound frozen model receipt before final-stage input;
 - resolves formation attributes from exactly one date-valid stocknames row;
 - reconciles CIZ delisting pseudo-days to `stkdelists` and uses `dlyret` once;
-- constructs the exact FF12 point-in-time universe and industry-neutral weights;
+- constructs the exact FF12 point-in-time universe and industry-neutral weights
+  under the required 15% industry gross cap;
+- publishes the panel and manifest through staged, no-clobber artifact paths;
 - records turnover, capacity constraints, cost components, source partitions,
   output digest, and split coverage in derived manifests; and
 - records canonical-YAML and exact-file config hashes separately in standard
   run manifests.
 
-Bounded validation: seven targeted unit/integration tests pass, including a tiny
+Bounded validation: ten targeted unit/integration tests pass, including a tiny
 synthetic DuckDB panel that proves selection-stage holdout exclusion, frozen
-model gating, and one-time delisting aggregation. Synthetic fixtures are only
-mechanism tests and are not research results.
+model gating, side-table sentinel exclusion, one-time delisting aggregation,
+industry-cap redistribution, and no-clobber/failed-build behavior. Synthetic
+fixtures are only mechanism tests and are not research results.
 
 No 2023-2025 return performance, signal-return correlation, candidate ranking,
 or threshold result was inspected. No full panel or flagship result exists yet.
@@ -81,7 +87,7 @@ record both.
 | Claim surface | Status | Reason |
 |---|---|---|
 | CRSP-v2 real-data sources are locally available and protocol-bound | supported | Live digest, item, size, count, and header audit passed. |
-| Adapter enforces the declared split and delisting/identity mechanics | supported for bounded tests | Unit and synthetic integration coverage pass; the large real panel is not built yet. |
+| Adapter enforces the declared split, truthful side-table scan boundary, delisting/identity mechanics, industry cap, and no-clobber output | supported for bounded tests | Unit and synthetic integration coverage pass; the large real panel is not built yet. |
 | 2023-2025 holdout remains sealed from model selection | supported to date | Only permitted metadata/header checks occurred; no holdout outcome analysis occurred. |
 | Legacy curated numbers are historical artifact facts | supported with caveats | Small curated files exist, but source artifacts are missing. |
 | Legacy run is an independent holdout or alpha result | blocked | The stated holdout was used for model selection and RC p=`0.941`. |
@@ -91,5 +97,6 @@ record both.
 
 When the portfolio's single memory-heavy slot is released, build the selection
 panel through 2022 only, validate integrity, execute the six predeclared
-candidates, and freeze the selected model before any 2023-2025 outcome row is
-opened.
+candidates, and freeze the selected model before any 2023-2025 daily outcome is
+opened beyond header verification or any post-validation side-table row is
+materialized.

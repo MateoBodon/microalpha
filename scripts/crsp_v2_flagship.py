@@ -25,7 +25,10 @@ def _parser() -> argparse.ArgumentParser:
 
     selection = subparsers.add_parser(
         "build-selection-panel",
-        help="Build selection panel without reading holdout outcome rows",
+        help=(
+            "Build through validation without opening holdout daily partitions; "
+            "unpartitioned side tables are scanned and date/key filtered"
+        ),
     )
     selection.add_argument("--output", type=Path, required=True)
     selection.add_argument("--memory-limit", default="4GB")
