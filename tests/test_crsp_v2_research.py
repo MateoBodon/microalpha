@@ -148,6 +148,7 @@ def test_industry_neutral_weights_capacity_turnover_and_costs() -> None:
         weighting="inverse_vol_126d",
         sleeve_fraction=0.25,
         target_gross=1.0,
+        max_industry_gross_weight=0.50,
         max_single_name_weight=0.30,
     )
     assert target.abs().sum() == pytest.approx(1.0)
@@ -203,8 +204,52 @@ def test_inverse_volatility_name_cap_redistributes_without_losing_neutrality() -
         weighting="inverse_vol_126d",
         sleeve_fraction=0.25,
         target_gross=1.0,
+        max_industry_gross_weight=1.0,
         max_single_name_weight=0.30,
     )
     assert weights.abs().max() <= 0.30 + 1e-12
     assert weights.abs().sum() == pytest.approx(1.0)
     assert weights.sum() == pytest.approx(0.0)
+
+
+def test_industry_gross_cap_redistributes_and_fails_when_infeasible() -> None:
+    rows: list[dict[str, float | int | str]] = []
+    permno = 1
+    for industry, count in [("BusEq", 10)] + [
+        (f"Industry-{index}", 2) for index in range(1, 8)
+    ]:
+        for rank in range(count):
+            rows.append(
+                {
+                    "permno": permno,
+                    "industry": industry,
+                    "score": float(count - rank),
+                    "volatility_126d": 0.02,
+                }
+            )
+            permno += 1
+    snapshot = pd.DataFrame(rows)
+
+    weights = industry_neutral_weights(
+        snapshot,
+        weighting="equal",
+        sleeve_fraction=0.50,
+        target_gross=1.0,
+        max_industry_gross_weight=0.15,
+        max_single_name_weight=0.10,
+    )
+    industry = snapshot.set_index("permno")["industry"]
+    industry_gross = weights.abs().groupby(industry.reindex(weights.index)).sum()
+    assert industry_gross.max() <= 0.15 + 1e-12
+    assert industry_gross.loc["BusEq"] == pytest.approx(0.15)
+    assert weights.abs().sum() == pytest.approx(1.0)
+
+    with pytest.raises(CRSPV2Error, match="Industry gross cap is infeasible"):
+        industry_neutral_weights(
+            snapshot.loc[snapshot["industry"].isin(["BusEq", "Industry-1"])],
+            weighting="equal",
+            sleeve_fraction=0.50,
+            target_gross=1.0,
+            max_industry_gross_weight=0.15,
+            max_single_name_weight=0.10,
+        )

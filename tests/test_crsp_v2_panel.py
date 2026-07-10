@@ -10,6 +10,7 @@ import duckdb
 import pytest
 import yaml
 
+import microalpha.research.crsp_v2_panel as panel_module
 from microalpha.research.crsp_v2 import (
     CRSPV2Error,
     audit_source_protocol,
@@ -166,7 +167,22 @@ def _fixture_protocol(tmp_path: Path) -> Path:
                 "securitysubtype": "COM",
                 "usincflg": "Y",
                 "siccd": 3571,
-            }
+            },
+            {
+                "permno": 99999,
+                "permco": 9999,
+                "namedt": "2023-06-01",
+                "nameenddt": "2023-12-31",
+                "ticker": "SEALED_NAME_SENTINEL",
+                "primaryexch": "Q",
+                "conditionaltype": "RW",
+                "tradingstatusflg": "A",
+                "sharetype": "NS",
+                "securitytype": "EQTY",
+                "securitysubtype": "COM",
+                "usincflg": "Y",
+                "siccd": 6021,
+            },
         ],
     )
     delists_path = tmp_path / "stkdelists" / "data.csv.gz"
@@ -180,7 +196,14 @@ def _fixture_protocol(tmp_path: Path) -> Path:
                 "delret": -0.50,
                 "delretmisstype": "",
                 "deldlydt": "2023-01-03",
-            }
+            },
+            {
+                "permno": 99999,
+                "delistingdt": "2023-11-29",
+                "delret": "SEALED_DELIST_SENTINEL",
+                "delretmisstype": "SEALED",
+                "deldlydt": "2023-11-30",
+            },
         ],
     )
 
@@ -208,14 +231,14 @@ def _fixture_protocol(tmp_path: Path) -> Path:
                 "table": "stocknames_v2",
                 "status": "ok",
                 "path": str(names_path),
-                "rows": 1,
+                "rows": 2,
                 "size_bytes": names_path.stat().st_size,
             },
             {
                 "table": "stkdelists",
                 "status": "ok",
                 "path": str(delists_path),
-                "rows": 1,
+                "rows": 2,
                 "size_bytes": delists_path.stat().st_size,
             },
         ],
@@ -292,12 +315,12 @@ def _fixture_protocol(tmp_path: Path) -> Path:
                     "side_tables": [
                         {
                             "table": "stocknames_v2",
-                            "expected_rows": 1,
+                            "expected_rows": 2,
                             "required_columns": NAME_COLUMNS,
                         },
                         {
                             "table": "stkdelists",
-                            "expected_rows": 1,
+                            "expected_rows": 2,
                             "required_columns": DELIST_COLUMNS,
                         },
                     ],
@@ -359,7 +382,22 @@ def test_adapter_is_manifest_bound_and_holdout_gated(tmp_path: Path) -> None:
     selection_manifest = build_monthly_panel(protocol_path, selection_path)
     assert selection_manifest["source_partition_count"] == 1
     assert selection_manifest["holdout_headers_verified"] is True
-    assert selection_manifest["holdout_outcome_rows_read"] is False
+    access = selection_manifest["access_contract"]
+    assert access["primary_holdout_partitions_opened_for_outcome_rows"] is False
+    assert access["primary_post_validation_rows_materialized"] == 0
+    assert access["side_table_source_bytes_scan_scope"] == (
+        "full_files_for_date_key_filter"
+    )
+    assert access["post_validation_stocknames_rows_materialized"] == 0
+    assert access["post_validation_delisting_rows_materialized"] == 0
+    assert selection_manifest["side_table_materialization"] == {
+        "stocknames_v2": {
+            "rows": 1,
+            "max_namedt": "2000-01-01",
+            "max_effective_nameenddt": "2022-12-31",
+        },
+        "stkdelists": {"rows": 0, "max_deldlydt": None},
+    }
     selection_rows = duckdb.sql(
         f"SELECT split, formation_date, history_months "
         f"FROM read_parquet('{selection_path}')"
@@ -396,7 +434,15 @@ def test_adapter_is_manifest_bound_and_holdout_gated(tmp_path: Path) -> None:
         frozen_model_path=frozen_model_path,
     )
     assert final_manifest["source_partition_count"] == 2
-    assert final_manifest["holdout_outcome_rows_read"] is True
+    final_access = final_manifest["access_contract"]
+    assert final_access["primary_holdout_partitions_opened_for_outcome_rows"] is True
+    assert final_access["primary_post_validation_rows_materialized"] == 2
+    assert final_access["post_validation_stocknames_rows_materialized"] == 1
+    assert final_access["post_validation_delisting_rows_materialized"] == 1
+    assert final_manifest["side_table_materialization"]["stocknames_v2"][
+        "rows"
+    ] == 1
+    assert final_manifest["side_table_materialization"]["stkdelists"]["rows"] == 1
     final_row = duckdb.sql(f"""
         SELECT monthly_total_return, delisting_pseudo_days, history_months
         FROM read_parquet('{final_path}')
@@ -405,3 +451,77 @@ def test_adapter_is_manifest_bound_and_holdout_gated(tmp_path: Path) -> None:
     assert final_row[0] == pytest.approx(-0.45)
     assert final_row[1] == 1
     assert final_row[2] == 1
+
+
+def test_adapter_refuses_to_clobber_panel_or_manifest(tmp_path: Path) -> None:
+    protocol_path = _fixture_protocol(tmp_path)
+    output_path = tmp_path / "selection.parquet"
+    output_path.write_bytes(b"existing-panel")
+
+    with pytest.raises(CRSPV2Error, match="Refusing to overwrite"):
+        build_monthly_panel(protocol_path, output_path)
+    assert output_path.read_bytes() == b"existing-panel"
+
+    output_path.unlink()
+    manifest_path = output_path.with_suffix(".parquet.manifest.json")
+    manifest_path.write_text("existing-manifest", encoding="utf-8")
+    with pytest.raises(CRSPV2Error, match="Refusing to overwrite"):
+        build_monthly_panel(protocol_path, output_path)
+    assert not output_path.exists()
+    assert manifest_path.read_text(encoding="utf-8") == "existing-manifest"
+
+
+def test_failed_staged_build_never_publishes_partial_artifacts(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    protocol_path = _fixture_protocol(tmp_path)
+    output_path = tmp_path / "selection.parquet"
+    manifest_path = output_path.with_suffix(".parquet.manifest.json")
+    real_sha256_file = panel_module.sha256_file
+
+    def fail_on_staged_output(path: str | Path, **kwargs: object) -> str:
+        candidate = Path(path)
+        if candidate.name == output_path.name and ".staging-" in candidate.parent.name:
+            raise RuntimeError("injected failure after staged COPY")
+        return real_sha256_file(path, **kwargs)
+
+    monkeypatch.setattr(panel_module, "sha256_file", fail_on_staged_output)
+    with pytest.raises(RuntimeError, match="injected failure"):
+        build_monthly_panel(protocol_path, output_path)
+
+    assert not output_path.exists()
+    assert not manifest_path.exists()
+
+
+def test_pair_publication_rolls_back_if_second_link_fails(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    staged_output = tmp_path / "staged.parquet"
+    staged_manifest = tmp_path / "staged.manifest.json"
+    output_path = tmp_path / "published.parquet"
+    manifest_path = tmp_path / "published.parquet.manifest.json"
+    staged_output.write_bytes(b"panel")
+    staged_manifest.write_text("{}", encoding="utf-8")
+    real_link = panel_module.os.link
+    call_count = 0
+
+    def fail_second_link(source: Path, destination: Path) -> None:
+        nonlocal call_count
+        call_count += 1
+        if call_count == 2:
+            raise OSError("injected manifest publication failure")
+        real_link(source, destination)
+
+    monkeypatch.setattr(panel_module.os, "link", fail_second_link)
+    with pytest.raises(CRSPV2Error, match="could not be published"):
+        panel_module._publish_artifact_pair_no_clobber(
+            staged_output,
+            output_path,
+            staged_manifest,
+            manifest_path,
+        )
+
+    assert not output_path.exists()
+    assert not manifest_path.exists()
+    assert staged_output.read_bytes() == b"panel"
+    assert staged_manifest.read_text(encoding="utf-8") == "{}"

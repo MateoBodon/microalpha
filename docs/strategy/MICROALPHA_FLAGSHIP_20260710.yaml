@@ -131,11 +131,37 @@ windows:
       - manifest metadata
       - file existence and byte size
       - column headers
+      - automated full-byte date/key scan of the two unpartitioned side tables,
+        provided no post-validation row is materialized, reconciled, or surfaced
     forbidden_before_model_freeze:
       - performance metrics
       - signal-return correlations
       - candidate rankings
       - threshold tuning
+
+selection_access_contract:
+  primary_daily_partitions: >-
+    Selection opens only dsf_v2 year partitions through 2022. No 2023-2025
+    daily partition may be opened beyond the permitted header-only source audit
+    before a protocol-bound model freeze.
+  unpartitioned_side_tables: >-
+    stocknames_v2 and stkdelists are gzip CSV files rather than date
+    partitions, so applying a date/key predicate requires scanning their full
+    source bytes. The selection adapter may materialize, integrity-check,
+    reconcile, or use only side-table rows matching opened daily rows through
+    2022-12-31; effective stocknames end dates are clamped to that cutoff.
+  required_receipt_fields:
+    - primary_holdout_partitions_opened_for_outcome_rows
+    - primary_post_validation_rows_materialized
+    - side_table_source_layout
+    - side_table_source_bytes_scan_scope
+    - side_table_materialization_end
+    - post_validation_stocknames_rows_materialized
+    - post_validation_delisting_rows_materialized
+  hard_stops:
+    - Any final-holdout daily partition is opened beyond header verification during selection.
+    - Any post-validation side-table row is materialized or reconciled during selection.
+    - Either the panel or its manifest output path already exists.
 
 universe:
   identifier: permno

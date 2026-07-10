@@ -30,7 +30,7 @@ header, or manifest digest changes.
 - Protocol: `docs/strategy/MICROALPHA_FLAGSHIP_20260710.yaml`
 - Protocol ID: `crsp-v2-industry-neutral-momentum-20260710`
 - Current protocol SHA256:
-  `b51d50ccfcf1cc368558d49afc5bd9386120efe92bdd03a7d43d7791be971743`
+  `f88df6c93d3a83ddf76be6e198fc567122f18b39204b8565290e09969f1af75e`
 - Selection data: warmup 2005-2006, training 2007-2016, validation 2017-2022.
 - Sealed final holdout: 2023-2025.
 - Live audit command:
@@ -70,6 +70,6 @@ campaign.
 
 `READY_FOR_SELECTION_PANEL_BUILD`
 
-The source contract and bounded adapter tests are ready. The 40.4M-row build is
-intentionally deferred until Portfolio OS releases the single memory-heavy
-empirical-job slot.
+The corrected source/access contract and bounded adapter tests are ready. The
+40.4M-row build is intentionally deferred until Portfolio OS releases the
+single memory-heavy empirical-job slot.
