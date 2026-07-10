@@ -205,6 +205,7 @@ def run_walk_forward(
             rc_cfg = cfg.reality_check.model_copy(update=rc_update)
             cfg = cfg.model_copy(update={"reality_check": rc_cfg})
     config_hash = hashlib.sha256(yaml.safe_dump(raw_config).encode("utf-8")).hexdigest()
+    config_file_hash = hashlib.sha256(cfg_path.read_bytes()).hexdigest()
     unsafe_execution, unsafe_reasons, exec_alignment = evaluate_execution_safety(
         cfg.template.exec
     )
@@ -230,6 +231,7 @@ def run_walk_forward(
         config_hash,
         config_summary=extract_config_summary(raw_config),
         git_sha=full_sha,
+        config_file_sha256=config_file_hash,
         unsafe_execution=unsafe_execution,
         unsafe_reasons=unsafe_reasons,
         execution_alignment=exec_alignment,
@@ -936,6 +938,8 @@ def run_walk_forward(
             holdout_manifest_payload = {
                 "run_id": run_id,
                 "config_sha256": config_hash,
+                "config_hash_kind": "canonical_yaml_sha256",
+                "config_file_sha256": config_file_hash,
                 "git_sha": full_sha,
                 "unsafe_execution": bool(unsafe_execution),
                 "unsafe_reasons": list(unsafe_reasons),

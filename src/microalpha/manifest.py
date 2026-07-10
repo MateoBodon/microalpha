@@ -30,6 +30,8 @@ class Manifest:
     seed: int
     config_path: str
     config_sha256: str
+    config_hash_kind: str = "canonical_yaml_sha256"
+    config_file_sha256: str | None = None
     unsafe_execution: bool = False
     unsafe_reasons: list[str] = field(default_factory=list)
     execution_alignment: dict[str, Any] = field(default_factory=dict)
@@ -130,6 +132,7 @@ def build(
     config_summary: Mapping[str, Any] | None = None,
     git_sha: Optional[str] = None,
     *,
+    config_file_sha256: str | None = None,
     unsafe_execution: bool = False,
     unsafe_reasons: list[str] | None = None,
     execution_alignment: Mapping[str, Any] | None = None,
@@ -156,6 +159,8 @@ def build(
         seed=norm_seed,
         config_path=os.path.abspath(config_path),
         config_sha256=config_sha256,
+        config_hash_kind="canonical_yaml_sha256",
+        config_file_sha256=config_file_sha256,
         unsafe_execution=bool(unsafe_execution),
         unsafe_reasons=list(unsafe_reasons or []),
         execution_alignment=dict(execution_alignment or {}),

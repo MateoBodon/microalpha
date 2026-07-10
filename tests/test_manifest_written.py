@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -93,9 +94,18 @@ def test_run_and_wfv_emit_manifests(tmp_path: Path) -> None:
         "pandas_version",
         "seed",
         "config_sha256",
+        "config_hash_kind",
+        "config_file_sha256",
     }
     assert required_fields.issubset(manifest_payload)
     assert manifest_payload["run_id"] == run_artifacts.name
+    assert manifest_payload["config_hash_kind"] == "canonical_yaml_sha256"
+    assert manifest_payload["config_file_sha256"] == hashlib.sha256(
+        run_cfg.read_bytes()
+    ).hexdigest()
+    assert manifest_payload["config_sha256"] == hashlib.sha256(
+        yaml.safe_dump(yaml.safe_load(run_cfg.read_text())).encode("utf-8")
+    ).hexdigest()
 
     metrics_payload = json.loads(run_metrics.read_text())
     forbidden = {"run_id", "timestamp", "artifacts_dir", "config_path"}
@@ -114,6 +124,13 @@ def test_run_and_wfv_emit_manifests(tmp_path: Path) -> None:
     wfv_manifest_payload = json.loads(wfv_manifest.read_text())
     assert required_fields.issubset(wfv_manifest_payload)
     assert wfv_manifest_payload["run_id"] == wfv_artifacts.name
+    assert wfv_manifest_payload["config_hash_kind"] == "canonical_yaml_sha256"
+    assert wfv_manifest_payload["config_file_sha256"] == hashlib.sha256(
+        wfv_cfg.read_bytes()
+    ).hexdigest()
+    assert wfv_manifest_payload["config_sha256"] == hashlib.sha256(
+        yaml.safe_dump(yaml.safe_load(wfv_cfg.read_text())).encode("utf-8")
+    ).hexdigest()
 
     wfv_metrics_payload = json.loads(wfv_metrics.read_text())
     assert forbidden.isdisjoint(wfv_metrics_payload)

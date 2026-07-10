@@ -105,6 +105,7 @@ def run_from_config(
         )
     cfg_bytes = yaml.safe_dump(config).encode("utf-8")
     config_hash = hashlib.sha256(cfg_bytes).hexdigest()
+    config_file_hash = hashlib.sha256(cfg_path.read_bytes()).hexdigest()
 
     full_sha, short_sha = resolve_git_sha()
     base_run_id = generate_run_id(short_sha)
@@ -122,6 +123,7 @@ def run_from_config(
         config_hash,
         config_summary=extract_config_summary(config),
         git_sha=full_sha,
+        config_file_sha256=config_file_hash,
         unsafe_execution=unsafe_execution,
         unsafe_reasons=unsafe_reasons,
         execution_alignment=exec_alignment,

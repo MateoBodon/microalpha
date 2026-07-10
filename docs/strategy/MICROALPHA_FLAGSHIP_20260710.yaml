@@ -1,0 +1,267 @@
+schema_version: microalpha-flagship-protocol/v1
+protocol_id: crsp-v2-industry-neutral-momentum-20260710
+status: predeclared_not_executed
+predeclared_at_utc: "2026-07-10T20:55:00Z"
+
+objective:
+  authoritative_goal: >-
+    Produce the strongest defensible, artifact-backed real-data result for
+    microalpha without tuning on the final holdout.
+  direct_evidence: >-
+    Net performance and implementation diagnostics on the sealed 2023-2025
+    CRSP holdout after the model and all thresholds are frozen.
+  proxy_evidence:
+    - Validation-period Sharpe and drawdown used only to choose among the six
+      predeclared candidates.
+    - Historical 2018-2019 results used only as a legacy comparator.
+
+dataset:
+  id: wrds-crsp-dsf-v2-20260707-plus-kf-20260709
+  sensitivity: D2
+  raw_data_in_git: forbidden
+  derived_root: /Volumes/Storage/Data/wrds/derived/microalpha/crsp-v2-industry-neutral-momentum-20260710
+  wrds:
+    primary_manifest:
+      path: /Volumes/Storage/Data/wrds/_manifests/20260707_full_p1_core_fast_csvgz/manifest.json
+      sha256: 17858b58455131da22e184dbe04091b3e3c8b4e2b0f336a2325561a52063b2c6
+      table: dsf_v2
+      snapshot: 20260707_0005_fast_partitioned
+      partitions:
+        kind: year
+        start: 2005
+        end: 2025
+        expected_count: 21
+        expected_rows: 40402817
+        expected_compressed_bytes: 3358516505
+      required_columns:
+        - permno
+        - permco
+        - siccd
+        - sharetype
+        - securitytype
+        - securitysubtype
+        - usincflg
+        - primaryexch
+        - conditionaltype
+        - tradingstatusflg
+        - dlycaldt
+        - dlydelflg
+        - dlyprc
+        - dlycap
+        - dlyret
+        - dlyretmissflg
+        - dlyvol
+        - dlyprcvol
+        - dlyclose
+        - dlybid
+        - dlyask
+        - dlyopen
+        - ticker
+        - shrout
+      side_tables:
+        - table: stocknames_v2
+          expected_rows: 87766
+          required_columns:
+            - permno
+            - permco
+            - namedt
+            - nameenddt
+            - ticker
+            - primaryexch
+            - conditionaltype
+            - tradingstatusflg
+            - sharetype
+            - securitytype
+            - securitysubtype
+            - usincflg
+            - siccd
+        - table: stkdelists
+          expected_rows: 29833
+          required_columns:
+            - permno
+            - delistingdt
+            - delret
+            - delretmisstype
+            - deldlydt
+    market_manifest:
+      path: /Volumes/Storage/Data/wrds/_manifests/20260707T141203Z_resume_90m_fast_csvgz/manifest.json
+      sha256: 1d17b6035088ea3bca454cf848e7b8aca37dfb1a50289a9d89833e503f310a0f
+      table: dsi
+      expected_rows: 26051
+      required_columns:
+        - date
+        - vwretd
+        - ewretd
+        - sprtrn
+      note: >-
+        This acquisition run has unrelated failures. Only the independently
+        successful, path-bound dsi item is authoritative for this protocol.
+  public:
+    acquisition_manifest:
+      path: /Volumes/Storage/Data/NON_WRDS/_runs/20260709_012831_non_wrds_max_acquisition/DOWNLOADS_MANIFEST.csv
+      sha256: 9f3d85e32db3795d2b4e686d034f6578224f6c6c0562d5a1eacd380dbdd8cc24
+    files:
+      - role: ff5_daily
+        path: /Volumes/Storage/Data/Public/public_ken_french_factor_library/library_files/F-F_Research_Data_5_Factors_2x3_daily_CSV.zip
+        sha256: bcf32ecc9e2bb20383784ac98891e42146a0091eec6ec77d3b5bf0d4e981e3f6
+      - role: momentum_daily
+        path: /Volumes/Storage/Data/Public/public_ken_french_factor_library/library_files/F-F_Momentum_Factor_daily_CSV.zip
+        sha256: f4237e2e36dffa13fd7823f55376316a94b5ac663af951dd9eaca8ed2c678bcf
+      - role: momentum_deciles_monthly
+        path: /Volumes/Storage/Data/Public/public_ken_french_factor_library/library_files/10_Portfolios_Prior_12_2_CSV.zip
+        sha256: ca0af27fa0829ed6ac38b7b13b20cc11fd12274a8d06dac226998dfc1d0f07f6
+
+windows:
+  source_start: "2005-01-01"
+  source_end: "2025-12-31"
+  warmup:
+    start: "2005-01-01"
+    end: "2006-12-31"
+  training:
+    start: "2007-01-01"
+    end: "2016-12-31"
+  validation:
+    start: "2017-01-01"
+    end: "2022-12-31"
+  final_holdout:
+    start: "2023-01-01"
+    end: "2025-12-31"
+    sealed: true
+    allowed_before_final_execution:
+      - manifest metadata
+      - file existence and byte size
+      - column headers
+    forbidden_before_model_freeze:
+      - performance metrics
+      - signal-return correlations
+      - candidate rankings
+      - threshold tuning
+
+universe:
+  identifier: permno
+  point_in_time: true
+  filters_at_formation_date:
+    sharetype: [NS]
+    securitytype: [EQTY]
+    securitysubtype: [COM]
+    usincflg: [Y]
+    primaryexch: [N, A, Q]
+    conditionaltype: [RW]
+    tradingstatusflg: [A]
+    minimum_price: 5.0
+    minimum_market_cap_usd: 250000000
+    minimum_60d_median_dollar_volume_usd: 5000000
+    minimum_return_history_months: 12
+  industry_classification: point-in-time FF12 mapping from siccd
+  exclusions:
+    - No current-constituent or ticker-survivor universe.
+    - No security is admitted using information observed after formation.
+
+return_semantics:
+  source_return: dlyret
+  delisting_audit_table: stkdelists
+  resolution: >-
+    CIZ emits a dlydelflg=Y pseudo-day at stkdelists.deldlydt and dlyret equals
+    stkdelists.delret when both are present. Use dlyret exactly once; the
+    delisting table is an audit cross-check and must never be compounded onto
+    dlyret.
+  bounded_evidence: >-
+    A read-only 2005 slice found 489 dlydelflg=Y rows; sampled matched rows had
+    dlycaldt=deldlydt and dlyret=delret, including missing-code agreement.
+  hard_stops:
+    - A flagged delisting pseudo-day has no unique stkdelists match.
+    - Numeric dlyret and delret disagree beyond source precision.
+    - Any implementation attempts to compound dlyret and delret.
+  execution_lag: Signal at month-end t; trade on the next available session.
+
+candidate_grid:
+  signals:
+    - mom_12_2
+    - mom_6_2
+    - blend_12_2_6_2
+  weighting:
+    - equal
+    - inverse_vol_126d
+  total_candidates: 6
+  common_rules:
+    industry_neutral: true
+    monthly_rebalance: true
+    long_fraction: 0.10
+    short_fraction: 0.10
+
+selection_reducer:
+  inputs: validation_only
+  eligibility:
+    - All six validation calendar years produce non-degenerate portfolios.
+    - No chronology, identifier, return, delisting, or PnL integrity failure.
+    - Validation max drawdown is at most 35 percent.
+    - Median names per sleeve is at least 30.
+  ordered_objective:
+    - maximize_median_calendar_year_net_sharpe_hac
+    - maximize_worst_calendar_year_net_return
+    - minimize_one_way_turnover
+  replay_rule: >-
+    If an objective or data-semantics defect is discovered, correct the reducer
+    before observing final-holdout results and replay all six candidates.
+
+portfolio:
+  capital_usd: 15000000
+  target_gross_exposure: 1.0
+  target_net_exposure: 0.0
+  max_single_name_weight: 0.02
+  max_industry_gross_weight: 0.15
+  max_participation_of_60d_adv: 0.02
+
+costs:
+  primary:
+    commission_bps_each_side: 5.0
+    spread: contemporaneous_half_spread_each_side
+    fallback_full_spread_bps: 10.0
+    impact_formula: "10 bps * sqrt(participation_rate / 0.01)"
+    annual_short_borrow_bps: 300.0
+  stress:
+    annual_short_borrow_bps: [0.0, 600.0]
+    cost_multiplier: [0.5, 2.0]
+  zero_cost_output: diagnostic_only
+
+baselines:
+  - id: crsp_vw_market
+    source: dsi.vwretd
+  - id: crsp_ew_market
+    source: dsi.ewretd
+  - id: identical_universe_classic_mom_12_2
+    source: constructed with identical eligibility, lag, and primary costs
+  - id: ken_french_mom
+    source: momentum_daily
+  - id: ken_french_momentum_deciles
+    source: momentum_deciles_monthly
+  - id: cash_rf
+    source: ff5_daily.RF
+  - id: legacy_40_name_wrds_run
+    source: docs/artifacts/resume/wrds/2026-02-16T22-33-46Z-8d90621
+    classification: historical_noncomparable
+
+promotion_gates:
+  result_artifact_required: true
+  required_outputs:
+    - source_manifest.json
+    - derived_panel_manifest.json
+    - selected_model.json
+    - validation_candidate_table.csv
+    - final_holdout_metrics.json
+    - baseline_comparison.csv
+    - cost_stress.csv
+    - exposure_diagnostics.csv
+    - integrity_report.json
+  performance_result:
+    - Final-holdout net Sharpe_HAC is positive.
+    - Final-holdout CAGR is positive.
+    - Final-holdout max drawdown is at most 25 percent.
+    - The selected model is not inferior to the strongest investable baseline
+      by more than 0.10 Sharpe.
+  alpha_wording:
+    - Stationary-bootstrap or SPA family-wise p-value is at most 0.10.
+    - FF5 plus MOM alpha has absolute HAC t-statistic at least 1.96.
+  failure_posture: >-
+    Always retain and report the result. If a promotion gate fails, publish it
+    internally as a rigorous null/negative finding and do not claim alpha.

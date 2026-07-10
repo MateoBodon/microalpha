@@ -1,109 +1,75 @@
 # Data Artifact Inventory
 
-last_updated: 2026-07-03
-updated_by: Codex T-001
-source_event: Post-transfer data/artifact inventory for WRDS recovery
+last_updated: 2026-07-10
+updated_by: Project OS v3 microalpha worker
+source_event: live flagship source audit and legacy artifact reconciliation
 
 ## Policy
 
-This inventory records metadata only. It does not copy raw WRDS/CRSP data and
-does not hash raw licensed data.
+This inventory records metadata only. Raw licensed rows remain outside Git and
+must not enter docs, logs, reports, bundles, or commits. Synthetic data is
+permitted only in unit/integration fixtures and is never empirical evidence.
 
-## WRDS Data Root
+## Canonical Real-Data Authorities
 
-- `WRDS_DATA_ROOT` environment variable: unset during T-001 inspection.
-- Historical WRDS root recorded in curated artifacts: `/srv/data/wrds/wrds`
-- Historical WRDS root exists on this machine: no.
-- Current conclusion: WRDS inputs are unavailable in this checkout/session.
-
-## Expected Current WRDS Dependencies
-
-From `configs/wfv_flagship_wrds.yaml` and
-`configs/wfv_flagship_wrds_sweep35.yaml`:
-
-| Dependency | Expected path pattern | Status |
+| Role | Authority | Verified state |
 |---|---|---|
-| Export manifest | `${WRDS_DATA_ROOT}/manifests/20251221_001618/manifest.json` | missing/unknown because `WRDS_DATA_ROOT` is unset; historical `/srv/data/wrds/wrds` absent |
-| CRSP daily CSV directory | `${WRDS_DATA_ROOT}/crsp/daily_csv` | missing/unknown because `WRDS_DATA_ROOT` is unset; historical `/srv/data/wrds/wrds` absent |
-| Security metadata | `${WRDS_DATA_ROOT}/meta/crsp_security_metadata.csv` | missing/unknown because `WRDS_DATA_ROOT` is unset; historical `/srv/data/wrds/wrds` absent |
-| Flagship universe | `${WRDS_DATA_ROOT}/universes/flagship_sector_neutral.csv` | missing/unknown because `WRDS_DATA_ROOT` is unset; historical `/srv/data/wrds/wrds` absent |
+| CRSP CIZ daily panel | `/Volumes/Storage/Data/wrds/_manifests/20260707_full_p1_core_fast_csvgz/manifest.json` | manifest SHA256 `17858b58455131da22e184dbe04091b3e3c8b4e2b0f336a2325561a52063b2c6`; 21 successful `dsf_v2` year partitions for 2005-2025; 40,402,817 rows; 3,358,516,505 compressed bytes |
+| Point-in-time security names | same manifest, `stocknames_v2` | one successful item; 87,766 rows; required identity, date-range, exchange, security-type, US-incorporation, and SIC columns present |
+| Delisting audit | same manifest, `stkdelists` | one successful item; 29,833 rows; `delret`, missing-code, and daily delisting-date columns present |
+| CRSP market baselines | `/Volumes/Storage/Data/wrds/_manifests/20260707T141203Z_resume_90m_fast_csvgz/manifest.json` | manifest SHA256 `1d17b6035088ea3bca454cf848e7b8aca37dfb1a50289a9d89833e503f310a0f`; one successful `dsi` item; 26,051 rows |
+| Ken French baselines | `/Volumes/Storage/Data/NON_WRDS/_runs/20260709_012831_non_wrds_max_acquisition/DOWNLOADS_MANIFEST.csv` | manifest SHA256 `9f3d85e32db3795d2b4e686d034f6578224f6c6c0562d5a1eacd380dbdd8cc24`; FF5 daily, MOM daily, and prior-12-2 deciles files each match their predeclared SHA256 |
 
-Expected dataset id for current WRDS configs:
-`wrds_crsp_export_20251221_v1`.
+The two WRDS acquisition manifests contain unrelated failed items (`16` and
+`34` respectively). The protocol relies only on the independently successful,
+path-bound items above and fails closed if any required item, size, row count,
+header, or manifest digest changes.
 
-## Config Metadata
+## Flagship Binding
 
-| Config | SHA256 in current checkout | Data class |
-|---|---|---|
-| `configs/wfv_flagship_wrds.yaml` | `1e15555f18a45dcc1c97c76a4fcee1d4eaa03ab656e695a0a8e3b4ea49e15175` | safe config metadata |
-| `configs/wfv_flagship_wrds_sweep35.yaml` | `5fb44d31684945aabad4132d4f7f5cd4eee9c83cfa61a8f8ecf55a0748755493` | safe config metadata |
-| `configs/wfv_flagship_public.yaml` | `e5ccee187a582855650b9d088919d3a2cc6302fb85bcc54429960ee4e476de4f` | safe config metadata |
+- Protocol: `docs/strategy/MICROALPHA_FLAGSHIP_20260710.yaml`
+- Protocol ID: `crsp-v2-industry-neutral-momentum-20260710`
+- Current protocol SHA256:
+  `b51d50ccfcf1cc368558d49afc5bd9386120efe92bdd03a7d43d7791be971743`
+- Selection data: warmup 2005-2006, training 2007-2016, validation 2017-2022.
+- Sealed final holdout: 2023-2025.
+- Live audit command:
+  `PYTHONPATH=src python3 scripts/crsp_v2_flagship.py --protocol docs/strategy/MICROALPHA_FLAGSHIP_20260710.yaml audit`
+- Live audit result: all bound inputs verified; only permitted manifest,
+  metadata, byte-size, digest, and header checks touched holdout partitions;
+  holdout outcome rows were not read.
 
-Note: the promoted WRDS manifest excerpt for run
-`2026-02-16T22-33-46Z-8d90621` records config hash
-`caa000f5e885c0e7f566e435fb94a6632c19bb37282c5a36c0fe4b47a6cb7260`, while the
-tracked config and ticket-35/ticket-36 run-log metadata record
-`5fb44d31684945aabad4132d4f7f5cd4eee9c83cfa61a8f8ecf55a0748755493`.
+## Legacy 40-Security Export
 
-## Artifact Directories Present
+The recovered legacy input contains 40 per-security CSV files, 69,733 rows,
+and dates 2013-01-02 through 2019-12-31. Its universe metadata assigns every
+security to `UNKNOWN`, so the old "sector-neutral" label is not supported.
+The configured export manifest at
+`/Volumes/Storage/Data/wrds/manifests/20251221_001618/manifest.json` has
+`no_crsp: true` and records only an OptionMetrics result; it does not establish
+provenance for those CRSP CSVs.
 
-| Path | Metadata | Classification |
-|---|---|---|
-| `artifacts/` | 119 files, about 2924 KiB, mtime `2026-07-02T21:12:48-0400` | generated/sample artifacts plus one older WRDS artifact directory; not raw data bundle material |
-| `docs/artifacts/resume/` | 16 files, about 76 KiB, mtime `2026-07-02T21:11:53-0400` | small curated resume-safe public/WRDS artifacts |
-| `reports/summaries/` | 17 files, about 656 KiB, mtime `2026-07-02T21:09:52-0400` | small summaries and images; current WRDS summary is stale versus leaderboard best |
-| `data/` | 30 files, about 2016 KiB, mtime `2026-07-02T21:09:51-0400` | bundled sample/public data and factors; not WRDS raw export |
-| `data_sp500/` | 936 files, about 94540 KiB, mtime `2026-07-02T21:09:52-0400` | large supporting local data panel; not included in review bundle |
+The legacy config hashes are not contradictory:
 
-## Current Artifact Paths
+- exact file SHA256:
+  `5fb44d31684945aabad4132d4f7f5cd4eee9c83cfa61a8f8ecf55a0748755493`
+- canonical `yaml.safe_dump` SHA256 used by runtime manifests:
+  `caa000f5e885c0e7f566e435fb94a6632c19bb37282c5a36c0fe4b47a6cb7260`
 
-| Artifact | Path | Availability | Classification |
-|---|---|---|---|
-| Public current resume line | `docs/artifacts/resume/public/resume_line_best.md` | present | small curated artifact |
-| Public current metrics | `docs/artifacts/resume/public/2026-02-17T01-02-27Z-98beced/metrics.json` | present | small curated artifact |
-| Public current manifest excerpt | `docs/artifacts/resume/public/2026-02-17T01-02-27Z-98beced/manifest_excerpt.json` | present | small curated metadata |
-| Public source local artifacts | `artifacts/_local/20260217_010106_ticket-37_public-mini-panel-resume-metrics/...` | missing | large/generated local artifact, not required in git |
-| WRDS current resume line | `docs/artifacts/resume/wrds/leaderboard/resume_line_best.md` | present | small curated artifact |
-| WRDS leaderboard | `docs/artifacts/resume/wrds/leaderboard/leaderboard.md`, `leaderboard.csv` | present | small curated artifacts |
-| WRDS current metrics | `docs/artifacts/resume/wrds/2026-02-16T22-33-46Z-8d90621/metrics.json` | present | small curated aggregate artifact |
-| WRDS current manifest excerpt | `docs/artifacts/resume/wrds/2026-02-16T22-33-46Z-8d90621/manifest_excerpt.json` | present | small curated metadata |
-| WRDS current source local artifacts | `artifacts/_local/20260216_223228_ticket-35_wrds-micro-sweep/...` | missing | large/generated local artifacts, not raw data but needed for exact source recovery |
-| WRDS current source report | `reports/_runs/20260216_223228_ticket-35_wrds-micro-sweep/wrds_flagship.md` | missing | generated local report |
-| Current `reports/summaries/wrds_flagship.md` | `reports/summaries/wrds_flagship.md` | present | stale summary for older run `2026-01-26T01-22-23Z-e76eb4d` |
+New manifests record both definitions explicitly.
 
-## Missing Data / Export Request
+## Artifact Availability
 
-To unblock T-003, provide or regenerate a local WRDS data root and set:
-
-```bash
-export WRDS_DATA_ROOT=/absolute/path/to/wrds
-```
-
-The path should contain, at minimum:
-
-- `manifests/20251221_001618/manifest.json`
-- `crsp/daily_csv/` with the CRSP daily price/return CSV exports used by
-  `wrds_crsp_export_20251221_v1`
-- `meta/crsp_security_metadata.csv`
-- `universes/flagship_sector_neutral.csv`
-
-If the original export cannot be restored, regenerate an equivalent or newer
-WRDS/CRSP export with:
-
-- CRSP daily stock data for the configured windows;
-- delisting returns where available;
-- security metadata sufficient for point-in-time ticker/security handling;
-- the flagship sector-neutral universe file;
-- a manifest with dataset id, export time, source tables, row/file counts, and
-  hashes for safe metadata/manifests only.
-
-Do not copy the raw WRDS/CRSP data into git, docs, reports, run logs, or review
-bundles.
+Small curated legacy metrics and leaderboard files remain under
+`docs/artifacts/resume/wrds/`. The referenced source run directory and report
+for `2026-02-16T22-33-46Z-8d90621` remain absent, so exact historical source
+reproduction is unavailable. This does not block the new manifest-bound CRSP-v2
+campaign.
 
 ## Conclusion
 
-`BLOCKED_FOR_T003_MISSING_DATA`
+`READY_FOR_SELECTION_PANEL_BUILD`
 
-T-003 should not run a WRDS baseline reproduction until `WRDS_DATA_ROOT` is set
-to a restored or regenerated local licensed data root containing the dependencies
-above.
+The source contract and bounded adapter tests are ready. The 40.4M-row build is
+intentionally deferred until Portfolio OS releases the single memory-heavy
+empirical-job slot.
