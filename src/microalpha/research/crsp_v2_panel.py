@@ -268,6 +268,7 @@ def build_monthly_panel(
     staging_root = Path(staging_directory.name)
     staged_output_path = staging_root / output_path.name
     staged_manifest_path = staging_root / manifest_path.name
+    staged_daily_path = staging_root / "_daily_filtered.parquet"
     if temp_directory is None:
         temp_directory = output_path.parent / "_duckdb_tmp"
     temp_directory = Path(temp_directory).expanduser().resolve()
@@ -279,6 +280,7 @@ def build_monthly_panel(
         connection.execute(f"SET memory_limit={_sql_literal(memory_limit)}")
         connection.execute(f"SET temp_directory={_sql_literal(temp_directory)}")
         connection.execute("SET preserve_insertion_order=false")
+        connection.execute("SET threads=2")
 
         daily_csv = _sql_list(source_paths)
         connection.execute(f"""
@@ -329,6 +331,19 @@ def build_monthly_panel(
             """).fetchone()[0]
         if duplicate_daily:
             raise CRSPV2Error("CRSP-v2 daily permno/date keys are not unique")
+
+        # The permitted daily slice is much larger than the finished monthly
+        # panel. Persist it temporarily, then release the in-memory table before
+        # rolling-window work so the caller's memory cap remains meaningful.
+        connection.execute(f"""
+            COPY daily TO {_sql_literal(staged_daily_path)}
+            (FORMAT PARQUET, COMPRESSION ZSTD, ROW_GROUP_SIZE 100000)
+            """)
+        connection.execute("DROP TABLE daily")
+        connection.execute(f"""
+            CREATE TEMP VIEW daily AS
+            SELECT * FROM read_parquet({_sql_literal(staged_daily_path)})
+            """)
 
         effective_name_end = (
             "least(coalesce(n.nameenddt, DATE '9999-12-31'), "
@@ -707,6 +722,13 @@ def build_monthly_panel(
             "delisting_pseudo_days": int(summary_row[5] or 0),
         },
         "return_semantics": "CIZ dlyret used once; stkdelists is reconciliation-only",
+        "build_resources": {
+            "duckdb_memory_limit": memory_limit,
+            "duckdb_threads": 2,
+            "filtered_daily_intermediate": (
+                "temporary same-filesystem parquet removed after publication"
+            ),
+        },
     }
     staged_manifest_path.write_text(
         json.dumps(manifest_payload, indent=2, sort_keys=True), encoding="utf-8"
