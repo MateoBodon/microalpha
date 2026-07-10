@@ -102,3 +102,7 @@ project_state/_generated/**
 
 # END AGENTIC SYSTEM KIT (v2)
 # <<< agentic-system-kit
+
+# PROJECT-OS-V3:GENERATED-IGNORE:START
+/STATE.md
+# PROJECT-OS-V3:GENERATED-IGNORE:END

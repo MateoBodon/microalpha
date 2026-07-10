@@ -1,0 +1,94 @@
+# Project OS configuration. This is policy, not a per-run prompt.
+schema_version = 3
+project_name = "microalpha"
+# 0 disables age-only churn. Event/Git/body changes still invalidate instantly;
+# adapters with expiring external observations should set their own freshness.
+state_stale_after_hours = 0
+default_risk = "medium"
+
+[authority]
+# This local prototype records the full taxonomy but enforces only local
+# lifecycle/validation rules. It has no connected-action policy evaluator.
+# A0 read-only; A1 local reversible; A2 bounded external under a standing rule;
+# A3 external/public under a standing rule or confirmation; A4 irreversible or
+# high-impact under focused confirmation/current capped standing authorization.
+standing_tier = "A1"
+standing_rule_refs = []
+
+[validation]
+default_profile = "standard"
+minimum_success_gate_risk = "medium"
+env_allowlist = []
+max_output_bytes = 1000000
+input_files = ["PROJECT.md", "AGENTS.md", "Makefile", "pyproject.toml", "pytest.ini", "scripts/data_policy_allowlist.txt"]
+# Optional bounded content roots for projects whose material source/config/test
+# files cannot be represented by at most 100 individual input_files entries.
+# Example: input_trees = [{path = "src", suffixes = [".py"]}]
+input_trees = [
+  {path = "src", suffixes = [".py"]},
+  {path = "tests", suffixes = [".py"]},
+  {path = "benchmarks", suffixes = [".py"]},
+  {path = "configs", suffixes = [".yaml", ".yml"]},
+  {path = "scripts", suffixes = [".py"]},
+  {path = "reports", suffixes = [".py"]},
+  {path = "tools", suffixes = [".py"]},
+  {path = "docs/strategy", suffixes = [".md"]},
+  {path = "project_state", suffixes = [".md"]},
+  {path = "docs/artifacts/resume", suffixes = [".md", ".json", ".csv"]},
+]
+
+[validation.risk_map]
+low = "quick"
+medium = "standard"
+high = "strict"
+critical = "strict"
+
+# Built-in integrity checks always run. Add project-native commands once here;
+# agents then use them automatically without rewriting prompts.
+# `supervised` permits only the initial executable family plus listed child
+# basenames and tracks them across process groups/sessions. `forbid` requires an
+# available OS no-fork backend (currently macOS sandbox-exec).
+[validation.profiles.quick]
+risk_level = "low"
+timeout_seconds = 120
+stop_on_failure = true
+trusted_shell = false
+descendant_policy = "supervised"
+allowed_descendant_executables = ["same-executable", "git"]
+commands = [
+  ["python3", "scripts/check_data_policy.py"],
+]
+proves = ["Project OS integrity and the repository data-policy gate pass at the recorded input fingerprint"]
+limits = ["No behavioral test suite or external-data result was checked"]
+
+[validation.profiles.standard]
+risk_level = "medium"
+timeout_seconds = 600
+stop_on_failure = true
+trusted_shell = false
+descendant_policy = "supervised"
+allowed_descendant_executables = ["same-executable", "git"]
+commands = [
+  ["python3", "scripts/check_data_policy.py"],
+  ["python3", "scripts/validate_run_logs.py"],
+  ["python3", "-c", "import pathlib, sys; sys.path.insert(0, 'src'); import microalpha; path = pathlib.Path(microalpha.__file__).resolve(); root = (pathlib.Path.cwd() / 'src').resolve(); print(f'microalpha_import_path={path}'); raise SystemExit(0 if root in path.parents else f'imported non-local microalpha: {path}')"],
+  ["python3", "-c", "import sys; sys.path.insert(0, 'src'); import pytest; raise SystemExit(pytest.main(['-q', 'tests/test_no_lookahead.py', 'tests/test_tplus1_execution.py', 'tests/test_walkforward.py', 'tests/test_degeneracy_constraints.py', 'tests/test_manifest_written.py', 'tests/test_metrics_invariant.py']))"],
+]
+proves = ["Project OS integrity, restricted-data policy, run-log validation, local-source import, and core leakage/holdout/manifest tests pass at the recorded input fingerprint"]
+limits = ["Full make test-fast passed separately during onboarding; no WRDS empirical run, benchmark campaign, deployment, or external-system behavior was checked"]
+
+[validation.profiles.strict]
+risk_level = "critical"
+timeout_seconds = 1800
+stop_on_failure = false
+trusted_shell = false
+descendant_policy = "supervised"
+allowed_descendant_executables = ["same-executable", "git"]
+commands = [
+  ["python3", "scripts/check_data_policy.py"],
+  ["python3", "scripts/validate_run_logs.py"],
+  ["python3", "-c", "import pathlib, sys; sys.path.insert(0, 'src'); import microalpha; path = pathlib.Path(microalpha.__file__).resolve(); root = (pathlib.Path.cwd() / 'src').resolve(); print(f'microalpha_import_path={path}'); raise SystemExit(0 if root in path.parents else f'imported non-local microalpha: {path}')"],
+  ["python3", "-c", "import sys; sys.path.insert(0, 'src'); import pytest; raise SystemExit(pytest.main(['-q', 'tests/test_no_lookahead.py', 'tests/test_tplus1_execution.py', 'tests/test_walkforward.py', 'tests/test_degeneracy_constraints.py', 'tests/test_manifest_written.py', 'tests/test_metrics_invariant.py']))"],
+]
+proves = ["Project OS integrity, restricted-data policy, run-log validation, local-source import, and core leakage/holdout/manifest tests pass at the recorded input fingerprint"]
+limits = ["Full make test-fast passed separately during onboarding; whole-repository lint has 17 pre-existing findings and is not claimed; no WRDS empirical run, full statistical audit, deployment, or external-system behavior was checked"]
