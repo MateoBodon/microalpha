@@ -67,6 +67,12 @@ SIGNAL_DEFINITIONS = {
         "conservative investment, and accrual-quality ranks within formation-month "
         "FF12 industry, using a fixed six-month accounting availability lag"
     ),
+    "sec_cash_earnings_acceleration": (
+        "equal ranks of first-filed annual net-income change, operating-cash-flow "
+        "change, cash conversion, and asset discipline within formation-month FF12 "
+        "industry; values are accession-bound to the earliest original XBRL 10-K "
+        "and become available at its SEC acceptance timestamp"
+    ),
 }
 
 

@@ -1,0 +1,227 @@
+schema_version: microalpha-sec-vintage-protocol/v1
+mechanism_id: sec_cash_earnings_acceleration_20260711
+status: predeclared_not_executed
+predeclared_at_utc: "2026-07-11T19:29:42Z"
+
+objective:
+  authoritative_goal: >-
+    Test one economically distinct, true first-filed accounting-change
+    mechanism after the current-snapshot QVPI failure, without changing that
+    rejected mechanism, using current Compustat values, or opening the
+    2023-2025 final return holdout.
+  mechanism: >-
+    Cash-confirmed earnings acceleration and balance-sheet discipline measured
+    only from values present in two consecutive original XBRL 10-K filings.
+    Each value is bound to its filing accession and becomes usable only at the
+    exact SEC acceptanceDateTime of the newer filing.
+  economic_hypothesis: >-
+    Improvements in first-filed earnings that are corroborated by operating
+    cash-flow improvement, high cash conversion, and restrained asset growth
+    are more persistent and less exposed to accrual reversal than unconfirmed
+    earnings changes. Industry-relative ranks prevent broad sector accounting
+    differences from becoming the signal.
+  claim_limit: >-
+    This is preregistered 2017-2022 validation evidence, not final-holdout or
+    production-alpha evidence. The CIK-to-GVKEY bridge is current Compustat
+    identifier metadata, not historical accounting values; 47 eligible
+    PERMNO/GVKEY pairs lack a CIK and are excluded. SEC bulk JSON members are
+    unpartitioned and can contain later facts, so member bytes are decoded but
+    only accession-matched filings accepted by 2022-11-30 are selected.
+
+inventory:
+  authentication_triggered: false
+  wrds_login_or_duo_triggered: false
+  current_compustat_accounting_values_opened: false
+  observed_without_return_projection:
+    target_ciks: 3106
+    first_filed_10k_rows: 21719
+    finite_feature_rows: 12240
+    submissions_archive_member_count: 981230
+    companyfacts_archive_member_count: 20028
+  identifier_bridge:
+    company_rows_with_valid_unique_cik: 37160
+    eligible_permno_gvkey_pairs: 3173
+    pairs_with_cik: 3126
+    pairs_without_cik: 47
+    duplicate_company_ciks: 0
+    duplicate_company_gvkeys: 0
+  filing_resolution:
+    supplemental_submission_members_opened: 1313
+    first_filed_original_xbrl_10k_rows: 21719
+    report_dates_with_multiple_original_10ks: 0
+    complete_three_concept_filing_rows: 15750
+    consecutive_complete_filing_pairs: 12240
+    maximum_selected_acceptance_timestamp: "2022-11-30T21:55:22Z"
+  concept_resolution:
+    assets_ok: 21562
+    assets_missing_matching_period: 157
+    net_income_ok: 19511
+    net_income_missing_concept: 161
+    net_income_missing_matching_period: 2047
+    operating_cash_flow_ok: 17063
+    operating_cash_flow_missing_concept: 92
+    operating_cash_flow_missing_matching_period: 4564
+
+frozen_inputs:
+  base_protocol_path: docs/strategy/MICROALPHA_FLAGSHIP_20260710.yaml
+  base_protocol_sha256: f88df6c93d3a83ddf76be6e198fc567122f18b39204b8565290e09969f1af75e
+  selection_panel:
+    path: /Volumes/Storage/Data/wrds/derived/microalpha/crsp-v2-industry-neutral-momentum-20260710/20260710T234504Z_selection_12gb/selection.parquet
+    sha256: 4ed2b33e2496e224a7701c3d0d71d593909d8fc7547ecdcbc483b2c83686206a
+    size_bytes: 59173798
+    manifest_sha256: 0e625c05853bfed6e8b811bbd3df86d0fe64a05cf9929ede537299adc851710d
+    maximum_date: "2022-12-31"
+  company_cik_bridge:
+    path: /Volumes/Storage/Data/wrds/raw/comp/company.parquet
+    sha256: b2635eecfd73563aa45b08e37526206d3022779586b5ebe287afc408238c44ca
+    size_bytes: 7420880
+    row_count: 56684
+    permitted_columns: [gvkey, cik]
+    accounting_value_columns_permitted: []
+  ccm_link_history:
+    path: /Volumes/Storage/Data/wrds/raw/crsp/ccmxpf_lnkhist.parquet
+    sha256: 33583d9f2ecac4a4bb66b12be47348a828ba1481f3b25ece6a5f081ca13b1f95
+    size_bytes: 1119372
+    row_count: 119716
+  public_sec:
+    companyfacts:
+      path: /Volumes/Storage/Data/Public/public_sec_edgar_xbrl_reference/bulk/companyfacts.zip
+      sha256: 9062afc06b351cd4f11a4824aaea3be9143332d3f7d731162a0a4cf47c69f570
+      size_bytes: 1389139194
+      member_count: 20028
+    submissions:
+      path: /Volumes/Storage/Data/Public/public_sec_edgar_xbrl_reference/bulk/submissions.zip
+      sha256: 9b507fd4738c7d8306910d00841e4a68b9926ea791caf3fac43140a550d102a3
+      size_bytes: 1550323541
+      member_count: 981230
+  archived_result_manifests:
+    momentum:
+      path: /Volumes/Storage/Data/wrds/derived/microalpha/crsp-v2-industry-neutral-momentum-20260710/20260711T150304Z_selection_execution_v3/selection_manifest.json
+      sha256: 09f7d5240d8290b442cd2f72ed1be9c374d51459de4fb31b4af7b5859f7a6d58
+    residual_momentum:
+      path: /Volumes/Storage/Data/wrds/derived/microalpha/crsp-v2-industry-neutral-momentum-20260710/20260711T162200Z_distinct_residual_family/result_manifest.json
+      sha256: 9e3a8818211a9ef9c81816bb2fadf6165636cc9a344f9284698adec3499ef107
+    low_volatility:
+      path: /Volumes/Storage/Data/wrds/derived/microalpha/crsp-v2-industry-neutral-momentum-20260710/20260711T170510Z_low_volatility/result_manifest.json
+      sha256: fba7c4f4b4e96f6b310da13103921817db4a04bc910ea451fdd1f79ff8653ad0
+    short_term_reversal:
+      path: /Volumes/Storage/Data/wrds/derived/microalpha/crsp-v2-industry-neutral-momentum-20260710/20260711T171235Z_short_term_reversal/result_manifest.json
+      sha256: 573dd7c74bc6e2bcea0ab22bde30efdc1fcfc9b4eef0ec6e7665c800bfe28b02
+    qvpi:
+      path: /Volumes/Storage/Data/wrds/derived/microalpha/crsp-v2-industry-neutral-momentum-20260710/20260711T190616Z_qvpi_annual_composite/result_manifest.json
+      sha256: 72b378035b736c50f26be8e11bff1f72dc2478365971294694336c9945332fb2
+
+frozen_mechanism:
+  candidate_id: sec_cash_earnings_acceleration__equal
+  signal: sec_cash_earnings_acceleration
+  weighting: equal
+  filing_contract:
+    form: 10-K
+    is_xbrl: true
+    original_only_exclude_amendments: true
+    selection: earliest acceptanceDateTime per CIK/reportDate
+    accession_binding: every fact row accn must equal the selected filing accession
+    current_period_binding:
+      instant: end equals reportDate and start is absent
+      duration: end equals reportDate and duration is 300 to 450 days inclusive
+      multiple_duration_rule: select the longest duration; conflicting equal-longest values are missing
+    consecutive_report_gap_days_inclusive: [300, 430]
+    availability: exact SEC acceptanceDateTime, normalized to its UTC calendar date for month-end formation
+    expiry: acceptance date plus eighteen calendar months
+  concepts:
+    assets: "us-gaap:Assets USD"
+    net_income: "us-gaap:NetIncomeLoss USD"
+    operating_cash_flow: "us-gaap:NetCashProvidedByUsedInOperatingActivities USD"
+  concept_aliases: forbidden
+  missing_value_imputation: forbidden
+  raw_features:
+    earnings_surprise: current net income minus prior net income, divided by prior assets
+    cashflow_surprise: current operating cash flow minus prior operating cash flow, divided by prior assets
+    cash_conversion: current operating cash flow minus current net income, divided by prior assets
+    asset_discipline: negative of current assets divided by prior assets minus one
+  feature_rank_order:
+    - earnings_surprise
+    - cashflow_surprise
+    - cash_conversion
+    - asset_discipline
+  ranking:
+    group: formation_date and point-in-time FF12 industry
+    transform: average-tie percentile rank centered to [-1, 1]
+    composite: equal arithmetic mean of all four complete feature ranks
+    tie_break: ascending PERMNO
+  ccm_contract:
+    linktype: [LC, LU]
+    linkprim: [P, C]
+    interval_must_cover_formation_date: true
+    ambiguous_permno_formation_gvkey_count: reject
+  portfolio_and_costs: inherit unchanged from base protocol
+
+validation:
+  formation_start: "2016-12-31"
+  realization_start: "2017-01-31"
+  realization_end: "2022-12-31"
+  expected_months: 72
+  observed_preoutcome_coverage:
+    minimum_complete_names_per_formation_month: 796
+    median_complete_names_per_formation_month: 1084.5
+    maximum_complete_names_per_formation_month: 1730
+    ambiguous_ccm_rows: 0
+  baselines:
+    - archived_frozen_momentum
+    - archived_residual_momentum
+    - archived_low_volatility
+    - archived_short_term_reversal
+    - archived_qvpi
+    - identical_universe_classic_momentum
+    - crsp_value_weighted_market
+    - crsp_equal_weighted_market
+    - ken_french_momentum
+    - cash_rf
+  stress_grid:
+    annual_short_borrow_bps: [0.0, 600.0]
+    nonborrow_cost_multiplier: [0.5, 2.0]
+
+decision_gates:
+  structural:
+    minimum_complete_names_each_formation_month: 500
+    minimum_median_names_per_sleeve: 30
+    maximum_ambiguous_ccm_rows: 0
+    require_all_six_validation_years_nondegenerate: true
+    require_exact_net_and_industry_neutrality: true
+  performance:
+    minimum_net_sharpe_hac: 0.50
+    minimum_sharpe_improvement_over_archived_frozen_momentum: 0.10
+    minimum_cagr: 0.0
+    maximum_drawdown: 0.25
+    harsh_stress_minimum_net_sharpe_hac: 0.0
+    harsh_stress_minimum_cagr: 0.0
+  pass_outcome: >-
+    Freeze the exact mechanism for independent review while keeping the
+    2023-2025 final holdout sealed. Holdout opening requires a separate goal
+    and exact frozen-generation receipt.
+  fail_outcome: >-
+    Archive the exact mechanism as validation evidence. Do not change signs,
+    weights, concepts, aliases, period rules, lags, expiry, missing-value
+    rules, thresholds, or acceptance logic after observing the result.
+
+access_contract:
+  final_holdout_outcomes_read: false
+  selection_panel_maximum_date: "2022-12-31"
+  minimum_sec_report_date: "2013-01-01"
+  maximum_sec_acceptance_timestamp: "2022-11-30T23:59:59Z"
+  current_compustat_values_used: false
+  compustat_company_columns_opened: [gvkey, cik]
+  sec_archive_layout: unpartitioned per-CIK JSON members
+  later_member_bytes_decoded_but_never_selected: true
+  post_cutoff_filing_rows_selected: 0
+  post_cutoff_fact_rows_selected: 0
+  restricted_identifier_rows_written_under_git: 0
+  hard_stops:
+    - Any 2023-2025 CRSP outcome row is opened or selected.
+    - Any SEC fact is used whose accession differs from the selected original 10-K.
+    - Any 10-K/A or later comparative accession is substituted for a first-filed value.
+    - Any selected SEC acceptance timestamp is later than 2022-11-30T23:59:59Z.
+    - Any current Compustat accounting value is used.
+    - Any source digest, row count, member count, aggregate inventory, or frozen formula differs.
+    - The output path already exists.
+    - Any raw restricted or per-identifier filing row is written under the Git worktree.
