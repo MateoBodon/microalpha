@@ -1,10 +1,4 @@
-"""Point-in-time SEC annual reporting-timeliness research primitives.
-
-This module deliberately contains no return loader or validation runner.  It
-prepares a separately preregistered filing-metadata signal while the empirical
-lane is unavailable.  A later goal must explicitly add outcome execution after
-rechecking the frozen contract and full return-free coverage.
-"""
+"""Point-in-time SEC annual reporting-timeliness research primitives."""
 
 from __future__ import annotations
 
@@ -20,15 +14,30 @@ import numpy as np
 import pandas as pd
 import yaml
 
-from .crsp_v2 import CRSPV2Error, protocol_sha256, sha256_file
+from .crsp_v2 import (
+    CRSPV2Error,
+    audit_source_protocol,
+    protocol_sha256,
+    sha256_file,
+)
 from .crsp_v2_fundamental import _centered_percentile_rank
+from .crsp_v2_low_volatility import _internal_baseline_row
 from .crsp_v2_sec_vintage import (
+    _archived_strategy_result,
     _first_filed_10ks,
     _load_company_cik_map,
     _normalize_cik,
     _target_ciks,
 )
-from .crsp_v2_selection import _git_sha, _sql_literal, _validate_selection_inputs
+from .crsp_v2_selection import (
+    StrategyResult,
+    _baseline_table,
+    _git_sha,
+    _load_signal_frame,
+    _run_strategy,
+    _sql_literal,
+    _validate_selection_inputs,
+)
 
 TIMING_FEATURE_COLUMNS = ["reporting_timeliness_level", "reporting_timeliness_change"]
 AGGREGATE_COVERAGE_COLUMNS = [
@@ -410,6 +419,82 @@ def build_sec_timing_scores(
         "final_holdout_outcomes_read": False,
     }
     return frame, coverage, audit
+
+
+def _load_sec_timing_validation_frame(
+    score_frame: pd.DataFrame,
+    panel_path: str | Path,
+    protocol: Mapping[str, Any],
+) -> tuple[pd.DataFrame, dict[str, Any]]:
+    """Project the frozen validation outcomes and attach the predeclared score."""
+
+    try:
+        import duckdb
+    except ImportError as exc:  # pragma: no cover
+        raise CRSPV2Error("DuckDB is required for SEC-timing validation") from exc
+    panel_path = Path(panel_path).expanduser().resolve()
+    validation_start = pd.Timestamp(protocol["windows"]["validation"]["start"])
+    validation_end = pd.Timestamp(protocol["windows"]["validation"]["end"])
+    first_formation = validation_start - pd.offsets.MonthEnd(1)
+    scores = score_frame[
+        ["permno", "formation_date", "sec_reporting_timeliness_quality"]
+    ].copy()
+    if scores.duplicated(["formation_date", "permno"]).any():
+        raise CRSPV2Error("SEC-timing validation score keys are not unique")
+    connection = duckdb.connect()
+    try:
+        connection.register("timing_scores", scores)
+        frame = connection.execute(
+            f"""
+            SELECT
+                CAST(panel.permno AS BIGINT) AS permno,
+                panel.formation_date,
+                panel.industry,
+                panel.eligible_at_formation,
+                panel.price,
+                panel.market_cap_usd,
+                panel.adv_60_usd,
+                panel.volatility_126d,
+                panel.full_spread_bps,
+                panel.monthly_total_return,
+                panel.delisting_pseudo_days,
+                timing_scores.sec_reporting_timeliness_quality
+            FROM read_parquet({_sql_literal(panel_path)}) AS panel
+            LEFT JOIN timing_scores
+              ON CAST(panel.permno AS BIGINT) = timing_scores.permno
+             AND panel.formation_date = timing_scores.formation_date
+            WHERE panel.formation_date BETWEEN
+                  DATE {_sql_literal(first_formation.date())}
+              AND DATE {_sql_literal(validation_end.date())}
+            ORDER BY panel.formation_date, panel.permno
+            """
+        ).df()
+    finally:
+        connection.close()
+    frame["formation_date"] = pd.to_datetime(frame["formation_date"]).dt.normalize()
+    if frame.duplicated(["formation_date", "permno"]).any():
+        raise CRSPV2Error("SEC-timing validation frame keys are not unique")
+    expected_dates = pd.DatetimeIndex(
+        pd.date_range(first_formation, validation_end, freq="ME")
+    ).normalize()
+    observed_dates = pd.DatetimeIndex(
+        sorted(frame["formation_date"].drop_duplicates())
+    ).normalize()
+    if not observed_dates.equals(expected_dates):
+        raise CRSPV2Error("SEC-timing validation frame is not the frozen 73 months")
+    if frame["formation_date"].max() > validation_end:
+        raise CRSPV2Error("SEC-timing validation opened a post-2022 outcome row")
+    return frame, {
+        "frame_rows": int(len(frame)),
+        "formation_months_including_final_realization": int(len(observed_dates)),
+        "minimum_formation_date": observed_dates.min().date().isoformat(),
+        "maximum_formation_date": observed_dates.max().date().isoformat(),
+        "scored_formation_rows": int(
+            frame["sec_reporting_timeliness_quality"].notna().sum()
+        ),
+        "validation_return_columns_projected": True,
+        "final_holdout_outcomes_read": False,
+    }
 
 
 def load_sec_timing_contract(path: str | Path) -> dict[str, Any]:
@@ -1057,12 +1142,394 @@ def run_sec_timing_return_free_coverage(
     }
 
 
+def _sec_timing_validation_decision(
+    contract: Mapping[str, Any],
+    candidate: StrategyResult,
+    archived_momentum: StrategyResult,
+    harsh_stress: StrategyResult,
+    *,
+    coverage_gate_passed: bool,
+) -> dict[str, Any]:
+    gates = contract["future_validation_gates"]
+    performance = gates["performance"]
+    checks = {
+        "return_free_coverage_gate_passed": bool(coverage_gate_passed),
+        "expected_validation_months": (
+            int(candidate.metrics["validation_months"])
+            == int(gates["expected_months"])
+        ),
+        "structurally_eligible": bool(candidate.metrics["eligible"]),
+        "exact_executed_net_neutrality": (
+            candidate.metrics["maximum_absolute_executed_net"] <= 1e-9
+        ),
+        "exact_executed_industry_neutrality": (
+            candidate.metrics["maximum_absolute_executed_industry_net"] <= 1e-9
+        ),
+        "minimum_net_sharpe_hac": (
+            candidate.metrics["net_sharpe_hac"]
+            >= float(performance["minimum_net_sharpe_hac"])
+        ),
+        "minimum_sharpe_improvement_over_archived_frozen_momentum": (
+            candidate.metrics["net_sharpe_hac"]
+            >= archived_momentum.metrics["net_sharpe_hac"]
+            + float(
+                performance[
+                    "minimum_sharpe_improvement_over_archived_frozen_momentum"
+                ]
+            )
+        ),
+        "minimum_cagr": (
+            candidate.metrics["cagr"] >= float(performance["minimum_cagr"])
+        ),
+        "maximum_drawdown": (
+            candidate.metrics["max_drawdown"]
+            <= float(performance["maximum_drawdown"])
+        ),
+        "harsh_stress_minimum_net_sharpe_hac": (
+            harsh_stress.metrics["net_sharpe_hac"]
+            >= float(performance["harsh_stress_minimum_net_sharpe_hac"])
+        ),
+        "harsh_stress_minimum_cagr": (
+            harsh_stress.metrics["cagr"]
+            >= float(performance["harsh_stress_minimum_cagr"])
+        ),
+    }
+    passed = all(checks.values())
+    return {
+        "outcome": (
+            "freeze_mechanism_keep_final_holdout_sealed"
+            if passed
+            else "archive_mechanism_as_validation_negative"
+        ),
+        "all_decision_gates_pass": passed,
+        "checks": checks,
+        "candidate_net_sharpe_hac": candidate.metrics["net_sharpe_hac"],
+        "candidate_cagr": candidate.metrics["cagr"],
+        "candidate_max_drawdown": candidate.metrics["max_drawdown"],
+        "archived_frozen_momentum_net_sharpe_hac": archived_momentum.metrics[
+            "net_sharpe_hac"
+        ],
+        "harsh_stress_net_sharpe_hac": harsh_stress.metrics["net_sharpe_hac"],
+        "harsh_stress_cagr": harsh_stress.metrics["cagr"],
+        "validation_outcomes_read": True,
+        "final_holdout_outcomes_read": False,
+    }
+
+
+def run_sec_timing_frozen_validation(
+    contract_path: str | Path,
+    output_dir: str | Path,
+    *,
+    validation_lane_admitted: bool = False,
+) -> dict[str, Any]:
+    """Execute the frozen 2017-2022 mechanism once through the existing evaluator."""
+
+    if not validation_lane_admitted:
+        raise CRSPV2Error(
+            "SEC-timing validation is locked until a separate lifecycle admits it"
+        )
+    contract_path = Path(contract_path).expanduser().resolve()
+    output_dir = Path(output_dir).expanduser().resolve()
+    if output_dir.exists():
+        raise CRSPV2Error(
+            f"Refusing to overwrite SEC-timing validation output: {output_dir}"
+        )
+    output_dir.parent.mkdir(parents=True, exist_ok=True)
+    contract = load_sec_timing_contract(contract_path)
+    source_audit = verify_sec_timing_sources(contract_path)
+    paths = _resolved_timing_paths(contract_path, contract)
+    protocol = yaml.safe_load(paths["base_protocol"].read_text(encoding="utf-8"))
+    if not isinstance(protocol, dict):
+        raise CRSPV2Error("SEC-timing base protocol must be a YAML mapping")
+
+    archived: dict[str, Path] = {}
+    for name, spec in contract["frozen_inputs"][
+        "archived_baseline_manifests"
+    ].items():
+        path = Path(str(spec["path"])).expanduser().resolve()
+        if sha256_file(path) != str(spec["sha256"]):
+            raise CRSPV2Error(f"SEC-timing archived baseline changed: {name}")
+        manifest = json.loads(path.read_text(encoding="utf-8"))
+        if manifest.get("final_holdout_outcomes_read") is not False:
+            raise CRSPV2Error(f"SEC-timing archived baseline opens holdout: {name}")
+        archived[str(name)] = path
+
+    ciks, target_audit = _target_ciks(
+        paths["company_cik_bridge"],
+        paths["ccm_link_history"],
+        paths["selection_panel"],
+        protocol,
+    )
+    expected_target_ciks = int(
+        contract["inventory"]["inherited_source_receipt"]["target_ciks"]
+    )
+    if len(ciks) != expected_target_ciks:
+        raise CRSPV2Error("SEC-timing validation target CIK population changed")
+    filing = contract["frozen_mechanism"]["filing_contract"]
+    timing_features, extraction_audit = extract_first_filed_sec_timing(
+        paths["submissions_zip"],
+        ciks,
+        minimum_report_date=contract["access_contract"]["minimum_sec_report_date"],
+        maximum_acceptance_timestamp=contract["access_contract"][
+            "maximum_sec_acceptance_timestamp"
+        ],
+        minimum_delay_days=int(filing["valid_delay_days_inclusive"][0]),
+        maximum_delay_days=int(filing["valid_delay_days_inclusive"][1]),
+        minimum_report_gap_days=int(filing["consecutive_report_gap_days_inclusive"][0]),
+        maximum_report_gap_days=int(filing["consecutive_report_gap_days_inclusive"][1]),
+    )
+    score_frame, coverage, frame_audit = build_sec_timing_scores(
+        timing_features,
+        paths["company_cik_bridge"],
+        paths["ccm_link_history"],
+        paths["selection_panel"],
+        protocol,
+    )
+    chronology = _chronology_receipt(
+        contract, target_audit, extraction_audit, frame_audit
+    )
+    coverage_gate = evaluate_sec_timing_coverage_gate(
+        coverage, contract, protocol, source_digests_verified=True
+    )
+    if not coverage_gate["gate_passed"]:
+        raise CRSPV2Error("SEC-timing validation coverage gate no longer passes")
+    frame, validation_audit = _load_sec_timing_validation_frame(
+        score_frame, paths["selection_panel"], protocol
+    )
+    frame["sec_cash_earnings_acceleration"] = frame[
+        "sec_reporting_timeliness_quality"
+    ]
+    del score_frame, timing_features, ciks
+
+    candidate = _run_strategy(
+        frame,
+        protocol,
+        signal="sec_cash_earnings_acceleration",
+        weighting="equal",
+    )
+    standard_frame = _load_signal_frame(paths["selection_panel"], protocol)
+    classic = _run_strategy(
+        standard_frame,
+        protocol,
+        signal="mom_12_2",
+        weighting="equal",
+        classic=True,
+    )
+    momentum = _run_strategy(
+        standard_frame,
+        protocol,
+        signal="blend_12_2_6_2",
+        weighting="inverse_vol_126d",
+    )
+    first_filed_cash_earnings = _archived_strategy_result(
+        archived["first_filed_cash_earnings"]
+    )
+    audit = audit_source_protocol(paths["base_protocol"])
+    baselines, baseline_monthly = _baseline_table(
+        protocol, audit, candidate, classic, paths["base_protocol"]
+    )
+    baseline_id_map = {
+        "selected_flagship": "sec_reporting_timeliness_quality",
+        "identical_universe_classic_mom_12_2": (
+            "identical_universe_classic_momentum"
+        ),
+        "crsp_vw_market": "crsp_value_weighted_market",
+        "crsp_ew_market": "crsp_equal_weighted_market",
+    }
+    baselines["baseline_id"] = baselines["baseline_id"].replace(baseline_id_map)
+    baselines = pd.concat(
+        [
+            baselines,
+            pd.DataFrame(
+                [
+                    _internal_baseline_row(
+                        "archived_frozen_momentum",
+                        momentum,
+                        archived["frozen_momentum"],
+                    ),
+                    _internal_baseline_row(
+                        "archived_first_filed_cash_earnings",
+                        first_filed_cash_earnings,
+                        archived["first_filed_cash_earnings"],
+                    ),
+                ]
+            ),
+        ],
+        ignore_index=True,
+    )
+    expected_baselines = list(contract["future_validation_gates"]["baselines"])
+    ordered_baseline_ids = [
+        "sec_reporting_timeliness_quality",
+        *expected_baselines,
+    ]
+    baselines = baselines.loc[
+        baselines["baseline_id"].isin(ordered_baseline_ids)
+    ].copy()
+    if set(baselines["baseline_id"]) != set(ordered_baseline_ids):
+        raise CRSPV2Error("SEC-timing frozen baseline set is incomplete")
+    baselines["baseline_id"] = pd.Categorical(
+        baselines["baseline_id"], categories=ordered_baseline_ids, ordered=True
+    )
+    baselines = baselines.sort_values("baseline_id").reset_index(drop=True)
+    baselines["baseline_id"] = baselines["baseline_id"].astype(str)
+
+    baseline_monthly = baseline_monthly.rename(columns=baseline_id_map)
+    baseline_monthly["archived_frozen_momentum"] = momentum.monthly[
+        "net_return"
+    ].to_numpy()
+    baseline_monthly["archived_first_filed_cash_earnings"] = (
+        first_filed_cash_earnings.monthly["net_return"].to_numpy()
+    )
+    baseline_monthly = baseline_monthly[
+        ["month", *ordered_baseline_ids]
+    ].copy()
+
+    stress_rows: list[dict[str, Any]] = []
+    stress_results: dict[tuple[float, float], StrategyResult] = {}
+    stress = contract["future_validation_gates"]["stress_grid"]
+    for borrow in stress["annual_short_borrow_bps"]:
+        for multiplier in stress["nonborrow_cost_multiplier"]:
+            result = _run_strategy(
+                frame,
+                protocol,
+                signal="sec_cash_earnings_acceleration",
+                weighting="equal",
+                annual_short_borrow_bps=float(borrow),
+                cost_multiplier=float(multiplier),
+            )
+            key = (float(borrow), float(multiplier))
+            stress_results[key] = result
+            stress_rows.append(
+                {
+                    "annual_short_borrow_bps": key[0],
+                    "nonborrow_cost_multiplier": key[1],
+                    **result.metrics,
+                }
+            )
+    harsh_key = (
+        float(max(stress["annual_short_borrow_bps"])),
+        float(max(stress["nonborrow_cost_multiplier"])),
+    )
+    decision = _sec_timing_validation_decision(
+        contract,
+        candidate,
+        momentum,
+        stress_results[harsh_key],
+        coverage_gate_passed=True,
+    )
+    del frame, standard_frame
+
+    staging = Path(
+        tempfile.mkdtemp(prefix=f".{output_dir.name}.staging-", dir=output_dir.parent)
+    )
+    try:
+        pd.DataFrame(
+            [
+                {
+                    "candidate_id": contract["frozen_mechanism"]["candidate_id"],
+                    "signal": contract["frozen_mechanism"]["signal"],
+                    "weighting": contract["frozen_mechanism"]["weighting"],
+                    **candidate.metrics,
+                }
+            ]
+        ).to_csv(staging / "validation_candidate_table.csv", index=False)
+        baselines.to_csv(staging / "baseline_comparison.csv", index=False)
+        pd.DataFrame(stress_rows).to_csv(staging / "cost_stress.csv", index=False)
+        baseline_monthly.to_csv(staging / "baseline_monthly_returns.csv", index=False)
+        candidate.monthly.to_csv(
+            staging / "candidate_monthly_diagnostics.csv", index=False
+        )
+        coverage.to_csv(staging / "feature_coverage.csv", index=False)
+        _json_dump(staging / "mechanism_decision.json", decision)
+        _json_dump(
+            staging / "source_manifest.json",
+            {
+                "schema_version": "microalpha-sec-timing-validation-sources/v1",
+                "contract_path": str(contract_path),
+                "contract_sha256": sha256_file(contract_path),
+                "source_audit": source_audit,
+                "archived_baseline_manifests": {
+                    name: {"path": str(path), "sha256": sha256_file(path)}
+                    for name, path in archived.items()
+                },
+                "chronology": chronology,
+                "coverage_gate": coverage_gate,
+                "validation_frame_audit": validation_audit,
+                "runner_git_sha": _git_sha(),
+                "restricted_identifier_rows_written": 0,
+                "validation_outcomes_read": True,
+                "final_holdout_outcomes_read": False,
+            },
+        )
+        _json_dump(
+            staging / "integrity_report.json",
+            {
+                "schema_version": "microalpha-sec-timing-validation-integrity/v1",
+                "published_frozen_contract_verified": True,
+                "source_digests_verified": True,
+                "coverage_gate_verified": True,
+                "chronology_verified": not chronology["failures"],
+                "frozen_baseline_set_verified": True,
+                "frozen_stress_grid_verified": True,
+                "candidate_structurally_eligible": bool(candidate.metrics["eligible"]),
+                "candidate_executed_net_neutrality_verified": (
+                    candidate.metrics["maximum_absolute_executed_net"] <= 1e-9
+                ),
+                "candidate_executed_industry_neutrality_verified": (
+                    candidate.metrics["maximum_absolute_executed_industry_net"]
+                    <= 1e-9
+                ),
+                "restricted_identifier_rows_written": 0,
+                "validation_outcomes_read": True,
+                "final_holdout_outcomes_read": False,
+            },
+        )
+        artifacts = {
+            path.name: {"sha256": sha256_file(path), "size_bytes": path.stat().st_size}
+            for path in sorted(staging.iterdir())
+        }
+        _json_dump(
+            staging / "result_manifest.json",
+            {
+                "schema_version": "microalpha-sec-timing-validation-result/v1",
+                "created_at_utc": datetime.now(timezone.utc).isoformat(),
+                "candidate": contract["frozen_mechanism"]["candidate_id"],
+                "mechanism_outcome": decision["outcome"],
+                "contract_sha256": sha256_file(contract_path),
+                "runner_git_sha": _git_sha(),
+                "artifacts": artifacts,
+                "restricted_identifier_rows_written": 0,
+                "validation_outcomes_read": True,
+                "final_holdout_outcomes_read": False,
+            },
+        )
+        os.rename(staging, output_dir)
+    except Exception:
+        if staging.exists():
+            shutil.rmtree(staging)
+        raise
+
+    return {
+        "output_dir": str(output_dir),
+        "candidate": contract["frozen_mechanism"]["candidate_id"],
+        "mechanism_outcome": decision["outcome"],
+        "all_decision_gates_pass": decision["all_decision_gates_pass"],
+        "net_sharpe_hac": candidate.metrics["net_sharpe_hac"],
+        "cagr": candidate.metrics["cagr"],
+        "max_drawdown": candidate.metrics["max_drawdown"],
+        "runner_git_sha": _git_sha(),
+        "validation_outcomes_read": True,
+        "final_holdout_outcomes_read": False,
+    }
+
+
 __all__ = [
     "AGGREGATE_COVERAGE_COLUMNS",
     "build_sec_timing_scores",
     "evaluate_sec_timing_coverage_gate",
     "extract_first_filed_sec_timing",
     "load_sec_timing_contract",
+    "run_sec_timing_frozen_validation",
     "run_sec_timing_return_free_coverage",
     "verify_sec_timing_sources",
 ]
