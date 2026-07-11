@@ -564,7 +564,7 @@ def _build_sec_vintage_frame(
                     {outcome_projection}
                 FROM read_parquet({_sql_literal(panel_path)})
                 WHERE formation_date BETWEEN DATE {_sql_literal(first_formation.date())}
-                                         AND DATE {_sql_literal(last_formation.date())}
+                                         AND DATE {_sql_literal(validation_end.date())}
             ), links AS (
                 SELECT
                     gvkey,
@@ -656,8 +656,10 @@ def _build_sec_vintage_frame(
     ].mean(axis=1, skipna=False)
     frame.loc[~complete, "sec_cash_earnings_acceleration"] = np.nan
 
+    formation_months = pd.date_range(first_formation, last_formation, freq="ME")
+    formation = frame.loc[frame["formation_date"].isin(formation_months)].copy()
     coverage_rows: list[dict[str, Any]] = []
-    for date, snapshot in frame.groupby("formation_date", sort=True):
+    for date, snapshot in formation.groupby("formation_date", sort=True):
         eligible = snapshot["eligible_at_formation"].fillna(False).astype(bool)
         scored = eligible & snapshot["sec_cash_earnings_acceleration"].notna()
         coverage_rows.append(

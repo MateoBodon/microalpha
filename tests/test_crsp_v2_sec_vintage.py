@@ -232,7 +232,7 @@ def _write_frame_fixture(tmp_path: Path) -> tuple[pd.DataFrame, Path, Path, Path
     ).to_parquet(link_path, index=False)
     panel_path = tmp_path / "panel.parquet"
     panel_rows = []
-    for date in pd.date_range("2016-12-31", "2022-11-30", freq="ME"):
+    for date in pd.date_range("2016-12-31", "2022-12-31", freq="ME"):
         for number in range(1, 5):
             panel_rows.append(
                 {
@@ -297,6 +297,7 @@ def test_frame_enforces_acceptance_and_ranks_without_projecting_returns(
     assert scores.loc[3] > scores.loc[2] > scores.loc[1]
     assert pd.isna(scores.loc[4])
     assert frame["monthly_total_return"].isna().all()
+    assert frame["formation_date"].max() == pd.Timestamp("2022-12-31")
     assert len(coverage) == 72
     assert audit["panel_return_column_projected"] is False
     assert audit["post_2022_sec_fact_rows_selected"] == 0
