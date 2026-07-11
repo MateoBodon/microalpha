@@ -793,6 +793,7 @@ def apply_trade_capacity(
     capital_usd: float,
     max_participation: float,
     max_single_name_weight: float | None = None,
+    tradable: pd.Series | None = None,
 ) -> CapacityResult:
     """Clip rebalance deltas to a percentage of lagged ADV and report turnover."""
 
@@ -814,6 +815,9 @@ def apply_trade_capacity(
 
     requested_delta = target_aligned - previous_aligned
     maximum_delta = adv * float(max_participation) / float(capital_usd)
+    if tradable is not None:
+        can_trade = tradable.reindex(index).fillna(False).astype(bool)
+        maximum_delta = maximum_delta.where(can_trade, 0.0)
     executed_delta = requested_delta.clip(lower=-maximum_delta, upper=maximum_delta)
     executed = previous_aligned + executed_delta
     constrained = tuple(index[executed_delta.abs() + 1e-15 < requested_delta.abs()])
@@ -841,6 +845,7 @@ def apply_constrained_trade_capacity(
     max_participation: float,
     max_single_name_weight: float,
     max_industry_gross_weight: float,
+    tradable: pd.Series | None = None,
 ) -> CapacityResult:
     """Execute as close to target as capacity permits while preserving risk caps.
 
@@ -877,6 +882,9 @@ def apply_constrained_trade_capacity(
         raise CRSPV2Error("Target exceeds the single-name cap")
 
     maximum_delta = adv * float(max_participation) / float(capital_usd)
+    if tradable is not None:
+        can_trade = tradable.reindex(index).fillna(False).astype(bool)
+        maximum_delta = maximum_delta.where(can_trade, 0.0)
     lower = np.maximum(
         previous_aligned.to_numpy() - maximum_delta.to_numpy(),
         -max_single_name_weight,

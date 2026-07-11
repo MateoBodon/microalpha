@@ -313,3 +313,18 @@ def test_constrained_capacity_preserves_actual_industry_neutrality() -> None:
     assert executed.groupby(industry).sum().abs().max() < 1e-9
     assert executed.abs().groupby(industry).sum().max() <= 0.20 + 1e-9
     assert result.fill_ratio < 1.0
+
+    no_session = apply_constrained_trade_capacity(
+        previous,
+        target,
+        adv,
+        industry,
+        capital_usd=1_000_000.0,
+        max_participation=0.02,
+        max_single_name_weight=0.20,
+        max_industry_gross_weight=0.20,
+        tradable=pd.Series({1: False, 2: True, 3: True, 4: True}),
+    )
+    assert no_session.executed_weights.loc[1] == pytest.approx(0.0)
+    assert no_session.executed_weights.loc[2] == pytest.approx(0.0)
+    assert no_session.executed_weights.groupby(industry).sum().abs().max() < 1e-9

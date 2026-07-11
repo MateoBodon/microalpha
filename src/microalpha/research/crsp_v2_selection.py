@@ -150,6 +150,7 @@ def _load_signal_frame(panel_path: Path, protocol: Mapping[str, Any]) -> pd.Data
                     formation_date,
                     industry,
                     eligible_at_formation,
+                    price,
                     adv_60_usd,
                     volatility_126d,
                     full_spread_bps,
@@ -268,6 +269,7 @@ def _run_strategy(
 
     previous = pd.Series(dtype=float)
     prior_adv = pd.Series(dtype=float)
+    prior_industry = pd.Series(dtype="object")
     rows: list[dict[str, Any]] = []
     for realization_date in realization_dates:
         formation_date = realization_date - pd.offsets.MonthEnd(1)
@@ -313,7 +315,14 @@ def _run_strategy(
         adv = current_adv.combine_first(prior_adv.reindex(union))
         if adv.isna().any() or adv.le(0.0).any():
             raise CRSPV2Error("Active trade lacks positive point-in-time ADV")
-        point_in_time_industry = formation["industry"].reindex(union)
+        point_in_time_industry = formation["industry"].reindex(union).combine_first(
+            prior_industry.reindex(union)
+        )
+        next_price = pd.to_numeric(realization["price"].reindex(union), errors="coerce")
+        tradable = next_price.abs().gt(0.0).fillna(False)
+        untradable_target_names = int(
+            (target.reindex(union, fill_value=0.0).ne(0.0) & ~tradable).sum()
+        )
         if classic:
             capacity = apply_trade_capacity(
                 previous,
@@ -322,6 +331,7 @@ def _run_strategy(
                 capital_usd=capital,
                 max_participation=max_participation,
                 max_single_name_weight=max_name,
+                tradable=tradable,
             )
         else:
             capacity = apply_constrained_trade_capacity(
@@ -333,6 +343,7 @@ def _run_strategy(
                 max_participation=max_participation,
                 max_single_name_weight=max_name,
                 max_industry_gross_weight=max_industry,
+                tradable=tradable,
             )
         executed = capacity.executed_weights.loc[
             capacity.executed_weights.abs().gt(1e-15)
@@ -365,29 +376,37 @@ def _run_strategy(
             realization["monthly_total_return"].reindex(executed.index),
             errors="coerce",
         )
-        if realized_returns.isna().any():
-            raise CRSPV2Error("An executed position lacks its t+1 monthly return")
-        gross_return = float((executed * realized_returns).sum())
-        net_return = gross_return - total_cost / capital
-        if net_return <= -1.0:
-            raise CRSPV2Error("Portfolio equity is non-positive")
-        post = executed * (1.0 + realized_returns) / (1.0 + net_return)
-        delisted = (
+        realization_present = pd.Series(
+            executed.index.isin(realization.index), index=executed.index
+        )
+        realized_delisting = (
             pd.to_numeric(
-                realization["delisting_pseudo_days"].reindex(post.index),
+                realization["delisting_pseudo_days"].reindex(executed.index),
                 errors="coerce",
             )
             .fillna(0)
             .gt(0)
         )
+        if (realization_present & realized_returns.isna()).any():
+            raise CRSPV2Error("A present realized position lacks its CIZ return")
+        absent_rows_zero_marked = int((~realization_present).sum())
+        present_missing_returns_zero_marked = 0
+        realized_returns = realized_returns.fillna(0.0)
+        gross_return = float((executed * realized_returns).sum())
+        net_return = gross_return - total_cost / capital
+        if net_return <= -1.0:
+            raise CRSPV2Error("Portfolio equity is non-positive")
+        post = executed * (1.0 + realized_returns) / (1.0 + net_return)
+        delisted = realized_delisting.reindex(post.index, fill_value=False)
         delisted_positions = int((delisted & executed.reindex(post.index).ne(0.0)).sum())
         post.loc[delisted] = 0.0
         previous = post.loc[post.abs().gt(1e-15)].sort_index()
         prior_adv = adv.reindex(previous.index).copy()
+        prior_industry = point_in_time_industry.reindex(previous.index).copy()
 
         target_industry = eligible.set_index("permno")["industry"].reindex(target.index)
         target_industry_gross = target.abs().groupby(target_industry).sum()
-        executed_industry = formation["industry"].reindex(executed.index)
+        executed_industry = point_in_time_industry.reindex(executed.index)
         if executed_industry.isna().any():
             raise CRSPV2Error("Executed holding lacks point-in-time industry")
         executed_industry_gross = executed.abs().groupby(executed_industry).sum()
@@ -415,6 +434,11 @@ def _run_strategy(
                     executed_industry_net.abs().max()
                 ),
                 "delisted_positions_liquidated": delisted_positions,
+                "untradable_target_names": untradable_target_names,
+                "absent_rows_zero_marked": absent_rows_zero_marked,
+                "present_missing_returns_zero_marked": (
+                    present_missing_returns_zero_marked
+                ),
                 "total_cost_dollars": float(total_cost),
                 "commission_dollars": float(cost["commission_dollars"] * cost_multiplier),
                 "spread_dollars": float(cost["spread_dollars"] * cost_multiplier),
@@ -491,6 +515,11 @@ def _run_strategy(
         ),
         "delisted_positions_liquidated": int(
             monthly["delisted_positions_liquidated"].sum()
+        ),
+        "untradable_target_names": int(monthly["untradable_target_names"].sum()),
+        "absent_rows_zero_marked": int(monthly["absent_rows_zero_marked"].sum()),
+        "present_missing_returns_zero_marked": int(
+            monthly["present_missing_returns_zero_marked"].sum()
         ),
         "maximum_target_industry_gross": float(
             monthly["max_target_industry_gross"].max()
@@ -912,6 +941,19 @@ def run_selection(
                     "Monthly aggregation does not isolate the first-session overnight "
                     "component; the same predeclared mapping is applied to every "
                     "candidate and is not final-holdout execution evidence"
+                ),
+                "no_session_rule": (
+                    "A requested trade with no following-month observed session is "
+                    "unfilled; an already-held security with no row is carried at an "
+                    "unchanged mark using its last observed point-in-time metadata"
+                ),
+                "missing_return_rule": (
+                    "Any present realized row without a CIZ return is a hard stop; "
+                    "only a wholly absent no-session month is carried unchanged"
+                ),
+                "return_semantics_authority": (
+                    "https://www.crsp.org/crsp_pdf/"
+                    "crsp-us-stock-indexes-databases-guide-flat-file-format-2-0/"
                 ),
             },
             "panel_sha256": sha256_file(panel_path),

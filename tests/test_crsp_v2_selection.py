@@ -59,6 +59,7 @@ def test_signal_windows_exclude_the_current_month(tmp_path: Path) -> None:
             "formation_date": dates,
             "industry": "BusEq",
             "eligible_at_formation": True,
+            "price": 50.0,
             "adv_60_usd": 100_000_000.0,
             "volatility_126d": 0.02,
             "full_spread_bps": 10.0,
@@ -96,6 +97,8 @@ def test_validation_engine_maps_formation_to_next_month_and_applies_costs() -> N
     for month_index, date in enumerate(dates):
         alpha_scale = 0.0003 + 0.0001 * np.sin(month_index / 3.0)
         for security, industry, score in securities:
+            if security == 2 and month_index == 1:
+                continue
             centered_score = score - 20.5
             delisted = security == 1 and month_index == 1
             rows.append(
@@ -104,6 +107,7 @@ def test_validation_engine_maps_formation_to_next_month_and_applies_costs() -> N
                     "formation_date": date,
                     "industry": industry,
                     "eligible_at_formation": not (security == 1 and month_index >= 1),
+                    "price": 50.0,
                     "adv_60_usd": 100_000_000.0,
                     "volatility_126d": 0.02 + (security % 5) * 0.001,
                     "full_spread_bps": 10.0,
@@ -135,6 +139,7 @@ def test_validation_engine_maps_formation_to_next_month_and_applies_costs() -> N
     assert result.monthly["max_abs_executed_industry_net"].max() <= 1e-9
     assert result.monthly["executed_net"].abs().max() <= 1e-9
     assert result.metrics["delisted_positions_liquidated"] == 1
+    assert result.metrics["untradable_target_names"] >= 1
     assert result.metrics["median_names_per_sleeve"] >= 30
     assert result.metrics["eligible"] is True
 
