@@ -42,6 +42,18 @@ SIGNAL_DEFINITIONS = {
         "formation lags 1..5; equivalently realization-relative months t-6..t-2"
     ),
     "blend_12_2_6_2": "equal arithmetic blend of the two frozen lagged signals",
+    "residual_mom_12_2": (
+        "sum of stock return minus contemporaneous FF12-industry median return "
+        "over formation lags 1..11"
+    ),
+    "residual_mom_6_2": (
+        "sum of stock return minus contemporaneous FF12-industry median return "
+        "over formation lags 1..5"
+    ),
+    "residual_mom_12_2_minus_reversal_1_1": (
+        "residual_mom_12_2 minus the formation-month stock return minus "
+        "contemporaneous FF12-industry median return"
+    ),
 }
 
 

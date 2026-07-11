@@ -1,0 +1,104 @@
+schema_version: microalpha-distinct-family-contract/v1
+contract_id: crsp-v2-residual-momentum-20260711
+status: predeclared_not_executed
+predeclared_at_utc: "2026-07-11T15:25:00Z"
+
+objective:
+  authoritative_goal: >-
+    Replace the weak frozen momentum blend only if a small economically distinct
+    family produces materially stronger, cost-aware, capacity-constrained
+    2017-2022 validation evidence while the 2023-2025 final holdout stays sealed.
+  proxy_warning: >-
+    Validation performance is a model-selection proxy, not final-holdout evidence
+    and not an alpha claim.
+
+frozen_inputs:
+  base_protocol_sha256: f88df6c93d3a83ddf76be6e198fc567122f18b39204b8565290e09969f1af75e
+  panel_sha256: 4ed2b33e2496e224a7701c3d0d71d593909d8fc7547ecdcbc483b2c83686206a
+  panel_manifest_sha256: 0e625c05853bfed6e8b811bbd3df86d0fe64a05cf9929ede537299adc851710d
+  previous_selection_manifest_sha256: 09f7d5240d8290b442cd2f72ed1be9c374d51459de4fb31b4af7b5859f7a6d58
+  previous_selected_candidate: blend_12_2_6_2__inverse_vol_126d
+
+access_contract:
+  permitted_dates: "2005-01-01 through 2022-12-31"
+  final_holdout_dates: "2023-01-01 through 2025-12-31"
+  final_holdout_outcomes_read: false
+  hard_stop: Any final-holdout outcome access before a separate post-freeze decision.
+
+economic_hypothesis: >-
+  Intermediate-horizon continuation may be more persistent at the firm-relative
+  level than at the industry level. Subtracting each FF12 industry's robust
+  contemporaneous median return removes industry drift. A separate predeclared
+  variant subtracts the formation-month firm residual once to control for
+  short-term reversal without fitting a coefficient.
+
+family:
+  industry_center: contemporaneous cross-sectional FF12 median monthly total return
+  candidates:
+    - id: residual_mom_12_2__equal
+      signal: residual_mom_12_2
+      weighting: equal
+      definition: Sum of industry-residual returns over formation lags 1 through 11.
+    - id: residual_mom_6_2__equal
+      signal: residual_mom_6_2
+      weighting: equal
+      definition: Sum of industry-residual returns over formation lags 1 through 5.
+    - id: residual_mom_12_2_minus_reversal_1_1__equal
+      signal: residual_mom_12_2_minus_reversal_1_1
+      weighting: equal
+      definition: >-
+        residual_mom_12_2 minus the formation-month industry-residual return,
+        with coefficient fixed at 1.0 before validation.
+  fixed_weighting_reason: >-
+    Equal weighting isolates the economic signal change and avoids retuning the
+    failed inverse-volatility versus equal-weight dimension.
+
+selection_reducer:
+  inputs: validation_only_2017_2022
+  ordered_objective:
+    - require_structural_eligibility
+    - maximize_net_sharpe_hac
+    - maximize_worst_calendar_year_net_return
+    - minimize_total_one_way_turnover
+  ties: candidate_id_ascending
+
+portfolio_cost_capacity_contract:
+  source: docs/strategy/MICROALPHA_FLAGSHIP_20260710.yaml
+  unchanged_rules:
+    - 15000000 USD capital
+    - 1.0 gross and 0.0 net exposure
+    - point-in-time FF12 industry neutrality
+    - 2 percent single-name cap
+    - 15 percent industry gross cap
+    - 2 percent of 60-day ADV participation cap
+    - 5 bps commission each side
+    - contemporaneous half-spread each side with 10 bps full-spread fallback
+    - square-root impact and 300 bps annual short borrow
+  stress_grid:
+    annual_short_borrow_bps: [0.0, 600.0]
+    nonborrow_cost_multiplier: [0.5, 2.0]
+
+baselines:
+  - exact rerun of blend_12_2_6_2__inverse_vol_126d on the frozen panel
+  - identical-universe classic 12-2 momentum with identical costs and capacity
+  - CRSP value-weight and equal-weight markets
+  - Ken French MOM and prior-12-2 decile spread
+  - cash RF
+  - legacy result retained as historical noncomparable evidence only
+
+family_gate:
+  minimum_sharpe_improvement_over_previous: 0.10
+  maximum_drawdown: 0.25
+  requirements:
+    - structurally eligible under unchanged constraints
+    - HAC Sharpe at least 0.10 above the previous frozen candidate
+    - HAC Sharpe at least as high as identical-universe classic momentum
+    - positive CAGR and at most 25 percent drawdown
+    - positive Sharpe and CAGR at 600 bps borrow plus 2x nonborrow costs
+  pass_outcome: Freeze the candidate while keeping the final holdout sealed.
+  fail_outcome: Archive the whole family as a validation negative and change method.
+
+claim_boundary:
+  alpha_claim_allowed: false
+  final_holdout_promotion_allowed: false
+  public_release_allowed: false
