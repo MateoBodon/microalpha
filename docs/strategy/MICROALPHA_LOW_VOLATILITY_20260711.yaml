@@ -1,0 +1,93 @@
+schema_version: microalpha-single-mechanism-contract/v1
+contract_id: crsp-v2-low-volatility-20260711
+status: predeclared_not_executed
+predeclared_at_utc: "2026-07-11T17:02:00Z"
+
+objective:
+  authoritative_goal: >-
+    Test one genuinely non-momentum, point-in-time low-volatility mechanism on
+    the existing CRSP-v2 selection panel and retain it only if materially strong
+    net validation and harsh-cost evidence pass fixed gates.
+  proxy_warning: >-
+    The 2017-2022 validation result is a mechanism screen, not final-holdout
+    evidence and not an alpha claim.
+
+frozen_inputs:
+  base_protocol_sha256: f88df6c93d3a83ddf76be6e198fc567122f18b39204b8565290e09969f1af75e
+  panel_sha256: 4ed2b33e2496e224a7701c3d0d71d593909d8fc7547ecdcbc483b2c83686206a
+  panel_manifest_sha256: 0e625c05853bfed6e8b811bbd3df86d0fe64a05cf9929ede537299adc851710d
+  momentum_result_manifest_sha256: 09f7d5240d8290b442cd2f72ed1be9c374d51459de4fb31b4af7b5859f7a6d58
+  residual_result_manifest_sha256: 9e3a8818211a9ef9c81816bb2fadf6165636cc9a344f9284698adec3499ef107
+  strongest_archived_candidate: residual_mom_12_2__equal
+  strongest_archived_net_sharpe_hac: 0.31980973031036036
+
+access_contract:
+  permitted_dates: "2005-01-01 through 2022-12-31"
+  final_holdout_dates: "2023-01-01 through 2025-12-31"
+  final_holdout_outcomes_read: false
+  hard_stop: Any final-holdout outcome access before a separate post-freeze decision.
+
+economic_hypothesis: >-
+  Leverage constraints and investor preference for lottery-like payoffs can
+  overprice high-risk securities relative to low-risk securities. A long-low,
+  short-high volatility spread within each point-in-time FF12 industry tests
+  that mechanism without using past return direction or tuning a coefficient.
+
+mechanism:
+  candidate_id: low_volatility_126d__equal
+  signal: low_volatility_126d
+  signal_definition: >-
+    Negative trailing 126-session daily-return volatility already computed at
+    formation month-end from source rows no later than that month-end.
+  direction: long lowest volatility and short highest volatility within FF12 industry
+  weighting: equal
+  candidate_count: 1
+  fixed_rules:
+    - No volatility threshold or transformation is fitted.
+    - The existing ten-percent long and short sleeves are unchanged.
+    - Trade execution begins in the following calendar month.
+
+portfolio_cost_capacity_contract:
+  source: docs/strategy/MICROALPHA_FLAGSHIP_20260710.yaml
+  unchanged_rules:
+    - 15000000 USD capital
+    - 1.0 gross and 0.0 net exposure
+    - point-in-time FF12 industry neutrality
+    - 2 percent single-name cap
+    - 15 percent industry gross cap
+    - 2 percent of 60-day ADV participation cap
+    - 5 bps commission each side
+    - contemporaneous half-spread each side with 10 bps full-spread fallback
+    - square-root impact and 300 bps annual short borrow
+  stress_grid:
+    annual_short_borrow_bps: [0.0, 600.0]
+    nonborrow_cost_multiplier: [0.5, 2.0]
+
+baselines:
+  - exact rerun of archived blend_12_2_6_2__inverse_vol_126d
+  - exact rerun of archived residual_mom_12_2__equal
+  - identical-universe classic 12-2 momentum with identical costs and capacity
+  - CRSP value-weight and equal-weight markets
+  - Ken French MOM and prior-12-2 decile spread
+  - cash RF
+  - legacy result retained as historical noncomparable evidence only
+
+mechanism_gate:
+  minimum_net_sharpe_hac: 0.45
+  minimum_hac_tstat: 1.50
+  minimum_sharpe_improvement_over_strongest_archived: 0.10
+  maximum_drawdown: 0.25
+  requirements:
+    - structurally eligible under unchanged constraints
+    - HAC Sharpe at least 0.45
+    - HAC Sharpe t-stat at least 1.50
+    - HAC Sharpe at least 0.10 above the strongest archived candidate
+    - positive CAGR and at most 25 percent drawdown
+    - positive Sharpe and CAGR at 600 bps borrow plus 2x nonborrow costs
+  pass_outcome: Freeze the mechanism while keeping the final holdout sealed.
+  fail_outcome: Archive the mechanism and change economic method without retuning.
+
+claim_boundary:
+  alpha_claim_allowed: false
+  final_holdout_promotion_allowed: false
+  public_release_allowed: false
