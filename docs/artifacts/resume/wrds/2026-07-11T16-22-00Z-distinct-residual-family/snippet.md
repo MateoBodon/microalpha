@@ -13,6 +13,6 @@ replacement margin; it also trailed identical-universe classic momentum at
 nonborrow costs. The 2023-2025 final holdout was not opened. This is neither a
 promotion nor an alpha claim.
 
-Exact evidence bindings are in `summary.json`. The external result-manifest
+Exact evidence bindings are in `metrics.json`. The external result-manifest
 SHA-256 is
 `9e3a8818211a9ef9c81816bb2fadf6165636cc9a344f9284698adec3499ef107`.
