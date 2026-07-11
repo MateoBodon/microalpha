@@ -10,6 +10,27 @@ commands:
 # Current Results
 
 
+## CRSP-v2 pre-holdout research (2026-07-11)
+
+- Frozen panel: `4ed2b33e2496e224a7701c3d0d71d593909d8fc7547ecdcbc483b2c83686206a`
+  covering only permitted data through 2022-12-31.
+- Previous six-candidate winner: `blend_12_2_6_2__inverse_vol_126d`;
+  validation HAC Sharpe `0.2407`, CAGR `1.70%`, max drawdown `11.42%`.
+- Economically distinct preregistered family: three equal-weight
+  FF12-industry-residual momentum signals at runner commit `ecb3def0`.
+- Best distinct-family candidate: `residual_mom_12_2__equal`; validation HAC
+  Sharpe `0.3198` (t-stat `1.2174`), CAGR `2.48%`, max drawdown `9.39%`.
+- Decision: archive the family as a validation negative. It improved on the
+  previous winner by only `0.0791` Sharpe, below the predeclared `0.10` margin;
+  it also trailed identical-universe classic momentum (`0.3260`) and produced
+  CAGR `-0.20%` at the harsh `600 bps` borrow plus `2x` nonborrow-cost stress.
+- Evidence: `docs/artifacts/resume/wrds/2026-07-11T16-22-00Z-distinct-residual-family/`;
+  external result-manifest SHA-256
+  `9e3a8818211a9ef9c81816bb2fadf6165636cc9a344f9284698adec3499ef107`.
+- The 2023-2025 final holdout was not opened. No alpha or promotion claim is
+  supported.
+
+
 ## Sample bundle (README + artifacts)
 
 - Run: `artifacts/sample_flagship/2025-10-30T18-39-31Z-a4ab8e7`
