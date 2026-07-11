@@ -1,0 +1,74 @@
+{
+  "schema_version": "microalpha-resume-safe-qvpi/v1",
+  "classification": "preregistered_validation_negative",
+  "candidate": "qvpi_annual_composite__equal",
+  "validation_window": {
+    "start": "2017-01-31",
+    "end": "2022-12-31",
+    "months": 72
+  },
+  "runner": {
+    "local_commit": "613ce293ca2c42ab8bdb49adcb7918e28caa752c",
+    "published_exact_tree_commit": "6ac4432c030877b2e68b38a4d9c5c61f45705641",
+    "tree": "cc6447f2a4766459052119ae79f0e559cdb6be65"
+  },
+  "provenance": {
+    "contract_sha256": "ee41da139ad6f1f3b7359c1719a2630c8225a4ca530292672cf88185378c2445",
+    "selection_panel_sha256": "4ed2b33e2496e224a7701c3d0d71d593909d8fc7547ecdcbc483b2c83686206a",
+    "annual_fundamental_manifest_sha256": "81c58b4dcba690438aa8c70b5e9af9b8c16c45eb94833ec790abbc8325daed1d",
+    "ccm_link_history_sha256": "33583d9f2ecac4a4bb66b12be47348a828ba1481f3b25ece6a5f081ca13b1f95",
+    "external_result_manifest_sha256": "72b378035b736c50f26be8e11bff1f72dc2478365971294694336c9945332fb2"
+  },
+  "feature_coverage": {
+    "minimum_complete_names": 1092,
+    "median_complete_names": 1144.0,
+    "maximum_complete_names": 1278,
+    "ambiguous_ccm_rows": 0
+  },
+  "primary_net_metrics": {
+    "sharpe_hac": -0.023394193388791444,
+    "sharpe_hac_tstat": -0.0461941855057238,
+    "cagr": -0.005623158473927359,
+    "max_drawdown": 0.3217401555899516,
+    "cumulative_return": -0.033268193287075,
+    "total_one_way_turnover": 14.333372028767927,
+    "total_cost_dollars": 1964136.8917280992,
+    "median_names_per_sleeve": 109.0,
+    "minimum_names_per_sleeve": 104,
+    "mean_fill_ratio": 0.9965732701675978,
+    "minimum_fill_ratio": 0.9498653763136168
+  },
+  "harsh_stress": {
+    "annual_short_borrow_bps": 600.0,
+    "nonborrow_cost_multiplier": 2.0,
+    "sharpe_hac": -0.2782251550356083,
+    "cagr": -0.027149446854921377,
+    "max_drawdown": 0.3739232953053476
+  },
+  "selected_comparators": {
+    "archived_frozen_momentum_sharpe_hac": 0.24068637598141043,
+    "archived_residual_momentum_sharpe_hac": 0.3198097303103603,
+    "identical_universe_classic_momentum_sharpe_hac": 0.3259702071591022,
+    "crsp_value_weighted_market_gross_sharpe_hac": 0.6310898408224764
+  },
+  "decision": {
+    "outcome": "archive_mechanism_as_validation_negative",
+    "structural_gates_passed": true,
+    "failed_gates": [
+      "minimum_net_sharpe_hac",
+      "minimum_sharpe_improvement_over_archived_frozen_momentum",
+      "positive_cagr",
+      "maximum_drawdown",
+      "harsh_stress_positive_net_sharpe_hac",
+      "harsh_stress_positive_cagr"
+    ],
+    "post_hoc_retuning_allowed": false
+  },
+  "evidence_limits": {
+    "compustat_snapshot_revision_risk": "present_not_true_vintage_evidence",
+    "final_holdout_outcomes_read": false,
+    "compustat_2023_2025_partitions_opened": false,
+    "restricted_identifier_rows_written": 0,
+    "alpha_or_promotion_claim_supported": false
+  }
+}

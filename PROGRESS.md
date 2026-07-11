@@ -140,3 +140,11 @@ Ticket-18: Installed agentic system scaffold, restored repo-specific docs, and g
   HAC Sharpe `-0.4542`, CAGR `-3.82%`, and `63.27x` turnover; harsh-cost Sharpe
   was `-1.0268`. The mechanism was archived without post-hoc direction
   inversion, and the 2023-2025 final holdout remained unopened.
+- Inventoried the existing local fundamentals and link vault without WRDS
+  authentication, then preregistered one annual quality/value/profitability/
+  investment composite before computing returns. The mechanism had broad,
+  unambiguous coverage but failed economically: net HAC Sharpe `-0.0234`, CAGR
+  `-0.56%`, max drawdown `32.17%`, and harsh-cost Sharpe `-0.2782`. It was
+  archived without retuning. The current Compustat snapshot is explicitly not
+  treated as true-vintage evidence, and the 2023-2025 final holdout stayed
+  sealed.

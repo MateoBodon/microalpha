@@ -12,6 +12,23 @@ commands:
 
 ## CRSP-v2 pre-holdout research (2026-07-11)
 
+- A single annual quality/value/profitability/investment composite was
+  preregistered before return computation using 2005-2022 Compustat annual
+  files, historical primary CCM links, a fixed six-month availability lag, and
+  the existing 2017-2022 validation panel. Coverage was `1,092` to `1,278`
+  complete names per formation month with zero ambiguous CCM rows.
+- The QVPI mechanism was structurally valid but failed the frozen economic
+  gates: net HAC Sharpe `-0.0234` (t-stat `-0.0462`), CAGR `-0.56%`, max
+  drawdown `32.17%`, and total one-way turnover `14.33x`. At 600 bps borrow plus
+  2x nonborrow costs, Sharpe was `-0.2782` and CAGR `-2.71%`. It is archived
+  without sign, weight, lag, missing-value, or threshold changes.
+- Fundamental evidence:
+  `docs/artifacts/resume/wrds/2026-07-11T19-06-16Z-fundamental-qvpi/`;
+  external result-manifest SHA-256
+  `72b378035b736c50f26be8e11bff1f72dc2478365971294694336c9945332fb2`.
+- The Compustat source is a current snapshot, not a historical vintage. The
+  availability lag protects basic chronology but does not remove later-
+  restatement leakage; this result is not true vintage-accounting evidence.
 - A pure one-month FF12-industry-residual reversal mechanism was preregistered
   separately from momentum and low volatility. It was structurally valid but
   economically poor after costs: validation HAC Sharpe `-0.4542`, t-stat
@@ -47,8 +64,8 @@ commands:
 - Evidence: `docs/artifacts/resume/wrds/2026-07-11T16-22-00Z-distinct-residual-family/`;
   external result-manifest SHA-256
   `9e3a8818211a9ef9c81816bb2fadf6165636cc9a344f9284698adec3499ef107`.
-- The 2023-2025 final holdout was not opened. No alpha or promotion claim is
-  supported.
+- The 2023-2025 final holdout was not opened in any of these campaigns. No
+  alpha or promotion claim is supported.
 
 
 ## Sample bundle (README + artifacts)
