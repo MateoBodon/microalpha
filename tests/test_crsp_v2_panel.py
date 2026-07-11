@@ -128,7 +128,12 @@ def _daily_row(date: str, return_value: float, *, delisting: bool = False) -> di
     return attributes
 
 
-def _fixture_protocol(tmp_path: Path) -> Path:
+def _fixture_protocol(
+    tmp_path: Path,
+    *,
+    duplicate_name_state: str | None = None,
+    missing_name_coverage: bool = False,
+) -> Path:
     year_2022 = tmp_path / "dsf_v2" / "year=2022" / "data.csv.gz"
     year_2023 = tmp_path / "dsf_v2" / "year=2023" / "data.csv.gz"
     _write_gzip_csv(
@@ -148,42 +153,52 @@ def _fixture_protocol(tmp_path: Path) -> Path:
         ],
     )
 
+    primary_name_row = {
+        "permno": 10001,
+        "permco": 5001,
+        "namedt": "2000-01-01",
+        "nameenddt": "2021-12-31" if missing_name_coverage else "2023-01-02",
+        "ticker": "TEST",
+        "primaryexch": "N",
+        "conditionaltype": "RW",
+        "tradingstatusflg": "A",
+        "sharetype": "NS",
+        "securitytype": "EQTY",
+        "securitysubtype": "COM",
+        "usincflg": "Y",
+        "siccd": 3571,
+    }
+    name_rows = [
+        primary_name_row,
+        {
+            "permno": 99999,
+            "permco": 9999,
+            "namedt": "2023-06-01",
+            "nameenddt": "2023-12-31",
+            "ticker": "SEALED_NAME_SENTINEL",
+            "primaryexch": "Q",
+            "conditionaltype": "RW",
+            "tradingstatusflg": "A",
+            "sharetype": "NS",
+            "securitytype": "EQTY",
+            "securitysubtype": "COM",
+            "usincflg": "Y",
+            "siccd": 6021,
+        },
+    ]
+    if duplicate_name_state is not None:
+        duplicate = dict(primary_name_row)
+        if duplicate_name_state == "conflicting":
+            duplicate["ticker"] = "CONFLICT"
+        elif duplicate_name_state != "equivalent":
+            raise ValueError("unknown duplicate_name_state")
+        name_rows.append(duplicate)
+
     names_path = tmp_path / "stocknames_v2" / "data.csv.gz"
     _write_gzip_csv(
         names_path,
         NAME_COLUMNS,
-        [
-            {
-                "permno": 10001,
-                "permco": 5001,
-                "namedt": "2000-01-01",
-                "nameenddt": "2023-01-02",
-                "ticker": "TEST",
-                "primaryexch": "N",
-                "conditionaltype": "RW",
-                "tradingstatusflg": "A",
-                "sharetype": "NS",
-                "securitytype": "EQTY",
-                "securitysubtype": "COM",
-                "usincflg": "Y",
-                "siccd": 3571,
-            },
-            {
-                "permno": 99999,
-                "permco": 9999,
-                "namedt": "2023-06-01",
-                "nameenddt": "2023-12-31",
-                "ticker": "SEALED_NAME_SENTINEL",
-                "primaryexch": "Q",
-                "conditionaltype": "RW",
-                "tradingstatusflg": "A",
-                "sharetype": "NS",
-                "securitytype": "EQTY",
-                "securitysubtype": "COM",
-                "usincflg": "Y",
-                "siccd": 6021,
-            },
-        ],
+        name_rows,
     )
     delists_path = tmp_path / "stkdelists" / "data.csv.gz"
     _write_gzip_csv(
@@ -231,7 +246,7 @@ def _fixture_protocol(tmp_path: Path) -> Path:
                 "table": "stocknames_v2",
                 "status": "ok",
                 "path": str(names_path),
-                "rows": 2,
+                "rows": len(name_rows),
                 "size_bytes": names_path.stat().st_size,
             },
             {
@@ -315,7 +330,7 @@ def _fixture_protocol(tmp_path: Path) -> Path:
                     "side_tables": [
                         {
                             "table": "stocknames_v2",
-                            "expected_rows": 2,
+                            "expected_rows": len(name_rows),
                             "required_columns": NAME_COLUMNS,
                         },
                         {
@@ -395,6 +410,13 @@ def test_adapter_is_manifest_bound_and_holdout_gated(tmp_path: Path) -> None:
             "rows": 1,
             "max_namedt": "2000-01-01",
             "max_effective_nameenddt": "2022-12-31",
+            "daily_rows_without_date_valid_name": 0,
+            "daily_rows_with_overlapping_name_history": 0,
+            "maximum_date_valid_name_matches": 1,
+            "attribute_resolution": (
+                "CIZ daily row is authoritative; stocknames_v2 is a "
+                "date-coverage and overlap audit only"
+            ),
         },
         "stkdelists": {"rows": 0, "max_deldlydt": None},
     }
@@ -451,6 +473,40 @@ def test_adapter_is_manifest_bound_and_holdout_gated(tmp_path: Path) -> None:
     assert final_row[0] == pytest.approx(-0.45)
     assert final_row[1] == 1
     assert final_row[2] == 1
+
+
+def test_equivalent_overlapping_name_states_are_reported(tmp_path: Path) -> None:
+    protocol_path = _fixture_protocol(tmp_path, duplicate_name_state="equivalent")
+    manifest = build_monthly_panel(protocol_path, tmp_path / "selection.parquet")
+
+    stocknames = manifest["side_table_materialization"]["stocknames_v2"]
+    assert stocknames["rows"] == 2
+    assert stocknames["daily_rows_with_overlapping_name_history"] == 2
+    assert stocknames["maximum_date_valid_name_matches"] == 2
+
+
+def test_conflicting_name_history_never_overrides_authoritative_ciz_row(
+    tmp_path: Path,
+) -> None:
+    protocol_path = _fixture_protocol(tmp_path, duplicate_name_state="conflicting")
+    output_path = tmp_path / "selection.parquet"
+
+    manifest = build_monthly_panel(protocol_path, output_path)
+
+    stocknames = manifest["side_table_materialization"]["stocknames_v2"]
+    assert stocknames["daily_rows_with_overlapping_name_history"] == 2
+    assert duckdb.sql(
+        f"SELECT ticker FROM read_parquet('{output_path}')"
+    ).fetchone()[0] == "TEST"
+
+
+def test_missing_date_valid_name_coverage_fails_closed(tmp_path: Path) -> None:
+    protocol_path = _fixture_protocol(tmp_path, missing_name_coverage=True)
+    output_path = tmp_path / "selection.parquet"
+
+    with pytest.raises(CRSPV2Error, match="stocknames coverage failed"):
+        build_monthly_panel(protocol_path, output_path)
+    assert not output_path.exists()
 
 
 def test_adapter_refuses_to_clobber_panel_or_manifest(tmp_path: Path) -> None:
