@@ -12,6 +12,16 @@ commands:
 
 ## CRSP-v2 pre-holdout research (2026-07-11)
 
+- A pure one-month FF12-industry-residual reversal mechanism was preregistered
+  separately from momentum and low volatility. It was structurally valid but
+  economically poor after costs: validation HAC Sharpe `-0.4542`, t-stat
+  `-1.4131`, CAGR `-3.82%`, max drawdown `23.44%`, and one-way turnover
+  `63.27x`. At 600 bps borrow plus 2x nonborrow costs, Sharpe was `-1.0268`
+  and CAGR `-8.10%`. It is archived without direction inversion or retuning.
+- Reversal evidence:
+  `docs/artifacts/resume/wrds/2026-07-11T17-12-35Z-short-term-reversal/`;
+  external result-manifest SHA-256
+  `573dd7c74bc6e2bcea0ab22bde30efdc1fcfc9b4eef0ec6e7665c800bfe28b02`.
 - A separately preregistered one-candidate low-volatility mechanism used
   negative point-in-time trailing 126-session volatility, equal weighting, and
   the unchanged FF12-neutral cost/capacity portfolio. It failed decisively:

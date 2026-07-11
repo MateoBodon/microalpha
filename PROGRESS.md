@@ -135,3 +135,8 @@ Ticket-18: Installed agentic system scaffold, restored repo-specific docs, and g
   Sharpe was `-0.0906`, CAGR `-2.20%`, max drawdown `43.83%`, and harsh-cost
   results were worse, so the mechanism was archived without retuning. The
   2023-2025 final holdout remained unopened.
+- Changed methods again and preregistered one pure one-month
+  industry-residual reversal mechanism. It was structurally valid but produced
+  HAC Sharpe `-0.4542`, CAGR `-3.82%`, and `63.27x` turnover; harsh-cost Sharpe
+  was `-1.0268`. The mechanism was archived without post-hoc direction
+  inversion, and the 2023-2025 final holdout remained unopened.
