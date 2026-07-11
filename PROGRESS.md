@@ -130,3 +130,8 @@ Ticket-18: Installed agentic system scaffold, restored repo-specific docs, and g
   replacement gate (less than `0.10` improvement, below classic momentum, and
   negative harsh-stress CAGR), so the family was archived honestly. The
   2023-2025 final holdout remained unopened.
+- Predeclared and executed one genuinely non-momentum, point-in-time
+  low-volatility mechanism with unchanged portfolio and cost rules. Net HAC
+  Sharpe was `-0.0906`, CAGR `-2.20%`, max drawdown `43.83%`, and harsh-cost
+  results were worse, so the mechanism was archived without retuning. The
+  2023-2025 final holdout remained unopened.

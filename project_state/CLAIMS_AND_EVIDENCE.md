@@ -2,7 +2,7 @@
 
 last_updated: 2026-07-11
 updated_by: Project OS v3 microalpha worker
-source_event: preregistered CRSP-v2 residual-family validation negative
+source_event: preregistered CRSP-v2 low-volatility validation negative
 
 Research, benchmark, and result-adjacent claims must remain bound to exact
 artifacts, source manifests, split policy, costs, baselines, and validation.
@@ -19,6 +19,7 @@ artifacts, source manifests, split policy, costs, baselines, and validation.
 | The legacy run found alpha or passed an independent holdout. | blocked | Ticket-35 prompt/results and RC p-value `0.941` | Do not promote externally. |
 | The frozen six-candidate CRSP-v2 momentum selection produced a valid but weak pre-holdout winner. | supported for 2017-2022 validation only | `docs/strategy/MICROALPHA_FLAGSHIP_20260710.yaml`; local result manifest SHA-256 `09f7d5240d8290b442cd2f72ed1be9c374d51459de4fb31b4af7b5859f7a6d58`; `project_state/CURRENT_RESULTS.md` | HAC Sharpe `0.2407`; this is a validation proxy, not final-holdout or alpha evidence. |
 | The preregistered FF12-industry-residual momentum family is stronger enough to replace the frozen winner. | rejected by predeclared gate | `docs/strategy/MICROALPHA_DISTINCT_SIGNAL_20260711.yaml`; `docs/artifacts/resume/wrds/2026-07-11T16-22-00Z-distinct-residual-family/`; local result manifest SHA-256 `9e3a8818211a9ef9c81816bb2fadf6165636cc9a344f9284698adec3499ef107` | Best HAC Sharpe `0.3198`, but improvement was `0.0791` rather than required `0.10`; it trailed classic momentum and harsh-stress CAGR was negative. Family is archived. |
+| The preregistered point-in-time low-volatility mechanism is a viable replacement. | rejected decisively by predeclared gate | `docs/strategy/MICROALPHA_LOW_VOLATILITY_20260711.yaml`; `docs/artifacts/resume/wrds/2026-07-11T17-05-10Z-low-volatility/`; local result manifest SHA-256 `fba7c4f4b4e96f6b310da13103921817db4a04bc910ea451fdd1f79ff8653ad0` | HAC Sharpe `-0.0906`, CAGR `-2.20%`, max drawdown `43.83%`, structural drawdown gate failed, and harsh-cost results worsened. Mechanism is archived without retuning. |
 | The 2023-2025 final holdout remained sealed throughout both selection campaigns. | supported by bound access receipts and result manifests | panel manifest SHA-256 `0e625c05853bfed6e8b811bbd3df86d0fe64a05cf9929ede537299adc851710d`; both result manifests; distinct-family integrity report | This proves the recorded runners did not use holdout outcomes; it does not establish future behavior outside these exact artifacts. |
 
 ## Unsupported Until New Evidence Exists

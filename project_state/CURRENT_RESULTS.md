@@ -12,6 +12,16 @@ commands:
 
 ## CRSP-v2 pre-holdout research (2026-07-11)
 
+- A separately preregistered one-candidate low-volatility mechanism used
+  negative point-in-time trailing 126-session volatility, equal weighting, and
+  the unchanged FF12-neutral cost/capacity portfolio. It failed decisively:
+  validation HAC Sharpe `-0.0906`, t-stat `-0.1943`, CAGR `-2.20%`, and max
+  drawdown `43.83%`. At 600 bps borrow plus 2x nonborrow costs, Sharpe was
+  `-0.2553` and CAGR `-4.41%`. The mechanism is archived without retuning.
+- Low-volatility evidence:
+  `docs/artifacts/resume/wrds/2026-07-11T17-05-10Z-low-volatility/`;
+  external result-manifest SHA-256
+  `fba7c4f4b4e96f6b310da13103921817db4a04bc910ea451fdd1f79ff8653ad0`.
 - Frozen panel: `4ed2b33e2496e224a7701c3d0d71d593909d8fc7547ecdcbc483b2c83686206a`
   covering only permitted data through 2022-12-31.
 - Previous six-candidate winner: `blend_12_2_6_2__inverse_vol_126d`;
