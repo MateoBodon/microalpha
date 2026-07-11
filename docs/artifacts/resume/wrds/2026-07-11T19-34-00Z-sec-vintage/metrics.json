@@ -1,0 +1,62 @@
+{
+  "access": {
+    "current_compustat_values_used": false,
+    "final_holdout_outcomes_read": false,
+    "post_2022_sec_fact_rows_selected": 0,
+    "restricted_identifier_rows_written": 0,
+    "sec_filing_rows_written": 0,
+    "wrds_authentication_triggered": false
+  },
+  "candidate": "sec_cash_earnings_acceleration__equal",
+  "contract_sha256": "707a257a628cd14813961299093fffa469ca527f921f608d80a24098ee6c419b",
+  "coverage": {
+    "ambiguous_ccm_rows": 0,
+    "maximum_complete_names": 1730,
+    "median_complete_names": 1084.5,
+    "minimum_complete_names": 796,
+    "target_ciks": 3106,
+    "usable_consecutive_filing_pairs": 12240
+  },
+  "decision": {
+    "all_decision_gates_pass": false,
+    "failed_gates": [
+      "minimum_net_sharpe_hac",
+      "harsh_stress_positive_net_sharpe_hac",
+      "harsh_stress_positive_cagr"
+    ],
+    "outcome": "archive_mechanism_as_validation_negative"
+  },
+  "harsh_stress": {
+    "annual_short_borrow_bps": 600.0,
+    "cagr": -0.004545405379532297,
+    "max_drawdown": 0.122310030909841,
+    "net_sharpe_hac": -0.10339180904540152,
+    "nonborrow_cost_multiplier": 2.0
+  },
+  "primary_metrics": {
+    "cagr": 0.017303466779502452,
+    "cumulative_return": 0.108416920751557,
+    "max_drawdown": 0.07705435636966518,
+    "minimum_names_per_sleeve": 74,
+    "net_sharpe_hac": 0.4736467623633747,
+    "net_sharpe_hac_tstat": 1.0650793436351231,
+    "total_cost_dollars": 1956553.427192152,
+    "total_one_way_turnover": 13.573676289147574,
+    "validation_months": 72
+  },
+  "published_executable": {
+    "local_runner_commit": "ac0f8942d36e5039c0019b96555c367f44c42744",
+    "remote_commit": "63061cec747d413c56944428ea32248143e697f3",
+    "tree_sha": "57bf203be9157a2bee482a2591dc28665849bbf9"
+  },
+  "result_manifest_sha256": "1ea92a323a254422772a8edfd86d0fd8d70b806a296190acaec1fb816379a3be",
+  "run_id": "20260711T193400Z_sec_cash_earnings_acceleration",
+  "schema_version": "microalpha-resume-sec-vintage/v1",
+  "validation_window": {
+    "formation_end": "2022-11-30",
+    "formation_start": "2016-12-31",
+    "realization_end": "2022-12-31",
+    "realization_start": "2017-01-31"
+  },
+  "vintage_status": "accession_bound_original_10k_values"
+}

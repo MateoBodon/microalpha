@@ -148,3 +148,13 @@ Ticket-18: Installed agentic system scaffold, restored repo-specific docs, and g
   archived without retuning. The current Compustat snapshot is explicitly not
   treated as true-vintage evidence, and the 2023-2025 final holdout stayed
   sealed.
+- Changed accounting method rather than retuning QVPI: extracted 12,240
+  consecutive annual feature pairs whose values were bound to the earliest
+  original XBRL 10-K accession and exact SEC acceptance timestamp, then
+  preregistered and published the executable before opening returns. The
+  cash-earnings acceleration mechanism reached net HAC Sharpe `0.4736`, CAGR
+  `1.73%`, and max drawdown `7.71%`, improving on frozen momentum by `0.2330`
+  Sharpe. It still failed the absolute `0.50` gate and the frozen 600 bps
+  borrow/2x-cost stress (Sharpe `-0.1034`, CAGR `-0.45%`), so it was archived
+  without retuning. Current Compustat values were not used and the 2023-2025
+  final holdout remained sealed.

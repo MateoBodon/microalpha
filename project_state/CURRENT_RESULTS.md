@@ -12,6 +12,22 @@ commands:
 
 ## CRSP-v2 pre-holdout research (2026-07-11)
 
+- A separately preregistered true first-filed mechanism used values present in
+  two consecutive original XBRL 10-K accessions, with availability bound to
+  exact SEC acceptance timestamps. The frozen universe had `796` to `1,730`
+  complete names per formation month (median `1,084.5`) and zero ambiguous CCM
+  rows. No current Compustat accounting value was used.
+- The SEC cash-earnings acceleration mechanism was structurally valid and
+  economically better than the archived frozen momentum baseline, but failed
+  the complete gate set: net HAC Sharpe `0.4736` (t-stat `1.0651`), CAGR
+  `1.73%`, max drawdown `7.71%`, and total one-way turnover `13.57x`. It beat
+  frozen momentum by `0.2330` Sharpe but missed the absolute `0.50` gate. At
+  600 bps borrow plus 2x nonborrow costs, Sharpe was `-0.1034` and CAGR
+  `-0.45%`, so the exact mechanism is archived without retuning.
+- SEC-vintage evidence:
+  `docs/artifacts/resume/wrds/2026-07-11T19-34-00Z-sec-vintage/`; external
+  result-manifest SHA-256
+  `1ea92a323a254422772a8edfd86d0fd8d70b806a296190acaec1fb816379a3be`.
 - A single annual quality/value/profitability/investment composite was
   preregistered before return computation using 2005-2022 Compustat annual
   files, historical primary CCM links, a fixed six-month availability lag, and
@@ -65,7 +81,8 @@ commands:
   external result-manifest SHA-256
   `9e3a8818211a9ef9c81816bb2fadf6165636cc9a344f9284698adec3499ef107`.
 - The 2023-2025 final holdout was not opened in any of these campaigns. No
-  alpha or promotion claim is supported.
+  alpha or promotion claim is supported; even the strongest new mechanism
+  failed its complete frozen gate set.
 
 
 ## Sample bundle (README + artifacts)
