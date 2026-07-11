@@ -1,0 +1,98 @@
+schema_version: microalpha-sec-cash-classic-momentum-ensemble/v1
+status: predeclared_not_executed
+predeclared_at_utc: "2026-07-11T23:33:20Z"
+
+objective:
+  candidate_id: sec_cash_classic_momentum_rank_ensemble__equal
+  signal: sec_cash_classic_momentum_rank_ensemble
+  hypothesis: >-
+    First-filed cash-earnings acceleration and classic 12-2 momentum encode
+    independently positive fundamental and price-trend information. Equal
+    within-industry ranks can diversify component noise without changing either
+    component's sign or searching over ensemble weights.
+  development_rule: exactly one 2017-2022 execution with no post-outcome adaptation
+
+frozen_inputs:
+  sec_vintage_contract:
+    path: docs/strategy/MICROALPHA_SEC_VINTAGE_20260711.yaml
+    sha256: 707a257a628cd14813961299093fffa469ca527f921f608d80a24098ee6c419b
+  first_filed_sec_result:
+    path: /Volumes/Storage/Data/wrds/derived/microalpha/crsp-v2-industry-neutral-momentum-20260710/20260711T193400Z_sec_cash_earnings_acceleration/result_manifest.json
+    sha256: 1ea92a323a254422772a8edfd86d0fd8d70b806a296190acaec1fb816379a3be
+  frozen_momentum_result:
+    path: /Volumes/Storage/Data/wrds/derived/microalpha/crsp-v2-industry-neutral-momentum-20260710/20260711T150304Z_selection_execution_v3/selection_manifest.json
+    sha256: 09f7d5240d8290b442cd2f72ed1be9c374d51459de4fb31b4af7b5859f7a6d58
+
+frozen_mechanism:
+  components:
+    first_filed_sec_cash_earnings_acceleration:
+      source_signal: sec_cash_earnings_acceleration
+      sign: positive
+      source_contract: frozen_inputs.sec_vintage_contract
+    classic_momentum:
+      source_signal: mom_12_2
+      sign: positive
+      lookback: months t-12 through t-2 inclusive
+  ranking:
+    group: formation_date and point-in-time FF12 industry
+    transform: average-tie percentile rank centered to [-1, 1]
+    component_weights:
+      first_filed_sec_cash_earnings_acceleration: 0.5
+      classic_momentum: 0.5
+    composite: arithmetic mean of both complete component ranks
+    missing_value_imputation: forbidden
+    tie_break: ascending PERMNO
+  weighting: equal
+  portfolio_universe_and_costs: inherit unchanged from SEC-vintage base protocol
+  weight_grid: forbidden
+
+development:
+  formation_start: "2016-12-31"
+  realization_start: "2017-01-31"
+  realization_end: "2022-12-31"
+  expected_months: 72
+  baselines:
+    - archived_first_filed_cash_earnings
+    - identical_universe_classic_momentum
+    - archived_frozen_momentum
+    - crsp_value_weighted_market
+    - crsp_equal_weighted_market
+    - cash_rf
+  stress_grid:
+    annual_short_borrow_bps: [0.0, 600.0]
+    nonborrow_cost_multiplier: [0.5, 2.0]
+
+promotion_gates:
+  structural:
+    minimum_complete_names_each_formation_month: 500
+    minimum_median_names_per_sleeve: 30
+    maximum_ambiguous_ccm_rows: 0
+    require_all_six_development_years_nondegenerate: true
+    require_exact_net_and_industry_neutrality: true
+  performance:
+    minimum_net_sharpe_hac: 0.50
+    minimum_sharpe_improvement_over_strongest_component: 0.10
+    minimum_cagr: 0.0
+    maximum_drawdown: 0.25
+    harsh_stress_minimum_net_sharpe_hac: 0.0
+    harsh_stress_minimum_cagr: 0.0
+  pass_outcome: >-
+    Freeze the exact ensemble, stop all development, and immediately begin a
+    separately recorded final-holdout execution without changing the formula,
+    universe, costs, weights, gates, or code tree.
+  fail_outcome: >-
+    Archive the exact ensemble without inversion, retuning, or another weight
+    and change the information source before any further development.
+
+access_contract:
+  development_outcomes_read: false
+  final_holdout_outcomes_read: false
+  maximum_development_outcome_date: "2022-12-31"
+  restricted_identifier_rows_written_under_git: 0
+  aws_used: false
+  authentication_triggered: false
+  hard_stops:
+    - Any 2023-2025 outcome row is opened before every promotion gate passes.
+    - Any component sign or 0.5 weight changes.
+    - Any alternative weight, rank transform, signal definition, threshold, universe, or cost is tested.
+    - Any raw identifier, feature, score, or security-level outcome row is written under Git.
