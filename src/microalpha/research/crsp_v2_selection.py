@@ -62,6 +62,11 @@ SIGNAL_DEFINITIONS = {
         "negative formation-month stock return minus contemporaneous FF12-industry "
         "median return, observed at month-end for next-month execution"
     ),
+    "qvpi_annual_composite": (
+        "equal-family annual book-to-market, gross-plus-operating profitability, "
+        "conservative investment, and accrual-quality ranks within formation-month "
+        "FF12 industry, using a fixed six-month accounting availability lag"
+    ),
 }
 
 
