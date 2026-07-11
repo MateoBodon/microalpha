@@ -1,0 +1,125 @@
+{
+  "schema_version": "microalpha-sec-timing-validation-aggregate-receipt/v1",
+  "candidate_id": "sec_reporting_timeliness_quality__equal",
+  "created_at_utc": "2026-07-11T23:27:09.792051+00:00",
+  "code_binding": {
+    "local_runner_commit": "da5d2701d89393c274240429180fed5573a02ec2",
+    "published_commit": "63c31321544592402dd48839dfb8382d84eab73b",
+    "published_tree": "7bc67b8e7ba739632530151cd57f12d28210c4c9",
+    "tree_match": true
+  },
+  "contract_sha256": "de44ed82b1a878c06828a956c0caa1ecd85918dbda8ecdf59d21d3ddc00c9116",
+  "execution": {
+    "validation_window": ["2017-01-31", "2022-12-31"],
+    "validation_months": 72,
+    "one_shot_run_count": 1,
+    "adapted_after_outcome": false,
+    "mechanism_outcome": "archive_mechanism_as_validation_negative"
+  },
+  "candidate_metrics": {
+    "net_sharpe_hac": -0.6194121316820743,
+    "net_sharpe_hac_se": 0.45890272788269515,
+    "net_sharpe_hac_tstat": -1.3497678136278342,
+    "cagr": -0.023489341412892384,
+    "max_drawdown": 0.1960744162414998,
+    "cumulative_return": -0.1329144918948152,
+    "total_one_way_turnover": 13.065844162586972,
+    "mean_monthly_one_way_turnover": 0.18147005781370795,
+    "median_names_per_sleeve": 159.0,
+    "minimum_names_per_sleeve": 151,
+    "mean_fill_ratio": 0.997864666603243,
+    "minimum_fill_ratio": 0.9735639386858002,
+    "total_cost_dollars": 1885503.8724635886,
+    "eligible": true,
+    "maximum_absolute_executed_net": 2.6020852139652106e-17,
+    "maximum_absolute_executed_industry_net": 2.6020852139652106e-18
+  },
+  "coverage_receipt": {
+    "formation_months": 72,
+    "minimum_complete_names": 1564,
+    "median_complete_names": 1652.0,
+    "maximum_complete_names": 1951,
+    "minimum_complete_industries": 12,
+    "ambiguous_ccm_rows": 0,
+    "gate_passed": true
+  },
+  "decision": {
+    "all_decision_gates_pass": false,
+    "checks": {
+      "return_free_coverage_gate_passed": true,
+      "expected_validation_months": true,
+      "structurally_eligible": true,
+      "exact_executed_net_neutrality": true,
+      "exact_executed_industry_neutrality": true,
+      "minimum_net_sharpe_hac": false,
+      "minimum_sharpe_improvement_over_archived_frozen_momentum": false,
+      "minimum_cagr": false,
+      "maximum_drawdown": true,
+      "harsh_stress_minimum_net_sharpe_hac": false,
+      "harsh_stress_minimum_cagr": false
+    }
+  },
+  "frozen_baselines": {
+    "archived_frozen_momentum": {
+      "net_sharpe_hac": 0.24068637598141043,
+      "cagr": 0.01696795738425738,
+      "max_drawdown": 0.11418590111263294
+    },
+    "archived_first_filed_cash_earnings": {
+      "net_sharpe_hac": 0.4736467623633747,
+      "cagr": 0.0173034667795024,
+      "max_drawdown": 0.0770543563696651
+    },
+    "identical_universe_classic_momentum": {
+      "net_sharpe_hac": 0.32597020715910224,
+      "cagr": 0.029002747688100294,
+      "max_drawdown": 0.16482925590595832
+    }
+  },
+  "stress_grid": [
+    {
+      "annual_short_borrow_bps": 0.0,
+      "nonborrow_cost_multiplier": 0.5,
+      "net_sharpe_hac": -0.1367673372647712,
+      "cagr": -0.005790447767198059
+    },
+    {
+      "annual_short_borrow_bps": 0.0,
+      "nonborrow_cost_multiplier": 2.0,
+      "net_sharpe_hac": -0.38103250169138736,
+      "cagr": -0.014722764665320187
+    },
+    {
+      "annual_short_borrow_bps": 600.0,
+      "nonborrow_cost_multiplier": 0.5,
+      "net_sharpe_hac": -0.93801750520493,
+      "cagr": -0.03509543413058147
+    },
+    {
+      "annual_short_borrow_bps": 600.0,
+      "nonborrow_cost_multiplier": 2.0,
+      "net_sharpe_hac": -1.18817520577202,
+      "cagr": -0.043802756772718277
+    }
+  ],
+  "access_receipt": {
+    "source_digests_verified": true,
+    "chronology_verified": true,
+    "frozen_baseline_set_verified": true,
+    "frozen_stress_grid_verified": true,
+    "restricted_identifier_rows_written": 0,
+    "validation_outcomes_read": true,
+    "final_holdout_outcomes_read": false,
+    "aws_used": false,
+    "authentication_triggered": false
+  },
+  "local_artifact_set": {
+    "output_dir": "/Volumes/Storage/Data/wrds/derived/microalpha/crsp-v2-industry-neutral-momentum-20260710/20260711T232609Z_sec_reporting_timeliness_validation",
+    "result_manifest_sha256": "60dad30ef46aeac917b986010384e7eda36cab716d179f210f22ef70b60efd98",
+    "mechanism_decision_sha256": "b0c775ab859b1d8672a7d72209630c1fabd43749bfb353d30ab0fbdbb5f3bec8",
+    "validation_candidate_table_sha256": "90163eb6ca2c818b2dcfa22ce6e7d21edcc4bc9d594f2658e1953298b2b2d063",
+    "baseline_comparison_sha256": "d3349f5d2008d3f4c1e7973c69f66da6261d31df268f44e68f9b47aeea69b6e0",
+    "cost_stress_sha256": "0d3e78747cb1133d9143696ba8706425184e9ed159ec96e59482bebd9feb5ad1",
+    "integrity_report_sha256": "c7695d715944a5efb4d52a48050c9c2c2ee4686cfad37b7ebbb08921ba59b27e"
+  }
+}
