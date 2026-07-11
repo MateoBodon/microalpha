@@ -158,3 +158,10 @@ Ticket-18: Installed agentic system scaffold, restored repo-specific docs, and g
   borrow/2x-cost stress (Sharpe `-0.1034`, CAGR `-0.45%`), so it was archived
   without retuning. Current Compustat values were not used and the 2023-2025
   final holdout remained sealed.
+- Prepared a bounded successor without using the empirical memory lane:
+  preregistered an SEC reporting-timeliness quality mechanism based only on
+  original 10-K report-to-acceptance delay and its year-over-year change. A
+  lightweight 12-CIK metadata pilot confirmed 85 valid consecutive filing
+  pairs, and deterministic extraction/chronology tests were added. Validation
+  execution is explicitly disabled pending re-admission after the FJS full
+  generation; no return column or 2023-2025 outcome was opened.

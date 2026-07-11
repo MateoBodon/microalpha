@@ -1,0 +1,201 @@
+schema_version: microalpha-sec-timing-protocol/v1
+mechanism_id: sec_reporting_timeliness_quality_20260711
+status: predeclared_not_executed
+predeclared_at_utc: "2026-07-11T19:48:08Z"
+
+objective:
+  authoritative_goal: >-
+    Freeze one genuinely distinct point-in-time SEC filing-metadata mechanism
+    without retuning rejected accounting-value mechanisms, projecting
+    2017-2022 validation returns, or opening the 2023-2025 final holdout.
+  mechanism: >-
+    Rank issuers on the absolute timeliness of the newest original XBRL 10-K
+    and on improvement in report-to-acceptance delay versus the prior original
+    XBRL 10-K. Slower filing and year-over-year delay deterioration rank lower.
+  economic_hypothesis: >-
+    A longer annual reporting lag, especially a deterioration relative to the
+    issuer's own prior lag, can indicate operational complexity, weak reporting
+    controls, or adverse information-processing frictions. The effect is
+    measured within point-in-time FF12 industry to reduce structural reporting
+    differences across industries.
+  distinctness: >-
+    The signal uses no accounting values, returns, prices, volatility,
+    estimates, analyst revisions, or current Compustat fundamentals. It does
+    not change any feature, sign, weight, or gate of QVPI or first-filed
+    cash-earnings acceleration.
+  claim_limit: >-
+    This lifecycle supports only source feasibility, preregistration, and
+    tested metadata chronology. It makes no coverage, return, alpha,
+    promotion, or final-holdout claim.
+
+inventory:
+  authentication_triggered: false
+  wrds_login_or_duo_triggered: false
+  aws_used: false
+  validation_return_columns_projected: false
+  final_holdout_outcomes_read: false
+  inherited_source_receipt:
+    path: /Volumes/Storage/Data/wrds/derived/microalpha/crsp-v2-industry-neutral-momentum-20260710/20260711T193400Z_sec_cash_earnings_acceleration/source_manifest.json
+    sha256: 5fe1338e86bf9f6e1b94f62da61de685990991e42ff94d9f3c82c87d04eecc55
+    size_bytes: 4297
+    target_ciks: 3106
+    first_original_xbrl_10k_rows_before_2022_12_01: 21719
+    supplemental_submission_members_opened: 1313
+    report_dates_with_multiple_original_10ks: 0
+    purpose: source-schema and accession/acceptance coverage only, not prior return outcomes
+  lightweight_pilot:
+    sampling_rule: 12 evenly spaced CIKs from the sorted 3106-CIK point-in-time eligible bridge
+    pilot_ciks: 12
+    original_xbrl_10ks: 96
+    consecutive_valid_timing_pairs: 85
+    ciks_with_valid_pair: 11
+    supplemental_members_opened: 6
+    observed_delay_days: {minimum: 38, median: 55.0, maximum: 138}
+    observed_delay_change_days: {minimum: -78, median: -1.0, maximum: 75}
+    post_cutoff_rows_selected: 0
+    return_columns_projected: false
+    note: >-
+      Pilot observations establish schema and basic feasibility only. They do
+      not determine signs, weights, validity bounds, thresholds, or gates.
+
+frozen_inputs:
+  base_protocol_path: docs/strategy/MICROALPHA_FLAGSHIP_20260710.yaml
+  base_protocol_sha256: f88df6c93d3a83ddf76be6e198fc567122f18b39204b8565290e09969f1af75e
+  selection_panel:
+    path: /Volumes/Storage/Data/wrds/derived/microalpha/crsp-v2-industry-neutral-momentum-20260710/20260710T234504Z_selection_12gb/selection.parquet
+    sha256: 4ed2b33e2496e224a7701c3d0d71d593909d8fc7547ecdcbc483b2c83686206a
+    size_bytes: 59173798
+    manifest_sha256: 0e625c05853bfed6e8b811bbd3df86d0fe64a05cf9929ede537299adc851710d
+    maximum_date: "2022-12-31"
+    columns_permitted_before_empirical_readmission:
+      - permno
+      - formation_date
+      - industry
+      - eligible_at_formation
+  company_cik_bridge:
+    path: /Volumes/Storage/Data/wrds/raw/comp/company.parquet
+    sha256: b2635eecfd73563aa45b08e37526206d3022779586b5ebe287afc408238c44ca
+    size_bytes: 7420880
+    permitted_columns: [gvkey, cik]
+  ccm_link_history:
+    path: /Volumes/Storage/Data/wrds/raw/crsp/ccmxpf_lnkhist.parquet
+    sha256: 33583d9f2ecac4a4bb66b12be47348a828ba1481f3b25ece6a5f081ca13b1f95
+    size_bytes: 1119372
+  submissions_zip:
+    path: /Volumes/Storage/Data/Public/public_sec_edgar_xbrl_reference/bulk/submissions.zip
+    sha256: 9b507fd4738c7d8306910d00841e4a68b9926ea791caf3fac43140a550d102a3
+    size_bytes: 1550323541
+    member_count: 981230
+  archived_baseline_manifests:
+    frozen_momentum:
+      path: /Volumes/Storage/Data/wrds/derived/microalpha/crsp-v2-industry-neutral-momentum-20260710/20260711T150304Z_selection_execution_v3/selection_manifest.json
+      sha256: 09f7d5240d8290b442cd2f72ed1be9c374d51459de4fb31b4af7b5859f7a6d58
+    first_filed_cash_earnings:
+      path: /Volumes/Storage/Data/wrds/derived/microalpha/crsp-v2-industry-neutral-momentum-20260710/20260711T193400Z_sec_cash_earnings_acceleration/result_manifest.json
+      sha256: 1ea92a323a254422772a8edfd86d0fd8d70b806a296190acaec1fb816379a3be
+
+frozen_mechanism:
+  candidate_id: sec_reporting_timeliness_quality__equal
+  signal: sec_reporting_timeliness_quality
+  weighting: equal
+  filing_contract:
+    form: 10-K
+    is_xbrl: true
+    original_only_exclude_amendments: true
+    selection: earliest acceptanceDateTime per CIK/reportDate
+    availability: exact SEC acceptanceDateTime, normalized to its UTC calendar date for month-end formation
+    expiry: acceptance date plus eighteen calendar months
+    valid_delay_days_inclusive: [1, 200]
+    consecutive_report_gap_days_inclusive: [300, 430]
+    latest_available_record_only: true
+  raw_features:
+    reporting_timeliness_level: negative of current acceptance UTC date minus current reportDate in calendar days
+    reporting_timeliness_change: prior reporting-delay days minus current reporting-delay days
+  feature_rank_order:
+    - reporting_timeliness_level
+    - reporting_timeliness_change
+  ranking:
+    group: formation_date and point-in-time FF12 industry
+    transform: average-tie percentile rank centered to [-1, 1]
+    composite: equal arithmetic mean of both complete feature ranks
+    direction: faster absolute filing and improved year-over-year timeliness rank higher
+    tie_break: ascending PERMNO
+  missing_value_imputation: forbidden
+  ccm_contract:
+    linktype: [LC, LU]
+    linkprim: [P, C]
+    interval_must_cover_formation_date: true
+    ambiguous_permno_formation_gvkey_count: reject
+  portfolio_and_costs: inherit unchanged from base protocol
+
+future_return_free_coverage_gate:
+  required_before_validation_readmission: true
+  exact_source_digests_must_match: true
+  expected_formation_months: 72
+  minimum_complete_names_each_formation_month: 500
+  minimum_complete_industries_each_formation_month: 10
+  maximum_ambiguous_ccm_rows: 0
+  write_only_aggregate_coverage: true
+  raw_identifier_rows_under_git: forbidden
+
+future_validation_gates:
+  realization_start: "2017-01-31"
+  realization_end: "2022-12-31"
+  expected_months: 72
+  baselines:
+    - archived_frozen_momentum
+    - archived_first_filed_cash_earnings
+    - identical_universe_classic_momentum
+    - crsp_value_weighted_market
+    - crsp_equal_weighted_market
+    - cash_rf
+  stress_grid:
+    annual_short_borrow_bps: [0.0, 600.0]
+    nonborrow_cost_multiplier: [0.5, 2.0]
+  performance:
+    minimum_net_sharpe_hac: 0.50
+    minimum_sharpe_improvement_over_archived_frozen_momentum: 0.10
+    minimum_cagr: 0.0
+    maximum_drawdown: 0.25
+    harsh_stress_minimum_net_sharpe_hac: 0.0
+    harsh_stress_minimum_cagr: 0.0
+  fail_rule: >-
+    Archive without changing signs, weights, filing selection, delay bounds,
+    expiry, missing-value rules, costs, or thresholds after outcomes.
+
+execution_contract:
+  validation_run_permitted: false
+  full_generation_waiting_on: FJS memory-heavy empirical lane
+  re_admission_required: true
+  permitted_now:
+    - source digest verification
+    - lightweight filing-metadata pilots
+    - deterministic unit and integration tests
+    - aggregate return-free coverage only if separately scheduled within memory capacity
+  forbidden_now:
+    - validation-scale extraction or return projection
+    - any 2017-2022 performance computation
+    - any 2023-2025 outcome access
+    - AWS use
+    - WRDS login or Duo authentication
+
+access_contract:
+  validation_outcomes_read: false
+  final_holdout_outcomes_read: false
+  maximum_sec_acceptance_timestamp: "2022-11-30T23:59:59Z"
+  minimum_sec_report_date: "2013-01-01"
+  current_compustat_values_used: false
+  companyfacts_values_used: false
+  analyst_estimate_or_revision_values_used: false
+  later_unpartitioned_submission_bytes_decoded_but_never_selected: true
+  post_cutoff_filing_rows_selected: 0
+  panel_return_columns_projected: false
+  restricted_identifier_rows_written_under_git: 0
+  hard_stops:
+    - Any validation or final-holdout return column is projected before explicit re-admission.
+    - Any 10-K/A or later original filing replaces the earliest original XBRL 10-K for a CIK/reportDate.
+    - Any filing accepted after 2022-11-30T23:59:59Z is selected.
+    - Any accounting value, analyst estimate, price, return, or volatility enters the signal.
+    - Any frozen feature direction, weight, validity bound, expiry, cost rule, or gate changes.
+    - Any source digest changes.
+    - Any raw restricted or per-identifier filing row is written under Git.

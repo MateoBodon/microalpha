@@ -12,6 +12,13 @@ commands:
 
 ## CRSP-v2 pre-holdout research (2026-07-11)
 
+- The next distinct mechanism is preregistered but intentionally unexecuted:
+  `sec_reporting_timeliness_quality__equal` ranks absolute original-10-K
+  reporting timeliness and year-over-year timeliness improvement using exact
+  SEC acceptance timestamps. Source digests and a 12-CIK metadata pilot passed,
+  and the adapter never projects return columns. No coverage, performance, or
+  promotion result exists; validation remains disabled pending explicit
+  re-admission after the FJS full generation.
 - A separately preregistered true first-filed mechanism used values present in
   two consecutive original XBRL 10-K accessions, with availability bound to
   exact SEC acceptance timestamps. The frozen universe had `796` to `1,730`
