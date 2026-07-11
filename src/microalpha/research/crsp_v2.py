@@ -626,14 +626,28 @@ def industry_neutral_weights(
     if not groups:
         raise CRSPV2Error("No industry contains enough securities for two sleeves")
 
-    industry_allocations = _capped_allocation(
-        pd.Series(
-            {industry: float(count) for industry, _, _, count in groups},
-            dtype=float,
-        ),
+    industry_raw = pd.Series(
+        {industry: float(count) for industry, _, _, count in groups}, dtype=float
+    )
+    industry_caps = pd.Series(
+        {
+            industry: min(
+                max_industry_gross_weight,
+                (
+                    2.0 * len(longs) * max_single_name_weight
+                    if max_single_name_weight is not None
+                    else max_industry_gross_weight
+                ),
+            )
+            for industry, longs, _, _ in groups
+        },
+        dtype=float,
+    )
+    industry_allocations = _variable_capped_allocation(
+        industry_raw,
+        industry_caps,
         total=target_gross,
-        cap=max_industry_gross_weight,
-        cap_label="Industry gross",
+        cap_label="Industry gross/name",
     )
     weights: dict[Any, float] = {}
     for industry, longs, shorts, _ in groups:
@@ -710,6 +724,46 @@ def _capped_allocation(
     return allocation
 
 
+def _variable_capped_allocation(
+    raw: pd.Series,
+    caps: pd.Series,
+    *,
+    total: float,
+    cap_label: str,
+) -> pd.Series:
+    """Normalize positive scores under item-specific caps by water-filling."""
+
+    values = pd.to_numeric(raw, errors="coerce").astype(float)
+    limits = pd.to_numeric(caps.reindex(values.index), errors="coerce").astype(float)
+    if (
+        values.isna().any()
+        or values.le(0.0).any()
+        or limits.isna().any()
+        or limits.le(0.0).any()
+        or total < 0.0
+    ):
+        raise CRSPV2Error("Allocation inputs and variable caps must be positive")
+    if float(limits.sum()) + 1e-12 < total:
+        raise CRSPV2Error(f"{cap_label} caps are infeasible for the allocation")
+
+    allocation = pd.Series(0.0, index=values.index)
+    remaining = values.index
+    remaining_total = float(total)
+    while len(remaining):
+        proposed = values.loc[remaining] / values.loc[remaining].sum() * remaining_total
+        over = proposed.gt(limits.loc[remaining] + 1e-15)
+        if not over.any():
+            allocation.loc[remaining] = proposed
+            break
+        capped = proposed.index[over]
+        allocation.loc[capped] = limits.loc[capped]
+        remaining_total -= float(limits.loc[capped].sum())
+        remaining = remaining.difference(capped, sort=False)
+    if not np.isclose(allocation.sum(), total, atol=1e-12):
+        raise CRSPV2Error("Variable-capped allocation misses its target")
+    return allocation
+
+
 def one_way_turnover(previous: pd.Series, target: pd.Series) -> float:
     """Return standard one-way turnover, one half of absolute weight changes."""
 
@@ -770,6 +824,153 @@ def apply_trade_capacity(
         executed_weights=executed,
         requested_turnover=0.5 * float(requested_delta.abs().sum()),
         executed_turnover=0.5 * float(executed_delta.abs().sum()),
+        requested_trade_dollars=requested_dollars,
+        executed_trade_dollars=executed_dollars,
+        fill_ratio=fill_ratio,
+        constrained_names=constrained,
+    )
+
+
+def apply_constrained_trade_capacity(
+    previous: pd.Series,
+    target: pd.Series,
+    adv_usd: pd.Series,
+    industry: pd.Series,
+    *,
+    capital_usd: float,
+    max_participation: float,
+    max_single_name_weight: float,
+    max_industry_gross_weight: float,
+) -> CapacityResult:
+    """Execute as close to target as capacity permits while preserving risk caps.
+
+    The linear program minimizes absolute target tracking error subject to
+    per-name participation bounds, the single-name cap, exact industry net
+    neutrality, and the industry gross cap. This prevents independent clipping
+    from turning a neutral target into an unintended directional portfolio.
+    """
+
+    try:
+        from scipy.optimize import linprog
+    except ImportError as exc:  # pragma: no cover - optional research dependency
+        raise CRSPV2Error(
+            "scipy is required for constrained CRSP-v2 execution"
+        ) from exc
+    if (
+        capital_usd <= 0.0
+        or not 0.0 < max_participation <= 1.0
+        or max_single_name_weight <= 0.0
+        or max_industry_gross_weight <= 0.0
+    ):
+        raise CRSPV2Error("Invalid constrained execution limits")
+
+    index = previous.index.union(target.index).union(adv_usd.index)
+    previous_aligned = previous.reindex(index, fill_value=0.0).astype(float)
+    target_aligned = target.reindex(index, fill_value=0.0).astype(float)
+    adv = pd.to_numeric(adv_usd.reindex(index), errors="coerce")
+    groups = industry.reindex(index)
+    if adv.isna().any() or adv.le(0.0).any():
+        raise CRSPV2Error("Positive ADV is required for constrained execution")
+    if groups.isna().any():
+        raise CRSPV2Error("Point-in-time industry is required for every active name")
+    if target_aligned.abs().gt(max_single_name_weight + 1e-12).any():
+        raise CRSPV2Error("Target exceeds the single-name cap")
+
+    maximum_delta = adv * float(max_participation) / float(capital_usd)
+    lower = np.maximum(
+        previous_aligned.to_numpy() - maximum_delta.to_numpy(),
+        -max_single_name_weight,
+    )
+    upper = np.minimum(
+        previous_aligned.to_numpy() + maximum_delta.to_numpy(),
+        max_single_name_weight,
+    )
+    if np.any(lower > upper + 1e-15):
+        raise CRSPV2Error("Capacity cannot restore an existing single-name cap breach")
+
+    n = len(index)
+    # Variables are executed weights x, target deviations d >= |x-target|,
+    # and gross auxiliaries g >= |x|.
+    objective = np.concatenate(
+        [np.zeros(n), np.ones(n), np.full(n, 1e-9, dtype=float)]
+    )
+    rows: list[np.ndarray] = []
+    rhs: list[float] = []
+    target_values = target_aligned.to_numpy()
+    for position in range(n):
+        row = np.zeros(3 * n)
+        row[position] = 1.0
+        row[n + position] = -1.0
+        rows.append(row)
+        rhs.append(float(target_values[position]))
+
+        row = np.zeros(3 * n)
+        row[position] = -1.0
+        row[n + position] = -1.0
+        rows.append(row)
+        rhs.append(float(-target_values[position]))
+
+        row = np.zeros(3 * n)
+        row[position] = 1.0
+        row[2 * n + position] = -1.0
+        rows.append(row)
+        rhs.append(0.0)
+
+        row = np.zeros(3 * n)
+        row[position] = -1.0
+        row[2 * n + position] = -1.0
+        rows.append(row)
+        rhs.append(0.0)
+
+    unique_industries = sorted(str(value) for value in groups.unique())
+    equality_rows: list[np.ndarray] = []
+    for group in unique_industries:
+        mask = groups.astype(str).eq(group).to_numpy()
+        gross_row = np.zeros(3 * n)
+        gross_row[2 * n :][mask] = 1.0
+        rows.append(gross_row)
+        rhs.append(float(max_industry_gross_weight))
+
+        net_row = np.zeros(3 * n)
+        net_row[:n][mask] = 1.0
+        equality_rows.append(net_row)
+
+    result = linprog(
+        objective,
+        A_ub=np.vstack(rows),
+        b_ub=np.asarray(rhs),
+        A_eq=np.vstack(equality_rows),
+        b_eq=np.zeros(len(equality_rows)),
+        bounds=[*(zip(lower, upper)), *([(0.0, None)] * (2 * n))],
+        method="highs",
+    )
+    if not result.success:
+        raise CRSPV2Error(f"Constrained execution is infeasible: {result.message}")
+
+    executed = pd.Series(result.x[:n], index=index, dtype=float)
+    executed.loc[executed.abs().lt(1e-14)] = 0.0
+    delta = executed - previous_aligned
+    requested_delta = target_aligned - previous_aligned
+    requested_dollars = float(requested_delta.abs().sum() * capital_usd)
+    executed_dollars = float(delta.abs().sum() * capital_usd)
+    fill_ratio = executed_dollars / requested_dollars if requested_dollars else 1.0
+    constrained = tuple(index[(executed - target_aligned).abs().gt(1e-10)])
+
+    industry_net = executed.groupby(groups.astype(str)).sum()
+    industry_gross = executed.abs().groupby(groups.astype(str)).sum()
+    if industry_net.abs().max() > 1e-9:
+        raise CRSPV2Error("Constrained execution missed industry neutrality")
+    if industry_gross.max() > max_industry_gross_weight + 1e-9:
+        raise CRSPV2Error("Constrained execution breached industry gross")
+    if executed.abs().max() > max_single_name_weight + 1e-9:
+        raise CRSPV2Error("Constrained execution breached the name cap")
+    if (delta.abs() - maximum_delta).max() > 1e-9:
+        raise CRSPV2Error("Constrained execution breached participation")
+
+    return CapacityResult(
+        executed_weights=executed,
+        requested_turnover=0.5 * float(requested_delta.abs().sum()),
+        executed_turnover=0.5 * float(delta.abs().sum()),
         requested_trade_dollars=requested_dollars,
         executed_trade_dollars=executed_dollars,
         fill_ratio=fill_ratio,

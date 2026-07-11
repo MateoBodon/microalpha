@@ -3,6 +3,7 @@
 from .crsp_v2 import (
     CapacityResult,
     CRSPV2Error,
+    apply_constrained_trade_capacity,
     audit_source_protocol,
     build_point_in_time_universe,
     estimate_rebalance_cost,
@@ -17,6 +18,7 @@ from .crsp_v2 import (
 __all__ = [
     "CRSPV2Error",
     "CapacityResult",
+    "apply_constrained_trade_capacity",
     "audit_source_protocol",
     "build_point_in_time_universe",
     "estimate_rebalance_cost",

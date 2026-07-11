@@ -5,6 +5,7 @@ import pytest
 
 from microalpha.research.crsp_v2 import (
     CRSPV2Error,
+    apply_constrained_trade_capacity,
     apply_trade_capacity,
     build_point_in_time_universe,
     estimate_rebalance_cost,
@@ -244,7 +245,7 @@ def test_industry_gross_cap_redistributes_and_fails_when_infeasible() -> None:
     assert industry_gross.loc["BusEq"] == pytest.approx(0.15)
     assert weights.abs().sum() == pytest.approx(1.0)
 
-    with pytest.raises(CRSPV2Error, match="Industry gross cap is infeasible"):
+    with pytest.raises(CRSPV2Error, match="Industry gross/name caps are infeasible"):
         industry_neutral_weights(
             snapshot.loc[snapshot["industry"].isin(["BusEq", "Industry-1"])],
             weighting="equal",
@@ -253,3 +254,62 @@ def test_industry_gross_cap_redistributes_and_fails_when_infeasible() -> None:
             max_industry_gross_weight=0.15,
             max_single_name_weight=0.10,
         )
+
+
+def test_name_capacity_is_applied_before_industry_gross_is_distributed() -> None:
+    rows: list[dict[str, float | int | str]] = []
+    permno = 1
+    industry_counts = [("Large", 100)] + [
+        (f"Small-{index:02d}", 2) for index in range(50)
+    ]
+    for industry, count in industry_counts:
+        for rank in range(count):
+            rows.append(
+                {
+                    "permno": permno,
+                    "industry": industry,
+                    "score": float(count - rank),
+                    "volatility_126d": 0.02,
+                }
+            )
+            permno += 1
+    snapshot = pd.DataFrame(rows)
+
+    weights = industry_neutral_weights(
+        snapshot,
+        sleeve_fraction=0.10,
+        target_gross=1.0,
+        max_industry_gross_weight=1.0,
+        max_single_name_weight=0.02,
+    )
+
+    industry = snapshot.set_index("permno")["industry"]
+    gross = weights.abs().groupby(industry.reindex(weights.index)).sum()
+    assert gross["Large"] == pytest.approx(0.40)
+    assert sorted(gross.drop("Large")) == pytest.approx([0.012] * 50)
+    assert weights.abs().max() <= 0.02 + 1e-12
+
+
+def test_constrained_capacity_preserves_actual_industry_neutrality() -> None:
+    target = pd.Series({1: 0.10, 2: -0.10, 3: 0.10, 4: -0.10})
+    previous = pd.Series(dtype=float)
+    adv = pd.Series({1: 1_000_000.0, 2: 100_000_000.0, 3: 100_000_000.0, 4: 100_000_000.0})
+    industry = pd.Series({1: "A", 2: "A", 3: "B", 4: "B"})
+
+    result = apply_constrained_trade_capacity(
+        previous,
+        target,
+        adv,
+        industry,
+        capital_usd=1_000_000.0,
+        max_participation=0.02,
+        max_single_name_weight=0.20,
+        max_industry_gross_weight=0.20,
+    )
+
+    executed = result.executed_weights
+    assert executed.loc[1] == pytest.approx(0.02)
+    assert executed.loc[2] == pytest.approx(-0.02)
+    assert executed.groupby(industry).sum().abs().max() < 1e-9
+    assert executed.abs().groupby(industry).sum().max() <= 0.20 + 1e-9
+    assert result.fill_ratio < 1.0
