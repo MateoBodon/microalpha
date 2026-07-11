@@ -1,0 +1,65 @@
+{
+  "schema_version": "microalpha-sec-timing-aggregate-receipt/v1",
+  "candidate_id": "sec_reporting_timeliness_quality__equal",
+  "created_at_utc": "2026-07-11T23:12:34.764440+00:00",
+  "code_binding": {
+    "published_commit": "5a0e64d4e8fdc9c81f78cb2eada01c07035f3509",
+    "published_tree": "52bded71389b6a22b1958be273be5c4c892c73ce",
+    "local_runner_commit": "6f50d56cbbfa275d5abd77d56daf53c0af8adea3",
+    "local_runner_tree": "52bded71389b6a22b1958be273be5c4c892c73ce",
+    "tree_match": true
+  },
+  "contract_sha256": "de44ed82b1a878c06828a956c0caa1ecd85918dbda8ecdf59d21d3ddc00c9116",
+  "coverage": {
+    "target_ciks": 3106,
+    "ciks_with_timing_pairs": 2919,
+    "first_original_xbrl_10k_rows": 21719,
+    "valid_delay_rows": 21674,
+    "consecutive_timing_pairs": 18491,
+    "formation_months": 72,
+    "formation_dates_exact": true,
+    "minimum_complete_names": 1564,
+    "median_complete_names": 1652.0,
+    "maximum_complete_names": 1951,
+    "minimum_complete_industries": 12,
+    "ambiguous_ccm_rows": 0
+  },
+  "chronology": {
+    "minimum_sec_report_date": "2013-01-01",
+    "maximum_permitted_acceptance_timestamp": "2022-11-30T23:59:59+00:00",
+    "maximum_selected_acceptance_timestamp": "2022-11-30T21:55:22+00:00",
+    "formation_start": "2016-12-31",
+    "formation_end": "2022-11-30",
+    "post_cutoff_filing_rows_selected": 0,
+    "selected_rows_available_after_formation": 0,
+    "selected_rows_expired_before_formation": 0,
+    "checks_passed": true
+  },
+  "coverage_gate": {
+    "expected_formation_months": 72,
+    "minimum_complete_names_each_formation_month": 500,
+    "minimum_complete_industries_each_formation_month": 10,
+    "maximum_ambiguous_ccm_rows": 0,
+    "exact_source_digests_match": true,
+    "failures": [],
+    "gate_passed": true,
+    "validation_readmission_granted": false
+  },
+  "access_receipt": {
+    "archived_return_manifests_opened": false,
+    "return_columns_projected": false,
+    "validation_outcomes_read": false,
+    "final_holdout_outcomes_read": false,
+    "raw_identifier_rows_written": 0,
+    "aws_used": false,
+    "authentication_triggered": false
+  },
+  "local_artifact_set": {
+    "output_dir": "/Volumes/Storage/Data/wrds/derived/microalpha/crsp-v2-industry-neutral-momentum-20260710/20260711T231206Z_sec_reporting_timeliness_coverage",
+    "result_manifest_sha256": "095992c4f2bdee219f407dfd8802a58889145a71f835f77f7601cb830836141c",
+    "aggregate_coverage_sha256": "bc56757a904e7581ffa3cd8ccbb0b7b0575ec68b6a74dd016edfd94d6959aed3",
+    "chronology_audit_sha256": "3bb609d8a2231a79d1a0b730b71667e6b1623e252bdfbd9a7d7cdd6f833e6deb",
+    "coverage_gate_sha256": "1c82af5a5844a045df0b6338cd80480b3c440c4608859a89728c0f6d1706ad9e",
+    "source_manifest_sha256": "e36f96f5b8bd5c778a08e5c0921c01dabb79802c930a8cd9d85b94cb350da355"
+  }
+}
