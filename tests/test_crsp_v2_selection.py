@@ -97,8 +97,9 @@ def test_validation_engine_maps_formation_to_next_month_and_applies_costs() -> N
     for month_index, date in enumerate(dates):
         alpha_scale = 0.0003 + 0.0001 * np.sin(month_index / 3.0)
         for security, industry, score in securities:
-            if security == 2 and month_index == 1:
+            if security == 3 and month_index == 1:
                 continue
+            placeholder = security == 2 and month_index == 2
             centered_score = score - 20.5
             delisted = security == 1 and month_index == 1
             rows.append(
@@ -106,13 +107,17 @@ def test_validation_engine_maps_formation_to_next_month_and_applies_costs() -> N
                     "permno": security,
                     "formation_date": date,
                     "industry": industry,
-                    "eligible_at_formation": not (security == 1 and month_index >= 1),
-                    "price": 50.0,
+                    "eligible_at_formation": not (
+                        placeholder or (security == 1 and month_index >= 1)
+                    ),
+                    "price": np.nan if placeholder else 50.0,
                     "adv_60_usd": 100_000_000.0,
                     "volatility_126d": 0.02 + (security % 5) * 0.001,
                     "full_spread_bps": 10.0,
                     "monthly_total_return": (
-                        -1.0 if delisted else centered_score * alpha_scale
+                        np.nan
+                        if placeholder
+                        else (-1.0 if delisted else centered_score * alpha_scale)
                     ),
                     "delisting_pseudo_days": int(delisted),
                     "mom_12_2": score,
@@ -140,8 +145,26 @@ def test_validation_engine_maps_formation_to_next_month_and_applies_costs() -> N
     assert result.monthly["executed_net"].abs().max() <= 1e-9
     assert result.metrics["delisted_positions_liquidated"] == 1
     assert result.metrics["untradable_target_names"] >= 1
+    assert result.metrics["present_no_session_rows_zero_marked"] >= 1
     assert result.metrics["median_names_per_sleeve"] >= 30
     assert result.metrics["eligible"] is True
+
+    executable_missing_return = frame.copy()
+    executable_missing_return.loc[
+        executable_missing_return["permno"].eq(2)
+        & executable_missing_return["formation_date"].eq(pd.Timestamp("2017-02-28")),
+        "price",
+    ] = 50.0
+    with pytest.raises(
+        CRSPV2Error,
+        match="executable or delisting observation lacks its CIZ return",
+    ):
+        _run_strategy(
+            executable_missing_return,
+            _protocol(),
+            signal="mom_12_2",
+            weighting="equal",
+        )
 
 
 def test_frozen_reducer_is_lexicographic_and_deterministic() -> None:

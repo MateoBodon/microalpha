@@ -387,10 +387,23 @@ def _run_strategy(
             .fillna(0)
             .gt(0)
         )
-        if (realization_present & realized_returns.isna()).any():
-            raise CRSPV2Error("A present realized position lacks its CIZ return")
+        executed_tradable = tradable.reindex(executed.index, fill_value=False)
+        executable_or_terminal = executed_tradable | realized_delisting
+        missing_executable_returns = (
+            realization_present & executable_or_terminal & realized_returns.isna()
+        )
+        if missing_executable_returns.any():
+            raise CRSPV2Error(
+                "An executable or delisting observation lacks its CIZ return"
+            )
         absent_rows_zero_marked = int((~realization_present).sum())
-        present_missing_returns_zero_marked = 0
+        present_no_session_rows_zero_marked = int(
+            (
+                realization_present
+                & ~executable_or_terminal
+                & realized_returns.isna()
+            ).sum()
+        )
         realized_returns = realized_returns.fillna(0.0)
         gross_return = float((executed * realized_returns).sum())
         net_return = gross_return - total_cost / capital
@@ -436,8 +449,8 @@ def _run_strategy(
                 "delisted_positions_liquidated": delisted_positions,
                 "untradable_target_names": untradable_target_names,
                 "absent_rows_zero_marked": absent_rows_zero_marked,
-                "present_missing_returns_zero_marked": (
-                    present_missing_returns_zero_marked
+                "present_no_session_rows_zero_marked": (
+                    present_no_session_rows_zero_marked
                 ),
                 "total_cost_dollars": float(total_cost),
                 "commission_dollars": float(cost["commission_dollars"] * cost_multiplier),
@@ -518,8 +531,8 @@ def _run_strategy(
         ),
         "untradable_target_names": int(monthly["untradable_target_names"].sum()),
         "absent_rows_zero_marked": int(monthly["absent_rows_zero_marked"].sum()),
-        "present_missing_returns_zero_marked": int(
-            monthly["present_missing_returns_zero_marked"].sum()
+        "present_no_session_rows_zero_marked": int(
+            monthly["present_no_session_rows_zero_marked"].sum()
         ),
         "maximum_target_industry_gross": float(
             monthly["max_target_industry_gross"].max()
@@ -945,11 +958,15 @@ def run_selection(
                 "no_session_rule": (
                     "A requested trade with no following-month observed session is "
                     "unfilled; an already-held security with no row is carried at an "
-                    "unchanged mark using its last observed point-in-time metadata"
+                    "unchanged mark using its last observed point-in-time metadata. A "
+                    "present CIZ month containing no price, numeric return, or "
+                    "delisting is the same non-trading placeholder state"
                 ),
                 "missing_return_rule": (
-                    "Any present realized row without a CIZ return is a hard stop; "
-                    "only a wholly absent no-session month is carried unchanged"
+                    "Any present executable-price or delisting observation without a "
+                    "CIZ return is a hard stop; a numeric return remains the mark even "
+                    "without a price; only absent or all-null no-session placeholder "
+                    "months are carried unchanged"
                 ),
                 "return_semantics_authority": (
                     "https://www.crsp.org/crsp_pdf/"
