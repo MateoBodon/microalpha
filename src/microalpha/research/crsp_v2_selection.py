@@ -42,6 +42,26 @@ SIGNAL_DEFINITIONS = {
         "formation lags 1..5; equivalently realization-relative months t-6..t-2"
     ),
     "blend_12_2_6_2": "equal arithmetic blend of the two frozen lagged signals",
+    "residual_mom_12_2": (
+        "sum of stock return minus contemporaneous FF12-industry median return "
+        "over formation lags 1..11"
+    ),
+    "residual_mom_6_2": (
+        "sum of stock return minus contemporaneous FF12-industry median return "
+        "over formation lags 1..5"
+    ),
+    "residual_mom_12_2_minus_reversal_1_1": (
+        "residual_mom_12_2 minus the formation-month stock return minus "
+        "contemporaneous FF12-industry median return"
+    ),
+    "low_volatility_126d": (
+        "negative point-in-time trailing 126-session daily-return volatility; "
+        "low-volatility securities rank above high-volatility securities"
+    ),
+    "short_term_reversal_1_1": (
+        "negative formation-month stock return minus contemporaneous FF12-industry "
+        "median return, observed at month-end for next-month execution"
+    ),
 }
 
 

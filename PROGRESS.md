@@ -120,3 +120,23 @@ Ticket-18: Installed agentic system scaffold, restored repo-specific docs, and g
 
 ### Done
 - T-000: installed AI Project OS v2 canonical docs under `docs/strategy/`, added `project_state/STATE_INDEX.md`, refreshed `project_state/RUNBOOK.md`, added validation and claims/evidence maps, indexed/copied pre-v2 docs under `docs/_archive/pre_ai_os_v2/20260703/`, and added `tools/agentic/ai_os_v2_bundle.py` for state/review bundles. Run log: `reports/_runs/20260703_172217_T-000_install_ai_project_os_v2/`.
+
+## 2026-07-11
+
+### Done
+- Predeclared and executed a three-candidate FF12-industry-residual momentum
+  family on the sealed CRSP-v2 selection panel. The best candidate improved
+  validation HAC Sharpe from `0.2407` to `0.3198`, but failed the frozen
+  replacement gate (less than `0.10` improvement, below classic momentum, and
+  negative harsh-stress CAGR), so the family was archived honestly. The
+  2023-2025 final holdout remained unopened.
+- Predeclared and executed one genuinely non-momentum, point-in-time
+  low-volatility mechanism with unchanged portfolio and cost rules. Net HAC
+  Sharpe was `-0.0906`, CAGR `-2.20%`, max drawdown `43.83%`, and harsh-cost
+  results were worse, so the mechanism was archived without retuning. The
+  2023-2025 final holdout remained unopened.
+- Changed methods again and preregistered one pure one-month
+  industry-residual reversal mechanism. It was structurally valid but produced
+  HAC Sharpe `-0.4542`, CAGR `-3.82%`, and `63.27x` turnover; harsh-cost Sharpe
+  was `-1.0268`. The mechanism was archived without post-hoc direction
+  inversion, and the 2023-2025 final holdout remained unopened.

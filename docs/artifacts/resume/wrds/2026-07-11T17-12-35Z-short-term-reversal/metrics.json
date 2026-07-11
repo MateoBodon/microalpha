@@ -1,0 +1,40 @@
+{
+  "artifact_classification": "aggregate_validation_evidence_no_restricted_rows",
+  "candidate": "short_term_reversal_1_1__equal",
+  "candidate_count": 1,
+  "contract_sha256": "43cc96f431cc3aa183d4f375891f62898775598a707961bb902e0779b9bac3af",
+  "dataset_id": "wrds-crsp-dsf-v2-20260707-plus-kf-20260709",
+  "decision": "archive_mechanism_as_validation_negative",
+  "final_holdout_outcomes_read": false,
+  "gates": {
+    "beats_strongest_archived_by_minimum_sharpe_delta": false,
+    "harsh_stress_positive_cagr": false,
+    "harsh_stress_positive_sharpe": false,
+    "max_drawdown_within_limit": true,
+    "minimum_hac_tstat": false,
+    "minimum_net_sharpe_hac": false,
+    "positive_cagr": false,
+    "structurally_eligible": true
+  },
+  "harsh_stress": {
+    "annual_short_borrow_bps": 600.0,
+    "cagr": -0.08098489191218039,
+    "net_sharpe_hac": -1.026792830741591,
+    "nonborrow_cost_multiplier": 2.0
+  },
+  "metrics": {
+    "cagr": -0.03818480301285898,
+    "hac_tstat": -1.413092629752643,
+    "max_drawdown": 0.23436721221736279,
+    "net_sharpe_hac": -0.45420940476383004,
+    "total_one_way_turnover": 63.27414432544121
+  },
+  "panel_sha256": "4ed2b33e2496e224a7701c3d0d71d593909d8fc7547ecdcbc483b2c83686206a",
+  "result_manifest_sha256": "573dd7c74bc6e2bcea0ab22bde30efdc1fcfc9b4eef0ec6e7665c800bfe28b02",
+  "runner_git_sha": "4f3cb1ab16bd9aac567755dbb00b04a94b31acac",
+  "schema_version": "microalpha-short-term-reversal-summary/v1",
+  "validation_window": {
+    "end": "2022-12-31",
+    "start": "2017-01-01"
+  }
+}

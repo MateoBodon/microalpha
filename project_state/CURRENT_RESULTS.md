@@ -10,6 +10,47 @@ commands:
 # Current Results
 
 
+## CRSP-v2 pre-holdout research (2026-07-11)
+
+- A pure one-month FF12-industry-residual reversal mechanism was preregistered
+  separately from momentum and low volatility. It was structurally valid but
+  economically poor after costs: validation HAC Sharpe `-0.4542`, t-stat
+  `-1.4131`, CAGR `-3.82%`, max drawdown `23.44%`, and one-way turnover
+  `63.27x`. At 600 bps borrow plus 2x nonborrow costs, Sharpe was `-1.0268`
+  and CAGR `-8.10%`. It is archived without direction inversion or retuning.
+- Reversal evidence:
+  `docs/artifacts/resume/wrds/2026-07-11T17-12-35Z-short-term-reversal/`;
+  external result-manifest SHA-256
+  `573dd7c74bc6e2bcea0ab22bde30efdc1fcfc9b4eef0ec6e7665c800bfe28b02`.
+- A separately preregistered one-candidate low-volatility mechanism used
+  negative point-in-time trailing 126-session volatility, equal weighting, and
+  the unchanged FF12-neutral cost/capacity portfolio. It failed decisively:
+  validation HAC Sharpe `-0.0906`, t-stat `-0.1943`, CAGR `-2.20%`, and max
+  drawdown `43.83%`. At 600 bps borrow plus 2x nonborrow costs, Sharpe was
+  `-0.2553` and CAGR `-4.41%`. The mechanism is archived without retuning.
+- Low-volatility evidence:
+  `docs/artifacts/resume/wrds/2026-07-11T17-05-10Z-low-volatility/`;
+  external result-manifest SHA-256
+  `fba7c4f4b4e96f6b310da13103921817db4a04bc910ea451fdd1f79ff8653ad0`.
+- Frozen panel: `4ed2b33e2496e224a7701c3d0d71d593909d8fc7547ecdcbc483b2c83686206a`
+  covering only permitted data through 2022-12-31.
+- Previous six-candidate winner: `blend_12_2_6_2__inverse_vol_126d`;
+  validation HAC Sharpe `0.2407`, CAGR `1.70%`, max drawdown `11.42%`.
+- Economically distinct preregistered family: three equal-weight
+  FF12-industry-residual momentum signals at runner commit `ecb3def0`.
+- Best distinct-family candidate: `residual_mom_12_2__equal`; validation HAC
+  Sharpe `0.3198` (t-stat `1.2174`), CAGR `2.48%`, max drawdown `9.39%`.
+- Decision: archive the family as a validation negative. It improved on the
+  previous winner by only `0.0791` Sharpe, below the predeclared `0.10` margin;
+  it also trailed identical-universe classic momentum (`0.3260`) and produced
+  CAGR `-0.20%` at the harsh `600 bps` borrow plus `2x` nonborrow-cost stress.
+- Evidence: `docs/artifacts/resume/wrds/2026-07-11T16-22-00Z-distinct-residual-family/`;
+  external result-manifest SHA-256
+  `9e3a8818211a9ef9c81816bb2fadf6165636cc9a344f9284698adec3499ef107`.
+- The 2023-2025 final holdout was not opened. No alpha or promotion claim is
+  supported.
+
+
 ## Sample bundle (README + artifacts)
 
 - Run: `artifacts/sample_flagship/2025-10-30T18-39-31Z-a4ab8e7`
