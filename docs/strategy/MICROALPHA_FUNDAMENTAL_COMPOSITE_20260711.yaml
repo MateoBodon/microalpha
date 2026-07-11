@@ -1,0 +1,205 @@
+schema_version: microalpha-fundamental-composite-protocol/v1
+mechanism_id: qvpi_annual_composite_20260711
+status: predeclared_not_executed
+predeclared_at_utc: "2026-07-11T18:53:12Z"
+
+objective:
+  authoritative_goal: >-
+    Test one economically distinct accounting mechanism after the CRSP-only
+    return, residual-return, low-volatility, and reversal plateau, without
+    opening the 2023-2025 final holdout or tuning after validation outcomes.
+  mechanism: >-
+    A single equal-family quality, value, profitability, and conservative
+    investment composite using annual Compustat fundamentals, historical CCM
+    links, and the already-sealed CRSP-v2 selection panel.
+  claim_limit: >-
+    The Compustat files are a current snapshot rather than a historical
+    vintage archive. The fixed six-month lag protects statement availability
+    timing, but cannot remove later-restatement leakage. This run is therefore
+    conservative-lag snapshot validation evidence, not a true vintage or
+    production alpha claim.
+
+inventory:
+  wrds_vault:
+    canonical_root: /Volumes/Storage/Data/wrds
+    uppercase_alias: /Volumes/Storage/Data/WRDS
+    same_filesystem_inode_verified: true
+    authentication_triggered: false
+  compustat_annual:
+    present: true
+    years_present: [2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
+    columns_present: [gvkey, datadate, fyear, fyr, at, lt, ceq, txditc, pstk, pstkl, pstkrv, sale, cogs, xsga, oibdp, dp, ni, ib, xint, capx, xrd, xad, che, dltt, dlc, csho, prcc_f]
+    duplicate_gvkey_datadate_rows_2005_2022: 0
+  compustat_quarterly:
+    present: true
+    years_present: [2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
+    rdq_present: false
+    excluded_reason: >-
+      The local projection omits report-date fields, so quarterly records
+      cannot support a stronger actual-announcement availability contract.
+  ccm_link_history:
+    present: true
+    source: crsp.ccmxpf_lnkhist local parquet
+  public_sec:
+    submissions_zip_present: true
+    submissions_zip_sha256: 9b507fd4738c7d8306910d00841e4a68b9926ea791caf3fac43140a550d102a3
+    companyfacts_zip_present: true
+    companyfacts_zip_sha256: 9062afc06b351cd4f11a4824aaea3be9143332d3f7d731162a0a4cf47c69f570
+    used_by_this_mechanism: false
+    reason: >-
+      SEC files are available for a future filing-date and vintage-value
+      mechanism, but combining first-filed dates with later-restated Compustat
+      values would not cure revision leakage in this preregistration.
+
+frozen_inputs:
+  base_protocol_path: docs/strategy/MICROALPHA_FLAGSHIP_20260710.yaml
+  base_protocol_sha256: f88df6c93d3a83ddf76be6e198fc567122f18b39204b8565290e09969f1af75e
+  selection_panel:
+    path: /Volumes/Storage/Data/wrds/derived/microalpha/crsp-v2-industry-neutral-momentum-20260710/20260710T234504Z_selection_12gb/selection.parquet
+    sha256: 4ed2b33e2496e224a7701c3d0d71d593909d8fc7547ecdcbc483b2c83686206a
+    manifest_sha256: 0e625c05853bfed6e8b811bbd3df86d0fe64a05cf9929ede537299adc851710d
+    maximum_date: "2022-12-31"
+  ccm_link_history:
+    path: /Volumes/Storage/Data/wrds/raw/crsp/ccmxpf_lnkhist.parquet
+    sha256: 33583d9f2ecac4a4bb66b12be47348a828ba1481f3b25ece6a5f081ca13b1f95
+    row_count: 119716
+  archived_result_manifests:
+    momentum:
+      path: /Volumes/Storage/Data/wrds/derived/microalpha/crsp-v2-industry-neutral-momentum-20260710/20260711T150304Z_selection_execution_v3/selection_manifest.json
+      sha256: 09f7d5240d8290b442cd2f72ed1be9c374d51459de4fb31b4af7b5859f7a6d58
+    residual_momentum:
+      path: /Volumes/Storage/Data/wrds/derived/microalpha/crsp-v2-industry-neutral-momentum-20260710/20260711T162200Z_distinct_residual_family/result_manifest.json
+      sha256: 9e3a8818211a9ef9c81816bb2fadf6165636cc9a344f9284698adec3499ef107
+    low_volatility:
+      path: /Volumes/Storage/Data/wrds/derived/microalpha/crsp-v2-industry-neutral-momentum-20260710/20260711T170510Z_low_volatility/result_manifest.json
+      sha256: fba7c4f4b4e96f6b310da13103921817db4a04bc910ea451fdd1f79ff8653ad0
+    short_term_reversal:
+      path: /Volumes/Storage/Data/wrds/derived/microalpha/crsp-v2-industry-neutral-momentum-20260710/20260711T171235Z_short_term_reversal/result_manifest.json
+      sha256: 573dd7c74bc6e2bcea0ab22bde30efdc1fcfc9b4eef0ec6e7665c800bfe28b02
+  compustat_annual:
+    root: /Volumes/Storage/Data/wrds/raw/comp/funda
+    opened_years: [2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022]
+    forbidden_before_final_holdout_execution: [2023, 2024, 2025]
+    expected_file_count: 18
+    expected_total_rows: 205695
+    aggregate_manifest_sha256: 81c58b4dcba690438aa8c70b5e9af9b8c16c45eb94833ec790abbc8325daed1d
+    files:
+      - {year: 2005, file_name: funda_2005.parquet, size_bytes: 997190, row_count: 10887, sha256: 3f9f741f53bc2e770243aec743087919312e1b9034b155928366b6859341607c}
+      - {year: 2006, file_name: funda_2006.parquet, size_bytes: 985317, row_count: 10891, sha256: 1f11e7bfa9b41878a4e06d1e200338a177c82135f1187b5ebb06bb62b5baebed}
+      - {year: 2007, file_name: funda_2007.parquet, size_bytes: 958025, row_count: 10907, sha256: 96de3515d396d456e197716ec63e2c08e3f1fb07d89aa4b29d05693e53558951}
+      - {year: 2008, file_name: funda_2008.parquet, size_bytes: 941185, row_count: 10720, sha256: 41ed4ee539c468ee4c2b4ec853adbeee233223d24f727a1115f4ba495fee22a5}
+      - {year: 2009, file_name: funda_2009.parquet, size_bytes: 920461, row_count: 10654, sha256: 883aa2728fbbd15c1e5ddb236a1e54cea8a1282cb18a86a6cbc967d5479888d8}
+      - {year: 2010, file_name: funda_2010.parquet, size_bytes: 920591, row_count: 10876, sha256: 9e1013cb2453d37981383cf5e87a384f5428bed96ef3636542b18ad1b5f1d47a}
+      - {year: 2011, file_name: funda_2011.parquet, size_bytes: 925984, row_count: 11280, sha256: aeb9a825700150ccd52031490568659f0236d2e9c7c4aded085a4e5e9f521017}
+      - {year: 2012, file_name: funda_2012.parquet, size_bytes: 968174, row_count: 11679, sha256: 95191ad5f7dcfda73ce5888927311b66acaffd3cb0be788ac21617b9cea9fda3}
+      - {year: 2013, file_name: funda_2013.parquet, size_bytes: 978826, row_count: 11786, sha256: 58b1ae2b913abc3912c4f7064b5ff5f982e65e5fbcc0dc8a0bf567cd62fce72c}
+      - {year: 2014, file_name: funda_2014.parquet, size_bytes: 961647, row_count: 11660, sha256: 3029dadd759b5535de507aa0432d7502e8ead532ad356ba91cd0384ccccdef70}
+      - {year: 2015, file_name: funda_2015.parquet, size_bytes: 933223, row_count: 11557, sha256: 6d6a59f04aa12634108e8bfb56e0666fd6cbf78d1e2a41feef55c1af1e7f79aa}
+      - {year: 2016, file_name: funda_2016.parquet, size_bytes: 911201, row_count: 11467, sha256: 102850cb89e151228621ca02139a4e333357c94c8efbf24ca4e2a6d56c4a1b03}
+      - {year: 2017, file_name: funda_2017.parquet, size_bytes: 895909, row_count: 11351, sha256: 7a0da96ac6348affa163e50794ff9ab52695ba71e0a9ef864dfbe1d64f7a9ab8}
+      - {year: 2018, file_name: funda_2018.parquet, size_bytes: 885637, row_count: 11438, sha256: ed76a53c8bce1629c70234adaf89d970737a7f9418c31bb372d7b092b63a6225}
+      - {year: 2019, file_name: funda_2019.parquet, size_bytes: 903585, row_count: 11712, sha256: dfa3b7ae66754b1fb002565e9ad174824e0c6baa8ef0dbe98647fb0385112eb7}
+      - {year: 2020, file_name: funda_2020.parquet, size_bytes: 915376, row_count: 11997, sha256: 7034b472d9d6ac32b579a8e50b2af2703078fb185b220b372f2265324df82ba1}
+      - {year: 2021, file_name: funda_2021.parquet, size_bytes: 931787, row_count: 12287, sha256: bbda070d800d30077ee017f24d35fe2ebe1a8482e0e6a4276302174142af9e48}
+      - {year: 2022, file_name: funda_2022.parquet, size_bytes: 936275, row_count: 12546, sha256: 166a3b317cd18efc16e1b3693cff71cf76e3fde1f1aaeb03255fd7b60ef8e1a7}
+
+frozen_mechanism:
+  candidate_id: qvpi_annual_composite__equal
+  signal: qvpi_annual_composite
+  weighting: equal
+  annual_record_contract:
+    availability_date: datadate plus six calendar months
+    expiry_date: datadate plus eighteen calendar months
+    prior_record_spacing_months_inclusive: [9, 15]
+    latest_available_record_only: true
+    missing_feature_imputation: forbidden
+    preferred_stock_fallback_order: [pstkrv, pstkl, pstk, zero]
+  ccm_contract:
+    linktype: [LC, LU]
+    linkprim: [P, C]
+    interval_must_cover_formation_date: true
+    ambiguous_permno_formation_gvkey_count: reject
+  raw_features:
+    book_equity_musd: ceq plus zero-filled txditc minus preferred stock fallback
+    book_to_market: book_equity_musd times 1000000 divided by formation market_cap_usd
+    gross_profitability: sale minus cogs divided by prior-year total assets
+    operating_profitability: sale minus cogs minus xsga minus xint divided by book_equity_musd
+    conservative_investment: negative of total assets divided by prior-year total assets minus one
+    accrual_quality: >-
+      Negative of [change in (total assets minus cash) minus change in
+      (total liabilities minus current debt minus long-term debt) minus
+      depreciation] divided by average current and prior-year total assets.
+  eligibility:
+    - Base CRSP formation eligibility is true.
+    - Book equity, book-to-market, current assets, and prior-year assets are positive.
+    - All four family inputs are finite and non-null.
+    - The CCM mapping is unique for the PERMNO and formation month.
+  ranking:
+    group: formation_date and point-in-time FF12 industry
+    transform: average-tie percentile rank centered to [-1, 1]
+    profitability_family: equal mean of gross and operating profitability ranks
+    composite: equal mean of value, profitability, conservative investment, and accrual quality family ranks
+    tie_break: ascending PERMNO
+  portfolio_and_costs: inherit unchanged from base protocol
+
+validation:
+  formation_start: "2016-12-31"
+  realization_start: "2017-01-31"
+  realization_end: "2022-12-31"
+  expected_months: 72
+  observed_preoutcome_coverage:
+    minimum_complete_names_per_formation_month: 1092
+    median_complete_names_per_formation_month: 1144
+    maximum_complete_names_per_formation_month: 1278
+    ambiguous_ccm_rows: 0
+  baselines:
+    - archived_frozen_momentum
+    - archived_residual_momentum
+    - archived_low_volatility
+    - archived_short_term_reversal
+    - identical_universe_classic_momentum
+    - crsp_value_weighted_market
+    - crsp_equal_weighted_market
+    - ken_french_momentum
+    - cash_rf
+  stress_grid:
+    annual_short_borrow_bps: [0.0, 600.0]
+    nonborrow_cost_multiplier: [0.5, 2.0]
+
+decision_gates:
+  structural:
+    minimum_complete_names_each_formation_month: 500
+    minimum_median_names_per_sleeve: 30
+    maximum_ambiguous_ccm_rows: 0
+    require_all_six_validation_years_nondegenerate: true
+    require_exact_net_and_industry_neutrality: true
+  performance:
+    minimum_net_sharpe_hac: 0.50
+    minimum_sharpe_improvement_over_archived_frozen_momentum: 0.10
+    minimum_cagr: 0.0
+    maximum_drawdown: 0.25
+    harsh_stress_minimum_net_sharpe_hac: 0.0
+    harsh_stress_minimum_cagr: 0.0
+  pass_outcome: >-
+    Freeze the mechanism for independent review while keeping the 2023-2025
+    final holdout sealed. Opening the holdout requires a separate goal and
+    exact frozen-generation receipt.
+  fail_outcome: >-
+    Archive this exact mechanism as validation evidence. Do not alter signs,
+    weights, lags, feature definitions, missing-value rules, or thresholds
+    after seeing the result.
+
+access_contract:
+  final_holdout_outcomes_read: false
+  compustat_2023_2025_partitions_opened: false
+  selection_panel_maximum_date: "2022-12-31"
+  link_history_source_layout: unpartitioned_parquet
+  link_history_scan_scope: full_file_for_interval_filter
+  link_rows_materialized_after_2022_12_31: 0
+  sec_bulk_values_opened: false
+  hard_stops:
+    - Any 2023-2025 CRSP outcome row is opened or materialized.
+    - Any 2023-2025 Compustat partition is opened by the validation runner.
+    - Any source digest, row count, schema, or frozen formula differs.
+    - The output path already exists.
+    - Any raw restricted row is written under the Git worktree.
