@@ -8,6 +8,11 @@ rechecking the frozen contract and full return-free coverage.
 
 from __future__ import annotations
 
+import json
+import os
+import shutil
+import tempfile
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable, Mapping
 
@@ -21,10 +26,71 @@ from .crsp_v2_sec_vintage import (
     _first_filed_10ks,
     _load_company_cik_map,
     _normalize_cik,
+    _target_ciks,
 )
-from .crsp_v2_selection import _sql_literal, _validate_selection_inputs
+from .crsp_v2_selection import _git_sha, _sql_literal, _validate_selection_inputs
 
 TIMING_FEATURE_COLUMNS = ["reporting_timeliness_level", "reporting_timeliness_change"]
+AGGREGATE_COVERAGE_COLUMNS = [
+    "formation_date",
+    "base_eligible_names",
+    "complete_names",
+    "ambiguous_ccm_rows",
+    "complete_industries",
+]
+TARGET_AUDIT_RECEIPT_KEYS = (
+    "company_rows",
+    "unique_company_ciks",
+    "duplicate_company_ciks",
+    "duplicate_company_gvkeys",
+    "eligible_permno_gvkey_pairs",
+    "pairs_with_cik",
+    "pairs_without_cik",
+    "target_ciks",
+    "panel_return_column_projected",
+)
+EXTRACTION_AUDIT_RECEIPT_KEYS = (
+    "submissions_archive_member_count",
+    "requested_ciks",
+    "missing_submission_ciks",
+    "supplemental_members_opened",
+    "original_xbrl_10k_rows_before_cutoff",
+    "first_filed_10k_rows",
+    "duplicate_original_accessions_removed",
+    "report_dates_with_multiple_original_10ks",
+    "valid_delay_rows",
+    "consecutive_timing_pairs",
+    "ciks_with_timing_pairs",
+    "minimum_selected_delay_days",
+    "maximum_selected_delay_days",
+    "maximum_selected_acceptance_timestamp",
+    "post_cutoff_filing_rows_selected",
+    "return_columns_projected",
+)
+FRAME_AUDIT_RECEIPT_KEYS = (
+    "company_rows",
+    "unique_company_ciks",
+    "duplicate_company_ciks",
+    "duplicate_company_gvkeys",
+    "feature_rows_with_company_bridge",
+    "frame_rows",
+    "scored_rows",
+    "minimum_complete_names",
+    "median_complete_names",
+    "maximum_complete_names",
+    "minimum_complete_industries",
+    "ambiguous_ccm_rows",
+    "coverage_formation_months",
+    "minimum_formation_date",
+    "maximum_formation_date",
+    "maximum_scored_acceptance_timestamp",
+    "selected_rows_available_after_formation",
+    "selected_rows_expired_before_formation",
+    "panel_columns_projected",
+    "return_columns_projected",
+    "validation_outcomes_read",
+    "final_holdout_outcomes_read",
+)
 
 
 def extract_first_filed_sec_timing(
@@ -71,9 +137,7 @@ def extract_first_filed_sec_timing(
     acceptance_day = (
         filings["acceptance_timestamp"].dt.tz_convert("UTC").dt.tz_localize(None)
     ).dt.normalize()
-    filings["reporting_delay_days"] = (
-        acceptance_day - filings["report_date"]
-    ).dt.days
+    filings["reporting_delay_days"] = (acceptance_day - filings["report_date"]).dt.days
     filings["prior_report_date"] = filings.groupby("cik", sort=False)[
         "report_date"
     ].shift(1)
@@ -97,9 +161,7 @@ def extract_first_filed_sec_timing(
         & filings["report_gap_days"].between(
             minimum_report_gap_days, maximum_report_gap_days, inclusive="both"
         )
-        & filings["prior_acceptance_timestamp"].lt(
-            filings["acceptance_timestamp"]
-        )
+        & filings["prior_acceptance_timestamp"].lt(filings["acceptance_timestamp"])
     )
     features = filings.loc[valid_pair].copy()
     features["reporting_timeliness_level"] = -features["reporting_delay_days"].astype(
@@ -109,9 +171,7 @@ def extract_first_filed_sec_timing(
         features["prior_reporting_delay_days"] - features["reporting_delay_days"]
     ).astype(float)
     features["availability_date"] = acceptance_day.loc[features.index]
-    features["expiry_date"] = features["availability_date"] + pd.DateOffset(
-        months=18
-    )
+    features["expiry_date"] = features["availability_date"] + pd.DateOffset(months=18)
     finite = np.isfinite(features[TIMING_FEATURE_COLUMNS]).all(axis=1)
     features = features.loc[finite].reset_index(drop=True)
     keep = [
@@ -256,13 +316,12 @@ def build_sec_timing_scores(
         frame[column] = pd.to_datetime(frame[column])
     if frame.duplicated(["formation_date", "permno"]).any():
         raise CRSPV2Error("SEC-timing frame formation-date/PERMNO keys are not unique")
-    frame["matched_gvkeys"] = pd.to_numeric(
-        frame["matched_gvkeys"], errors="coerce"
-    ).fillna(0).astype(int)
-    chronology = (
-        frame["availability_date"].le(frame["formation_date"])
-        & frame["expiry_date"].ge(frame["formation_date"])
+    frame["matched_gvkeys"] = (
+        pd.to_numeric(frame["matched_gvkeys"], errors="coerce").fillna(0).astype(int)
     )
+    chronology = frame["availability_date"].le(frame["formation_date"]) & frame[
+        "expiry_date"
+    ].ge(frame["formation_date"])
     complete = (
         frame["eligible_at_formation"].fillna(False).astype(bool)
         & frame["matched_gvkeys"].eq(1)
@@ -275,9 +334,7 @@ def build_sec_timing_scores(
         frame.loc[~complete, column] = np.nan
     group = frame.groupby(["formation_date", "industry"], sort=True, dropna=False)
     for column in TIMING_FEATURE_COLUMNS:
-        frame[f"{column}_rank"] = group[column].transform(
-            _centered_percentile_rank
-        )
+        frame[f"{column}_rank"] = group[column].transform(_centered_percentile_rank)
     frame["sec_reporting_timeliness_quality"] = frame[
         [f"{column}_rank" for column in TIMING_FEATURE_COLUMNS]
     ].mean(axis=1, skipna=False)
@@ -295,17 +352,31 @@ def build_sec_timing_scores(
                 "ambiguous_ccm_rows": int(
                     (eligible & snapshot["matched_gvkeys"].gt(1)).sum()
                 ),
-                "complete_industries": int(
-                    snapshot.loc[scored, "industry"].nunique()
-                ),
+                "complete_industries": int(snapshot.loc[scored, "industry"].nunique()),
             }
         )
     coverage = pd.DataFrame(coverage_rows)
-    if len(coverage) != 72:
-        raise CRSPV2Error("SEC-timing metadata coverage must contain 72 months")
+    expected_formation_dates = pd.DatetimeIndex(
+        pd.date_range(first_formation, last_formation, freq="ME")
+    ).normalize()
+    observed_formation_dates = pd.DatetimeIndex(
+        pd.to_datetime(coverage["formation_date"], errors="raise")
+    ).normalize()
+    if not observed_formation_dates.equals(expected_formation_dates):
+        raise CRSPV2Error(
+            "SEC-timing metadata coverage formation months differ from the "
+            "frozen 72-month chronology"
+        )
     if int(coverage["ambiguous_ccm_rows"].sum()) != 0:
         raise CRSPV2Error("Ambiguous CCM mapping reached SEC-timing formation rows")
     scored = frame["sec_reporting_timeliness_quality"].notna()
+    selected_metadata = frame["accession"].notna()
+    available_after_formation = selected_metadata & frame["availability_date"].gt(
+        frame["formation_date"]
+    )
+    expired_before_formation = selected_metadata & frame["expiry_date"].lt(
+        frame["formation_date"]
+    )
     audit = {
         **company_audit,
         "feature_rows_with_company_bridge": int(len(features)),
@@ -314,8 +385,20 @@ def build_sec_timing_scores(
         "minimum_complete_names": int(coverage["complete_names"].min()),
         "median_complete_names": float(coverage["complete_names"].median()),
         "maximum_complete_names": int(coverage["complete_names"].max()),
+        "minimum_complete_industries": int(coverage["complete_industries"].min()),
         "ambiguous_ccm_rows": int(coverage["ambiguous_ccm_rows"].sum()),
+        "coverage_formation_months": int(len(coverage)),
+        "minimum_formation_date": frame["formation_date"].min().date().isoformat(),
         "maximum_formation_date": frame["formation_date"].max().date().isoformat(),
+        "maximum_scored_acceptance_timestamp": (
+            pd.to_datetime(frame.loc[scored, "acceptance_timestamp"], utc=True)
+            .max()
+            .isoformat()
+            if scored.any()
+            else None
+        ),
+        "selected_rows_available_after_formation": int(available_after_formation.sum()),
+        "selected_rows_expired_before_formation": int(expired_before_formation.sum()),
         "panel_columns_projected": [
             "permno",
             "formation_date",
@@ -367,14 +450,63 @@ def load_sec_timing_contract(path: str | Path) -> dict[str, Any]:
         raise CRSPV2Error("SEC-timing annual spacing changed")
     if filing.get("expiry") != "acceptance date plus eighteen calendar months":
         raise CRSPV2Error("SEC-timing expiry changed")
+    filing_exact = {
+        "form": "10-K",
+        "is_xbrl": True,
+        "original_only_exclude_amendments": True,
+        "latest_available_record_only": True,
+    }
+    if any(filing.get(key) != value for key, value in filing_exact.items()):
+        raise CRSPV2Error("SEC-timing original-XBRL filing contract changed")
     ranking = mechanism.get("ranking", {})
     if (
         ranking.get("direction")
         != "faster absolute filing and improved year-over-year timeliness rank higher"
     ):
         raise CRSPV2Error("SEC-timing ranking direction changed")
+    ranking_exact = {
+        "group": "formation_date and point-in-time FF12 industry",
+        "transform": "average-tie percentile rank centered to [-1, 1]",
+        "composite": "equal arithmetic mean of both complete feature ranks",
+        "tie_break": "ascending PERMNO",
+    }
+    if any(ranking.get(key) != value for key, value in ranking_exact.items()):
+        raise CRSPV2Error("SEC-timing ranking contract changed")
     if mechanism.get("missing_value_imputation") != "forbidden":
         raise CRSPV2Error("SEC-timing missing-value rule changed")
+    ccm = mechanism.get("ccm_contract", {})
+    if (
+        list(ccm.get("linktype", [])) != ["LC", "LU"]
+        or list(ccm.get("linkprim", [])) != ["P", "C"]
+        or ccm.get("interval_must_cover_formation_date") is not True
+        or ccm.get("ambiguous_permno_formation_gvkey_count") != "reject"
+    ):
+        raise CRSPV2Error("SEC-timing CCM contract changed")
+    permitted_panel_columns = (
+        payload.get("frozen_inputs", {})
+        .get("selection_panel", {})
+        .get("columns_permitted_before_empirical_readmission", [])
+    )
+    if list(permitted_panel_columns) != [
+        "permno",
+        "formation_date",
+        "industry",
+        "eligible_at_formation",
+    ]:
+        raise CRSPV2Error("SEC-timing return-free panel projection changed")
+    coverage_gate = payload.get("future_return_free_coverage_gate", {})
+    expected_coverage_gate = {
+        "required_before_validation_readmission": True,
+        "exact_source_digests_must_match": True,
+        "expected_formation_months": 72,
+        "minimum_complete_names_each_formation_month": 500,
+        "minimum_complete_industries_each_formation_month": 10,
+        "maximum_ambiguous_ccm_rows": 0,
+        "write_only_aggregate_coverage": True,
+        "raw_identifier_rows_under_git": "forbidden",
+    }
+    if coverage_gate != expected_coverage_gate:
+        raise CRSPV2Error("SEC-timing return-free coverage gate changed")
     execution = payload.get("execution_contract", {})
     if execution.get("validation_run_permitted") is not False:
         raise CRSPV2Error("SEC-timing validation must remain disabled")
@@ -383,6 +515,18 @@ def load_sec_timing_contract(path: str | Path) -> dict[str, Any]:
         raise CRSPV2Error("SEC-timing validation outcomes must remain unread")
     if access.get("final_holdout_outcomes_read") is not False:
         raise CRSPV2Error("SEC-timing final holdout must remain sealed")
+    access_exact = {
+        "maximum_sec_acceptance_timestamp": "2022-11-30T23:59:59Z",
+        "minimum_sec_report_date": "2013-01-01",
+        "current_compustat_values_used": False,
+        "companyfacts_values_used": False,
+        "analyst_estimate_or_revision_values_used": False,
+        "post_cutoff_filing_rows_selected": 0,
+        "panel_return_columns_projected": False,
+        "restricted_identifier_rows_written_under_git": 0,
+    }
+    if any(access.get(key) != value for key, value in access_exact.items()):
+        raise CRSPV2Error("SEC-timing return-free access contract changed")
     return payload
 
 
@@ -415,15 +559,15 @@ def verify_sec_timing_sources(contract_path: str | Path) -> dict[str, Any]:
         checks[f"{key}_sha256"] = observed
     expected = {
         "selection_panel_sha256": frozen["selection_panel"]["sha256"],
-        "selection_panel_manifest_sha256": frozen["selection_panel"][
-            "manifest_sha256"
-        ],
+        "selection_panel_manifest_sha256": frozen["selection_panel"]["manifest_sha256"],
     }
     for key, value in expected.items():
         if checks[key] != value:
             raise CRSPV2Error(f"SEC-timing frozen input changed: {key}")
     return {
         "schema_version": "microalpha-sec-timing-source-audit/v1",
+        "contract_path": str(contract_path),
+        "contract_sha256": sha256_file(contract_path),
         "checks": checks,
         "panel_columns_projected": [],
         "return_columns_projected": False,
@@ -432,9 +576,493 @@ def verify_sec_timing_sources(contract_path: str | Path) -> dict[str, Any]:
     }
 
 
+def evaluate_sec_timing_coverage_gate(
+    coverage: pd.DataFrame,
+    contract: Mapping[str, Any],
+    protocol: Mapping[str, Any],
+    *,
+    source_digests_verified: bool,
+) -> dict[str, Any]:
+    """Reduce aggregate metadata coverage against the frozen gate."""
+
+    if list(coverage.columns) != AGGREGATE_COVERAGE_COLUMNS:
+        raise CRSPV2Error(
+            "SEC-timing coverage columns must appear exactly once in frozen order"
+        )
+    ordered = coverage[AGGREGATE_COVERAGE_COLUMNS].copy()
+    ordered["formation_date"] = pd.to_datetime(
+        ordered["formation_date"], errors="raise"
+    ).dt.normalize()
+    count_columns = AGGREGATE_COVERAGE_COLUMNS[1:]
+    for column in count_columns:
+        if pd.api.types.is_bool_dtype(ordered[column]):
+            raise CRSPV2Error(
+                f"SEC-timing aggregate count must be an integer, not boolean: {column}"
+            )
+        values = pd.to_numeric(ordered[column], errors="raise").to_numpy(dtype=float)
+        if (
+            not np.isfinite(values).all()
+            or (values < 0).any()
+            or not np.equal(values, np.floor(values)).all()
+        ):
+            raise CRSPV2Error(
+                f"SEC-timing aggregate count is not a finite nonnegative integer: {column}"
+            )
+        ordered[column] = values.astype("int64")
+    if (
+        ordered["complete_names"].gt(ordered["base_eligible_names"]).any()
+        or ordered["ambiguous_ccm_rows"].gt(ordered["base_eligible_names"]).any()
+        or ordered["complete_names"]
+        .add(ordered["ambiguous_ccm_rows"])
+        .gt(ordered["base_eligible_names"])
+        .any()
+        or ordered["complete_industries"].gt(ordered["complete_names"]).any()
+    ):
+        raise CRSPV2Error("SEC-timing aggregate coverage counts are internally invalid")
+    ordered = ordered.sort_values("formation_date", kind="mergesort").reset_index(
+        drop=True
+    )
+    validation_start = pd.Timestamp(protocol["windows"]["validation"]["start"])
+    validation_end = pd.Timestamp(protocol["windows"]["validation"]["end"])
+    expected_dates = pd.DatetimeIndex(
+        pd.date_range(
+            validation_start - pd.offsets.MonthEnd(1),
+            validation_end - pd.offsets.MonthEnd(1),
+            freq="ME",
+        )
+    ).normalize()
+    observed_dates = pd.DatetimeIndex(ordered["formation_date"])
+    gate = contract["future_return_free_coverage_gate"]
+    observed = {
+        "formation_months": int(len(ordered)),
+        "formation_dates_exact": bool(observed_dates.equals(expected_dates)),
+        "minimum_complete_names_each_formation_month": (
+            int(ordered["complete_names"].min()) if not ordered.empty else 0
+        ),
+        "median_complete_names": (
+            float(ordered["complete_names"].median()) if not ordered.empty else 0.0
+        ),
+        "maximum_complete_names": (
+            int(ordered["complete_names"].max()) if not ordered.empty else 0
+        ),
+        "minimum_complete_industries_each_formation_month": (
+            int(ordered["complete_industries"].min()) if not ordered.empty else 0
+        ),
+        "ambiguous_ccm_rows": int(ordered["ambiguous_ccm_rows"].sum()),
+        "maximum_ambiguous_ccm_rows_in_one_month": (
+            int(ordered["ambiguous_ccm_rows"].max()) if not ordered.empty else 0
+        ),
+    }
+    checks = {
+        "exact_source_digests_match": (
+            bool(source_digests_verified)
+            if gate["exact_source_digests_must_match"]
+            else True
+        ),
+        "expected_formation_months": (
+            observed["formation_months"] == int(gate["expected_formation_months"])
+            and observed["formation_dates_exact"]
+        ),
+        "minimum_complete_names_each_formation_month": (
+            observed["minimum_complete_names_each_formation_month"]
+            >= int(gate["minimum_complete_names_each_formation_month"])
+        ),
+        "minimum_complete_industries_each_formation_month": (
+            observed["minimum_complete_industries_each_formation_month"]
+            >= int(gate["minimum_complete_industries_each_formation_month"])
+        ),
+        "maximum_ambiguous_ccm_rows": (
+            observed["ambiguous_ccm_rows"] <= int(gate["maximum_ambiguous_ccm_rows"])
+        ),
+        "aggregate_only_receipt": True,
+    }
+    failures = [name for name, passed in checks.items() if not passed]
+    return {
+        "schema_version": "microalpha-sec-timing-coverage-gate/v1",
+        "candidate_id": contract["frozen_mechanism"]["candidate_id"],
+        "expected": {
+            key: gate[key]
+            for key in (
+                "exact_source_digests_must_match",
+                "expected_formation_months",
+                "minimum_complete_names_each_formation_month",
+                "minimum_complete_industries_each_formation_month",
+                "maximum_ambiguous_ccm_rows",
+            )
+        },
+        "observed": observed,
+        "checks": checks,
+        "failures": failures,
+        "gate_passed": not failures,
+        "validation_run_permitted": False,
+        "return_columns_projected": False,
+        "final_holdout_outcomes_read": False,
+    }
+
+
+def _json_dump(path: Path, payload: Mapping[str, Any]) -> None:
+    path.write_text(
+        json.dumps(dict(payload), indent=2, sort_keys=True, allow_nan=False) + "\n",
+        encoding="utf-8",
+    )
+
+
+def _resolved_timing_paths(
+    contract_path: Path, contract: Mapping[str, Any]
+) -> dict[str, Path]:
+    frozen = contract["frozen_inputs"]
+    base_protocol = Path(str(frozen["base_protocol_path"])).expanduser()
+    if not base_protocol.is_absolute():
+        base_protocol = contract_path.parents[2] / base_protocol
+    panel = Path(str(frozen["selection_panel"]["path"])).expanduser().resolve()
+    return {
+        "base_protocol": base_protocol.resolve(),
+        "selection_panel": panel,
+        "selection_panel_manifest": panel.with_suffix(panel.suffix + ".manifest.json"),
+        "company_cik_bridge": Path(str(frozen["company_cik_bridge"]["path"]))
+        .expanduser()
+        .resolve(),
+        "ccm_link_history": Path(str(frozen["ccm_link_history"]["path"]))
+        .expanduser()
+        .resolve(),
+        "submissions_zip": Path(str(frozen["submissions_zip"]["path"]))
+        .expanduser()
+        .resolve(),
+    }
+
+
+def _aggregate_audit_view(
+    audit: Mapping[str, Any],
+    keys: Iterable[str],
+    *,
+    label: str,
+) -> dict[str, Any]:
+    """Whitelist scalar aggregate audit fields before persistence."""
+
+    receipt: dict[str, Any] = {}
+    for key in keys:
+        if key not in audit:
+            continue
+        value = audit[key]
+        if key == "panel_columns_projected":
+            if not isinstance(value, (list, tuple)) or not all(
+                isinstance(item, str) for item in value
+            ):
+                raise CRSPV2Error(f"{label} panel projection receipt is invalid")
+            receipt[key] = list(value)
+            continue
+        if isinstance(value, (Mapping, list, tuple, set, pd.Series, pd.DataFrame)):
+            raise CRSPV2Error(f"{label} audit field is not aggregate scalar: {key}")
+        if isinstance(value, np.generic):
+            value = value.item()
+        if isinstance(value, pd.Timestamp):
+            value = value.isoformat()
+        receipt[key] = value
+    return receipt
+
+
+def _chronology_receipt(
+    contract: Mapping[str, Any],
+    target_audit: Mapping[str, Any],
+    extraction_audit: Mapping[str, Any],
+    frame_audit: Mapping[str, Any],
+) -> dict[str, Any]:
+    target_receipt = _aggregate_audit_view(
+        target_audit, TARGET_AUDIT_RECEIPT_KEYS, label="SEC-timing target"
+    )
+    extraction_receipt = _aggregate_audit_view(
+        extraction_audit,
+        EXTRACTION_AUDIT_RECEIPT_KEYS,
+        label="SEC-timing extraction",
+    )
+    frame_receipt = _aggregate_audit_view(
+        frame_audit, FRAME_AUDIT_RECEIPT_KEYS, label="SEC-timing frame"
+    )
+    cutoff = pd.Timestamp(
+        contract["access_contract"]["maximum_sec_acceptance_timestamp"]
+    )
+    if cutoff.tzinfo is None:
+        cutoff = cutoff.tz_localize("UTC")
+    else:
+        cutoff = cutoff.tz_convert("UTC")
+    selected_maximum = extraction_audit.get("maximum_selected_acceptance_timestamp")
+    selected_maximum_timestamp = (
+        pd.Timestamp(selected_maximum) if selected_maximum is not None else None
+    )
+    if selected_maximum_timestamp is not None:
+        if selected_maximum_timestamp.tzinfo is None:
+            selected_maximum_timestamp = selected_maximum_timestamp.tz_localize("UTC")
+        else:
+            selected_maximum_timestamp = selected_maximum_timestamp.tz_convert("UTC")
+    scored_maximum = frame_audit.get("maximum_scored_acceptance_timestamp")
+    scored_maximum_timestamp = (
+        pd.Timestamp(scored_maximum) if scored_maximum is not None else None
+    )
+    if scored_maximum_timestamp is not None:
+        if scored_maximum_timestamp.tzinfo is None:
+            scored_maximum_timestamp = scored_maximum_timestamp.tz_localize("UTC")
+        else:
+            scored_maximum_timestamp = scored_maximum_timestamp.tz_convert("UTC")
+    permitted_columns = contract["frozen_inputs"]["selection_panel"][
+        "columns_permitted_before_empirical_readmission"
+    ]
+    inherited_source = contract["inventory"]["inherited_source_receipt"]
+    submissions_spec = contract["frozen_inputs"]["submissions_zip"]
+    checks = {
+        "target_cik_count_exact": (
+            int(target_audit.get("target_ciks", -1))
+            == int(inherited_source["target_ciks"])
+            and int(extraction_audit.get("requested_ciks", -1))
+            == int(inherited_source["target_ciks"])
+        ),
+        "submissions_member_count_exact": (
+            int(extraction_audit.get("submissions_archive_member_count", -1))
+            == int(submissions_spec["member_count"])
+        ),
+        "first_original_10k_count_exact": (
+            int(extraction_audit.get("first_filed_10k_rows", -1))
+            == int(inherited_source["first_original_xbrl_10k_rows_before_2022_12_01"])
+        ),
+        "supplemental_member_count_exact": (
+            int(extraction_audit.get("supplemental_members_opened", -1))
+            == int(inherited_source["supplemental_submission_members_opened"])
+        ),
+        "multiple_original_report_dates_exact": (
+            int(extraction_audit.get("report_dates_with_multiple_original_10ks", -1))
+            == int(inherited_source["report_dates_with_multiple_original_10ks"])
+        ),
+        "target_resolution_return_free": (
+            target_audit.get("panel_return_column_projected") is False
+        ),
+        "filing_extraction_return_free": (
+            extraction_audit.get("return_columns_projected") is False
+        ),
+        "formation_projection_return_free": (
+            frame_audit.get("return_columns_projected") is False
+        ),
+        "validation_outcomes_unread": (
+            frame_audit.get("validation_outcomes_read") is False
+        ),
+        "final_holdout_outcomes_unread": (
+            frame_audit.get("final_holdout_outcomes_read") is False
+        ),
+        "panel_projection_exact": (
+            list(frame_audit.get("panel_columns_projected", []))
+            == list(permitted_columns)
+        ),
+        "no_post_cutoff_filing_selected": (
+            int(extraction_audit.get("post_cutoff_filing_rows_selected", -1)) == 0
+        ),
+        "selected_acceptance_not_after_cutoff": (
+            selected_maximum_timestamp is None or selected_maximum_timestamp <= cutoff
+        ),
+        "scored_acceptance_not_after_cutoff": (
+            scored_maximum_timestamp is None or scored_maximum_timestamp <= cutoff
+        ),
+        "availability_not_after_formation": (
+            int(frame_audit.get("selected_rows_available_after_formation", -1)) == 0
+        ),
+        "expiry_not_before_formation": (
+            int(frame_audit.get("selected_rows_expired_before_formation", -1)) == 0
+        ),
+    }
+    failures = [name for name, passed in checks.items() if not passed]
+    if failures:
+        raise CRSPV2Error(
+            "SEC-timing return-free chronology failed closed: " + ", ".join(failures)
+        )
+    return {
+        "schema_version": "microalpha-sec-timing-chronology/v1",
+        "maximum_sec_acceptance_timestamp": cutoff.isoformat(),
+        "minimum_sec_report_date": contract["access_contract"][
+            "minimum_sec_report_date"
+        ],
+        "checks": checks,
+        "target_audit": target_receipt,
+        "extraction_audit": extraction_receipt,
+        "frame_audit": frame_receipt,
+        "failures": [],
+        "return_columns_projected": False,
+        "validation_outcomes_read": False,
+        "final_holdout_outcomes_read": False,
+        "restricted_identifier_rows_written": 0,
+    }
+
+
+def run_sec_timing_return_free_coverage(
+    contract_path: str | Path,
+    output_dir: str | Path,
+    *,
+    memory_lane_admitted: bool = False,
+    generated_at_utc: str | None = None,
+) -> dict[str, Any]:
+    """Run full metadata coverage and publish only aggregate receipts.
+
+    The function never loads a return column and never writes a CIK, GVKEY,
+    PERMNO, accession, filing row, feature row, or scored row.  Callers must
+    separately schedule the potentially memory-heavy 3,106-CIK extraction.
+    """
+
+    if not memory_lane_admitted:
+        raise CRSPV2Error(
+            "Full SEC-timing coverage is locked until separate memory-lane admission"
+        )
+    contract_path = Path(contract_path).expanduser().resolve()
+    output_dir = Path(output_dir).expanduser().resolve()
+    if output_dir.exists():
+        raise CRSPV2Error(
+            f"Refusing to overwrite SEC-timing coverage output: {output_dir}"
+        )
+    output_dir.parent.mkdir(parents=True, exist_ok=True)
+    contract = load_sec_timing_contract(contract_path)
+    source_audit = verify_sec_timing_sources(contract_path)
+    paths = _resolved_timing_paths(contract_path, contract)
+    protocol = yaml.safe_load(paths["base_protocol"].read_text(encoding="utf-8"))
+    if not isinstance(protocol, dict):
+        raise CRSPV2Error("SEC-timing base protocol must be a YAML mapping")
+    ciks, target_audit = _target_ciks(
+        paths["company_cik_bridge"],
+        paths["ccm_link_history"],
+        paths["selection_panel"],
+        protocol,
+    )
+    expected_target_ciks = int(
+        contract["inventory"]["inherited_source_receipt"]["target_ciks"]
+    )
+    if (
+        len(ciks) != expected_target_ciks
+        or int(target_audit.get("target_ciks", -1)) != expected_target_ciks
+    ):
+        raise CRSPV2Error("SEC-timing target CIK population changed")
+    filing = contract["frozen_mechanism"]["filing_contract"]
+    timing_features, extraction_audit = extract_first_filed_sec_timing(
+        paths["submissions_zip"],
+        ciks,
+        minimum_report_date=contract["access_contract"]["minimum_sec_report_date"],
+        maximum_acceptance_timestamp=contract["access_contract"][
+            "maximum_sec_acceptance_timestamp"
+        ],
+        minimum_delay_days=int(filing["valid_delay_days_inclusive"][0]),
+        maximum_delay_days=int(filing["valid_delay_days_inclusive"][1]),
+        minimum_report_gap_days=int(filing["consecutive_report_gap_days_inclusive"][0]),
+        maximum_report_gap_days=int(filing["consecutive_report_gap_days_inclusive"][1]),
+    )
+    frame, coverage, frame_audit = build_sec_timing_scores(
+        timing_features,
+        paths["company_cik_bridge"],
+        paths["ccm_link_history"],
+        paths["selection_panel"],
+        protocol,
+    )
+    chronology = _chronology_receipt(
+        contract, target_audit, extraction_audit, frame_audit
+    )
+    coverage_gate = evaluate_sec_timing_coverage_gate(
+        coverage, contract, protocol, source_digests_verified=True
+    )
+    aggregate_coverage = coverage[AGGREGATE_COVERAGE_COLUMNS].copy()
+    aggregate_coverage["formation_date"] = pd.to_datetime(
+        aggregate_coverage["formation_date"], errors="raise"
+    ).dt.strftime("%Y-%m-%d")
+    aggregate_coverage = aggregate_coverage.sort_values(
+        "formation_date", kind="mergesort"
+    ).reset_index(drop=True)
+
+    source_files = {}
+    source_check_names = {
+        "base_protocol": "base_protocol_sha256",
+        "selection_panel": "selection_panel_sha256",
+        "selection_panel_manifest": "selection_panel_manifest_sha256",
+        "company_cik_bridge": "company_cik_bridge_sha256",
+        "ccm_link_history": "ccm_link_history_sha256",
+        "submissions_zip": "submissions_zip_sha256",
+    }
+    for name, check_name in source_check_names.items():
+        path = paths[name]
+        source_files[name] = {
+            "path": str(path),
+            "sha256": source_audit["checks"][check_name],
+            "size_bytes": path.stat().st_size,
+        }
+    source_manifest = {
+        "schema_version": "microalpha-sec-timing-sources/v1",
+        "contract_path": str(contract_path),
+        "contract_sha256": sha256_file(contract_path),
+        "source_files": source_files,
+        "target_audit": chronology["target_audit"],
+        "target_ciks": expected_target_ciks,
+        "panel_columns_projected": list(
+            contract["frozen_inputs"]["selection_panel"][
+                "columns_permitted_before_empirical_readmission"
+            ]
+        ),
+        "archived_return_manifests_opened": False,
+        "return_columns_projected": False,
+        "validation_outcomes_read": False,
+        "final_holdout_outcomes_read": False,
+    }
+    del frame, timing_features, ciks
+    staging = Path(
+        tempfile.mkdtemp(prefix=f".{output_dir.name}.staging-", dir=output_dir.parent)
+    )
+    try:
+        aggregate_coverage.to_csv(staging / "aggregate_coverage.csv", index=False)
+        _json_dump(staging / "source_manifest.json", source_manifest)
+        _json_dump(staging / "chronology_audit.json", chronology)
+        _json_dump(staging / "coverage_gate.json", coverage_gate)
+        artifacts = {
+            path.name: {
+                "sha256": sha256_file(path),
+                "size_bytes": path.stat().st_size,
+            }
+            for path in sorted(staging.iterdir())
+        }
+        result_manifest = {
+            "schema_version": "microalpha-sec-timing-coverage-result/v1",
+            "created_at_utc": generated_at_utc
+            or datetime.now(timezone.utc).isoformat(),
+            "candidate_id": contract["frozen_mechanism"]["candidate_id"],
+            "contract_sha256": sha256_file(contract_path),
+            "runner_git_sha": _git_sha(),
+            "coverage_gate_passed": bool(coverage_gate["gate_passed"]),
+            "validation_readmission_granted": False,
+            "artifacts": artifacts,
+            "written_artifact_classes": [
+                "aggregate_monthly_coverage",
+                "source_hash_receipt",
+                "chronology_receipt",
+                "coverage_gate_receipt",
+            ],
+            "raw_identifier_rows_written": 0,
+            "return_columns_projected": False,
+            "validation_outcomes_read": False,
+            "final_holdout_outcomes_read": False,
+        }
+        _json_dump(staging / "result_manifest.json", result_manifest)
+        os.rename(staging, output_dir)
+    except Exception:
+        if staging.exists():
+            shutil.rmtree(staging)
+        raise
+    return {
+        "output_dir": str(output_dir),
+        "candidate_id": contract["frozen_mechanism"]["candidate_id"],
+        "coverage_gate_passed": bool(coverage_gate["gate_passed"]),
+        "validation_readmission_granted": False,
+        "runner_git_sha": _git_sha(),
+        "raw_identifier_rows_written": 0,
+        "return_columns_projected": False,
+        "validation_outcomes_read": False,
+        "final_holdout_outcomes_read": False,
+    }
+
+
 __all__ = [
+    "AGGREGATE_COVERAGE_COLUMNS",
     "build_sec_timing_scores",
+    "evaluate_sec_timing_coverage_gate",
     "extract_first_filed_sec_timing",
     "load_sec_timing_contract",
+    "run_sec_timing_return_free_coverage",
     "verify_sec_timing_sources",
 ]
