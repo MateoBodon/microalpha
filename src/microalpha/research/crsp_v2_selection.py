@@ -58,6 +58,10 @@ SIGNAL_DEFINITIONS = {
         "negative point-in-time trailing 126-session daily-return volatility; "
         "low-volatility securities rank above high-volatility securities"
     ),
+    "short_term_reversal_1_1": (
+        "negative formation-month stock return minus contemporaneous FF12-industry "
+        "median return, observed at month-end for next-month execution"
+    ),
 }
 
 
