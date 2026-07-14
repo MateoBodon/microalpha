@@ -787,3 +787,20 @@
 - **Tests run:** …
 - **Artifacts/logs:** …
 - **Documentation updates:** …
+## ticket-99 — Public portfolio presentation
+
+**Status:** DONE.
+
+**Goal (1 sentence):** Make the public repository page explain Microalpha's leakage-aware workflow and strongest accepted aggregate evidence without exposing licensed data or implying a live strategy.
+
+**Acceptance criteria (objective + falsifiable):**
+- The first screen states the problem, evidence boundary, and non-live status.
+- Quickstart, architecture, repository navigation, limitations, and reproducibility paths are present and link correctly.
+- Every published performance value is aggregate, public-safe, and bound to a named canonical artifact in a dedicated evidence note.
+- The result chart has source data, readable labels, and an honest zero reference.
+- The full test suite, data-policy scan, and docs-link check pass.
+
+**End-of-ticket:**
+- **Tests run:** `pytest -q`; `python scripts/check_data_policy.py`; `python scripts/check_docs_links.py`.
+- **Artifacts/logs:** `docs/assets/portfolio/validation_frontier.{csv,svg}`; `docs/agent_runs/20260714_220933_ticket-99_portfolio-presentation/`.
+- **Documentation updates:** `README.md`, `docs/portfolio_evidence_2026-07-11.md`, `PROGRESS.md`, `CHANGELOG.md`.

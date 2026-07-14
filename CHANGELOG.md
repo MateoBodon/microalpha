@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ## [Unreleased]
 ### Added
+- A public-safe validation-frontier chart with its source CSV and an evidence note binding each published aggregate metric to the accepted 2026-07-11 research artifacts.
 - Repository guardrails: pytest marker config, WRDS detection helpers, log fan-out to `artifacts/logs/`.
 - Pre-commit automation (black, isort, ruff, detect-secrets) plus tightened `.gitignore`.
 - WRDS-focused Makefile targets, CHANGELOG bootstrap, and CI/docs placeholders for analytics & reporting.
@@ -29,6 +30,7 @@ All notable changes to this project will be documented in this file. The format 
 
 
 ### Changed
+- Reorganized the repository README around the research problem, quickstart, architecture, validation evidence, reproducibility, and explicit status/limitations.
 - Walk-forward WRDS config aligned to available universe coverage (2013–2019) to restore non-degenerate holdout metrics.
 - WRDS flagship run now uses 3y/9m folds (21 folds), trimmed grid (top_frac × turnover only), higher turnover cap, and produces reproducible signals/analytics/factors/SPA assets for run `2025-11-12T18-50-58Z-b2eaf50` with docs, plots, and summaries updated in lockstep.
 - ticket-01: WRDS configs now surface gross leverage/single-name caps and borrow model; reporting now includes net/gross exposure + cost breakdown.
