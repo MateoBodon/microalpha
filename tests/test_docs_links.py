@@ -9,8 +9,8 @@ def test_public_install_and_artifact_links_are_safe() -> None:
 
     assert "git clone https://github.com/MateoBodon/microalpha.git" in readme
     assert "git clone https://github.com/MateoBodon/microalpha.git" in docs_home
-    assert "Do not use `pip install microalpha`" in docs_home
-    assert "\n   pip install microalpha\n" not in docs_home
+    assert "namesake package on PyPI is an unrelated third-party project" in docs_home
+    assert "pip install microalpha" not in docs_home
 
     for rel_path in ("artifacts/sample_flagship", "artifacts/sample_wfv"):
         assert rel_path in readme

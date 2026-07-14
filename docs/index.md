@@ -22,9 +22,8 @@ Microalpha is an event-driven research platform for reproducible quantitative st
    pip install -e ".[dev]"
    ```
 
-   > Do not use `pip install microalpha`: that PyPI name belongs to an
-   > unrelated third-party project. This repository has no public package
-   > release; the supported installation path is the source checkout above.
+   > The namesake package on PyPI is an unrelated third-party project. This
+   > repository has no public package release; use the source checkout above.
 
 2. **Run the bundled mean-reversion backtest**
 
