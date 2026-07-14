@@ -15,7 +15,7 @@ SRC_ROOT = REPO_ROOT / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
-from microalpha.manifest import ManifestLoadError, load_manifest_path
+from microalpha.manifest import ManifestLoadError, load_manifest_path  # noqa: E402
 
 DEFAULT_ARTIFACTS_ROOT = Path("artifacts")
 DEFAULT_OUTPUT = Path("reports/summaries/runs_index.csv")
@@ -133,7 +133,9 @@ def _collect_manifests(artifacts_root: Path) -> list[Path]:
     for path in candidates:
         key = path.resolve().as_posix()
         unique[key] = path
-    return sorted(unique.values(), key=lambda p: _relative_to(p, artifacts_root).as_posix())
+    return sorted(
+        unique.values(), key=lambda p: _relative_to(p, artifacts_root).as_posix()
+    )
 
 
 def _extract_walkforward(payload: Mapping[str, Any]) -> Mapping[str, Any]:
@@ -200,7 +202,9 @@ def build_runs_index(artifacts_root: Path, repo_root: Path) -> list[dict[str, st
 def write_csv(rows: list[dict[str, str]], output_path: Path) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=RUNS_INDEX_COLUMNS, lineterminator="\n")
+        writer = csv.DictWriter(
+            handle, fieldnames=RUNS_INDEX_COLUMNS, lineterminator="\n"
+        )
         writer.writeheader()
         writer.writerows(rows)
 

@@ -7,9 +7,9 @@ import pandas as pd
 import pytest
 import yaml
 
+import microalpha.walkforward as walkforward
 from microalpha.events import SignalEvent
 from microalpha.walkforward import run_walk_forward
-import microalpha.walkforward as walkforward
 
 
 def test_sample_walkforward_produces_folds(tmp_path: Path) -> None:
@@ -142,14 +142,10 @@ def test_holdout_selection_excludes_holdout_data(tmp_path: Path, monkeypatch) ->
         HoldoutDirectionalStrategy,
     )
     cfg_path = _write_holdout_fixture(tmp_path, include_holdout=True)
-    no_holdout_cfg_path = _write_holdout_fixture(
-        tmp_path, include_holdout=False
-    )
+    no_holdout_cfg_path = _write_holdout_fixture(tmp_path, include_holdout=False)
 
     artifacts_dir = tmp_path / "artifacts"
-    result = run_walk_forward(
-        str(cfg_path), override_artifacts_dir=str(artifacts_dir)
-    )
+    result = run_walk_forward(str(cfg_path), override_artifacts_dir=str(artifacts_dir))
     no_holdout_dir = tmp_path / "artifacts_no_holdout"
     no_holdout_result = run_walk_forward(
         str(no_holdout_cfg_path),
@@ -179,9 +175,7 @@ def test_holdout_window_does_not_overlap_selection(tmp_path: Path, monkeypatch) 
     cfg_path = _write_holdout_fixture(tmp_path, include_holdout=True)
 
     artifacts_dir = tmp_path / "artifacts"
-    result = run_walk_forward(
-        str(cfg_path), override_artifacts_dir=str(artifacts_dir)
-    )
+    result = run_walk_forward(str(cfg_path), override_artifacts_dir=str(artifacts_dir))
 
     holdout_start = pd.Timestamp(result["walkforward"]["holdout_start"])
     for fold in result["folds"]:

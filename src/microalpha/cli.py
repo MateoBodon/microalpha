@@ -158,7 +158,11 @@ def main() -> None:
             Path(args.bootstrap_out).resolve()
             if args.bootstrap_out
             else (
-                (equity_plot_path.parent if equity_plot_path.suffix else equity_plot_path)
+                (
+                    equity_plot_path.parent
+                    if equity_plot_path.suffix
+                    else equity_plot_path
+                )
                 / DEFAULT_BOOTSTRAP_NAME
             )
         )

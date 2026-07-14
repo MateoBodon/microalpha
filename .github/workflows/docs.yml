@@ -4,6 +4,13 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: write
+
+concurrency:
+  group: microalpha-docs
+  cancel-in-progress: true
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -22,7 +29,7 @@ jobs:
           pip install mkdocs mkdocs-material
 
       - name: Build documentation
-        run: mkdocs build
+        run: mkdocs build --strict
 
       - name: Deploy documentation
         env:
@@ -30,4 +37,5 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          mkdocs gh-deploy --force --remote-name origin --config-file mkdocs.yml
+          mkdocs gh-deploy --force --remote-name origin --config-file mkdocs.yml \
+            --message "docs: deploy ${GITHUB_SHA}"

@@ -13,7 +13,9 @@ from microalpha.data import MultiCsvDataHandler
 from microalpha.events import MarketEvent
 
 
-def _write_panel(csv_dir: Path, symbols: List[str], base_dates: pd.DatetimeIndex) -> None:
+def _write_panel(
+    csv_dir: Path, symbols: List[str], base_dates: pd.DatetimeIndex
+) -> None:
     rng = np.random.default_rng(2025)
     csv_dir.mkdir(parents=True, exist_ok=True)
     for symbol in symbols:
@@ -48,7 +50,11 @@ def _baseline_stream(handler: MultiCsvDataHandler) -> Iterator[MarketEvent]:
                     value = df.loc[ts, "close"]  # type: ignore[index]
                 except KeyError:
                     continue
-                price = float(value.iloc[0]) if isinstance(value, pd.Series) else float(value)
+                price = (
+                    float(value.iloc[0])
+                    if isinstance(value, pd.Series)
+                    else float(value)
+                )
             else:
                 idx = df.index.searchsorted(ts, side="right") - 1
                 if idx < 0:

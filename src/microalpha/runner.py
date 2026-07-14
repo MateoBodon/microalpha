@@ -26,8 +26,6 @@ from .execution import (
     ImplementationShortfall,
     KyleLambda,
     LOBExecution,
-)
-from .execution import (
     SquareRootImpact as SquareRootImpactExecutor,
 )
 from .execution_safety import evaluate_execution_safety
@@ -35,13 +33,9 @@ from .integrity import evaluate_portfolio_integrity
 from .logging import JsonlWriter
 from .manifest import (
     build as build_manifest,
-)
-from .manifest import (
     extract_config_summary,
     generate_run_id,
     resolve_git_sha,
-)
-from .manifest import (
     write as write_manifest,
 )
 from .market_metadata import load_symbol_meta
@@ -52,10 +46,8 @@ from .risk import bootstrap_sharpe_ratio
 from .slippage import (
     LinearImpact,
     LinearPlusSqrtImpact,
-    VolumeSlippageModel,
-)
-from .slippage import (
     SquareRootImpact as SquareRootImpactSlippage,
+    VolumeSlippageModel,
 )
 from .strategies.breakout import BreakoutStrategy
 from .strategies.cs_momentum import CrossSectionalMomentum
@@ -177,7 +169,10 @@ def run_from_config(
             )
             strategy_params["symbols"] = universe_symbols
             strategy_params.setdefault("warmup_history", None)
-        if strategy_name == "CrossSectionalMomentum" and "symbols" not in strategy_params:
+        if (
+            strategy_name == "CrossSectionalMomentum"
+            and "symbols" not in strategy_params
+        ):
             strategy_params["symbols"] = config.get("symbols") or [symbol]
 
         symbols = strategy_params.get("symbols") or config.get("symbols") or [symbol]
@@ -487,7 +482,9 @@ def _persist_order_flow_diagnostics(
     try:
         order_flow.merge_filter_diagnostics(filter_diagnostics)
     except Exception as exc:  # pragma: no cover - diagnostics should not fail run
-        order_flow.record_error(f"merge_filter_diagnostics_error: {type(exc).__name__}: {exc}")
+        order_flow.record_error(
+            f"merge_filter_diagnostics_error: {type(exc).__name__}: {exc}"
+        )
     payload = order_flow.payload()
     path = artifacts_dir / "order_flow_diagnostics.json"
     with path.open("w", encoding="utf-8") as handle:

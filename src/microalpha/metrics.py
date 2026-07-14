@@ -85,9 +85,7 @@ def compute_metrics(
     max_gross_exposure = (
         float(df["gross_exposure"].max()) if "gross_exposure" in df else None
     )
-    max_net_exposure = (
-        float(df["exposure"].abs().max()) if "exposure" in df else None
-    )
+    max_net_exposure = float(df["exposure"].abs().max()) if "exposure" in df else None
 
     # Annualized volatility and CAGR
     ann_vol = float(returns.std(ddof=0) * (periods**0.5)) if len(returns) > 1 else 0.0
@@ -174,9 +172,7 @@ def compute_metrics(
         "max_net_exposure": max_net_exposure,
         "exposure_std": float(df["exposure"].std(ddof=0)) if "exposure" in df else 0.0,
         "gross_exposure_std": (
-            float(df["gross_exposure"].std(ddof=0))
-            if "gross_exposure" in df
-            else None
+            float(df["gross_exposure"].std(ddof=0)) if "gross_exposure" in df else None
         ),
         "total_turnover": float(turnover),
         "turnover_per_day": float(turnover / max(len(df), 1)),

@@ -3,8 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, Iterable, List, Literal, Mapping, cast
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, Iterable, List, Literal, Mapping, cast
 
 from .events import FillEvent, LookaheadError, MarketEvent, OrderEvent, SignalEvent
 from .logging import JsonlWriter
@@ -99,7 +98,9 @@ class Portfolio:
                     else None
                 )
                 if borrow_cfg.get("multiplier") is not None:
-                    self.borrow_fee_multiplier = float(borrow_cfg.get("multiplier", 1.0))
+                    self.borrow_fee_multiplier = float(
+                        borrow_cfg.get("multiplier", 1.0)
+                    )
             else:
                 self.borrow_fee_bps = (
                     float(getattr(borrow_cfg, "annual_fee_bps"))
@@ -112,10 +113,14 @@ class Portfolio:
                     else None
                 )
                 if getattr(borrow_cfg, "multiplier", None) is not None:
-                    self.borrow_fee_multiplier = float(getattr(borrow_cfg, "multiplier"))
+                    self.borrow_fee_multiplier = float(
+                        getattr(borrow_cfg, "multiplier")
+                    )
 
     def on_market(self, event: MarketEvent) -> None:
-        self._record_equity(event.timestamp, apply_borrow_costs=True, overwrite_last=True)
+        self._record_equity(
+            event.timestamp, apply_borrow_costs=True, overwrite_last=True
+        )
 
     def refresh_equity_after_fills(self, timestamp: int) -> None:
         """Refresh the latest equity snapshot after same-day fills."""
@@ -179,7 +184,9 @@ class Portfolio:
         else:
             self.equity_curve.append(record)
 
-    def valuation_snapshot(self, timestamp: int | None = None) -> tuple[float, float, float]:
+    def valuation_snapshot(
+        self, timestamp: int | None = None
+    ) -> tuple[float, float, float]:
         """Return (market_value, gross_market_value, unrealized_pnl) at timestamp."""
         ts = self.current_time if timestamp is None else timestamp
         if ts is None:
@@ -209,9 +216,7 @@ class Portfolio:
             position = self.positions.get(signal.symbol)
             if not position or position.qty == 0:
                 if self.order_flow:
-                    self.order_flow.record_order_drop(
-                        "exit_no_position", signal=signal
-                    )
+                    self.order_flow.record_order_drop("exit_no_position", signal=signal)
                 return []
             side = cast(Literal["BUY", "SELL"], "SELL" if position.qty > 0 else "BUY")
             order = OrderEvent(signal.timestamp, signal.symbol, abs(position.qty), side)
@@ -257,7 +262,9 @@ class Portfolio:
             self.market_value + (qty if side == "BUY" else -qty) * price
         )
         projected_exposure = (
-            abs(anticipated_market_value) / projected_equity if projected_equity else 0.0
+            abs(anticipated_market_value) / projected_equity
+            if projected_equity
+            else 0.0
         )
 
         if self.max_exposure is not None and projected_exposure > self.max_exposure:
@@ -267,7 +274,9 @@ class Portfolio:
                     max_additional = max_abs_mv - self.market_value
                 else:
                     max_additional = max_abs_mv + self.market_value
-                max_qty_exposure = int(max_additional / price) if max_additional > 0 else 0
+                max_qty_exposure = (
+                    int(max_additional / price) if max_additional > 0 else 0
+                )
                 if max_qty_exposure <= 0:
                     if self.order_flow:
                         self.order_flow.record_order_drop(
@@ -466,7 +475,9 @@ class Portfolio:
             return 0.0
 
         meta = self._symbol_meta.get(key)
-        raw_bps = meta.borrow_fee_annual_bps if meta and meta.borrow_fee_annual_bps else None
+        raw_bps = (
+            meta.borrow_fee_annual_bps if meta and meta.borrow_fee_annual_bps else None
+        )
         if raw_bps is None and self.borrow_fee_bps is not None:
             raw_bps = self.borrow_fee_bps
         if raw_bps is None and self.borrow_fee_floor_bps is not None:
@@ -517,9 +528,15 @@ class Portfolio:
                 return int(signal.meta["qty"])
             if "weight" in signal.meta:
                 target_weight = float(signal.meta["weight"])
-                equity = self.last_equity if self.last_equity is not None else self.initial_cash
+                equity = (
+                    self.last_equity
+                    if self.last_equity is not None
+                    else self.initial_cash
+                )
                 if equity and equity > 0:
-                    price = self.data_handler.get_latest_price(signal.symbol, signal.timestamp)
+                    price = self.data_handler.get_latest_price(
+                        signal.symbol, signal.timestamp
+                    )
                     if price is None and self.current_time is not None:
                         price = self.data_handler.get_latest_price(
                             signal.symbol, self.current_time

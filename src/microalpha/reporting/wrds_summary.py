@@ -27,6 +27,7 @@ from microalpha.reporting.robustness import write_robustness_artifacts
 from microalpha.reporting.spa import SpaSummary, load_grid_returns, write_outputs
 from microalpha.wrds import guard_no_wrds_copy
 
+
 @dataclass(frozen=True)
 class HeadlineMetrics:
     sharpe_hac: float
@@ -151,7 +152,12 @@ def _format_human_currency(value: float | None) -> str:
     if value is None or not math.isfinite(value):
         return "$0"
     abs_val = abs(value)
-    suffixes = ((1_000_000_000_000, "T"), (1_000_000_000, "B"), (1_000_000, "MM"), (1_000, "K"))
+    suffixes = (
+        (1_000_000_000_000, "T"),
+        (1_000_000_000, "B"),
+        (1_000_000, "MM"),
+        (1_000, "K"),
+    )
     for threshold, suffix in suffixes:
         if abs_val >= threshold:
             return f"${value / threshold:.2f}{suffix}"
@@ -323,7 +329,9 @@ def _render_cost_breakdown(cost_payload: dict | None) -> list[str] | None:
 
 
 def _has_trade_log(artifact_dir: Path) -> bool:
-    return any((artifact_dir / name).exists() for name in ("trades.jsonl", "trades.csv"))
+    return any(
+        (artifact_dir / name).exists() for name in ("trades.jsonl", "trades.csv")
+    )
 
 
 def _load_cost_payload(artifact_dir: Path) -> dict | None:
@@ -360,13 +368,17 @@ def _extract_headline(
     return HeadlineMetrics(sharpe, mar, max_dd, turnover, rc_p, spa_p)
 
 
-def _parse_factor_table(markdown: str) -> tuple[list[dict[str, float | str]], str | None]:
+def _parse_factor_table(
+    markdown: str,
+) -> tuple[list[dict[str, float | str]], str | None]:
     rows: list[dict[str, float | str]] = []
     for raw in markdown.splitlines():
         line = raw.strip()
         if not line.startswith("|"):
             continue
-        if line.startswith("| ---") or ("Factor" in line and "Beta" in line and "t-stat" in line):
+        if line.startswith("| ---") or (
+            "Factor" in line and "Beta" in line and "t-stat" in line
+        ):
             continue
         cells = [cell.strip() for cell in line.strip("|").split("|")]
         if len(cells) < 3:
@@ -381,7 +393,10 @@ def _parse_factor_table(markdown: str) -> tuple[list[dict[str, float | str]], st
     if not rows:
         return [], "Factor regression table is empty; run reports/factors.py first."
     if all(abs(row["beta"]) < 1e-9 and abs(row["t_stat"]) < 1e-9 for row in rows):
-        return rows, "Factor regression table contains only zeros; rerun the regression."
+        return (
+            rows,
+            "Factor regression table contains only zeros; rerun the regression.",
+        )
     return rows, None
 
 
@@ -449,7 +464,9 @@ def _coerce_float(value: object) -> float | None:
     return candidate if math.isfinite(candidate) else None
 
 
-def _infer_spa_dimensions(artifact_dir: Path, diagnostics: list[str]) -> tuple[int, int]:
+def _infer_spa_dimensions(
+    artifact_dir: Path, diagnostics: list[str]
+) -> tuple[int, int]:
     grid_path = artifact_dir / "grid_returns.csv"
     if not grid_path.exists():
         return 0, 0
@@ -651,7 +668,9 @@ def _render_spa_plot(
         _render_spa_placeholder(destination, f"SPA error: {reason or 'unknown error'}")
         return SpaRenderResult(destination, "error", reason)
     if status != "ok":
-        _render_spa_placeholder(destination, f"SPA degenerate: {reason or 'invalid inputs'}")
+        _render_spa_placeholder(
+            destination, f"SPA degenerate: {reason or 'invalid inputs'}"
+        )
         return SpaRenderResult(destination, "degenerate", reason)
 
     candidates = spa_payload.get("candidate_stats") or []
@@ -937,10 +956,16 @@ def _write_docs_results(
     )
     lines.append(
         "- Target turnover ≈ "
-        + (f"{turnover_target:.2%}" if isinstance(turnover_target, (int, float)) else "N/A")
+        + (
+            f"{turnover_target:.2%}"
+            if isinstance(turnover_target, (int, float))
+            else "N/A"
+        )
         + f" of ADV with max {max_sector or 'N/A'} positions per sector."
     )
-    lines.append("- Execution assumes TWAP slicing with linear+sqrt impact, 5 bps commissions, and borrow spread floor of 8 bps.")
+    lines.append(
+        "- Execution assumes TWAP slicing with linear+sqrt impact, 5 bps commissions, and borrow spread floor of 8 bps."
+    )
     lines.append("")
 
     docs_artifacts_root = None
@@ -977,10 +1002,14 @@ def render_wrds_summary(
     artifact_dir = artifact_dir.resolve()
     output_path = output_path.resolve()
     if docs_results and not docs_image_root:
-        raise SystemExit("--docs-image-root must be provided when --docs-results is set")
+        raise SystemExit(
+            "--docs-image-root must be provided when --docs-results is set"
+        )
 
     metrics_path = _require_file(artifact_dir / "metrics.json", "metrics.json")
-    equity_png = _require_file(equity_image or (artifact_dir / "equity_curve.png"), "equity_curve.png")
+    equity_png = _require_file(
+        equity_image or (artifact_dir / "equity_curve.png"), "equity_curve.png"
+    )
     bootstrap_png = _require_file(
         bootstrap_image or (artifact_dir / "bootstrap_hist.png"),
         "bootstrap_hist.png",
@@ -1021,15 +1050,23 @@ def render_wrds_summary(
     run_id = manifest_payload.get("run_id") or artifact_dir.name or "wrds_run"
     config_path_value = manifest_payload.get("config_path")
     config_path = Path(config_path_value).expanduser() if config_path_value else None
-    config_meta = _load_config_metadata(config_path if config_path and config_path.exists() else None)
-    config_label = _relative_to_repo(config_path) if config_path else (config_path_value or "unknown")
+    config_meta = _load_config_metadata(
+        config_path if config_path and config_path.exists() else None
+    )
+    config_label = (
+        _relative_to_repo(config_path)
+        if config_path
+        else (config_path_value or "unknown")
+    )
     train_start, test_end, fold_count = _load_folds_metadata(folds_path)
     unsafe_lines = _unsafe_banner(manifest_payload)
 
     analytics_dir = (analytics_plots or Path("artifacts/plots")).expanduser().resolve()
     ic_plot = _require_file(analytics_dir / f"{run_id}_ic_ir.png", "IC/IR plot")
     decile_plot = _require_file(analytics_dir / f"{run_id}_deciles.png", "deciles plot")
-    beta_plot = _require_file(analytics_dir / f"{run_id}_rolling_betas.png", "rolling betas plot")
+    beta_plot = _require_file(
+        analytics_dir / f"{run_id}_rolling_betas.png", "rolling betas plot"
+    )
     spa_plot = spa_result.path
 
     if metrics_json_out:
@@ -1040,7 +1077,9 @@ def render_wrds_summary(
         metrics_copy["spa_status"] = spa_status
         if spa_skip_reason:
             metrics_copy["spa_skip_reason"] = spa_skip_reason
-        metrics_json_out.write_text(json.dumps(metrics_copy, indent=2) + "\n", encoding="utf-8")
+        metrics_json_out.write_text(
+            json.dumps(metrics_copy, indent=2) + "\n", encoding="utf-8"
+        )
     if spa_json_out:
         spa_json_out = spa_json_out.expanduser().resolve()
         spa_json_out.parent.mkdir(parents=True, exist_ok=True)
@@ -1081,7 +1120,9 @@ def render_wrds_summary(
     lines.extend(_render_non_degenerate(manifest_payload))
     if spa_status != "ok":
         lines.extend(_spa_failure_banner(spa_status, spa_skip_reason))
-    headline_title = "## Headline Metrics" if spa_status == "ok" else "## Headline Metrics (blocked)"
+    headline_title = (
+        "## Headline Metrics" if spa_status == "ok" else "## Headline Metrics (blocked)"
+    )
     lines.extend([headline_title, ""])
     lines.extend(_render_table(headline))
     lines.append("")
@@ -1126,11 +1167,17 @@ def render_wrds_summary(
 
     lines.append("## Visuals")
     lines.append("")
-    lines.append(f"![Equity Curve]({_relpath(image_for_summary['equity'], output_path)})")
+    lines.append(
+        f"![Equity Curve]({_relpath(image_for_summary['equity'], output_path)})"
+    )
     lines.append("")
-    lines.append(f"![Bootstrap Sharpe Histogram]({_relpath(image_for_summary['bootstrap'], output_path)})")
+    lines.append(
+        f"![Bootstrap Sharpe Histogram]({_relpath(image_for_summary['bootstrap'], output_path)})"
+    )
     lines.append("")
-    lines.append(f"![SPA Comparator t-stats]({_relpath(image_for_summary['spa'], output_path)})")
+    lines.append(
+        f"![SPA Comparator t-stats]({_relpath(image_for_summary['spa'], output_path)})"
+    )
     lines.append("")
 
     lines.append("## Hansen SPA Summary")
@@ -1186,7 +1233,9 @@ def render_wrds_summary(
 
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("artifact_dir", type=Path, help="Artifact directory for WRDS run")
+    parser.add_argument(
+        "artifact_dir", type=Path, help="Artifact directory for WRDS run"
+    )
     parser.add_argument(
         "--output",
         type=Path,
@@ -1199,7 +1248,12 @@ def _build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Path to the FF5+MOM markdown table output by reports/factors.py",
     )
-    parser.add_argument("--docs-results", type=Path, default=None, help="Optional docs/results_wrds.md destination")
+    parser.add_argument(
+        "--docs-results",
+        type=Path,
+        default=None,
+        help="Optional docs/results_wrds.md destination",
+    )
     parser.add_argument(
         "--docs-image-root",
         type=Path,

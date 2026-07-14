@@ -185,7 +185,9 @@ def render_tearsheet(
         )
         ax_hist.set_xlabel("Bootstrapped Sharpe")
         ax_hist.set_ylabel("Frequency")
-        p_value = metrics.get("reality_check_p_value") or metrics.get("bootstrap_p_value")
+        p_value = metrics.get("reality_check_p_value") or metrics.get(
+            "bootstrap_p_value"
+        )
         mean = float(np.mean(bootstrap_samples))
         std = float(np.std(bootstrap_samples))
         textbox = [
@@ -220,7 +222,10 @@ def render_tearsheet(
     fig_hist.savefig(bootstrap_path, dpi=200)
     plt.close(fig_hist)
 
-    return {"equity_curve": equity_path.resolve(), "bootstrap_hist": bootstrap_path.resolve()}
+    return {
+        "equity_curve": equity_path.resolve(),
+        "bootstrap_hist": bootstrap_path.resolve(),
+    }
 
 
 def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:

@@ -19,7 +19,9 @@ def _count_trades(path: Path | None) -> int:
     if path is None or not path.exists():
         return 0
     if path.suffix.lower() == ".jsonl":
-        return sum(1 for line in path.read_text(encoding="utf-8").splitlines() if line.strip())
+        return sum(
+            1 for line in path.read_text(encoding="utf-8").splitlines() if line.strip()
+        )
     if path.suffix.lower() == ".csv":
         df = pd.read_csv(path)
         return int(len(df))
@@ -89,7 +91,13 @@ def main() -> int:
         print("Returns std:", stats["returns_std"])
     print("Trades (metrics/trades file):", num_trades_metric, "/", trades_count)
     print("Turnover:", turnover)
-    print("Costs (commission/slippage/borrow/total):", commission, slippage, borrow, total_costs)
+    print(
+        "Costs (commission/slippage/borrow/total):",
+        commission,
+        slippage,
+        borrow,
+        total_costs,
+    )
 
     checks = []
     if turnover > 0 and trades_count == 0:

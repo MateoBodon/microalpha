@@ -19,9 +19,7 @@ def test_portfolio_uses_signal_weight_for_sizing():
     portfolio = Portfolio(data_handler=_StubData(), initial_cash=1000.0)
     portfolio.on_market(MarketEvent(1, "AAA", 50.0, 1_000))
 
-    long_signal = SignalEvent(
-        1, "AAA", "LONG", meta={"weight": 0.2, "reason": "test"}
-    )
+    long_signal = SignalEvent(1, "AAA", "LONG", meta={"weight": 0.2, "reason": "test"})
     orders = list(portfolio.on_signal(long_signal))
     assert orders and orders[0].qty == 4  # 0.2 * 1000 / 50
     assert orders[0].side == "BUY"

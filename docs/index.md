@@ -12,13 +12,19 @@ Microalpha is an event-driven research platform for reproducible quantitative st
 
 ## Quickstart
 
-1. **Install the package**
+1. **Install this repository from source**
 
    ```bash
-   pip install microalpha
-   # or, for local development
+   git clone https://github.com/MateoBodon/microalpha.git
+   cd microalpha
+   python -m venv .venv
+   source .venv/bin/activate
    pip install -e ".[dev]"
    ```
+
+   > Do not use `pip install microalpha`: that PyPI name belongs to an
+   > unrelated third-party project. This repository has no public package
+   > release; the supported installation path is the source checkout above.
 
 2. **Run the bundled mean-reversion backtest**
 
@@ -36,3 +42,8 @@ Microalpha is an event-driven research platform for reproducible quantitative st
    - Try the scenarios in [Examples](examples.md).
 
 Use the navigation to dive into leakage guarantees, reproducibility tooling, API surfaces, and runnable examples.
+
+---
+
+These docs are deployed from the public `main` branch. The deployment commit is
+recorded in the repository's [Docs workflow](https://github.com/MateoBodon/microalpha/actions/workflows/docs.yml).

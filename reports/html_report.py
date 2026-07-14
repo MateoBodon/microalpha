@@ -40,15 +40,32 @@ def main() -> None:
     args = ap.parse_args()
 
     eq = pd.read_csv(args.equity_csv)
-    eq_ts = pd.to_datetime(eq["timestamp"]) if "timestamp" in eq else pd.RangeIndex(len(eq))
+    eq_ts = (
+        pd.to_datetime(eq["timestamp"]) if "timestamp" in eq else pd.RangeIndex(len(eq))
+    )
 
     # Figure with subplots: equity + rolling Sharpe + PnL hist (if available)
     from plotly.subplots import make_subplots
-    fig = make_subplots(rows=3, cols=1, shared_xaxes=False, specs=[[{"secondary_y": True}], [{}], [{}]],
-                        row_heights=[0.6, 0.2, 0.2], vertical_spacing=0.06)
+
+    fig = make_subplots(
+        rows=3,
+        cols=1,
+        shared_xaxes=False,
+        specs=[[{"secondary_y": True}], [{}], [{}]],
+        row_heights=[0.6, 0.2, 0.2],
+        vertical_spacing=0.06,
+    )
     fig.add_trace(
-        go.Scatter(x=eq_ts, y=eq["equity"], mode="lines", name="Equity", line=dict(color="#1f77b4")),
-        row=1, col=1, secondary_y=False
+        go.Scatter(
+            x=eq_ts,
+            y=eq["equity"],
+            mode="lines",
+            name="Equity",
+            line=dict(color="#1f77b4"),
+        ),
+        row=1,
+        col=1,
+        secondary_y=False,
     )
 
     trades = read_trades_jsonl(args.trades)
@@ -64,7 +81,10 @@ def main() -> None:
                     mode="markers",
                     name="Buys",
                     marker=dict(symbol="triangle-up", color="#2ca02c"),
-                ), row=1, col=1, secondary_y=True
+                ),
+                row=1,
+                col=1,
+                secondary_y=True,
             )
             fig.add_trace(
                 go.Scatter(
@@ -73,25 +93,48 @@ def main() -> None:
                     mode="markers",
                     name="Sells",
                     marker=dict(symbol="triangle-down", color="#d62728"),
-                ), row=1, col=1, secondary_y=True
+                ),
+                row=1,
+                col=1,
+                secondary_y=True,
             )
 
             # Rolling Sharpe on equity returns
             if len(eq) > 2:
                 ret = pd.Series(eq["equity"]).pct_change().fillna(0.0)
-                window = min(63, max(2, len(ret)//5))
+                window = min(63, max(2, len(ret) // 5))
                 rolling_mean = ret.rolling(window).mean()
                 rolling_std = ret.rolling(window).std(ddof=0)
-                sharpe = (rolling_mean / (rolling_std.replace(0, pd.NA))).fillna(0.0) * (252 ** 0.5)
-                fig.add_trace(go.Scatter(x=eq_ts, y=sharpe, mode="lines", name="Rolling Sharpe (63d)", line=dict(color="#9467bd")),
-                              row=2, col=1)
+                sharpe = (rolling_mean / (rolling_std.replace(0, pd.NA))).fillna(
+                    0.0
+                ) * (252**0.5)
+                fig.add_trace(
+                    go.Scatter(
+                        x=eq_ts,
+                        y=sharpe,
+                        mode="lines",
+                        name="Rolling Sharpe (63d)",
+                        line=dict(color="#9467bd"),
+                    ),
+                    row=2,
+                    col=1,
+                )
 
             # Per-trade realized PnL histogram
             if "realized_pnl" in trades:
-                fig.add_trace(go.Histogram(x=trades["realized_pnl"], name="Trade PnL", marker_color="#8c564b"),
-                              row=3, col=1)
+                fig.add_trace(
+                    go.Histogram(
+                        x=trades["realized_pnl"],
+                        name="Trade PnL",
+                        marker_color="#8c564b",
+                    ),
+                    row=3,
+                    col=1,
+                )
 
-    fig.update_layout(title="Microalpha Report", legend=dict(orientation="h"), template="plotly_white")
+    fig.update_layout(
+        title="Microalpha Report", legend=dict(orientation="h"), template="plotly_white"
+    )
     fig.update_yaxes(title_text="Equity", row=1, col=1, secondary_y=False)
     fig.update_yaxes(title_text="Price", row=1, col=1, secondary_y=True)
     fig.update_xaxes(title_text="Time", row=1, col=1)

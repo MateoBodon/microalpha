@@ -65,7 +65,9 @@ class Engine:
         if order_flow and signals:
             try:
                 order_flow.begin_rebalance(signals, market_event.timestamp)
-            except Exception as exc:  # pragma: no cover - diagnostics should not fail run
+            except (
+                Exception
+            ) as exc:  # pragma: no cover - diagnostics should not fail run
                 order_flow.record_error(
                     f"begin_rebalance_error: {type(exc).__name__}: {exc}"
                 )
@@ -103,7 +105,9 @@ class Engine:
         if order_flow and signals:
             try:
                 order_flow.end_rebalance()
-            except Exception as exc:  # pragma: no cover - diagnostics should not fail run
+            except (
+                Exception
+            ) as exc:  # pragma: no cover - diagnostics should not fail run
                 order_flow.record_error(
                     f"end_rebalance_error: {type(exc).__name__}: {exc}"
                 )

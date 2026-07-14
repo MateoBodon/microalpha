@@ -63,10 +63,14 @@ def evaluate_portfolio_integrity(
 
     expected_equity = initial_equity + realized_pnl + unrealized_pnl - commission_total
     recon_error = float(final_equity - expected_equity)
-    recon_tol = max(tol_abs, tol_rel * max(abs(final_equity), abs(expected_equity), 1.0))
+    recon_tol = max(
+        tol_abs, tol_rel * max(abs(final_equity), abs(expected_equity), 1.0)
+    )
 
     total_costs = commission_total + borrow_cost_total + float(slippage_total)
-    equity_constant = _equity_is_constant(equity_series, tol_abs=tol_abs, tol_rel=tol_rel)
+    equity_constant = _equity_is_constant(
+        equity_series, tol_abs=tol_abs, tol_rel=tol_rel
+    )
 
     reasons: list[str] = []
     if abs(recon_error) > recon_tol:

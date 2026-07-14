@@ -39,9 +39,7 @@ class SymbolMeta:
                 else self.borrow_fee_annual_bps
             ),
             volatility_bps=(
-                volatility_bps
-                if volatility_bps is not None
-                else self.volatility_bps
+                volatility_bps if volatility_bps is not None else self.volatility_bps
             ),
         )
 

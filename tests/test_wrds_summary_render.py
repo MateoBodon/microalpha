@@ -104,7 +104,9 @@ template:
             "test_end": "2013-04-01",
         }
     ]
-    (artifact_dir / "folds.json").write_text(json.dumps(folds_payload), encoding="utf-8")
+    (artifact_dir / "folds.json").write_text(
+        json.dumps(folds_payload), encoding="utf-8"
+    )
 
     plots_dir = tmp_path / "plots"
     plots_dir.mkdir()
@@ -143,7 +145,9 @@ template:
 def test_wrds_summary_missing_equity(tmp_path: Path) -> None:
     artifact_dir = tmp_path / "missing"
     artifact_dir.mkdir()
-    (artifact_dir / "metrics.json").write_text(json.dumps({"sharpe_ratio": 1.0}), encoding="utf-8")
+    (artifact_dir / "metrics.json").write_text(
+        json.dumps({"sharpe_ratio": 1.0}), encoding="utf-8"
+    )
     _write_png(artifact_dir / "bootstrap_hist.png")
     (artifact_dir / "spa.json").write_text(
         json.dumps(
@@ -169,7 +173,9 @@ def test_wrds_summary_missing_equity(tmp_path: Path) -> None:
         json.dumps({"run_id": "run", "config_path": str(tmp_path / "cfg.yaml")}),
         encoding="utf-8",
     )
-    (tmp_path / "cfg.yaml").write_text("walkforward: {testing_days: 10}\n", encoding="utf-8")
+    (tmp_path / "cfg.yaml").write_text(
+        "walkforward: {testing_days: 10}\n", encoding="utf-8"
+    )
     (artifact_dir / "folds.json").write_text(
         json.dumps(
             [
@@ -241,7 +247,9 @@ def test_wrds_summary_allows_zero_spa(tmp_path: Path) -> None:
     )
     manifest = {"run_id": "run", "config_path": str(tmp_path / "cfg.yaml")}
     (artifact_dir / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
-    (tmp_path / "cfg.yaml").write_text("walkforward: {testing_days: 10}\n", encoding="utf-8")
+    (tmp_path / "cfg.yaml").write_text(
+        "walkforward: {testing_days: 10}\n", encoding="utf-8"
+    )
     (artifact_dir / "folds.json").write_text(
         json.dumps(
             [
@@ -307,7 +315,9 @@ def test_wrds_summary_creates_degenerate_spa_when_missing(tmp_path: Path) -> Non
     )
     manifest = {"run_id": "run", "config_path": str(tmp_path / "cfg.yaml")}
     (artifact_dir / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
-    (tmp_path / "cfg.yaml").write_text("walkforward: {testing_days: 10}\n", encoding="utf-8")
+    (tmp_path / "cfg.yaml").write_text(
+        "walkforward: {testing_days: 10}\n", encoding="utf-8"
+    )
     (artifact_dir / "folds.json").write_text(
         json.dumps(
             [

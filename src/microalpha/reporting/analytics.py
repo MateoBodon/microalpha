@@ -97,7 +97,9 @@ def compute_rolling_ir(ic_series: pd.Series, window: int = 63) -> pd.Series:
     rolling_mean = ic_series.rolling(window).mean()
     rolling_std = ic_series.rolling(window).std(ddof=0)
     with np.errstate(divide="ignore", invalid="ignore"):
-        ir = np.where(rolling_std > 0, np.sqrt(window) * (rolling_mean / rolling_std), np.nan)
+        ir = np.where(
+            rolling_std > 0, np.sqrt(window) * (rolling_mean / rolling_std), np.nan
+        )
     result = pd.Series(ir, index=ic_series.index, name="rolling_ir")
     return result
 
@@ -126,12 +128,7 @@ def compute_decile_table(signals: pd.DataFrame, deciles: int = 10) -> pd.DataFra
             )
     if not records:
         return pd.DataFrame(columns=["decile", "mean_return"])
-    summary = (
-        pd.DataFrame(records)
-        .groupby("decile")["mean_return"]
-        .mean()
-        .sort_index()
-    )
+    summary = pd.DataFrame(records).groupby("decile")["mean_return"].mean().sort_index()
     summary.index = [f"P{int(idx)}" for idx in summary.index]
     table = summary.to_frame().reset_index().rename(columns={"index": "decile"})
     tail_label = f"P{deciles}"
@@ -216,16 +213,32 @@ def plot_ic_series(ic_series: pd.Series, ir_series: pd.Series, output: Path) -> 
     output.parent.mkdir(parents=True, exist_ok=True)
     fig, axes = plt.subplots(2, 1, figsize=(10, 6), sharex=True)
     if ic_series.empty:
-        axes[0].text(0.5, 0.5, "IC unavailable", ha="center", va="center", transform=axes[0].transAxes)
+        axes[0].text(
+            0.5,
+            0.5,
+            "IC unavailable",
+            ha="center",
+            va="center",
+            transform=axes[0].transAxes,
+        )
     else:
         axes[0].plot(ic_series.index, ic_series.values, label="IC", color="#1f77b4")
         axes[0].axhline(0.0, color="black", linewidth=0.8, linestyle=":")
         axes[0].set_ylabel("IC")
         axes[0].grid(True, linestyle=":", alpha=0.3)
     if ir_series.empty:
-        axes[1].text(0.5, 0.5, "Rolling IR unavailable", ha="center", va="center", transform=axes[1].transAxes)
+        axes[1].text(
+            0.5,
+            0.5,
+            "Rolling IR unavailable",
+            ha="center",
+            va="center",
+            transform=axes[1].transAxes,
+        )
     else:
-        axes[1].plot(ir_series.index, ir_series.values, label="Rolling IR", color="#d62728")
+        axes[1].plot(
+            ir_series.index, ir_series.values, label="Rolling IR", color="#d62728"
+        )
         axes[1].axhline(0.0, color="black", linewidth=0.8, linestyle=":")
         axes[1].set_ylabel("IR")
         axes[1].grid(True, linestyle=":", alpha=0.3)
@@ -239,7 +252,14 @@ def plot_deciles(table: pd.DataFrame, output: Path) -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
     fig, ax = plt.subplots(figsize=(9, 4))
     if table.empty:
-        ax.text(0.5, 0.5, "Deciles unavailable", ha="center", va="center", transform=ax.transAxes)
+        ax.text(
+            0.5,
+            0.5,
+            "Deciles unavailable",
+            ha="center",
+            va="center",
+            transform=ax.transAxes,
+        )
     else:
         labels = table["decile"].astype(str)
         mask = labels.str.match(r"^P\d+$")
@@ -266,7 +286,14 @@ def plot_rolling_betas(betas: pd.DataFrame, output: Path) -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
     fig, ax = plt.subplots(figsize=(10, 5))
     if betas.empty:
-        ax.text(0.5, 0.5, "Rolling betas unavailable", ha="center", va="center", transform=ax.transAxes)
+        ax.text(
+            0.5,
+            0.5,
+            "Rolling betas unavailable",
+            ha="center",
+            va="center",
+            transform=ax.transAxes,
+        )
     else:
         for column in betas.columns:
             ax.plot(betas.index, betas[column], label=column)
@@ -320,7 +347,9 @@ def generate_analytics(
     rolling_betas: pd.DataFrame | None = None
     if factors_df is not None:
         factor_cols = [col for col in factors_df.columns if col != "RF"]
-        rolling_betas = compute_rolling_betas(returns, factors_df, factor_cols=factor_cols, window=window)
+        rolling_betas = compute_rolling_betas(
+            returns, factors_df, factor_cols=factor_cols, window=window
+        )
 
     analytics_dir.mkdir(parents=True, exist_ok=True)
     ic_path = analytics_dir / f"{artifact_dir.name}_ic_series.csv"
@@ -354,13 +383,44 @@ def generate_analytics(
 
 def _build_arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("artifact_dir", type=Path, help="Artifact directory containing equity_curve.csv and signals.csv")
-    parser.add_argument("--signals", type=Path, default=None, help="Override path to signals CSV")
-    parser.add_argument("--factors", type=Path, default=None, help="Optional factor CSV (FF5+MOM compatible)")
-    parser.add_argument("--plots-dir", type=Path, default=PLOTS_DIR, help="Directory for saving plots (default: artifacts/plots)")
-    parser.add_argument("--analytics-dir", type=Path, default=ANALYTICS_DIR, help="Directory for saving CSV analytics (default: artifacts/analytics)")
-    parser.add_argument("--window", type=int, default=63, help="Rolling window (trading days) for IR and betas")
-    parser.add_argument("--deciles", type=int, default=10, help="Number of buckets for decile aggregation")
+    parser.add_argument(
+        "artifact_dir",
+        type=Path,
+        help="Artifact directory containing equity_curve.csv and signals.csv",
+    )
+    parser.add_argument(
+        "--signals", type=Path, default=None, help="Override path to signals CSV"
+    )
+    parser.add_argument(
+        "--factors",
+        type=Path,
+        default=None,
+        help="Optional factor CSV (FF5+MOM compatible)",
+    )
+    parser.add_argument(
+        "--plots-dir",
+        type=Path,
+        default=PLOTS_DIR,
+        help="Directory for saving plots (default: artifacts/plots)",
+    )
+    parser.add_argument(
+        "--analytics-dir",
+        type=Path,
+        default=ANALYTICS_DIR,
+        help="Directory for saving CSV analytics (default: artifacts/analytics)",
+    )
+    parser.add_argument(
+        "--window",
+        type=int,
+        default=63,
+        help="Rolling window (trading days) for IR and betas",
+    )
+    parser.add_argument(
+        "--deciles",
+        type=int,
+        default=10,
+        help="Number of buckets for decile aggregation",
+    )
     return parser
 
 

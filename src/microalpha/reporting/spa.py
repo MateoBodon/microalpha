@@ -118,17 +118,23 @@ def load_grid_returns(grid_path: Path) -> pd.DataFrame:
         raise ValueError("Grid returns data must include 'model' and 'value' columns")
     if "panel_id" not in frame.columns:
         if {"fold", "timestamp"}.issubset(frame.columns):
-            frame["panel_id"] = frame["fold"].astype(str) + ":" + frame["timestamp"].astype(str)
+            frame["panel_id"] = (
+                frame["fold"].astype(str) + ":" + frame["timestamp"].astype(str)
+            )
         else:
             frame["panel_id"] = frame.index.astype(str)
     frame["_order"] = np.arange(len(frame))
-    pivot = frame.pivot_table(index="panel_id", columns="model", values="value", aggfunc="first")
+    pivot = frame.pivot_table(
+        index="panel_id", columns="model", values="value", aggfunc="first"
+    )
     order = frame.groupby("panel_id")["_order"].min().sort_values()
     pivot = pivot.reindex(order.index)
     return pivot
 
 
-def _stationary_bootstrap_indices(n: int, avg_block: int, rng: np.random.Generator) -> np.ndarray:
+def _stationary_bootstrap_indices(
+    n: int, avg_block: int, rng: np.random.Generator
+) -> np.ndarray:
     p = 1.0 / max(1, avg_block)
     indices = np.empty(n, dtype=int)
     current = int(rng.integers(0, n))
@@ -362,7 +368,9 @@ def write_outputs(summary: SpaSummary, json_path: Path, markdown_path: Path) -> 
     if summary.status != "ok":
         lines.append(f"- **Status:** {summary.status}")
         if summary.status == "error":
-            lines.append(f"- **Error:** {summary.error or summary.reason or 'unknown error'}")
+            lines.append(
+                f"- **Error:** {summary.error or summary.reason or 'unknown error'}"
+            )
         else:
             lines.append(f"- **Reason:** {summary.reason or 'invalid inputs'}")
         lines.append(f"- **Observations:** {summary.n_obs}")
@@ -408,8 +416,18 @@ def _build_parser() -> argparse.ArgumentParser:
         default=Path("artifacts/analytics/spa.md"),
         help="Path to write SPA markdown summary",
     )
-    parser.add_argument("--bootstrap", type=int, default=2000, help="Number of stationary bootstrap draws")
-    parser.add_argument("--avg-block", type=int, default=63, help="Average block length for stationary bootstrap")
+    parser.add_argument(
+        "--bootstrap",
+        type=int,
+        default=2000,
+        help="Number of stationary bootstrap draws",
+    )
+    parser.add_argument(
+        "--avg-block",
+        type=int,
+        default=63,
+        help="Average block length for stationary bootstrap",
+    )
     parser.add_argument("--seed", type=int, default=0, help="Seed for reproducibility")
     return parser
 

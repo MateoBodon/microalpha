@@ -1,6 +1,9 @@
 import pandas as pd
 
-from microalpha.strategies.flagship_mom import FlagshipMomentumStrategy, TRADING_DAYS_MONTH
+from microalpha.strategies.flagship_mom import (
+    TRADING_DAYS_MONTH,
+    FlagshipMomentumStrategy,
+)
 
 
 def test_flagship_filter_diagnostics_counts(tmp_path):

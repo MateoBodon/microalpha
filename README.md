@@ -13,6 +13,12 @@ that is actually ready to publish.
 > licensed-data campaign remains pre-holdout: its 2023–2025 final holdout is
 > sealed, and no alpha or live-performance claim is made.
 
+| Completed evidence | Scope | Claim boundary |
+| --- | --- | --- |
+| Six frozen mechanisms | 2017–2022 validation | Every candidate was rejected by at least one preregistered gate |
+| Immutable run manifests | Config, data identity, code state, outputs | Aggregate public receipts; licensed rows remain local |
+| Final holdout | 2023–2025 | Sealed and not used in the reported economic evidence |
+
 ## What it makes auditable
 
 | Research risk | microalpha control |
@@ -69,9 +75,11 @@ execution as separate steps so their timing assumptions can be tested directly.
 
 ## Evidence, including negative results
 
-The latest aggregate-only research ledger is intentionally more useful than a
-single best backtest. Six frozen mechanisms were evaluated on a 2017–2022
-validation window while the 2023–2025 final holdout remained sealed.
+The latest completed economic ledger (as of **2026-07-11**) is intentionally
+more useful than a single best backtest. Six frozen mechanisms were evaluated
+on a 2017–2022 validation window while the 2023–2025 final holdout remained
+sealed. Newer SEC 13F pipeline work is infrastructure progress, not newer
+economic evidence.
 
 ![Validation HAC Sharpe for six preregistered mechanisms; only the SEC cash-earnings candidate approaches the 0.50 promotion gate and it still fails the full gate set](docs/assets/portfolio/validation_frontier.svg)
 

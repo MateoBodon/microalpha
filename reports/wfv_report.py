@@ -29,8 +29,12 @@ def build_wfv_report(folds_path: str) -> plt.Figure:
     # Bar plot of Sharpe per fold (train vs test)
     x = np.arange(len(folds))
     width = 0.35
-    axes[0].bar(x - width / 2, train_sharpes, width, label="Train", color="#1f77b4", alpha=0.7)
-    axes[0].bar(x + width / 2, test_sharpes, width, label="Test", color="#d62728", alpha=0.7)
+    axes[0].bar(
+        x - width / 2, train_sharpes, width, label="Train", color="#1f77b4", alpha=0.7
+    )
+    axes[0].bar(
+        x + width / 2, test_sharpes, width, label="Test", color="#d62728", alpha=0.7
+    )
     axes[0].set_xticks(x, labels)
     axes[0].set_ylabel("Sharpe")
     axes[0].set_title("Per-Fold Sharpe (Train vs Test)")
@@ -72,5 +76,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-

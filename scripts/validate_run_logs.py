@@ -8,7 +8,6 @@ import re
 import sys
 from pathlib import Path
 
-
 RUNS_ROOT = Path("docs/agent_runs")
 TICKETS_FILE = Path("docs/CODEX_SPRINT_TICKETS.md")
 
@@ -58,7 +57,9 @@ def require(condition: bool, errors: list[str], message: str) -> None:
         errors.append(message)
 
 
-def validate_meta(meta_path: Path, run_dir: Path, ticket_ids: set[str], errors: list[str]) -> None:
+def validate_meta(
+    meta_path: Path, run_dir: Path, ticket_ids: set[str], errors: list[str]
+) -> None:
     try:
         data = json.loads(meta_path.read_text())
     except Exception as exc:  # pragma: no cover - generic parse guard

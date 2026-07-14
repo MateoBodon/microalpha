@@ -112,7 +112,9 @@ def test_stream_matches_baseline_logic(tmp_path: Path) -> None:
         _write_csv(data_dir / f"{sym}.csv", list(dates), prices)
 
     for mode in ("ffill", "exact"):
-        handler = MultiCsvDataHandler(csv_dir=data_dir, symbols=list(symbol_data), mode=mode)
+        handler = MultiCsvDataHandler(
+            csv_dir=data_dir, symbols=list(symbol_data), mode=mode
+        )
         handler.set_date_range(idx[0], idx[-1])
         expected = _baseline_events(handler)
         observed = _collect_events(handler)

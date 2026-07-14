@@ -115,10 +115,12 @@ class CapitalPolicyCfg(BaseModel):
 
 class BorrowCfg(BaseModel):
     annual_fee_bps: float | None = Field(
-        default=None, description="Fallback annualized borrow fee in bps if metadata is missing."
+        default=None,
+        description="Fallback annualized borrow fee in bps if metadata is missing.",
     )
     floor_bps: float | None = Field(
-        default=None, description="Minimum borrow fee in bps (applied after multiplier)."
+        default=None,
+        description="Minimum borrow fee in bps (applied after multiplier).",
     )
     multiplier: float = Field(
         default=1.0, description="Multiplier applied to metadata borrow fees."

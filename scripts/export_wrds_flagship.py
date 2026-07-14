@@ -78,7 +78,9 @@ def _ensure_pgpass() -> None:
         mode = path.stat().st_mode & 0o777
     except OSError as exc:  # pragma: no cover - filesystem edge case
         raise SystemExit(f"Unable to stat {path}: {exc}") from exc
-    raise SystemExit(f"{path} must contain WRDS entry with 600 perms (found {oct(mode)})")
+    raise SystemExit(
+        f"{path} must contain WRDS entry with 600 perms (found {oct(mode)})"
+    )
 
 
 def _resolve_wrds_username() -> str | None:
@@ -97,7 +99,9 @@ def _resolve_wrds_username() -> str | None:
             if len(fields) < 4:
                 continue
             host_field = fields[0]
-            if host_field in {"*", WRDS_HOST} or host_field.endswith("wharton.upenn.edu"):
+            if host_field in {"*", WRDS_HOST} or host_field.endswith(
+                "wharton.upenn.edu"
+            ):
                 return fields[3]
     except OSError:  # pragma: no cover - filesystem edge cases
         return None
@@ -109,7 +113,12 @@ def _load_universe(root: Path) -> list[str]:
     if not universe_csv.exists():
         raise SystemExit(f"Universe file missing: {universe_csv}")
     symbols = (
-        pd.read_csv(universe_csv)["symbol"].astype(str).str.upper().dropna().unique().tolist()
+        pd.read_csv(universe_csv)["symbol"]
+        .astype(str)
+        .str.upper()
+        .dropna()
+        .unique()
+        .tolist()
     )
     if not symbols:
         raise SystemExit("Universe file has no symbols")
@@ -248,10 +257,16 @@ def _map_gics(code: float | int | str | None) -> str:
     return GICS_SECTORS.get(text[:2], "UNKNOWN")
 
 
-def _write_metadata(dsf: pd.DataFrame, gics_df: pd.DataFrame, meta_path: Path) -> pd.DataFrame:
+def _write_metadata(
+    dsf: pd.DataFrame, gics_df: pd.DataFrame, meta_path: Path
+) -> pd.DataFrame:
     latest = dsf.sort_values("date").groupby("ticker").tail(1).copy()
     latest["market_cap"] = latest["close"].abs() * latest["shares_out"].abs()
-    gics_df = gics_df.rename(columns={"gsector": "gics_sector"}) if not gics_df.empty else gics_df
+    gics_df = (
+        gics_df.rename(columns={"gsector": "gics_sector"})
+        if not gics_df.empty
+        else gics_df
+    )
     latest = latest.merge(gics_df[["permno", "gics_sector"]], on="permno", how="left")
     latest["sector"] = latest["gics_sector"].apply(_map_gics)
     meta_path.parent.mkdir(parents=True, exist_ok=True)
@@ -281,7 +296,13 @@ def _write_metadata(dsf: pd.DataFrame, gics_df: pd.DataFrame, meta_path: Path) -
     return payload
 
 
-def _write_manifest(stats: ExportStats, num_symbols: int, csv_dir: Path, parquet_dir: Path, meta_path: Path) -> None:
+def _write_manifest(
+    stats: ExportStats,
+    num_symbols: int,
+    csv_dir: Path,
+    parquet_dir: Path,
+    meta_path: Path,
+) -> None:
     MANIFEST_PATH.parent.mkdir(parents=True, exist_ok=True)
     payload = {
         "exported_at": datetime.now(timezone.utc).isoformat(),

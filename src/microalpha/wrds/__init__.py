@@ -154,9 +154,7 @@ def guard_no_wrds_copy(path: Path, *, operation: str = "copy") -> None:
     """Raise if attempting to copy data directly from WRDS_DATA_ROOT."""
 
     if is_wrds_path(path):
-        raise ValueError(
-            f"Refusing to {operation} file from WRDS_DATA_ROOT: {path}"
-        )
+        raise ValueError(f"Refusing to {operation} file from WRDS_DATA_ROOT: {path}")
 
 
 __all__ = [

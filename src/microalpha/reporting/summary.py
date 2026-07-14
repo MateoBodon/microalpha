@@ -662,9 +662,7 @@ def _render_cost_section(cost_path: Path) -> str | None:
         return "_Cost sensitivity unavailable._"
 
     lines = ["**Cost sensitivity (ex-post scaling of recorded costs)**", ""]
-    lines.append(
-        "| Multiplier | Sharpe | MaxDD | CAGR | MAR | Cost drag (bps/yr) |"
-    )
+    lines.append("| Multiplier | Sharpe | MaxDD | CAGR | MAR | Cost drag (bps/yr) |")
     lines.append("| --- | ---:| ---:| ---:| ---:| ---:|")
     for row in grid:
         lines.append(

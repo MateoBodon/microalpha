@@ -3,6 +3,7 @@
 
 Stdlib only. Writes JSON outputs to project_state/_generated.
 """
+
 from __future__ import annotations
 
 import ast
@@ -31,7 +32,9 @@ def rg_files(root: Path) -> list[str]:
         return files
 
 
-def add_explicit_dirs(files: list[str], root: Path, extra_dirs: list[Path]) -> list[str]:
+def add_explicit_dirs(
+    files: list[str], root: Path, extra_dirs: list[Path]
+) -> list[str]:
     seen = set(files)
     for directory in extra_dirs:
         if not directory.exists():
@@ -60,7 +63,11 @@ def classify_role(path: str) -> str:
         return "report"
     if path.startswith("artifacts/"):
         return "artifact"
-    if path.startswith("data/") or path.startswith("data_sp500/") or path.startswith("data_sp500_enriched/"):
+    if (
+        path.startswith("data/")
+        or path.startswith("data_sp500/")
+        or path.startswith("data_sp500_enriched/")
+    ):
         return "data"
     if path.startswith("scripts/"):
         return "script"
@@ -281,7 +288,7 @@ def import_graph(py_files: list[Path]) -> dict[str, list[str]]:
             elif isinstance(node, ast.ImportFrom):
                 if node.level and current_module:
                     parts = current_module.split(".")
-                    base_parts = parts[:-node.level]
+                    base_parts = parts[: -node.level]
                     if node.module:
                         base_parts += node.module.split(".")
                     if base_parts:
@@ -322,10 +329,7 @@ def main() -> None:
         files,
         ROOT,
         [
-            ROOT
-            / "artifacts"
-            / "sample_flagship"
-            / "2025-10-30T18-39-31Z-a4ab8e7",
+            ROOT / "artifacts" / "sample_flagship" / "2025-10-30T18-39-31Z-a4ab8e7",
             ROOT / "artifacts" / "sample_wfv" / "2025-10-30T18-39-47Z-a4ab8e7",
         ],
     )
@@ -335,9 +339,16 @@ def main() -> None:
         json.dumps(inventory, indent=2, sort_keys=True), encoding="utf-8"
     )
 
-    py_files = [ROOT / f for f in files if f.endswith(".py") and (
-        f.startswith("src/") or f.startswith("experiments/") or f.startswith("tools/")
-    )]
+    py_files = [
+        ROOT / f
+        for f in files
+        if f.endswith(".py")
+        and (
+            f.startswith("src/")
+            or f.startswith("experiments/")
+            or f.startswith("tools/")
+        )
+    ]
 
     sym_index = symbol_index(py_files)
     (GENERATED_DIR / "symbol_index.json").write_text(
@@ -350,7 +361,9 @@ def main() -> None:
     )
 
     targets = make_targets(ROOT / "Makefile")
-    (GENERATED_DIR / "make_targets.txt").write_text("\n".join(targets) + "\n", encoding="utf-8")
+    (GENERATED_DIR / "make_targets.txt").write_text(
+        "\n".join(targets) + "\n", encoding="utf-8"
+    )
 
 
 if __name__ == "__main__":

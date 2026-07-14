@@ -29,23 +29,19 @@ from .execution import (
     SquareRootImpact,
 )
 from .execution_safety import evaluate_execution_safety
+from .integrity import evaluate_portfolio_integrity
 from .logging import JsonlWriter
 from .manifest import (
     build as build_manifest,
-)
-from .manifest import (
     extract_config_summary,
     generate_run_id,
     resolve_git_sha,
-)
-from .manifest import (
     write as write_manifest,
 )
 from .market_metadata import load_symbol_meta
 from .metrics import compute_metrics
 from .order_flow import OrderFlowDiagnostics, infer_non_degenerate_reason
 from .portfolio import Portfolio
-from .integrity import evaluate_portfolio_integrity
 from .risk_stats import block_bootstrap
 from .runner import (
     persist_config,
@@ -97,9 +93,7 @@ def _non_degenerate_reasons(
     if cfg is None:
         return reasons
     if cfg.min_trades is not None and num_trades < cfg.min_trades:
-        reasons.append(
-            f"num_trades {num_trades} < min_trades {int(cfg.min_trades)}"
-        )
+        reasons.append(f"num_trades {num_trades} < min_trades {int(cfg.min_trades)}")
     if cfg.min_turnover is not None and turnover < cfg.min_turnover:
         reasons.append(
             f"total_turnover {turnover:.4f} < min_turnover {float(cfg.min_turnover):.4f}"
@@ -277,9 +271,9 @@ def run_walk_forward(
             cs_symbols = [str(sym).upper() for sym in raw_symbols]
             base_params.setdefault("symbols", cs_symbols)
         else:
-            universe_path = base_params.get("universe_path") or cfg.template.strategy.params.get(
+            universe_path = base_params.get(
                 "universe_path"
-            )
+            ) or cfg.template.strategy.params.get("universe_path")
             if universe_path is None:
                 raise ValueError(
                     "FlagshipMomentumStrategy requires 'universe_path' defined in template params"
@@ -335,8 +329,7 @@ def run_walk_forward(
 
     try:
         while (
-            current_date
-            + pd.Timedelta(days=training_days + testing_days + 1)
+            current_date + pd.Timedelta(days=training_days + testing_days + 1)
             <= selection_end
         ):
             train_start = current_date
@@ -418,9 +411,7 @@ def run_walk_forward(
                     symbol=symbol, **_strategy_kwargs(best_params, warmup_prices)
                 )
             order_flow = (
-                OrderFlowDiagnostics()
-                if cfg.template.order_flow_diagnostics
-                else None
+                OrderFlowDiagnostics() if cfg.template.order_flow_diagnostics else None
             )
             portfolio = _build_portfolio(
                 data_handler,
@@ -458,7 +449,9 @@ def run_walk_forward(
             if hasattr(strategy, "get_filter_diagnostics"):
                 try:
                     filter_diagnostics = strategy.get_filter_diagnostics()
-                except Exception as exc:  # pragma: no cover - diagnostics should not fail the run
+                except (
+                    Exception
+                ) as exc:  # pragma: no cover - diagnostics should not fail the run
                     filter_diagnostics = {
                         "error": f"{type(exc).__name__}: {exc}",
                     }
@@ -635,9 +628,7 @@ def run_walk_forward(
             non_degenerate_cfg is not None
             and non_degenerate_cfg.min_turnover is not None
         ):
-            criteria.append(
-                f"min_turnover={float(non_degenerate_cfg.min_turnover)}"
-            )
+            criteria.append(f"min_turnover={float(non_degenerate_cfg.min_turnover)}")
         criteria_text = ", ".join(criteria) if criteria else "unspecified"
         selection_failure_reason = (
             "Non-degenerate constraints rejected all candidates "
@@ -716,9 +707,7 @@ def run_walk_forward(
                 str(artifacts_dir / "holdout_trades.jsonl")
             )
             holdout_order_flow = (
-                OrderFlowDiagnostics()
-                if cfg.template.order_flow_diagnostics
-                else None
+                OrderFlowDiagnostics() if cfg.template.order_flow_diagnostics else None
             )
             holdout_portfolio = _build_portfolio(
                 data_handler,
@@ -757,8 +746,12 @@ def run_walk_forward(
             holdout_filter_diagnostics: Dict[str, Any] | None = None
             if hasattr(holdout_strategy, "get_filter_diagnostics"):
                 try:
-                    holdout_filter_diagnostics = holdout_strategy.get_filter_diagnostics()
-                except Exception as exc:  # pragma: no cover - diagnostics should not fail the run
+                    holdout_filter_diagnostics = (
+                        holdout_strategy.get_filter_diagnostics()
+                    )
+                except (
+                    Exception
+                ) as exc:  # pragma: no cover - diagnostics should not fail the run
                     holdout_filter_diagnostics = {
                         "error": f"{type(exc).__name__}: {exc}",
                     }
@@ -872,7 +865,9 @@ def run_walk_forward(
             holdout_loss_trades = 0
             for trade in holdout_trades:
                 try:
-                    holdout_total_commission += float(trade.get("commission", 0.0) or 0.0)
+                    holdout_total_commission += float(
+                        trade.get("commission", 0.0) or 0.0
+                    )
                     holdout_total_slippage += abs(
                         float(trade.get("slippage", 0.0) or 0.0)
                     ) * abs(float(trade.get("qty", 0.0) or 0.0))
@@ -901,7 +896,9 @@ def run_walk_forward(
                 holdout_win_trades / holdout_win_denom if holdout_win_denom > 0 else 0.0
             )
             holdout_avg_trade_notional = (
-                holdout_trade_notional / holdout_num_trades if holdout_num_trades > 0 else 0.0
+                holdout_trade_notional / holdout_num_trades
+                if holdout_num_trades > 0
+                else 0.0
             )
             holdout_metrics.update(
                 {
@@ -1165,7 +1162,9 @@ def _optimise_parameters(
         if hasattr(strategy, "get_filter_diagnostics"):
             try:
                 filter_diagnostics = strategy.get_filter_diagnostics()
-            except Exception as exc:  # pragma: no cover - diagnostics should not fail tuning
+            except (
+                Exception
+            ) as exc:  # pragma: no cover - diagnostics should not fail tuning
                 filter_diagnostics = {
                     "error": f"{type(exc).__name__}: {exc}",
                 }
@@ -1177,9 +1176,7 @@ def _optimise_parameters(
                     "model": _format_param_label(params),
                     "params": dict(params),
                     "num_trades": len(getattr(portfolio, "trades", None) or []),
-                    "turnover": float(
-                        getattr(portfolio, "total_turnover", 0.0) or 0.0
-                    ),
+                    "turnover": float(getattr(portfolio, "total_turnover", 0.0) or 0.0),
                     "reasons": ["empty_equity_curve"],
                     "filter_diagnostics": filter_diagnostics,
                     "order_flow_diagnostics": order_flow_payload,
@@ -1201,9 +1198,7 @@ def _optimise_parameters(
                     "model": _format_param_label(params),
                     "params": dict(params),
                     "num_trades": len(getattr(portfolio, "trades", None) or []),
-                    "turnover": float(
-                        getattr(portfolio, "total_turnover", 0.0) or 0.0
-                    ),
+                    "turnover": float(getattr(portfolio, "total_turnover", 0.0) or 0.0),
                     "reasons": exclusion_reasons,
                     "filter_diagnostics": filter_diagnostics,
                     "order_flow_diagnostics": order_flow_payload,
@@ -1338,9 +1333,7 @@ def _build_executor(
     if exec_cfg.queue_coefficient is not None:
         kwargs["queue_coefficient"] = float(exec_cfg.queue_coefficient)
     if exec_cfg.queue_passive_multiplier is not None:
-        kwargs["queue_passive_multiplier"] = float(
-            exec_cfg.queue_passive_multiplier
-        )
+        kwargs["queue_passive_multiplier"] = float(exec_cfg.queue_passive_multiplier)
     if exec_cfg.queue_seed is not None:
         kwargs["queue_seed"] = int(exec_cfg.queue_seed)
     if exec_cfg.queue_randomize is not None:
@@ -1524,9 +1517,7 @@ def _aggregate_selection_summary(
     aggregated: Dict[str, Dict[str, Any]] = {}
     for fold_index, summary in enumerate(grid_summaries):
         for entry in summary:
-            model = entry.get("model") or _format_param_label(
-                entry.get("params", {})
-            )
+            model = entry.get("model") or _format_param_label(entry.get("params", {}))
             params = dict(entry.get("params") or {})
             sharpe = float(entry.get("sharpe_ratio", 0.0) or 0.0)
             cagr = float(entry.get("cagr", 0.0) or 0.0)
@@ -1556,9 +1547,9 @@ def _aggregate_selection_summary(
             {
                 "model": model,
                 "params": record.get("params") or {},
-                "mean_sharpe": float(np.mean(sharpe_vals))
-                if sharpe_vals
-                else float("-inf"),
+                "mean_sharpe": (
+                    float(np.mean(sharpe_vals)) if sharpe_vals else float("-inf")
+                ),
                 "mean_cagr": float(np.mean(cagr_vals)) if cagr_vals else 0.0,
                 "mean_ann_vol": float(np.mean(ann_vol_vals)) if ann_vol_vals else 0.0,
                 "num_folds": int(len(sharpe_vals)),

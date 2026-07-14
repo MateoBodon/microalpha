@@ -14,8 +14,24 @@ def test_load_grid_returns_pivots_panel(tmp_path) -> None:
     for fold in range(2):
         for t in range(3):
             panel_id = f"{fold}:{t}"
-            rows.append({"fold": fold, "timestamp": t, "model": "A", "value": 0.01 * (t + fold), "panel_id": panel_id})
-            rows.append({"fold": fold, "timestamp": t, "model": "B", "value": 0.008 * (t + fold), "panel_id": panel_id})
+            rows.append(
+                {
+                    "fold": fold,
+                    "timestamp": t,
+                    "model": "A",
+                    "value": 0.01 * (t + fold),
+                    "panel_id": panel_id,
+                }
+            )
+            rows.append(
+                {
+                    "fold": fold,
+                    "timestamp": t,
+                    "model": "B",
+                    "value": 0.008 * (t + fold),
+                    "panel_id": panel_id,
+                }
+            )
     pd.DataFrame(rows).to_csv(path, index=False)
     pivot = load_grid_returns(path)
     assert list(pivot.columns) == ["A", "B"]

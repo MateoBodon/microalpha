@@ -37,6 +37,10 @@ dev = [
 [tool.black]
 line-length = 88
 
+[tool.isort]
+profile = "black"
+combine_as_imports = true
+
 [tool.ruff]
 line-length = 88
 exclude = [
@@ -50,6 +54,9 @@ ignore = [
     # Temporarily ignore long lines in CI to unblock; keep Black for wrapping
     "E501",
 ]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
 
 [tool.mypy]
 python_version = "3.12"

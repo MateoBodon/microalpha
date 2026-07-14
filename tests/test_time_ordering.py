@@ -1,7 +1,6 @@
 import numpy as np
 import pytest
-from hypothesis import HealthCheck, given, settings
-from hypothesis import strategies as st
+from hypothesis import HealthCheck, given, settings, strategies as st
 
 from microalpha.engine import Engine
 from microalpha.events import LookaheadError, MarketEvent

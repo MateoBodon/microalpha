@@ -30,7 +30,9 @@ def _format(results, meta) -> str:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("artifact_dir", type=Path, help="Artifact directory with equity_curve.csv")
+    parser.add_argument(
+        "artifact_dir", type=Path, help="Artifact directory with equity_curve.csv"
+    )
     parser.add_argument(
         "--factors",
         type=Path,

@@ -73,8 +73,8 @@ class FlagshipMomentumStrategy:
         self.universe = self._load_universe(universe_path)
         self.universe_dates = sorted(self.universe.keys())
         self.max_history = (
-            (self.lookback_months + self.skip_months + 2) * TRADING_DAYS_MONTH
-        )
+            self.lookback_months + self.skip_months + 2
+        ) * TRADING_DAYS_MONTH
         self._filter_diagnostics: List[Dict[str, float | int | str]] = []
 
     # ------------------------------------------------------------------
@@ -177,7 +177,7 @@ class FlagshipMomentumStrategy:
         history = self.price_history.setdefault(event.symbol, [])
         history.append(float(event.price))
         if len(history) > self.max_history:
-            del history[:-self.max_history]
+            del history[: -self.max_history]
 
         timestamp = pd.to_datetime(event.timestamp)
         period_end = (
@@ -217,9 +217,7 @@ class FlagshipMomentumStrategy:
         return self._build_signals(long_sel, short_sel, event_timestamp, period_end)
 
     # ------------------------------------------------------------------
-    def _universe_snapshot(
-        self, period_end: pd.Timestamp
-    ) -> Optional[pd.DataFrame]:
+    def _universe_snapshot(self, period_end: pd.Timestamp) -> Optional[pd.DataFrame]:
         eligible = [date for date in self.universe_dates if date <= period_end]
         if not eligible:
             return None
@@ -273,7 +271,9 @@ class FlagshipMomentumStrategy:
             records.append(
                 {
                     "symbol": symbol_str,
-                    "sector": str(row.get("sector", self.sector_map.get(symbol_str, "UNKNOWN"))),
+                    "sector": str(
+                        row.get("sector", self.sector_map.get(symbol_str, "UNKNOWN"))
+                    ),
                     "momentum": float(momentum),
                     "adv": adv,
                     "close": float(row.get("close", prices[-1])),

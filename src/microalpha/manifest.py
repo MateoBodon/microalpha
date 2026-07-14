@@ -67,7 +67,9 @@ def load_manifest_path(path: str | Path) -> dict[str, Any]:
     return payload
 
 
-def load_manifest(artifact_dir: str | Path, *, required: bool = True) -> dict[str, Any] | None:
+def load_manifest(
+    artifact_dir: str | Path, *, required: bool = True
+) -> dict[str, Any] | None:
     """Load a manifest.json from an artifact directory."""
 
     manifest_path = Path(artifact_dir) / "manifest.json"
@@ -178,9 +180,11 @@ def extract_config_summary(raw_config: Mapping[str, Any]) -> dict[str, Any]:
     borrow_cfg = _as_mapping(template.get("borrow"))
 
     risk_caps = {
-        "max_gross_leverage": template.get("max_gross_leverage")
-        if template.get("max_gross_leverage") is not None
-        else template.get("max_portfolio_heat"),
+        "max_gross_leverage": (
+            template.get("max_gross_leverage")
+            if template.get("max_gross_leverage") is not None
+            else template.get("max_portfolio_heat")
+        ),
         "max_portfolio_heat": template.get("max_portfolio_heat"),
         "max_net_leverage": template.get("max_exposure"),
         "max_single_name_weight": template.get("max_single_name_weight"),

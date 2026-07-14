@@ -29,7 +29,11 @@ def _wrds_universe_path(path: str | None) -> Path:
         root = os.environ.get("WRDS_DATA_ROOT")
         if not root:
             raise SystemExit("Set WRDS_DATA_ROOT or pass --universe explicitly")
-        candidate = Path(root).expanduser().resolve() / "universes" / "flagship_sector_neutral.csv"
+        candidate = (
+            Path(root).expanduser().resolve()
+            / "universes"
+            / "flagship_sector_neutral.csv"
+        )
     if not candidate.exists():
         raise SystemExit(f"Universe CSV not found: {candidate}")
     return candidate
@@ -92,16 +96,20 @@ def _build_signals(
         df["adv"] = float("nan")
 
     mask = df["score"].notna() & df["forward_return"].notna()
-    mask &= (~df["score"].isin([float("inf"), float("-inf")]))
-    mask &= (~df["forward_return"].isin([float("inf"), float("-inf")]))
+    mask &= ~df["score"].isin([float("inf"), float("-inf")])
+    mask &= ~df["forward_return"].isin([float("inf"), float("-inf")])
     adv_filter = df["adv"].fillna(min_adv) >= min_adv
     mask &= adv_filter
 
-    signals = df.loc[mask, ["date", "symbol", "score", "forward_return", "adv", "sector"]].copy()
+    signals = df.loc[
+        mask, ["date", "symbol", "score", "forward_return", "adv", "sector"]
+    ].copy()
     signals = signals.rename(columns={"date": "as_of"})
     signals["as_of"] = signals["as_of"].dt.strftime("%Y-%m-%d")
     if signals.empty:
-        raise SystemExit("No signals survived filtering; check lookback/min-adv parameters")
+        raise SystemExit(
+            "No signals survived filtering; check lookback/min-adv parameters"
+        )
 
     output_path = output_path.expanduser().resolve()
     output_path.parent.mkdir(parents=True, exist_ok=True)

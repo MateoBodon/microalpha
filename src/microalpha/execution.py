@@ -120,7 +120,9 @@ class Executor:
         limit_price = order.price if order.order_type == "LIMIT" else None
 
         if self.limit_mode is not None:
-            spread_bps = meta.spread_bps if meta.spread_bps and meta.spread_bps > 0 else 10.0
+            spread_bps = (
+                meta.spread_bps if meta.spread_bps and meta.spread_bps > 0 else 10.0
+            )
             half_spread_px = (spread_bps / 20_000.0) * market_price
             if self.limit_mode == "IOC":
                 limit_price = market_price if limit_price is None else limit_price
@@ -202,9 +204,7 @@ class Executor:
         if not limit_context:
             return qty
 
-        fraction = self._queue_fill_fraction(
-            order, market_price, timestamp, qty, meta
-        )
+        fraction = self._queue_fill_fraction(order, market_price, timestamp, qty, meta)
         if fraction <= 0.0:
             return 0
 
@@ -223,7 +223,9 @@ class Executor:
     ) -> float:
         abs_qty = max(abs(qty), 1)
         adv = meta.adv if meta.adv and meta.adv > 0 else float(abs_qty) * 20.0
-        spread_bps = meta.spread_bps if meta.spread_bps and meta.spread_bps > 0 else 10.0
+        spread_bps = (
+            meta.spread_bps if meta.spread_bps and meta.spread_bps > 0 else 10.0
+        )
 
         vol_bps = self._resolve_volatility_bps(order.symbol, timestamp, meta)
         if vol_bps <= 0:

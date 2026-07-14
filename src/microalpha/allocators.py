@@ -66,8 +66,12 @@ def lw_min_var(
         return (weights, returns_df) if return_cov else weights
 
     cov_shrink = _ledoit_wolf_cov(returns_df.to_numpy(dtype=float))
-    cov_df = pd.DataFrame(cov_shrink, index=returns_df.columns, columns=returns_df.columns)
-    weights = _min_var_weights(cov_df.to_numpy(), allow_short=allow_short, epsilon=epsilon)
+    cov_df = pd.DataFrame(
+        cov_shrink, index=returns_df.columns, columns=returns_df.columns
+    )
+    weights = _min_var_weights(
+        cov_df.to_numpy(), allow_short=allow_short, epsilon=epsilon
+    )
     weights_series = pd.Series(weights, index=cov_df.index, name="weight")
 
     if return_cov:
@@ -98,8 +102,16 @@ def budgeted_allocator(
         total_signal = float(long_signals.abs().sum() + short_signals.abs().sum())
     total_signal = max(total_signal, 1e-12)
 
-    long_budget = total_budget * float(long_signals.sum()) / total_signal if not long_signals.empty else 0.0
-    short_budget = total_budget * float(short_signals.abs().sum()) / total_signal if not short_signals.empty else 0.0
+    long_budget = (
+        total_budget * float(long_signals.sum()) / total_signal
+        if not long_signals.empty
+        else 0.0
+    )
+    short_budget = (
+        total_budget * float(short_signals.abs().sum()) / total_signal
+        if not short_signals.empty
+        else 0.0
+    )
 
     weights = pd.Series(0.0, index=cov_df.index, name="weight")
 
@@ -130,6 +142,7 @@ def budgeted_allocator(
 
 # ---------------------------------------------------------------------------
 # Helpers
+
 
 def _as_dataframe(
     data: pd.DataFrame | np.ndarray | Mapping[str, Mapping[str, float]],

@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 from collections import Counter
 from dataclasses import dataclass, field
-from typing import Any, Dict, Iterable, List, Mapping, Optional
+from typing import Any, Dict, Iterable, List, Mapping
 
 import pandas as pd
 
@@ -90,7 +90,9 @@ class OrderFlowDiagnostics:
         try:
             signals_list = list(signals)
         except Exception as exc:  # pragma: no cover - defensive
-            self.record_error(f"begin_rebalance signals error: {type(exc).__name__}: {exc}")
+            self.record_error(
+                f"begin_rebalance signals error: {type(exc).__name__}: {exc}"
+            )
             key = _timestamp_to_date(timestamp)
             self._active_key = key
             self._entry_for_key(key)
@@ -128,7 +130,9 @@ class OrderFlowDiagnostics:
 
             nonzero_weights = [w for w in weights if abs(w) > 0]
             entry["target_weights_nonzero_count"] = int(len(nonzero_weights))
-            entry["sum_abs_weights"] = float(sum(abs(w) for w in weights)) if weights else 0.0
+            entry["sum_abs_weights"] = (
+                float(sum(abs(w) for w in weights)) if weights else 0.0
+            )
             entry["min_weight"] = float(min(weights)) if weights else None
             entry["max_weight"] = float(max(weights)) if weights else None
         except Exception as exc:  # pragma: no cover - diagnostics should not fail run
@@ -140,12 +144,16 @@ class OrderFlowDiagnostics:
     def end_rebalance(self) -> None:
         self._active_key = None
 
-    def record_order_created(self, order: OrderEvent, signal: SignalEvent | None = None) -> None:
+    def record_order_created(
+        self, order: OrderEvent, signal: SignalEvent | None = None
+    ) -> None:
         key = self._resolve_key(signal=signal, order=order)
         entry = self._entry_for_key(key)
         entry["orders_created_count"] = int(entry["orders_created_count"]) + 1
         if abs(int(getattr(order, "qty", 0) or 0)) > 0:
-            entry["orders_nonzero_qty_count"] = int(entry["orders_nonzero_qty_count"]) + 1
+            entry["orders_nonzero_qty_count"] = (
+                int(entry["orders_nonzero_qty_count"]) + 1
+            )
 
     def record_order_drop(
         self,
@@ -199,7 +207,9 @@ class OrderFlowDiagnostics:
         except (TypeError, ValueError):
             self.record_error("fill_notional_cast_error")
 
-    def merge_filter_diagnostics(self, filter_diagnostics: Mapping[str, Any] | None) -> None:
+    def merge_filter_diagnostics(
+        self, filter_diagnostics: Mapping[str, Any] | None
+    ) -> None:
         if filter_diagnostics is None:
             return
         if not isinstance(filter_diagnostics, Mapping):
@@ -278,7 +288,9 @@ class OrderFlowDiagnostics:
         return summary
 
     def payload(self) -> Dict[str, Any]:
-        entries = sorted(self._entries.values(), key=lambda e: str(e.get("rebalance_date")))
+        entries = sorted(
+            self._entries.values(), key=lambda e: str(e.get("rebalance_date"))
+        )
         payload: Dict[str, Any] = {"entries": entries, "summary": self.summary()}
         if self._errors:
             payload["errors"] = list(self._errors)
@@ -304,9 +316,13 @@ def infer_non_degenerate_reason(payload: Mapping[str, Any] | None) -> str | None
     for entry in entries:
         if not isinstance(entry, Mapping):
             continue
-        totals["targets_nonzero"] += int(entry.get("target_weights_nonzero_count", 0) or 0)
+        totals["targets_nonzero"] += int(
+            entry.get("target_weights_nonzero_count", 0) or 0
+        )
         totals["orders_created"] += int(entry.get("orders_created_count", 0) or 0)
-        totals["orders_nonzero_qty"] += int(entry.get("orders_nonzero_qty_count", 0) or 0)
+        totals["orders_nonzero_qty"] += int(
+            entry.get("orders_nonzero_qty_count", 0) or 0
+        )
         totals["orders_accepted"] += int(entry.get("orders_accepted_count", 0) or 0)
         totals["orders_rejected"] += int(entry.get("orders_rejected_count", 0) or 0)
         totals["fills"] += int(entry.get("fills_count", 0) or 0)

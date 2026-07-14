@@ -225,9 +225,9 @@ def main() -> None:
 
     summary = {
         "rebalance_dates": len(universe_sizes),
-        "average_size": float(np.mean(list(universe_sizes.values())))
-        if universe_sizes
-        else 0,
+        "average_size": (
+            float(np.mean(list(universe_sizes.values()))) if universe_sizes else 0
+        ),
         "min_size": min(universe_sizes.values()) if universe_sizes else 0,
         "max_size": max(universe_sizes.values()) if universe_sizes else 0,
         "parameters": {
