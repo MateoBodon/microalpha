@@ -17,14 +17,16 @@ from microalpha.reporting.analytics import (
 def test_compute_ic_series_matches_spearman() -> None:
     signals = pd.DataFrame(
         {
-            "as_of": pd.to_datetime([
-                "2024-01-01",
-                "2024-01-01",
-                "2024-01-01",
-                "2024-01-02",
-                "2024-01-02",
-                "2024-01-02",
-            ]),
+            "as_of": pd.to_datetime(
+                [
+                    "2024-01-01",
+                    "2024-01-01",
+                    "2024-01-01",
+                    "2024-01-02",
+                    "2024-01-02",
+                    "2024-01-02",
+                ]
+            ),
             "symbol": ["A", "B", "C", "A", "B", "C"],
             "score": [1.0, 2.0, 3.0, 3.0, 2.0, 1.0],
             "forward_return": [0.1, 0.2, 0.3, 0.1, 0.2, 0.4],

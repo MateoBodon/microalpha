@@ -9,7 +9,9 @@ class _StubDataHandler:
     def __init__(self, price: float = 100.0) -> None:
         self.price = price
 
-    def get_latest_price(self, symbol: str, timestamp: int):  # pragma: no cover - trivial
+    def get_latest_price(
+        self, symbol: str, timestamp: int
+    ):  # pragma: no cover - trivial
         return self.price
 
 

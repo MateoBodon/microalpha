@@ -8,8 +8,8 @@ from microalpha.execution import Executor
 from microalpha.order_flow import OrderFlowDiagnostics
 from microalpha.portfolio import Portfolio
 from microalpha.strategies.flagship_mom import (
-    FlagshipMomentumStrategy,
     TRADING_DAYS_MONTH,
+    FlagshipMomentumStrategy,
 )
 
 

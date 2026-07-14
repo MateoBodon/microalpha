@@ -13,10 +13,10 @@ The bundle includes:
 - ticket file (if present)
 - selected small changed files (best-effort)
 """
+
 from __future__ import annotations
 
 import argparse
-import os
 import subprocess
 import sys
 import zipfile
@@ -27,7 +27,9 @@ from typing import Optional, Tuple
 
 def run(cmd: list[str], cwd: Optional[Path] = None) -> Tuple[int, str]:
     try:
-        out = subprocess.check_output(cmd, cwd=str(cwd) if cwd else None, stderr=subprocess.STDOUT)
+        out = subprocess.check_output(
+            cmd, cwd=str(cwd) if cwd else None, stderr=subprocess.STDOUT
+        )
         return 0, out.decode("utf-8", errors="replace")
     except subprocess.CalledProcessError as e:
         return e.returncode, e.output.decode("utf-8", errors="replace")
@@ -48,7 +50,9 @@ def ensure_repo_snapshot(repo: Path, scratch_dir: Path) -> Optional[Path]:
     if tool.exists():
         scratch_dir.mkdir(parents=True, exist_ok=True)
         scratch_snap = scratch_dir / "repo_snapshot.md"
-        code, out = run([sys.executable, str(tool), "--out", str(scratch_snap)], cwd=repo)
+        code, out = run(
+            [sys.executable, str(tool), "--out", str(scratch_snap)], cwd=repo
+        )
         if code == 0:
             p = Path(out.strip().splitlines()[-1])
             if p.exists():
@@ -109,7 +113,9 @@ def restore_stash(repo: Path, stash_ref: str, status_before: str) -> None:
         raise SystemExit(f"Failed to drop stash {stash_ref}:\n{out}")
 
 
-def prepare_worktree(repo: Path, label: str, no_stash: bool) -> tuple[str, str | None, bool]:
+def prepare_worktree(
+    repo: Path, label: str, no_stash: bool
+) -> tuple[str, str | None, bool]:
     status_before = git_status_porcelain(repo)
     dirty = bool(status_before.strip())
     stash_ref = None
@@ -135,24 +141,28 @@ def bundle_root(repo: Path) -> Path:
 
 def list_changed_files(repo: Path, stash_ref: Optional[str] = None) -> list[str]:
     if stash_ref:
-        _, out = run(["git", "-C", str(repo), "stash", "show", "--name-only", stash_ref])
-        return [l.strip() for l in out.splitlines() if l.strip()]
+        _, out = run(
+            ["git", "-C", str(repo), "stash", "show", "--name-only", stash_ref]
+        )
+        return [line.strip() for line in out.splitlines() if line.strip()]
     # Prefer git diff names for working tree
     _, out = run(["git", "-C", str(repo), "diff", "--name-only"])
-    changed = [l.strip() for l in out.splitlines() if l.strip()]
+    changed = [line.strip() for line in out.splitlines() if line.strip()]
     # Include staged
     _, out2 = run(["git", "-C", str(repo), "diff", "--cached", "--name-only"])
-    for l in out2.splitlines():
-        l = l.strip()
-        if l and l not in changed:
-            changed.append(l)
+    for line in out2.splitlines():
+        line = line.strip()
+        if line and line not in changed:
+            changed.append(line)
     return changed
 
 
 def collect_diffs(repo: Path, stash_ref: Optional[str]) -> tuple[str, str, str]:
     if stash_ref:
         _, diff = run(["git", "-C", str(repo), "stash", "show", "-p", stash_ref])
-        _, diff_stat = run(["git", "-C", str(repo), "stash", "show", "--stat", stash_ref])
+        _, diff_stat = run(
+            ["git", "-C", str(repo), "stash", "show", "--stat", stash_ref]
+        )
         return diff, "", diff_stat
     _, diff = run(["git", "-C", str(repo), "diff"])
     _, diff_cached = run(["git", "-C", str(repo), "diff", "--cached"])
@@ -160,7 +170,9 @@ def collect_diffs(repo: Path, stash_ref: Optional[str]) -> tuple[str, str, str]:
     return diff, diff_cached, diff_stat
 
 
-def add_file_if_small(z: zipfile.ZipFile, repo: Path, rel_path: str, max_bytes: int = 120_000) -> None:
+def add_file_if_small(
+    z: zipfile.ZipFile, repo: Path, rel_path: str, max_bytes: int = 120_000
+) -> None:
     p = repo / rel_path
     if not p.exists() or not p.is_file():
         return
@@ -174,10 +186,18 @@ def add_file_if_small(z: zipfile.ZipFile, repo: Path, rel_path: str, max_bytes: 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--zip", action="store_true", help="Create zip bundle (default behavior).")
-    ap.add_argument("--ticket", type=str, default=None, help="Ticket id to include (optional).")
+    ap.add_argument(
+        "--zip", action="store_true", help="Create zip bundle (default behavior)."
+    )
+    ap.add_argument(
+        "--ticket", type=str, default=None, help="Ticket id to include (optional)."
+    )
     ap.add_argument("--out", type=str, default=None, help="Output zip path (optional).")
-    ap.add_argument("--include-files", action="store_true", help="Include small changed files in addition to diffs.")
+    ap.add_argument(
+        "--include-files",
+        action="store_true",
+        help="Include small changed files in addition to diffs.",
+    )
     ap.add_argument(
         "--no-stash",
         action="store_true",
@@ -204,14 +224,20 @@ def main() -> int:
         snap = ensure_repo_snapshot(repo, bundle_dir)
 
         # Collect git info
-        _, log = run(["git", "-C", str(repo), "log", "-n", "50", "--oneline", "--decorate"])
+        _, log = run(
+            ["git", "-C", str(repo), "log", "-n", "50", "--oneline", "--decorate"]
+        )
         diff, diff_cached, diff_stat = collect_diffs(repo, stash_ref)
         changed = list_changed_files(repo, stash_ref)
 
         ts = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
         ticket = (args.ticket or "").strip()
         suffix = f"_{ticket}" if ticket else ""
-        out_zip = Path(args.out) if args.out else (bundle_dir / f"gpt_bundle_{ts}{suffix}.zip")
+        out_zip = (
+            Path(args.out)
+            if args.out
+            else (bundle_dir / f"gpt_bundle_{ts}{suffix}.zip")
+        )
 
         readme = f"""GPT Bundle
 
@@ -238,7 +264,9 @@ Contents:
             z.writestr("git_diff.patch", diff)
             z.writestr("git_diff_cached.patch", diff_cached)
             z.writestr("git_diff_stat.txt", diff_stat)
-            z.writestr("changed_files.txt", "\n".join(changed) + ("\n" if changed else ""))
+            z.writestr(
+                "changed_files.txt", "\n".join(changed) + ("\n" if changed else "")
+            )
 
             if snap and snap.exists():
                 if snap.is_relative_to(repo):

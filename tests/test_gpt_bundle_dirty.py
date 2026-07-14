@@ -19,7 +19,9 @@ def test_gpt_bundle_stashes_when_dirty() -> None:
     mod._git_status_porcelain = fake_status
     mod._stash_push = fake_stash_push
 
-    status_before, stash_ref, dirty = mod._prepare_worktree("temp: gpt_bundle", no_stash=False)
+    status_before, stash_ref, dirty = mod._prepare_worktree(
+        "temp: gpt_bundle", no_stash=False
+    )
     assert dirty is True
     assert status_before.strip() == "M dirty.txt"
     assert stash_ref == "stash@{0}"

@@ -50,7 +50,10 @@ class VolumeSlippageModel(SlippageModel):
     """Legacy quadratic volume model retained for backward compatibility."""
 
     def __init__(
-        self, price_impact: float = 0.0001, *, metadata: Mapping[str, SymbolMeta] | None = None
+        self,
+        price_impact: float = 0.0001,
+        *,
+        metadata: Mapping[str, SymbolMeta] | None = None,
     ) -> None:
         super().__init__(metadata=metadata)
         self.price_impact = float(price_impact)

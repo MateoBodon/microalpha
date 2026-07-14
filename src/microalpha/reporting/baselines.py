@@ -85,16 +85,24 @@ def compute_baselines(
     if "timestamp" not in equity_df.columns:
         baseline_df = pd.DataFrame(columns=BASELINE_COLUMNS)
         _write_baselines(baseline_df, baselines_path, status, status_path)
-        _write_missing_flagship_readme(artifact_dir, "equity_curve.csv missing timestamp")
+        _write_missing_flagship_readme(
+            artifact_dir, "equity_curve.csv missing timestamp"
+        )
         return baseline_df
 
-    equity_df["date"] = pd.to_datetime(equity_df["timestamp"], unit="ns", errors="coerce")
+    equity_df["date"] = pd.to_datetime(
+        equity_df["timestamp"], unit="ns", errors="coerce"
+    )
     equity_df["date"] = equity_df["date"].dt.normalize()
-    equity_df = equity_df.dropna(subset=["date"]).drop_duplicates("date").sort_values("date")
+    equity_df = (
+        equity_df.dropna(subset=["date"]).drop_duplicates("date").sort_values("date")
+    )
     if equity_df.empty:
         baseline_df = pd.DataFrame(columns=BASELINE_COLUMNS)
         _write_baselines(baseline_df, baselines_path, status, status_path)
-        _write_missing_flagship_readme(artifact_dir, "equity_curve.csv has no usable dates")
+        _write_missing_flagship_readme(
+            artifact_dir, "equity_curve.csv has no usable dates"
+        )
         return baseline_df
 
     if "returns" in equity_df.columns:
@@ -117,8 +125,13 @@ def compute_baselines(
     if flagship_returns.notna().any():
         status["flagship_net"] = {"status": "ok", "reason": "equity_curve.csv returns"}
     else:
-        status["flagship_net"] = {"status": "missing", "reason": "flagship returns unavailable"}
-        _write_missing_flagship_readme(artifact_dir, "flagship returns unavailable in equity_curve.csv")
+        status["flagship_net"] = {
+            "status": "missing",
+            "reason": "flagship returns unavailable",
+        }
+        _write_missing_flagship_readme(
+            artifact_dir, "flagship returns unavailable in equity_curve.csv"
+        )
 
     config_path = _resolve_config_path(artifact_dir)
     config_payload = _load_config_payload(config_path)
@@ -254,7 +267,9 @@ def compute_baseline_metrics(
             {
                 "Series": BASELINE_LABELS["flagship_net"],
                 **_metrics_from_returns(
-                    baselines["flagship_net"], periods_per_year=periods_per_year, hac_lags=hac_lags
+                    baselines["flagship_net"],
+                    periods_per_year=periods_per_year,
+                    hac_lags=hac_lags,
                 ),
                 "Turnover": _turnover_for("flagship_net"),
             }
@@ -277,11 +292,16 @@ def compute_baseline_metrics(
             }
         )
 
-    return pd.DataFrame(rows, columns=["Series", "Sharpe_HAC", "MaxDD", "CAGR", "Turnover"])
+    return pd.DataFrame(
+        rows, columns=["Series", "Sharpe_HAC", "MaxDD", "CAGR", "Turnover"]
+    )
 
 
 def render_baseline_table(metrics_df: pd.DataFrame) -> str:
-    lines = ["| Series | Sharpe_HAC | MaxDD | CAGR | Turnover |", "| --- | ---:| ---:| ---:| ---:|"]
+    lines = [
+        "| Series | Sharpe_HAC | MaxDD | CAGR | Turnover |",
+        "| --- | ---:| ---:| ---:| ---:|",
+    ]
     for row in metrics_df.itertuples(index=False):
         lines.append(
             "| {series} | {sharpe} | {maxdd} | {cagr} | {turnover} |".format(
@@ -374,7 +394,9 @@ def _resolve_config_path(artifact_dir: Path) -> Path | None:
                     return artifact_candidate
         except Exception:
             pass
-    yaml_files = sorted(list(artifact_dir.glob("*.yaml")) + list(artifact_dir.glob("*.yml")))
+    yaml_files = sorted(
+        list(artifact_dir.glob("*.yaml")) + list(artifact_dir.glob("*.yml"))
+    )
     return yaml_files[0] if yaml_files else None
 
 
@@ -387,8 +409,14 @@ def _load_config_payload(config_path: Path | None) -> dict[str, Any]:
         return {}
 
 
-def _resolve_data_path(config: Mapping[str, Any], config_path: Path | None) -> Path | None:
-    base = config.get("template") if isinstance(config.get("template"), Mapping) else config
+def _resolve_data_path(
+    config: Mapping[str, Any], config_path: Path | None
+) -> Path | None:
+    base = (
+        config.get("template")
+        if isinstance(config.get("template"), Mapping)
+        else config
+    )
     if not isinstance(base, Mapping):
         return None
     data_path = base.get("data_path") or base.get("data_dir") or base.get("data")
@@ -397,8 +425,14 @@ def _resolve_data_path(config: Mapping[str, Any], config_path: Path | None) -> P
     return _resolve_path(str(data_path), config_path)
 
 
-def _resolve_universe_path(config: Mapping[str, Any], config_path: Path | None) -> Path | None:
-    base = config.get("template") if isinstance(config.get("template"), Mapping) else config
+def _resolve_universe_path(
+    config: Mapping[str, Any], config_path: Path | None
+) -> Path | None:
+    base = (
+        config.get("template")
+        if isinstance(config.get("template"), Mapping)
+        else config
+    )
     if not isinstance(base, Mapping):
         return None
     strategy = base.get("strategy")
@@ -441,7 +475,9 @@ def _load_universe(path: Path) -> dict[pd.Timestamp, pd.DataFrame]:
     return universe
 
 
-def _collect_universe_symbols(universe: Mapping[pd.Timestamp, pd.DataFrame]) -> list[str]:
+def _collect_universe_symbols(
+    universe: Mapping[pd.Timestamp, pd.DataFrame],
+) -> list[str]:
     symbols: set[str] = set()
     for snapshot in universe.values():
         symbols.update([str(sym).upper() for sym in snapshot.index])
@@ -644,7 +680,10 @@ def _attach_market_proxy(
 ) -> pd.DataFrame:
     path, reason = _resolve_market_proxy_path(data_path)
     if path is None or not path.exists():
-        status["market_proxy"] = {"status": "missing", "reason": reason or "market proxy not found"}
+        status["market_proxy"] = {
+            "status": "missing",
+            "reason": reason or "market proxy not found",
+        }
         baselines["market_proxy"] = np.nan
         return baselines
 
@@ -658,7 +697,9 @@ def _attach_market_proxy(
     return baselines
 
 
-def _resolve_market_proxy_path(data_path: Path | None) -> tuple[Path | None, str | None]:
+def _resolve_market_proxy_path(
+    data_path: Path | None,
+) -> tuple[Path | None, str | None]:
     candidates: list[tuple[Path, str]] = []
     if data_path:
         candidates.extend(
@@ -695,12 +736,18 @@ def _load_proxy_returns(path: Path, calendar: pd.DatetimeIndex) -> pd.Series:
     df = df.dropna(subset=[date_col])
     df = df.set_index(date_col).sort_index()
 
-    return_cols = [col for col in df.columns if col.lower() in {"vwretd", "return", "returns", "ret"}]
+    return_cols = [
+        col
+        for col in df.columns
+        if col.lower() in {"vwretd", "return", "returns", "ret"}
+    ]
     if return_cols:
         series = df[return_cols[0]].astype(float)
         return series.reindex(calendar, fill_value=0.0)
 
-    price_cols = [col for col in df.columns if col.lower() in {"close", "price", "adj_close"}]
+    price_cols = [
+        col for col in df.columns if col.lower() in {"close", "price", "adj_close"}
+    ]
     if price_cols:
         prices = df[price_cols[0]].astype(float)
         prices = prices.reindex(calendar, method="ffill")
@@ -793,7 +840,9 @@ def _write_baselines(
 ) -> None:
     output = df.copy()
     if "date" in output.columns:
-        output["date"] = pd.to_datetime(output["date"], errors="coerce").dt.strftime("%Y-%m-%d")
+        output["date"] = pd.to_datetime(output["date"], errors="coerce").dt.strftime(
+            "%Y-%m-%d"
+        )
     baselines_path.write_text(output.to_csv(index=False), encoding="utf-8")
     status_path.write_text(json.dumps(status, indent=2), encoding="utf-8")
 

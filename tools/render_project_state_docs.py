@@ -3,6 +3,7 @@
 
 Stdlib only. Writes project_state/*.md with consistent metadata headers.
 """
+
 from __future__ import annotations
 
 import json
@@ -41,7 +42,9 @@ def utc_now() -> str:
 
 
 def git_sha() -> str:
-    return subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    return subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
+    ).strip()
 
 
 def git_branch() -> str:
@@ -235,9 +238,11 @@ def recent_run_summaries(root: Path, limit: int = 3) -> list[dict[str, str]]:
             {
                 "run": run_dir.name,
                 "summary": summary,
-                "results_path": results_path.relative_to(ROOT).as_posix()
-                if results_path.exists()
-                else "",
+                "results_path": (
+                    results_path.relative_to(ROOT).as_posix()
+                    if results_path.exists()
+                    else ""
+                ),
             }
         )
     return summaries
@@ -267,7 +272,9 @@ def wrds_caveat(results_text: str) -> str:
     return ""
 
 
-def render_architecture(symbol_index: dict[str, Any], inventory: list[dict[str, Any]]) -> str:
+def render_architecture(
+    symbol_index: dict[str, Any], inventory: list[dict[str, Any]]
+) -> str:
     core_modules = [
         "src/microalpha/engine.py",
         "src/microalpha/data.py",
@@ -336,14 +343,19 @@ DataHandler -> Engine -> Strategy -> Portfolio -> Broker -> Execution -> Artifac
 - WRDS helpers: `src/microalpha/wrds/` and `scripts/export_wrds_flagship.py`.
 """.format(
         module_notes="\n".join(module_notes),
-        artifact_lines="\n".join(artifact_lines) if artifact_lines else "- (no artifacts indexed)",
+        artifact_lines=(
+            "\n".join(artifact_lines) if artifact_lines else "- (no artifacts indexed)"
+        ),
     )
 
 
 def render_module_summaries(symbol_index: dict[str, Any]) -> str:
     rows = summarize_module_symbols(symbol_index)
 
-    table_lines = ["| Module | Docstring | Classes | Functions |", "| --- | --- | ---: | ---: |"]
+    table_lines = [
+        "| Module | Docstring | Classes | Functions |",
+        "| --- | --- | ---: | ---: |",
+    ]
     for row in rows:
         doc = row["module_doc"].replace("|", "\\|")
         table_lines.append(
@@ -381,7 +393,12 @@ def render_function_index(symbol_index: dict[str, Any]) -> str:
 
 def render_dependency_graph(import_graph: dict[str, list[str]]) -> str:
     total_edges = sum(len(v) for v in import_graph.values())
-    lines = ["# Dependency Graph", "", f"Internal import edges (microalpha.*): {total_edges}", ""]
+    lines = [
+        "# Dependency Graph",
+        "",
+        f"Internal import edges (microalpha.*): {total_edges}",
+        "",
+    ]
     lines.append("## Adjacency list (file -> internal imports)")
     for path in sorted(import_graph.keys()):
         imports = import_graph[path]
@@ -588,9 +605,7 @@ def render_current_results(
             for key, value in smoke_metrics.items():
                 smoke_block += f"  - {key}: {value}\n"
             smoke_block += "- Report: `reports/summaries/wrds_flagship_smoke.md`\n"
-        smoke_block += (
-            "- Note: Smoke run validates WRDS pipeline wiring; metrics are not interpretable for performance.\n"
-        )
+        smoke_block += "- Note: Smoke run validates WRDS pipeline wiring; metrics are not interpretable for performance.\n"
 
     progress_date, progress_entries = latest_progress_section(progress_text)
     progress_block = ""
@@ -669,7 +684,9 @@ def render_known_issues(progress_text: str, wrds_text: str) -> str:
         issues.append(f"From `PROGRESS.md`: {entry}")
 
     if not issues:
-        issues.append("No known issues recorded in `PROGRESS.md` or `docs/results_wrds.md`.")
+        issues.append(
+            "No known issues recorded in `PROGRESS.md` or `docs/results_wrds.md`."
+        )
 
     return "\n".join(["# Known Issues", ""] + [f"- {issue}" for issue in issues]) + "\n"
 
@@ -687,7 +704,12 @@ Based on `Plan.md`:
 
 
 def render_config_reference(config_paths: list[Path]) -> str:
-    lines = ["# Config Reference", "", "| Config | Top-level keys | Notes |", "| --- | --- | --- |"]
+    lines = [
+        "# Config Reference",
+        "",
+        "| Config | Top-level keys | Notes |",
+        "| --- | --- | --- |",
+    ]
     for path in config_paths:
         keys = top_level_keys_from_yaml(path)
         note = ""
@@ -836,14 +858,14 @@ def main() -> None:
         / "2025-10-30T18-39-47Z-a4ab8e7"
         / "metrics.json"
     )
-    sample_metrics = read_json(sample_metrics_path) if sample_metrics_path.exists() else {}
+    sample_metrics = (
+        read_json(sample_metrics_path) if sample_metrics_path.exists() else {}
+    )
     wfv_metrics = read_json(wfv_metrics_path) if wfv_metrics_path.exists() else {}
     holdout_root = ROOT / "artifacts" / "sample_wfv_holdout"
     holdout_dir = latest_run_dir(holdout_root)
     holdout_run = holdout_dir.name if holdout_dir else None
-    holdout_metrics_path = (
-        holdout_dir / "holdout_metrics.json" if holdout_dir else None
-    )
+    holdout_metrics_path = holdout_dir / "holdout_metrics.json" if holdout_dir else None
     holdout_metrics = (
         read_json(holdout_metrics_path)
         if holdout_metrics_path and holdout_metrics_path.exists()
@@ -856,9 +878,15 @@ def main() -> None:
     deps = []
     dep_match = re.search(r"dependencies\s*=\s*\[(.*?)\]", pyproject_text, re.S)
     if dep_match:
-        deps = [d.strip().strip('"') for d in dep_match.group(1).split(",") if d.strip()]
+        deps = [
+            d.strip().strip('"') for d in dep_match.group(1).split(",") if d.strip()
+        ]
 
-    test_files = [item["path"] for item in inventory if item.get("role") == "test" and item["path"].endswith('.py')]
+    test_files = [
+        item["path"]
+        for item in inventory
+        if item.get("role") == "test" and item["path"].endswith(".py")
+    ]
 
     changelog_text = read_text(ROOT / "CHANGELOG.md")
 
@@ -886,7 +914,9 @@ def main() -> None:
         "KNOWN_ISSUES.md": render_known_issues(progress_text, wrds_text),
         "ROADMAP.md": render_roadmap(),
         "CONFIG_REFERENCE.md": render_config_reference(config_paths),
-        "SERVER_ENVIRONMENT.md": render_server_environment(platform.python_version(), deps),
+        "SERVER_ENVIRONMENT.md": render_server_environment(
+            platform.python_version(), deps
+        ),
         "TEST_COVERAGE.md": render_test_coverage(test_files),
         "STYLE_GUIDE.md": render_style_guide(),
         "CHANGELOG.md": render_changelog(changelog_text),

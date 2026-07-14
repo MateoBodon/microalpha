@@ -231,7 +231,9 @@ def _prepare_factors(factor_csv: Path, required: Sequence[str]) -> pd.DataFrame:
 def _design_matrix(
     factors: pd.DataFrame, factor_names: Sequence[str], excess_returns: pd.Series
 ) -> tuple[np.ndarray, np.ndarray]:
-    aligned = factors[list(factor_names)].join(excess_returns.rename("excess"), how="inner")
+    aligned = factors[list(factor_names)].join(
+        excess_returns.rename("excess"), how="inner"
+    )
     aligned = aligned.dropna()
     if aligned.empty:
         raise ValueError("No overlapping dates between factors and returns")
@@ -275,7 +277,9 @@ def compute_factor_regression(
 
     model_key = model.lower()
     if model_key not in MODEL_FACTORS:
-        raise ValueError(f"Unknown factor model '{model}'. Valid options: {sorted(MODEL_FACTORS)}")
+        raise ValueError(
+            f"Unknown factor model '{model}'. Valid options: {sorted(MODEL_FACTORS)}"
+        )
 
     factor_names = MODEL_FACTORS[model_key]
     returns = _prepare_returns(equity_csv)
@@ -326,8 +330,12 @@ def _format_meta_line(meta: FactorRegressionMeta) -> str:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Run factor regressions on Microalpha artifacts")
-    parser.add_argument("artifact_dir", type=Path, help="Artifact directory containing equity_curve.csv")
+    parser = argparse.ArgumentParser(
+        description="Run factor regressions on Microalpha artifacts"
+    )
+    parser.add_argument(
+        "artifact_dir", type=Path, help="Artifact directory containing equity_curve.csv"
+    )
     parser.add_argument(
         "--factors",
         type=Path,
@@ -340,7 +348,9 @@ def main() -> None:
         default=None,
         help="Optional markdown file to write the regression table to",
     )
-    parser.add_argument("--hac-lags", type=int, default=5, help="Newey-West lag length (default: 5)")
+    parser.add_argument(
+        "--hac-lags", type=int, default=5, help="Newey-West lag length (default: 5)"
+    )
     parser.add_argument(
         "--model",
         choices=sorted(MODEL_FACTORS.keys()),
@@ -378,7 +388,9 @@ def main() -> None:
     print(_format_meta_line(output.meta))
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
-        args.output.write_text(table + "\n" + _format_meta_line(output.meta) + "\n", encoding="utf-8")
+        args.output.write_text(
+            table + "\n" + _format_meta_line(output.meta) + "\n", encoding="utf-8"
+        )
 
 
 if __name__ == "__main__":

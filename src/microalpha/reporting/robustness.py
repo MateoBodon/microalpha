@@ -46,6 +46,7 @@ def write_robustness_artifacts(
 # Cost sensitivity
 # ---------------------------------------------------------------------------
 
+
 def compute_cost_sensitivity(
     artifact_dir: Path | str,
     *,
@@ -88,14 +89,18 @@ def compute_cost_sensitivity(
         )
         commission_total = float(trades_df["commission"].sum())
         slippage_total = float(trades_df["slippage_cost"].sum())
-        cost_by_day = trades_df.groupby("date")[["commission", "slippage_cost"]].sum().sum(axis=1)
+        cost_by_day = (
+            trades_df.groupby("date")[["commission", "slippage_cost"]].sum().sum(axis=1)
+        )
 
     borrow_total = None
     metrics_path = artifact_dir / "metrics.json"
     if metrics_path.exists():
         try:
             metrics_payload = json.loads(metrics_path.read_text(encoding="utf-8"))
-            borrow_total = metrics_payload.get("borrow_cost_total") or metrics_payload.get("borrow_total")
+            borrow_total = metrics_payload.get(
+                "borrow_cost_total"
+            ) or metrics_payload.get("borrow_total")
             if borrow_total is not None:
                 borrow_total = float(borrow_total)
         except (OSError, ValueError, TypeError):
@@ -108,7 +113,9 @@ def compute_cost_sensitivity(
     for multiplier in multipliers:
         adjustment = (multiplier - 1.0) * (per_day_cost / prev_equity.to_numpy())
         adjusted_returns = returns - adjustment
-        metrics = _metrics_from_returns(adjusted_returns, periods_per_year=periods_per_year)
+        metrics = _metrics_from_returns(
+            adjusted_returns, periods_per_year=periods_per_year
+        )
         cost_drag = (base_metrics["cagr"] - metrics["cagr"]) * 10_000.0
         grid.append(
             {
@@ -175,6 +182,7 @@ def _metrics_from_returns(
 # ---------------------------------------------------------------------------
 # Metadata coverage
 # ---------------------------------------------------------------------------
+
 
 def compute_metadata_coverage(artifact_dir: Path | str) -> Mapping[str, object]:
     """Compute liquidity/financing metadata coverage for executed trades."""
@@ -245,7 +253,9 @@ def compute_metadata_coverage(artifact_dir: Path | str) -> Mapping[str, object]:
             missing_spread=~frame["has_spread"],
             missing_borrow=frame["short_side"] & ~frame["has_borrow"],
         )
-        .groupby("symbol")[["notional", "missing_adv", "missing_spread", "missing_borrow"]]
+        .groupby("symbol")[
+            ["notional", "missing_adv", "missing_spread", "missing_borrow"]
+        ]
         .agg(
             notional_missing_adv=("missing_adv", "sum"),
             notional_missing_spread=("missing_spread", "sum"),
@@ -291,6 +301,7 @@ def compute_metadata_coverage(artifact_dir: Path | str) -> Mapping[str, object]:
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _load_trades(trades_path: Path) -> pd.DataFrame:
     if trades_path.suffix == ".jsonl":
         records = []
@@ -327,7 +338,9 @@ def _load_config(config_path: Path) -> Mapping[str, object]:
         return yaml.safe_load(handle) or {}
 
 
-def _resolve_meta_path(config_path: Path | None, config: Mapping[str, object]) -> Path | None:
+def _resolve_meta_path(
+    config_path: Path | None, config: Mapping[str, object]
+) -> Path | None:
     meta_value = None
     if isinstance(config, Mapping):
         meta_value = config.get("meta_path") or config.get("meta")
@@ -359,7 +372,11 @@ def _extract_defaults(config: Mapping[str, object]) -> Mapping[str, float | None
         if isinstance(exec_block, Mapping):
             slippage = exec_block.get("slippage")
             if isinstance(slippage, Mapping):
-                return float(slippage.get(key)) if slippage.get(key) is not None else default
+                return (
+                    float(slippage.get(key))
+                    if slippage.get(key) is not None
+                    else default
+                )
         return default
 
     return {

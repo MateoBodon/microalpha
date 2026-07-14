@@ -43,6 +43,10 @@ def test_wrds_flagship_risk_limits_match_spec() -> None:
 
 
 def test_wrds_smoke_config_keeps_same_limits() -> None:
-    base = _extract_risk(yaml.safe_load(_BASE_CFG.read_text(encoding="utf-8"))["template"])
-    smoke = _extract_risk(yaml.safe_load(_SMOKE_CFG.read_text(encoding="utf-8"))["template"])
+    base = _extract_risk(
+        yaml.safe_load(_BASE_CFG.read_text(encoding="utf-8"))["template"]
+    )
+    smoke = _extract_risk(
+        yaml.safe_load(_SMOKE_CFG.read_text(encoding="utf-8"))["template"]
+    )
     assert base == smoke

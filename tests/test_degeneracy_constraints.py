@@ -28,8 +28,12 @@ def _write_prices(tmp_path: Path) -> Path:
     return data_dir
 
 
-def test_non_degenerate_rejects_zero_trade_selection(tmp_path: Path, monkeypatch) -> None:
-    monkeypatch.setitem(walkforward.STRATEGY_MAPPING, "NoTradeStrategy", NoTradeStrategy)
+def test_non_degenerate_rejects_zero_trade_selection(
+    tmp_path: Path, monkeypatch
+) -> None:
+    monkeypatch.setitem(
+        walkforward.STRATEGY_MAPPING, "NoTradeStrategy", NoTradeStrategy
+    )
     data_dir = _write_prices(tmp_path)
 
     config = {
@@ -54,5 +58,9 @@ def test_non_degenerate_rejects_zero_trade_selection(tmp_path: Path, monkeypatch
     cfg_path = tmp_path / "wfv_no_trade.yaml"
     cfg_path.write_text(yaml.safe_dump(config), encoding="utf-8")
 
-    with pytest.raises(ValueError, match="Non-degenerate constraints rejected all candidates"):
-        run_walk_forward(str(cfg_path), override_artifacts_dir=str(tmp_path / "artifacts"))
+    with pytest.raises(
+        ValueError, match="Non-degenerate constraints rejected all candidates"
+    ):
+        run_walk_forward(
+            str(cfg_path), override_artifacts_dir=str(tmp_path / "artifacts")
+        )

@@ -33,7 +33,9 @@ def _git_status_porcelain() -> str:
 def _stash_push(label: str) -> str:
     try:
         subprocess.check_output(
-            ["git", "stash", "push", "-u", "-m", label], text=True, stderr=subprocess.STDOUT
+            ["git", "stash", "push", "-u", "-m", label],
+            text=True,
+            stderr=subprocess.STDOUT,
         )
     except subprocess.CalledProcessError as exc:
         raise SystemExit(f"Failed to stash worktree: {exc.output}") from exc
@@ -392,7 +394,9 @@ def main() -> None:
         base, head, source = _derive_diff_range(meta_path)
         _write_commits(stage, base, head, source)
         diff_cmd = ["git", "diff", f"{base}..{head}"]
-        diff_text = subprocess.check_output(diff_cmd, text=True, stderr=subprocess.STDOUT)
+        diff_text = subprocess.check_output(
+            diff_cmd, text=True, stderr=subprocess.STDOUT
+        )
         diff_path.write_text(diff_text, encoding="utf-8")
         _verify_patch_matches(diff_path, stage, base, head, run_name)
 

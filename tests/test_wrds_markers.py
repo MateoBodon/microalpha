@@ -10,7 +10,9 @@ class DummyItem:
         self.keywords = {"wrds": wrds}
         self._markers: list[pytest.Mark] = []
 
-    def add_marker(self, marker: pytest.Mark) -> None:  # pragma: no cover - pytest interface shim
+    def add_marker(
+        self, marker: pytest.Mark
+    ) -> None:  # pragma: no cover - pytest interface shim
         self._markers.append(marker)
 
 
