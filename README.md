@@ -1,5 +1,7 @@
 # microalpha
 
+[![Documentation](https://img.shields.io/badge/docs-live-2563eb)](https://mateobodon.github.io/microalpha/)
+
 **A leakage-aware, event-driven research engine for turning quantitative ideas
 into timestamped, costed, reproducible evidence.**
 
