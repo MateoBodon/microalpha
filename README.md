@@ -1,7 +1,6 @@
 # microalpha
 
 [![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-0969da)](https://mateobodon.github.io/microalpha/)
-[![License: MIT](https://img.shields.io/badge/license-MIT-1a7f37)](LICENSE)
 
 **A leakage-aware, event-driven research engine for turning quantitative ideas
 into timestamped, costed, reproducible evidence.**
@@ -211,5 +210,5 @@ used in the analysis.
 
 ## License
 
-Code is available under the [MIT License](LICENSE). Data sources may carry
-separate restrictions; WRDS/CRSP data are not redistributed here.
+No open-source license is currently declared for this repository. Data sources
+may carry separate restrictions; WRDS/CRSP data are not redistributed here.
