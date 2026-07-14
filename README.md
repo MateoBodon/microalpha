@@ -1,6 +1,5 @@
 # microalpha
 
-[![CI](https://github.com/MateoBodon/microalpha/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/MateoBodon/microalpha/actions/workflows/ci.yml?query=branch%3Amain)
 [![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-0969da)](https://mateobodon.github.io/microalpha/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-1a7f37)](LICENSE)
 
