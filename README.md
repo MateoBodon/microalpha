@@ -1,197 +1,216 @@
 # microalpha
 
-[![CI](https://github.com/mateobodon/microalpha/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/mateobodon/microalpha/actions/workflows/ci.yml?query=branch%3Amain)
-[![Docs](https://img.shields.io/badge/docs-pages-blue)](https://mateobodon.github.io/microalpha)
-![Coverage](https://img.shields.io/badge/coverage-78%25-blue.svg)
+[![CI](https://github.com/MateoBodon/microalpha/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/MateoBodon/microalpha/actions/workflows/ci.yml?query=branch%3Amain)
+[![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-0969da)](https://mateobodon.github.io/microalpha/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-1a7f37)](LICENSE)
 
-**Leakage-safe, event-driven backtesting engine with walk-forward cross-validation, parameter optimisation, and production-grade reporting.**
+**A leakage-aware, event-driven research engine for turning quantitative ideas
+into timestamped, costed, reproducible evidence.**
 
-microalpha focuses on rigorous research hygiene: strict chronology enforcement, automated walk-forward reality checks, reproducible artefacts, and a publishing pipeline (MkDocs + GitHub Pages) ready for stakeholder hand-offs. Out of the box you get deterministic sample runs, a public-data configuration bundle, WRDS stubs, factor analytics, and a full test suite that refuses to pass if documentation links or generated visuals go missing.
+microalpha is built for the part of backtesting that is easiest to get wrong:
+chronology, point-in-time data, execution timing, model selection, transaction
+costs, and the boundary between an interesting validation result and a claim
+that is actually ready to publish.
 
----
+> **Status — research infrastructure, not a live trading system.** The public
+> sample workflows validate the engine and reporting path. The latest reviewed
+> licensed-data campaign remains pre-holdout: its 2023–2025 final holdout is
+> sealed, and no alpha or live-performance claim is made.
 
-## Latest Results (bundled sample data)
+## What it makes auditable
 
-| Run | Sharpe<sub>HAC</sub> | MAR | Max DD | RealityCheck *p*-value | Turnover |
-| --- | ---:| ---:| ---:| ---:| ---:|
-| Single backtest ([configs/flagship_sample.yaml](configs/flagship_sample.yaml)) | -0.66 | -0.41 | 17.26% | 0.861 | $1.21M |
-| Walk-forward ([configs/wfv_flagship_sample.yaml](configs/wfv_flagship_sample.yaml)) | 0.22 | 0.03 | 34.79% | 1.000 | $28.53M |
-
-_Source artefacts: `artifacts/sample_flagship/2025-10-30T18-39-31Z-a4ab8e7` and `artifacts/sample_wfv/2025-10-30T18-39-47Z-a4ab8e7`._
-
-![Sample Flagship Equity Curve](artifacts/sample_flagship/2025-10-30T18-39-31Z-a4ab8e7/equity_curve.png)
-![Sample Flagship Bootstrap Histogram](artifacts/sample_flagship/2025-10-30T18-39-31Z-a4ab8e7/bootstrap_hist.png)
-
-### Factor regression (FF3 sample bundle)
-
-| Factor | Beta | *t*-stat |
-| --- | ---:| ---:|
-| Alpha | -0.0055 | -1.42 |
-| Mkt_RF | 10.7236 | 1.74 |
-| SMB | 1.4014 | 0.12 |
-| HML | -13.1416 | -0.77 |
-
-Computed automatically against `data/factors/ff3_sample.csv` using HAC (Newey–West) standard errors. The sample factor bundle is weekly; reports explicitly resample returns to match factor frequency and record the frequency + sample size alongside the table. The table is injected into `reports/summaries/flagship_mom_wfv.md` when the factor CSV is present.
-
----
-
-## Project highlights
-
-- **Leakage-safe engine** – event-driven core (DataHandler ➝ Engine ➝ Portfolio ➝ Broker) with timestamp validation, t+1 fills, and lookahead guards enforced by tests.
-- **Out-of-sample discipline** – configurable walk-forward validation with Politis–White stationary bootstraps, per-fold metrics, and aggregated reality-check summaries.
-- **Visual + statistical reporting** – CLI renders equity/bootstrapped Sharpe PNGs, Markdown summaries, and optional factor regressions; README embeds the same artefacts.
-- **Data bundles for every stage** – deterministic sample universe, public ticker mini-panel, WRDS/CRSP configuration template, and FF3 factor snippets included in-repo.
-- **Production hygiene** – MkDocs documentation, GitHub Pages auto-deploy, Ruff/Mypy/Pytest/Coverage gates, schema tests that fail when artefacts disappear.
-
----
-
-## Getting started
-
-### Requirements
-- Python 3.12+
-- `pip` (recommended: virtual environment via `venv` or `conda`)
-- Optional: WRDS/CRSP exports (see [docs/wrds.md](docs/wrds.md))
-
-### Install
-```bash
-python -m venv .venv && source .venv/bin/activate
-pip install -e '.[dev]'
-```
-
-### Reproduce the flagship notebooks in two commands
-```bash
-make sample && make report          # single backtest artefacts + summary
-make wfv && make report-wfv         # walk-forward artefacts + summary + factors
-```
-Outputs appear under `artifacts/sample_flagship/<RUN_ID>` and `artifacts/sample_wfv/<RUN_ID>` with:
-
-```
-bootstrap.json       equity_curve.csv     equity_curve.png
-bootstrap_hist.png   exposures.csv        factor_exposure.csv
-metrics.json         trades.jsonl         (plus fold-by-fold CSVs for WFV)
-```
-
-`microalpha report` will emit Markdown summaries into `reports/summaries/` and embed HAC factor tables automatically when `data/factors/ff3_sample.csv` is present.
-
-### Public-data quickstart
-```bash
-microalpha wfv --config configs/wfv_flagship_public.yaml \
-  --out artifacts/public_wfv
-microalpha report --artifact-dir artifacts/public_wfv/<RUN_ID>
-```
-Prices live under `data/public/prices/` (AAPL, MSFT, AMZN, GOOGL, TSLA, NVDA); metadata is in `data/public/meta_public.csv`.
-
-### WRDS/CRSP workflow (guarded)
-1. Export WRDS DSF prices + security master to local paths.
-2. Point [`configs/wfv_flagship_wrds.yaml`](configs/wfv_flagship_wrds.yaml) at `$WRDS_DATA_ROOT` exports (env vars are expanded automatically).
-3. Run the guarded pipeline:
-
-   ```bash
-   make wfv-wrds && make report-wrds
-   python reports/analytics.py artifacts/wrds_flagship/<RUN_ID>
-   python reports/factors.py artifacts/wrds_flagship/<RUN_ID> --model ff5_mom
-   python reports/spa.py --grid artifacts/wrds_flagship/<RUN_ID>/grid_returns.csv
-   ```
-
-4. Drop the resulting PNG/MD/JSON artefacts into git (never WRDS raw data) and link them from [docs/results_wrds.md](docs/results_wrds.md).
-5. Consult [docs/wrds.md](docs/wrds.md) for schema tables, licensing notes, and survivorship guidance.
-
----
-
-## CLI cheatsheet
-
-| Command | Description |
+| Research risk | microalpha control |
 | --- | --- |
-| `microalpha run --config <cfg> --out <dir>` | Single backtest over the full sample.
-| `microalpha wfv --config <cfg> --out <dir>` | Walk-forward cross-validation with optional reality-check overrides.
-| `microalpha report --artifact-dir <dir>` | Produce PNGs + Markdown summary (factor table auto-added when factors set).
-| `microalpha info` | Emit environment + package metadata as JSON.
+| Lookahead and same-period execution | Timestamp validation, explicit signal/fill clocks, tested `t+1` fills |
+| Selection overfitting | Walk-forward folds, preregistered candidate sets, stationary-bootstrap reality checks |
+| Frictionless backtests | Commission, slippage, borrow, turnover, capacity, and stress-cost accounting |
+| Unreproducible results | Resolved configs, dataset/artifact manifests, run IDs, immutable metrics and trades |
+| Licensed-data leakage | Raw WRDS/CRSP data stays local; only reviewed aggregate evidence is publishable |
 
-See `microalpha --help` for full argument lists.
+## Quickstart
 
----
+Requires Python 3.12+.
 
-## Documentation
+```bash
+git clone https://github.com/MateoBodon/microalpha.git
+cd microalpha
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -e '.[dev]'
 
-- Live site: **https://mateobodon.github.io/microalpha** (auto-built via `.github/workflows/docs.yml`).
-- Local preview: `mkdocs serve`
-- Key pages: project overview (`docs/index.md`), flagship strategy walkthrough, reproducibility guarantees, leakage safety, WRDS guide, factor analytics.
+make sample
+make report
+```
 
----
+The sample run writes a self-describing artifact directory containing the
+resolved config, metrics, trades, exposures, equity curve, bootstrap result,
+and manifest. Run the walk-forward path with:
 
-## Quality gates & testing
+```bash
+make wfv
+make report-wfv
+```
+
+These bundled inputs are for deterministic software validation—not evidence of
+tradable performance.
+
+## Research flow
+
+```mermaid
+flowchart LR
+    A["Research question<br/>and frozen protocol"] --> B["Point-in-time data<br/>and source manifest"]
+    B --> C["Chronology guards<br/>and signal clock"]
+    C --> D["Event loop<br/>Strategy → Portfolio → Broker"]
+    D --> E["Walk-forward selection<br/>costs and stress tests"]
+    E --> F["Evidence bundle<br/>metrics · trades · config · hashes"]
+    F --> G{"Claim gate"}
+    G -->|pass| H["Reviewed aggregate result"]
+    G -->|fail| I["Preserved negative result"]
+```
+
+The engine keeps data access, signal formation, portfolio construction, and
+execution as separate steps so their timing assumptions can be tested directly.
+
+## Evidence, including negative results
+
+The latest aggregate-only research ledger is intentionally more useful than a
+single best backtest. Six frozen mechanisms were evaluated on a 2017–2022
+validation window while the 2023–2025 final holdout remained sealed.
+
+![Validation HAC Sharpe for six preregistered mechanisms; only the SEC cash-earnings candidate approaches the 0.50 promotion gate and it still fails the full gate set](docs/assets/portfolio/validation_frontier.svg)
+
+| Frozen mechanism | Net HAC Sharpe | Decision |
+| --- | ---: | --- |
+| Classic momentum baseline | 0.2407 | Baseline; validation proxy only |
+| Industry-residual momentum | 0.3198 | Rejected: improvement `0.0791` < required `0.10` |
+| Low volatility | -0.0906 | Rejected on return and drawdown gates |
+| One-month reversal | -0.4542 | Rejected; `63.27×` one-way turnover |
+| Annual QVPI composite | -0.0234 | Rejected; restatement/vintage caveat remains |
+| SEC cash-earnings acceleration | 0.4736 | Rejected: below `0.50`; harsh-cost Sharpe `-0.1034` |
+
+This is **validation evidence, not a final-holdout or alpha claim**. The strongest
+candidate was still rejected because the complete preregistered gate set did not
+pass. Exact windows, costs, uncertainty, manifest digests, and caveats are in the
+[public-safe research note](docs/portfolio_evidence_2026-07-11.md); chart values
+are also available as [CSV](docs/assets/portfolio/validation_frontier.csv).
+
+## Core capabilities
+
+- **Event-driven engine** — explicit data, strategy, portfolio, risk, broker,
+  and execution components with deterministic clocks.
+- **Walk-forward validation** — training/test folds, parameter selection,
+  per-fold outputs, and aggregate out-of-sample metrics.
+- **Inference** — HAC statistics, Politis–White stationary bootstrap, reality
+  checks, SPA tooling, and factor regressions.
+- **Execution realism** — `t+1` fills, commissions, slippage/impact models,
+  borrow costs, turnover controls, sector/industry caps, and capacity checks.
+- **Evidence packaging** — resolved YAML, data IDs, manifests, metrics, trades,
+  plots, and Markdown summaries designed to survive handoff and review.
+- **Data boundaries** — deterministic synthetic samples, a small public-data
+  path, and guarded adapters for local licensed research data.
+
+## CLI
 
 | Command | Purpose |
 | --- | --- |
-| `ruff check` | Linting + import hygiene.
-| `mypy src/microalpha/reporting/factors.py` | Type-check the reporting extension (fast path).
-| `pytest -q` | Run the 70+ unit/integration tests.
-| `pytest --cov=microalpha --cov-report=term` | Generate coverage (78% with bundled suites).
-| `mkdocs build` | Verify docs compile before deployment.
+| `microalpha run --config <yaml> --out <dir>` | Run one event-driven backtest |
+| `microalpha wfv --config <yaml> --out <dir>` | Run walk-forward validation |
+| `microalpha report --artifact-dir <run>` | Render plots and a Markdown result summary |
+| `microalpha info` | Print environment and package metadata as JSON |
 
-Tests include artefact schema validation (`tests/test_artifacts_schema.py`), CLI contract checks, docs-link verification, factor regression smoke tests, and the original leakage/t+1 safeguards.
+Example public-data workflow:
 
----
-
-## Architecture & methodology
-
-### Engine snapshot
-```
-Market data ➝ DataHandler ➝ Engine loop ➝ Strategy ➝ Portfolio ➝ Broker ➝ Trades
-```
-- **Strict chronology:** timestamps validated before signal handling; fills posted at `t+1` when configured.
-- **Portfolio & risk:** turnover caps, sector heat controls, Kelly-style scaling, pluggable slippage & commission models.
-- **Execution models:** TWAP, VWAP, linear/√-impact, Kyle λ, implementation shortfall, and LOB simulation with latency knobs.
-
-### Walk-forward pipeline
-1. Split train/test windows according to `walkforward` block.
-2. Optimise strategy hyper-parameters on training folds.
-3. Evaluate out-of-sample; capture per-fold metrics, exposures, trades.
-4. Run Politis–White stationary bootstrap across competing models.
-5. Persist a manifest (`folds.json`, `reality_check.json`, `metrics.json`) and summary tables.
-
-### Statistical toolkit
-- **HAC Sharpe estimates** with configurable lags.
-- **Bootstrap reality checks** aggregated across folds (stored in `bootstrap.json`).
-- **Factor regression helper** (`reports/factors_ff.py`) producing HAC *t*-stats for FF3-style alphas.
-
----
-
-## Data bundles
-
-| Bundle | Location | Contents |
-| --- | --- | --- |
-| Sample flagship | `data/sample/` | Synthetic-cross section (6 tickers), metadata, risk-free series. Used by default configs.
-| Public mini-panel | `data/public/` | 6 recognisable tickers (AAPL, MSFT, AMZN, GOOGL, TSLA, NVDA) with trimmed CSVs + metadata + universe file.
-| WRDS template | `configs/wfv_flagship_wrds.yaml` | Paths + schema expectations for CRSP DSF exports; guarded `make wrds` target.
-| Factors | `data/factors/ff3_sample.csv` | Weekly FF3 sample spanning 2020–2021 for regression demos.
-
----
-
-## Repository layout (selected)
-
-```
-artifacts/                # Committed sample runs powering the README & tests
-configs/                  # YAML configs (sample, public, WRDS)
-data/                     # Sample + public data bundles + factor CSV
-src/microalpha/           # Engine, strategies, reporting, CLI
-reports/                  # CLI entrypoints, summaries, factor utilities
-docs/                     # MkDocs content
-.tests/                   # Pytest suites guarding CLI, artefacts, leakage
+```bash
+microalpha wfv \
+  --config configs/wfv_flagship_public.yaml \
+  --out artifacts/public_wfv
+microalpha report --artifact-dir artifacts/public_wfv/<RUN_ID>
 ```
 
----
+The tiny public panel is a wiring/demo surface. Its latest audited run had zero
+trades and must not be used as a performance claim.
 
-## Contributing & next steps
+## Output contract
 
-- Issues and PRs welcome – ensure `pytest -q`, `ruff check`, and `mkdocs build` succeed locally.
-- Ideas for expansion:
-  - richer public datasets (e.g., macro factors, option metrics)
-  - portfolio attribution dashboards
-  - GPU-accelerated simulations for dense intraday data.
+A typical run includes:
 
----
+```text
+<RUN_ID>/
+├── config_resolved.yaml
+├── manifest.json
+├── metrics.json
+├── trades.jsonl
+├── exposures.csv
+├── equity_curve.csv
+├── equity_curve.png
+├── bootstrap.json
+└── folds.json              # walk-forward runs
+```
+
+The manifest binds the run to its config, software state, and dataset identity;
+reporting reads these artifacts rather than reconstructing results from prose.
+Committed examples are available under
+[`artifacts/sample_flagship`](artifacts/sample_flagship/) and
+[`artifacts/sample_wfv`](artifacts/sample_wfv/).
+
+## Licensed-data workflow
+
+WRDS/CRSP exports are never committed. A local user can point the guarded config
+at `WRDS_DATA_ROOT`, run the pipeline, and publish only reviewed aggregate
+artifacts:
+
+```bash
+make wfv-wrds
+make report-wrds
+python reports/analytics.py artifacts/wrds_flagship/<RUN_ID>
+python reports/spa.py --grid artifacts/wrds_flagship/<RUN_ID>/grid_returns.csv
+```
+
+See [the WRDS guide](docs/wrds.md) for schema, licensing, point-in-time, and
+survivorship requirements.
+
+## Repository map
+
+| Path | Role |
+| --- | --- |
+| `src/microalpha/` | Engine, data, strategies, execution, portfolio, risk, reporting |
+| `configs/` | Reproducible sample, public, and local licensed-data workflows |
+| `tests/` | Chronology, execution, reporting, artifact, and data-policy contracts |
+| `artifacts/` | Committed deterministic evidence used by docs and tests |
+| `docs/` | User documentation, methods, data rules, and evidence notes |
+| `reports/` | Analytics, factor, SPA, and summary entry points |
+
+## Validation
+
+```bash
+ruff check
+mypy src/microalpha/reporting/factors.py
+pytest -q
+mkdocs build --strict
+```
+
+Focused tests cover no-lookahead behavior, `t+1` execution, artifact schemas,
+CLI contracts, factor alignment, data policy, and documentation links.
+
+## Limitations
+
+- microalpha does not connect to a broker or claim live execution.
+- Public sample and mini-panel runs validate software behavior, not alpha.
+- Licensed-data results are reproducible only for authorized users with the
+  exact source snapshot; the repository publishes aggregates, not raw rows.
+- The latest pre-holdout research candidates all failed at least one frozen
+  promotion gate. The final 2023–2025 holdout remains sealed.
+- Historical artifacts can become stale; trust a result only when its manifest,
+  status label, and evidence note agree.
+
+## Contributing and citation
+
+Issues and focused pull requests are welcome. Preserve chronology, add a test
+for any changed timing assumption, and bind result claims to generated artifacts.
+For research use, cite the repository URL and the exact commit/artifact manifest
+used in the analysis.
 
 ## License
 
-MIT © Mateo Bodon. See [LICENSE](LICENSE).
+Code is available under the [MIT License](LICENSE). Data sources may carry
+separate restrictions; WRDS/CRSP data are not redistributed here.

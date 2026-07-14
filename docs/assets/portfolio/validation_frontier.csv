@@ -1,0 +1,7 @@
+mechanism,hac_sharpe,status
+Classic momentum baseline,0.2407,baseline_validation_proxy
+Industry-residual momentum,0.3198,rejected_margin_gate
+Point-in-time low volatility,-0.0906,rejected
+One-month reversal,-0.4542,rejected
+Annual QVPI composite,-0.0234,rejected
+SEC cash-earnings acceleration,0.4736,rejected_absolute_and_stress_gates
