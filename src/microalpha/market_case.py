@@ -123,8 +123,8 @@ def _metrics(returns: pd.Series) -> dict[str, float | int]:
         if sample_std > 0
         else 0.0
     )
-    equity = np.cumprod(1.0 + values)
-    drawdown = equity / np.maximum.accumulate(equity) - 1.0
+    equity: np.ndarray = np.cumprod(1.0 + values)
+    drawdown: np.ndarray = equity / np.maximum.accumulate(equity) - 1.0
     max_drawdown = float(np.min(drawdown))
     return {
         "observations": int(len(values)),

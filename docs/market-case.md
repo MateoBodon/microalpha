@@ -104,7 +104,7 @@ git diff --exit-code -- docs/assets/market_case
 The command is offline and deterministic. It regenerates the report, daily
 ledger, fold table, source manifest, selection distribution, JSON schema, SVGs,
 and receipt. The current receipt SHA-256 is
-`1c0e93a2c0e7cd5cabcbdf3310fae532ec5139f1adce3333ab7e78866e4295ac`.
+`c9bb33e6af50fca5f3ac3ae07254ae017751bfe47d00f4fa106708b28ccb3529`.
 
 ## Machine-readable artifacts
 

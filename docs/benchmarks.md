@@ -12,8 +12,8 @@ Python 3.12.2, Apple arm64:
 
 | Benchmark | Result | What is exercised |
 | --- | ---: | --- |
-| Market Risk Case, median of 3 clean directories | `45.7031 s` | 2,198-session report, bootstrap inference, SVGs, schemas, hashes |
-| Active engine, 100,000 market events | `12,513 events/s` | 10 symbols, target-weight resize, t+1 fills, commission ledger |
+| Market Risk Case, median of 3 clean directories | `23.8578 s` | 2,198-session report, bootstrap inference, SVGs, schemas, hashes |
+| Active engine, 100,000 market events | `16,516 events/s` | 10 symbols, target-weight resize, t+1 fills, commission ledger |
 | Active engine peak traced memory | `5.919 MB` | Same 100,000-event workload |
 
 The three report runs produced the same receipt. This receipt is a conservative

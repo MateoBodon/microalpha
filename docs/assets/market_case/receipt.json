@@ -13,7 +13,7 @@
   "claim_boundary": "retrospective public-factor risk-management evidence; no statistically confirmed alpha, security-level capacity, or live-trading claim",
   "generator": {
     "source_sha256": {
-      "market_case.py": "65c77d94956db6a819701d8035f130074ea2fdc864a77450d10fc9840adde0d3",
+      "market_case.py": "91ae477c99b3f82b8e7fe8a4214c41c024b158ccbee9fe7e6e820d0353beea18",
       "multiple_testing.py": "71ea17a709cffd3edc9bf01634b60ee8955efba3e939b1d64c8f88f2947faf89"
     },
     "version": "0.3.0"
