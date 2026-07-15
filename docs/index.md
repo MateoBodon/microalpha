@@ -1,48 +1,60 @@
 # Microalpha
 
-Microalpha is an event-driven research platform for reproducible quantitative strategy development. The engine prioritises leakage-safety, deterministic execution, and rich analytics so researchers can iterate quickly without sacrificing rigor.
+**A quantitative research audit lab that makes invalid backtests visibly fail.**
 
-## Why Microalpha?
+Microalpha separates market-data availability, signal time, portfolio state,
+execution events, cost accounting, model selection, and artifact provenance.
+The flagship Audit Lab injects four common research failures into deterministic
+synthetic data and proves the safe path removes them.
 
-- **Leakage-safe core**: strict timestamp ordering, FIFO broker interactions, and lookahead guards.
-- **Execution realism**: TWAP/impact models and a configurable level-2 limit order book.
-- **Reproducible pipelines**: manifest metadata, trade logs, and automation-ready CLI.
-- **Extensible design**: users can plug in new strategies, data handlers, and execution layers.
-- **Documentation-first**: MkDocs site with invariants, manifests, API references, and runnable demos.
+![Audit Lab paired results](assets/audit_lab/audit_lab.svg)
 
-## Quickstart
+## Run the proof
 
-1. **Install this repository from source**
+```bash
+git clone https://github.com/MateoBodon/microalpha.git
+cd microalpha
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install .
+microalpha audit-demo
+```
 
-   ```bash
-   git clone https://github.com/MateoBodon/microalpha.git
-   cd microalpha
-   python -m venv .venv
-   source .venv/bin/activate
-   pip install -e ".[dev]"
-   ```
+The output is tracked under `docs/assets/audit_lab/`. A correct clean run leaves
+that directory unchanged:
 
-   > The namesake package on PyPI is an unrelated third-party project. This
-   > repository has no public package release; use the source checkout above.
+```bash
+git diff --exit-code -- docs/assets/audit_lab
+```
 
-2. **Run the bundled mean-reversion backtest**
+Receipt SHA-256:
+`feb7e57ade26575942d10d21c4bd9c1a86724b2ab4f959bf1741eb46106b7b4b`.
 
-   ```bash
-   microalpha run -c configs/meanrev.yaml
-   ```
+Install from this repository: the namesake package on PyPI is an unrelated third-party project.
 
-   The CLI writes manifests, metrics, equity curves, and trade logs under `artifacts/<run_id>/`.
+## What the fixture proves
 
-3. **Explore further**
+| Audit | Naive | Safe | Enforcement |
+| --- | ---: | ---: | --- |
+| Revised value before availability | Sharpe `+20.53` | `−0.17` | 756 rows blocked |
+| Same-tick signal and fill | Sharpe `+21.89` | `+0.17` | queued t+1 fill |
+| Omitted costs | Sharpe `+0.57` | `−0.68` | four-part cost ledger |
+| Best of 128 noise models | Sharpe `+1.38` | OOS `−1.28` | corrected `p=0.601` |
 
-   - Inspect leakage invariants in [Leakage Safety](leakage-safety.md).
-   - Review reproducibility workflows in [Reproducibility](reproducibility.md).
-   - Extend components using the [API Reference](api.md).
-   - Try the scenarios in [Examples](examples.md).
+The planted positive control is detected at `p=0.001`. All results are synthetic
+software fixtures, never market or alpha claims.
 
-Use the navigation to dive into leakage guarantees, reproducibility tooling, API surfaces, and runnable examples.
+![Clock and hash lineage](assets/audit_lab/data_lineage.svg)
 
----
+## Product path
 
-These docs are deployed from the public `main` branch. The deployment commit is
-recorded in the repository's [Docs workflow](https://github.com/MateoBodon/microalpha/actions/workflows/docs.yml).
+1. [Audit Lab](audit-lab.md) — exact fixture, method, schemas, and hashes.
+2. [Architecture](architecture.md) — event scheduling and component boundaries.
+3. [API](api.md) — CLI and Python extension points.
+4. [Reproducibility](reproducibility.md) — manifests, deterministic evidence,
+   and clean-run checks.
+5. [Limitations](limitations.md) — what the system does not prove.
+
+The [research case study](portfolio_evidence_2026-07-11.md) shows the other side
+of the same discipline: six licensed-data mechanisms failed frozen promotion
+gates while the 2023–2025 confirmation set remained sealed.

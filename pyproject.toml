@@ -1,11 +1,20 @@
 [project]
 name = "microalpha"
-version = "0.1.0"
-description = "A event-driven backtesting engine for quantitative strategies."
+version = "0.2.0"
+description = "An event-driven quantitative research audit lab for chronology, costs, walk-forward evidence, and reproducibility."
 authors = [
     { name = "Mateo Bodon", email = "mateo.bodon@yale.edu" },
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10,<3.13"
+license = "MIT"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+]
 dependencies = [
     "numpy",
     "pandas",
@@ -69,3 +78,8 @@ where = ["src"]
 
 [project.scripts]
 microalpha = "microalpha.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/MateoBodon/microalpha"
+Documentation = "https://mateobodon.github.io/microalpha/"
+Issues = "https://github.com/MateoBodon/microalpha/issues"

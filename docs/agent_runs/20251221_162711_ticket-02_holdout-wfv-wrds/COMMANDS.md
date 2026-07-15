@@ -3,20 +3,20 @@
 ```
 sed -n '1,200p' docs/results_wrds_smoke.md
 sed -n '1,240p' Makefile
-ls /Volumes/Storage/Data
-ls /Volumes/Storage/Data/wrds
-ls /Volumes/Storage/Data/wrds/crsp
-ls /Volumes/Storage/Data/wrds/meta
-ls /Volumes/Storage/Data/wrds/universes
+ls <EXTERNAL_STORAGE>/Data
+ls <EXTERNAL_STORAGE>/Data/wrds
+ls <EXTERNAL_STORAGE>/Data/wrds/crsp
+ls <EXTERNAL_STORAGE>/Data/wrds/meta
+ls <EXTERNAL_STORAGE>/Data/wrds/universes
 date '+%Y%m%d_%H%M%S'
 mkdir -p docs/agent_runs/20251221_162711_ticket-02_holdout-wfv-wrds
 cat <<'EOF' > docs/agent_runs/20251221_162711_ticket-02_holdout-wfv-wrds/PROMPT.md
 User request:
 
-WRDS is available, i keep all WRDS raw data at /Volumes/Storage/Data ,look through, find, then continue
+WRDS is available, i keep all WRDS raw data at <EXTERNAL_STORAGE>/Data ,look through, find, then continue
 EOF
-WRDS_DATA_ROOT=/Volumes/Storage/Data/wrds make wfv-wrds-smoke
-WRDS_DATA_ROOT=/Volumes/Storage/Data/wrds make report-wrds-smoke
+WRDS_DATA_ROOT=<EXTERNAL_STORAGE>/Data/wrds make wfv-wrds-smoke
+WRDS_DATA_ROOT=<EXTERNAL_STORAGE>/Data/wrds make report-wrds-smoke
 ls artifacts/wrds_flagship_smoke/2025-12-21T21-28-14Z-33c9c2a | rg holdout
 rg -n "Latest run" -n docs/results_wrds_smoke.md
 python3 tools/build_project_state.py
@@ -52,7 +52,7 @@ cat <<'EOF' > docs/agent_runs/20251221_162711_ticket-02_holdout-wfv-wrds/RESULTS
 # Results
 
 Summary:
-- Located WRDS exports under `/Volumes/Storage/Data/wrds` with expected `crsp`, `meta`, and `universes` paths.
+- Located WRDS exports under `<EXTERNAL_STORAGE>/Data/wrds` with expected `crsp`, `meta`, and `universes` paths.
 - Ran WRDS holdout-capable smoke WFV; holdout artifacts were written alongside WFV outputs.
 - Rendered WRDS smoke report outputs and updated `docs/results_wrds_smoke.md` plus summary assets; regenerated project_state docs.
 
@@ -76,8 +76,8 @@ EOF
 cat <<'EOF' > docs/agent_runs/20251221_162711_ticket-02_holdout-wfv-wrds/TESTS.md
 # Tests
 
-- `WRDS_DATA_ROOT=/Volumes/Storage/Data/wrds make wfv-wrds-smoke` (pass)
-- `WRDS_DATA_ROOT=/Volumes/Storage/Data/wrds make report-wrds-smoke` (pass; warnings about pandas fillna and matplotlib tight_layout)
+- `WRDS_DATA_ROOT=<EXTERNAL_STORAGE>/Data/wrds make wfv-wrds-smoke` (pass)
+- `WRDS_DATA_ROOT=<EXTERNAL_STORAGE>/Data/wrds make report-wrds-smoke` (pass; warnings about pandas fillna and matplotlib tight_layout)
 - `pytest -q` (not run in this follow-up)
 EOF
 python3 - <<'PY'
@@ -95,12 +95,12 @@ meta = {
         "os": "macOS-26.0.1-arm64-arm-64bit",
         "python": "3.12.2",
         "pip_freeze_hash": "d155c3d7c2b41ef4ce242bfec462edd0db5be747333f4495a1e96c8a0252e525",
-        "notes": "WRDS exports located under /Volumes/Storage/Data/wrds",
+        "notes": "WRDS exports located under <EXTERNAL_STORAGE>/Data/wrds",
     },
     "data": {
         "mode": "wrds",
         "dataset_id": "wrds_smoke",
-        "wrds_data_root": "/Volumes/Storage/Data/wrds",
+        "wrds_data_root": "<EXTERNAL_STORAGE>/Data/wrds",
         "license_notes": "No raw WRDS data committed.",
     },
     "config": {
@@ -128,6 +128,6 @@ Path("docs/agent_runs/20251221_162711_ticket-02_holdout-wfv-wrds/META.json").wri
 )
 PY
 git add PROGRESS.md docs/results_wrds_smoke.md reports/summaries/wrds_flagship_smoke.md reports/summaries/wrds_flagship_smoke_factors.md reports/summaries/wrds_flagship_smoke_metrics.json docs/img/wrds_flagship_smoke/2025-12-21T21-28-14Z-33c9c2a project_state docs/agent_runs/20251221_162711_ticket-02_holdout-wfv-wrds
-git commit -m "ticket-02: run WRDS holdout smoke" -m "Tests: WRDS_DATA_ROOT=/Volumes/Storage/Data/wrds make wfv-wrds-smoke; WRDS_DATA_ROOT=/Volumes/Storage/Data/wrds make report-wrds-smoke" -m "Artifacts: artifacts/wrds_flagship_smoke/2025-12-21T21-28-14Z-33c9c2a/ (local only)" -m "Docs: PROGRESS.md, docs/results_wrds_smoke.md, reports/summaries/wrds_flagship_smoke*, docs/img/wrds_flagship_smoke/2025-12-21T21-28-14Z-33c9c2a/, docs/agent_runs/20251221_162711_ticket-02_holdout-wfv-wrds/"
+git commit -m "ticket-02: run WRDS holdout smoke" -m "Tests: WRDS_DATA_ROOT=<EXTERNAL_STORAGE>/Data/wrds make wfv-wrds-smoke; WRDS_DATA_ROOT=<EXTERNAL_STORAGE>/Data/wrds make report-wrds-smoke" -m "Artifacts: artifacts/wrds_flagship_smoke/2025-12-21T21-28-14Z-33c9c2a/ (local only)" -m "Docs: PROGRESS.md, docs/results_wrds_smoke.md, reports/summaries/wrds_flagship_smoke*, docs/img/wrds_flagship_smoke/2025-12-21T21-28-14Z-33c9c2a/, docs/agent_runs/20251221_162711_ticket-02_holdout-wfv-wrds/"
 git status -sb
 ```

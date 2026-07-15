@@ -1,222 +1,212 @@
 # microalpha
 
+[![CI](https://github.com/MateoBodon/microalpha/actions/workflows/ci.yml/badge.svg)](https://github.com/MateoBodon/microalpha/actions/workflows/ci.yml)
 [![Documentation](https://img.shields.io/badge/docs-live-2563eb)](https://mateobodon.github.io/microalpha/)
+[![Python 3.10–3.12](https://img.shields.io/badge/python-3.10–3.12-0ea5e9)](pyproject.toml)
+[![MIT License](https://img.shields.io/badge/license-MIT-22c55e)](LICENSE)
 
-**A leakage-aware, event-driven research engine for turning quantitative ideas
-into timestamped, costed, reproducible evidence.**
+**A quant research audit lab that catches four ways a backtest lies: data
+leakage, impossible execution, omitted costs, and selection overfitting.**
 
-microalpha is built for the part of backtesting that is easiest to get wrong:
-chronology, point-in-time data, execution timing, model selection, transaction
-costs, and the boundary between an interesting validation result and a claim
-that is actually ready to publish.
+Microalpha is an event-driven Python system for turning a quantitative idea
+into timestamped, costed, walk-forward evidence. Its flagship is not a profitable
+strategy. It is a deterministic, known-ground-truth fixture that proves the
+research pipeline rejects attractive results when they are invalid.
 
-> **Status — research infrastructure, not a live trading system.** The public
-> sample workflows validate the engine and reporting path. The latest reviewed
-> licensed-data campaign remains pre-holdout: its 2023–2025 final holdout is
-> sealed, and no alpha or live-performance claim is made.
+![Four paired Audit Lab results: leaky versus point-in-time data, same-tick versus queued execution, gross versus costed returns, and naive versus corrected selection](docs/assets/audit_lab/audit_lab.svg)
 
-| Completed evidence | Scope | Claim boundary |
-| --- | --- | --- |
-| Six frozen mechanisms | 2017–2022 validation | Every candidate was rejected by at least one preregistered gate |
-| Immutable run manifests | Config, data identity, code state, outputs | Aggregate public receipts; licensed rows remain local |
-| Final holdout | 2023–2025 | Sealed and not used in the reported economic evidence |
-
-## What it makes auditable
-
-| Research risk | microalpha control |
-| --- | --- |
-| Lookahead and same-period execution | Timestamp validation, explicit signal/fill clocks, tested `t+1` fills |
-| Selection overfitting | Walk-forward folds, preregistered candidate sets, stationary-bootstrap reality checks |
-| Frictionless backtests | Commission, slippage, borrow, turnover, capacity, and stress-cost accounting |
-| Unreproducible results | Resolved configs, dataset/artifact manifests, run IDs, immutable metrics and trades |
-| Licensed-data leakage | Raw WRDS/CRSP data stays local; only reviewed aggregate evidence is publishable |
-
-## Quickstart
-
-Requires Python 3.12+.
+## The 30-second proof
 
 ```bash
 git clone https://github.com/MateoBodon/microalpha.git
 cd microalpha
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install -e '.[dev]'
-
-make sample
-make report
+python -m venv .venv && source .venv/bin/activate
+python -m pip install .
+microalpha audit-demo
 ```
 
-The sample run writes a self-describing artifact directory containing the
-resolved config, metrics, trades, exposures, equity curve, bootstrap result,
-and manifest. Run the walk-forward path with:
+The command uses no network, provider, licensed data, or hidden holdout. It
+recreates the tracked evidence under `docs/assets/audit_lab/`.
 
-```bash
-make wfv
-make report-wfv
-```
+| Failure injected into the synthetic fixture | Naive result | Audited result | What stopped it |
+| --- | ---: | ---: | --- |
+| Revised value used before availability | Sharpe `+20.53` | `−0.17` | 756 unavailable rows blocked |
+| Same-tick signal and fill | Sharpe `+21.89` | `+0.17` | Fill queued until the t+1 market event |
+| Costs omitted from a planted control | Sharpe `+0.57` | `−0.68` | Commission, spread, impact, and borrow reconciled |
+| Best of 128 noise models | Sharpe `+1.38` | OOS `−1.28` | Walk-forward split; max-stat `p=0.601` |
 
-These bundled inputs are for deterministic software validation—not evidence of
-tradable performance.
+The separately labeled planted positive control passes at `p=0.001`, showing
+that the correction is capable of detecting a known effect rather than merely
+rejecting everything. These values are software-test outputs, not market
+performance or evidence of alpha.
 
-## Research flow
+Canonical receipt SHA-256:
+`feb7e57ade26575942d10d21c4bd9c1a86724b2ab4f959bf1741eb46106b7b4b`.
+The [receipt](docs/assets/audit_lab/receipt.json) binds the input fixture,
+generator version and source, and every JSON, CSV, and SVG artifact by hash.
+
+On the current Apple arm64 benchmark host, Audit Lab completed in a median
+`1.3745 s` across five runs and the no-op event loop processed `1,464,231`
+events/s. These are host-dependent engineering baselines, documented in the
+[benchmark receipt](docs/assets/audit_lab/benchmark.json), not correctness or
+performance promises.
+
+## What is engineered, not asserted
+
+![Audit lineage from synthetic oracle through availability gate, event queue, cost ledger, and SHA-256 receipt](docs/assets/audit_lab/data_lineage.svg)
+
+- **Point-in-time discipline** — `require_point_in_time` fails closed on
+  `available_at > decision_at` and reports exact violating row IDs and counts;
+  production data manifests retain source lineage.
+- **Event-time execution** — orders become planned execution slices; future
+  fills cannot change cash, positions, turnover, P&L, or logs before their
+  market event is processed.
+- **Configurable execution costs** — commission, spread, slippage/impact,
+  borrow, turnover, exposure, and capacity controls. These are simulation
+  models, not claims of venue calibration.
+- **Walk-forward evaluation** — parameter selection is isolated from test and
+  holdout windows, with fold-level manifests and artifacts.
+- **Selection control** — candidate-minus-benchmark returns are null-centered
+  and synchronously resampled for a max-statistic test that preserves
+  cross-model dependence.
+- **Artifact provenance** — generator source, version, seed, schema, inputs,
+  and canonical outputs are hash-bound. The Audit Lab excludes clocks, hosts,
+  and absolute paths, so clean directories reproduce identical bytes.
+
+Audit Lab uses transparent NumPy oracle constructions so each injected failure
+has known ground truth. Production event scheduling is exercised separately by
+the [future-fill regression test](tests/test_tplus1_execution.py); the shared
+max-statistic implementation is covered by
+[selection-control tests](tests/test_multiple_testing.py).
+
+## Architecture
 
 ```mermaid
 flowchart LR
-    A["Research question<br/>and frozen protocol"] --> B["Point-in-time data<br/>and source manifest"]
-    B --> C["Chronology guards<br/>and signal clock"]
-    C --> D["Event loop<br/>Strategy → Portfolio → Broker"]
-    D --> E["Walk-forward selection<br/>costs and stress tests"]
-    E --> F["Evidence bundle<br/>metrics · trades · config · hashes"]
-    F --> G{"Claim gate"}
-    G -->|pass| H["Reviewed aggregate result"]
-    G -->|fail| I["Preserved negative result"]
+    A["Point-in-time data<br/>availability + lineage"] --> B["Strategy<br/>signal at event t"]
+    B --> C["Portfolio + risk<br/>sizing and constraints"]
+    C --> D["Execution plan<br/>queued slices"]
+    D --> E["Broker fill<br/>only when event arrives"]
+    E --> F["Cost + P&L ledger<br/>exact reconciliation"]
+    F --> G["Walk-forward evidence<br/>benchmark + max statistic"]
+    G --> H["Artifact receipt<br/>schemas + SHA-256"]
 ```
 
-The engine keeps data access, signal formation, portfolio construction, and
-execution as separate steps so their timing assumptions can be tested directly.
+Data access, signal formation, portfolio construction, execution, inference,
+and claim gating remain separate so each timing assumption has a testable
+boundary. See the [architecture guide](docs/architecture.md) and
+[Audit Lab methodology](docs/audit-lab.md).
 
-## Evidence, including negative results
-
-The latest completed economic ledger (as of **2026-07-11**) is intentionally
-more useful than a single best backtest. Six frozen mechanisms were evaluated
-on a 2017–2022 validation window while the 2023–2025 final holdout remained
-sealed. Newer SEC 13F pipeline work is infrastructure progress, not newer
-economic evidence.
-
-![Validation HAC Sharpe for six preregistered mechanisms; only the SEC cash-earnings candidate approaches the 0.50 promotion gate and it still fails the full gate set](docs/assets/portfolio/validation_frontier.svg)
-
-| Frozen mechanism | Net HAC Sharpe | Decision |
-| --- | ---: | --- |
-| Classic momentum baseline | 0.2407 | Baseline; validation proxy only |
-| Industry-residual momentum | 0.3198 | Rejected: improvement `0.0791` < required `0.10` |
-| Low volatility | -0.0906 | Rejected on return and drawdown gates |
-| One-month reversal | -0.4542 | Rejected; `63.27×` one-way turnover |
-| Annual QVPI composite | -0.0234 | Rejected; restatement/vintage caveat remains |
-| SEC cash-earnings acceleration | 0.4736 | Rejected: below `0.50`; harsh-cost Sharpe `-0.1034` |
-
-This is **validation evidence, not a final-holdout or alpha claim**. The strongest
-candidate was still rejected because the complete preregistered gate set did not
-pass. Exact windows, costs, uncertainty, manifest digests, and caveats are in the
-[public-safe research note](docs/portfolio_evidence_2026-07-11.md); chart values
-are also available as [CSV](docs/assets/portfolio/validation_frontier.csv).
-
-## Core capabilities
-
-- **Event-driven engine** — explicit data, strategy, portfolio, risk, broker,
-  and execution components with deterministic clocks.
-- **Walk-forward validation** — training/test folds, parameter selection,
-  per-fold outputs, and aggregate out-of-sample metrics.
-- **Inference** — HAC statistics, Politis–White stationary bootstrap, reality
-  checks, SPA tooling, and factor regressions.
-- **Execution realism** — `t+1` fills, commissions, slippage/impact models,
-  borrow costs, turnover controls, sector/industry caps, and capacity checks.
-- **Evidence packaging** — resolved YAML, data IDs, manifests, metrics, trades,
-  plots, and Markdown summaries designed to survive handoff and review.
-- **Data boundaries** — deterministic synthetic samples, a small public-data
-  path, and guarded adapters for local licensed research data.
-
-## CLI
+## CLI and Python API
 
 | Command | Purpose |
 | --- | --- |
-| `microalpha run --config <yaml> --out <dir>` | Run one event-driven backtest |
-| `microalpha wfv --config <yaml> --out <dir>` | Run walk-forward validation |
-| `microalpha report --artifact-dir <run>` | Render plots and a Markdown result summary |
+| `microalpha audit-demo` | Rebuild the deterministic correctness fixture and receipt |
+| `microalpha --version` | Print the installed distribution version |
+| `microalpha run --config <yaml> --out <dir>` | Run one event-driven simulation |
+| `microalpha wfv --config <yaml> --out <dir>` | Run walk-forward selection and evaluation |
+| `microalpha report --artifact-dir <run>` | Render a report from an existing artifact set |
 | `microalpha info` | Print environment and package metadata as JSON |
 
-Example public-data workflow:
+The same demo is available as a Python API:
+
+```python
+from microalpha.audit_lab import run_audit_lab
+
+result = run_audit_lab("my-audit-evidence")
+print(result["receipt_sha256"])
+```
+
+Core extension points cover strategies, data handlers, portfolio policies,
+execution models, slippage, reporting, and statistical controls. See the
+[API guide](docs/api.md) and [examples](docs/examples.md).
+
+## Reproduce and verify
 
 ```bash
-microalpha wfv \
-  --config configs/wfv_flagship_public.yaml \
-  --out artifacts/public_wfv
-microalpha report --artifact-dir artifacts/public_wfv/<RUN_ID>
+# User-facing proof
+microalpha audit-demo
+git diff --exit-code -- docs/assets/audit_lab
+
+# Contributor gates
+python -m pip install -e '.[dev]'
+ruff check .
+black --check .
+isort --check-only .
+mypy --follow-imports=skip \
+  src/microalpha/audit_lab.py src/microalpha/multiple_testing.py \
+  src/microalpha/engine.py src/microalpha/execution.py \
+  src/microalpha/reporting/factors.py
+pytest -m "not wrds" --cov=microalpha --cov-report=term-missing
+python scripts/check_data_policy.py
+git ls-files -z README.md PROJECT.md pyproject.toml LICENSE CHANGELOG.md \
+  Makefile 'src/**' 'tests/**' 'scripts/**' '.github/**' \
+  docs/index.md docs/audit-lab.md docs/architecture.md docs/api.md \
+  docs/examples.md docs/reproducibility.md docs/leakage-safety.md \
+  docs/benchmarks.md docs/limitations.md docs/portfolio_evidence_2026-07-11.md \
+  docs/wrds.md docs/flagship_momentum_wrds.md docs/results_wrds.md docs/factors.md \
+  'docs/assets/audit_lab/**' \
+  | xargs -0 detect-secrets-hook --baseline .secrets.baseline
+mkdocs build --strict
 ```
 
-The tiny public panel is a wiring/demo surface. Its latest audited run had zero
-trades and must not be used as a performance claim.
+CI runs the supported Python matrix and enforces lint, format, types, secret
+scanning, tests, coverage, deterministic Audit Lab regeneration, and strict docs.
 
-## Output contract
+Two earlier synthetic example bundles remain available for schema and reporting
+inspection: [`artifacts/sample_flagship`](artifacts/sample_flagship) and
+[`artifacts/sample_wfv`](artifacts/sample_wfv). They are historical examples;
+the Audit Lab above is the canonical product demonstration.
 
-A typical run includes:
+## Honest research case study
 
-```text
-<RUN_ID>/
-├── config_resolved.yaml
-├── manifest.json
-├── metrics.json
-├── trades.jsonl
-├── exposures.csv
-├── equity_curve.csv
-├── equity_curve.png
-├── bootstrap.json
-└── folds.json              # walk-forward runs
-```
+Microalpha was also used for a preregistered 2017–2022 licensed-data research
+campaign. Six frozen mechanisms—including momentum, residual momentum, low
+volatility, reversal, a fundamentals composite, and an SEC cash-earnings
+candidate—each failed at least one promotion gate. The strongest development
+candidate reached net HAC Sharpe `0.4736`, missed the `0.50` threshold, and
+failed harsh costs at `−0.1034`. The 2023–2025 confirmation set remains sealed.
 
-The manifest binds the run to its config, software state, and dataset identity;
-reporting reads these artifacts rather than reconstructing results from prose.
-Committed examples are available under
-[`artifacts/sample_flagship`](artifacts/sample_flagship/) and
-[`artifacts/sample_wfv`](artifacts/sample_wfv/).
-
-## Licensed-data workflow
-
-WRDS/CRSP exports are never committed. A local user can point the guarded config
-at `WRDS_DATA_ROOT`, run the pipeline, and publish only reviewed aggregate
-artifacts:
-
-```bash
-make wfv-wrds
-make report-wrds
-python reports/analytics.py artifacts/wrds_flagship/<RUN_ID>
-python reports/spa.py --grid artifacts/wrds_flagship/<RUN_ID>/grid_returns.csv
-```
-
-See [the WRDS guide](docs/wrds.md) for schema, licensing, point-in-time, and
-survivorship requirements.
+That is a feature of the project, not an embarrassing footnote: the system
+preserved a negative result instead of retuning until a chart looked good. Read
+the [public-safe case study](docs/portfolio_evidence_2026-07-11.md). Licensed
+rows are not distributed.
 
 ## Repository map
 
 | Path | Role |
 | --- | --- |
-| `src/microalpha/` | Engine, data, strategies, execution, portfolio, risk, reporting |
+| `src/microalpha/` | Engine, events, data, strategies, execution, portfolio, risk, inference, reporting |
+| `tests/` | Chronology, execution, holdout, statistics, artifact, CLI, and data-policy contracts |
+| `docs/assets/audit_lab/` | Generated public correctness evidence and SHA-256 receipt |
 | `configs/` | Reproducible sample, public, and local licensed-data workflows |
-| `tests/` | Chronology, execution, reporting, artifact, and data-policy contracts |
-| `artifacts/` | Committed deterministic evidence used by docs and tests |
-| `docs/` | User documentation, methods, data rules, and evidence notes |
-| `reports/` | Analytics, factor, SPA, and summary entry points |
+| `docs/` | Product guides, methodology, API, limitations, and historical case study |
+| `artifacts/` | Run-scoped simulation outputs; most generated paths remain untracked |
 
-## Validation
+Historical project logs remain available for provenance, but a new user should
+start with **Audit Lab → Architecture → API → Reproducibility → Limitations**.
 
-```bash
-ruff check
-mypy src/microalpha/reporting/factors.py
-pytest -q
-mkdocs build --strict
-```
+## Limits and claim boundary
 
-Focused tests cover no-lookahead behavior, `t+1` execution, artifact schemas,
-CLI contracts, factor alignment, data policy, and documentation links.
+- Microalpha is research software, not a broker, execution venue, or live
+  trading system.
+- The Audit Lab is synthetic and deliberately adversarial. Its positive controls
+  are not evidence of market predictability.
+- Cost and impact models are configurable simulations; they are not calibrated
+  to every asset, venue, or order type.
+- Point-in-time safety ultimately depends on correct source availability
+  metadata. A manifest cannot repair an incorrectly labeled dataset.
+- Licensed-data research is reproducible only for authorized users with the
+  exact source snapshot; raw WRDS/CRSP/OptionMetrics data is never published.
+- No public package is published to PyPI because that distribution name belongs
+  to an unrelated project. Install this repository from source or a GitHub
+  release artifact.
 
-## Limitations
-
-- microalpha does not connect to a broker or claim live execution.
-- Public sample and mini-panel runs validate software behavior, not alpha.
-- Licensed-data results are reproducible only for authorized users with the
-  exact source snapshot; the repository publishes aggregates, not raw rows.
-- The latest pre-holdout research candidates all failed at least one frozen
-  promotion gate. The final 2023–2025 holdout remains sealed.
-- Historical artifacts can become stale; trust a result only when its manifest,
-  status label, and evidence note agree.
-
-## Contributing and citation
-
-Issues and focused pull requests are welcome. Preserve chronology, add a test
-for any changed timing assumption, and bind result claims to generated artifacts.
-For research use, cite the repository URL and the exact commit/artifact manifest
-used in the analysis.
+More detail: [limitations](docs/limitations.md), [data policy](docs/wrds.md), and
+[reproducibility](docs/reproducibility.md).
 
 ## License
 
-No open-source license is currently declared for this repository. Data sources
-may carry separate restrictions; WRDS/CRSP data are not redistributed here.
+Code is available under the [MIT License](LICENSE). Data sources and generated
+research inputs may carry separate restrictions; the license does not grant
+rights to third-party datasets.

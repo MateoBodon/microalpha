@@ -7,7 +7,7 @@
   "numpy_version": "2.2.6",
   "pandas_version": "2.2.3",
   "seed": 321,
-  "config_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/configs/wfv_flagship_sample_holdout.yaml",
+  "config_path": "<HOME>/Documents/Programming/Projects/microalpha/configs/wfv_flagship_sample_holdout.yaml",
   "config_sha256": "d07891662ad83d8447eabd803a80f6616b101f3fc4334bd7c43052cb1552ed6a",
   "config_summary": {
     "risk_caps": {
@@ -51,7 +51,7 @@
       "skip_months": 1
     },
     "selected_params_full": {
-      "universe_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/data/sample/universe_sample.csv",
+      "universe_path": "<HOME>/Documents/Programming/Projects/microalpha/data/sample/universe_sample.csv",
       "lookback_months": 6,
       "skip_months": 1,
       "top_frac": 0.35,
@@ -70,8 +70,8 @@
         "ZETA"
       ]
     },
-    "selection_summary_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/selection_summary.json",
-    "holdout_metrics_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/holdout_metrics.json",
-    "holdout_manifest_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/holdout_manifest.json"
+    "selection_summary_path": "<HOME>/Documents/Programming/Projects/microalpha/artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/selection_summary.json",
+    "holdout_metrics_path": "<HOME>/Documents/Programming/Projects/microalpha/artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/holdout_metrics.json",
+    "holdout_manifest_path": "<HOME>/Documents/Programming/Projects/microalpha/artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/holdout_manifest.json"
   }
 }

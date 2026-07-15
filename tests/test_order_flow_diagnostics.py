@@ -19,8 +19,18 @@ def _write_prices(tmp_path, symbol, dates, prices):
 
 
 def test_order_flow_diagnostics_populated(tmp_path):
-    _write_prices(tmp_path, "AAA", ["2020-01-31", "2020-02-03"], [50.0, 52.0])
-    _write_prices(tmp_path, "BBB", ["2020-01-31", "2020-02-03"], [60.0, 61.0])
+    _write_prices(
+        tmp_path,
+        "AAA",
+        ["2020-01-31", "2020-02-03", "2020-02-04"],
+        [50.0, 52.0, 52.5],
+    )
+    _write_prices(
+        tmp_path,
+        "BBB",
+        ["2020-01-31", "2020-02-03", "2020-02-04"],
+        [60.0, 61.0, 61.5],
+    )
 
     universe_path = tmp_path / "universe.csv"
     pd.DataFrame(
@@ -64,7 +74,7 @@ def test_order_flow_diagnostics_populated(tmp_path):
     payload = order_flow.payload()
 
     assert payload["entries"]
-    entry = payload["entries"][0]
+    entry = max(payload["entries"], key=lambda item: item["orders_created_count"])
     assert entry["selected_long"] >= 1
     assert entry["target_weights_nonzero_count"] >= 1
     assert entry["orders_created_count"] >= 1

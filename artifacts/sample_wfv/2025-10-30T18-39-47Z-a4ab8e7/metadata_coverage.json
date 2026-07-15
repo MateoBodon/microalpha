@@ -1,5 +1,5 @@
 {
-  "meta_source": "/Users/mateobodon/Documents/Programming/Projects/microalpha/data/sample/meta_sample.csv",
+  "meta_source": "<HOME>/Documents/Programming/Projects/microalpha/data/sample/meta_sample.csv",
   "coverage": {
     "pct_notional_with_adv": 1.0,
     "pct_notional_with_spread": 1.0,

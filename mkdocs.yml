@@ -7,16 +7,40 @@ theme:
     - navigation.sections
 nav:
   - Home: index.md
-  - Flagship Strategy: flagship_strategy.md
+  - Audit Lab: audit-lab.md
+  - Architecture: architecture.md
+  - API & CLI: api.md
   - Examples: examples.md
   - Reproducibility: reproducibility.md
   - Leakage Safety: leakage-safety.md
-  - WRDS & Real Data: wrds.md
-  - WRDS Flagship Spec: flagship_momentum_wrds.md
-  - WRDS Results: results_wrds.md
-  - Factors: factors.md
+  - Benchmarks: benchmarks.md
+  - Limitations: limitations.md
+  - Research case study: portfolio_evidence_2026-07-11.md
+  - Licensed-data research:
+      - Data policy: wrds.md
+      - Strategy specification: flagship_momentum_wrds.md
+      - Historical results: results_wrds.md
+      - Factor analysis: factors.md
 extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/MateoBodon/microalpha
 docs_dir: docs
+not_in_nav: |
+  /agent_runs/**
+  /gpt_outputs/**
+  /prompts/**
+  /portfolio/**
+  /tickets/**
+  /CODEX_SPRINT_TICKETS.md
+  /DECISIONS.md
+  /DOCS_AND_LOGGING_SYSTEM.md
+  /NOW.md
+  /PLAN_OF_RECORD.md
+  /RUNBOOK.md
+  /RUN_REGISTRY.md
+  /TICKETS.md
+  /data_sp500.md
+  /flagship_strategy.md
+  /results_wrds_resume.md
+  /results_wrds_smoke.md

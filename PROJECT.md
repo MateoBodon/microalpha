@@ -2,37 +2,38 @@
 
 ## Project Profile
 - Name: microalpha
-- One-liner: Leakage-safe, event-driven backtesting engine with walk-forward cross-validation and reporting.
-- Type: research/trading
+- One-liner: Quant research audit lab that makes leakage, impossible execution, omitted costs, and selection overfitting visibly fail.
+- Type: quantitative engineering / research infrastructure
 - Risk tier: high
 - Primary languages: Python
 - External dependencies / services: WRDS/CRSP exports (optional), MkDocs (docs site)
 
 ## Goals (what “done” looks like)
-- Leakage-safe backtesting and walk-forward validation with reproducible artifacts.
-- Sample/public data runs plus an optional WRDS pipeline for real data.
-- Report generation (plots + Markdown summaries) suitable for audit/review.
+- One-command, deterministic Audit Lab evidence with known ground truth and a SHA-256 receipt.
+- Event-scheduled execution, point-in-time availability, explicit cost reconciliation, and benchmark-differential selection correction.
+- Clean-clone install, usable CLI/API, green multi-version CI, and product-first docs.
+- Honest public case studies; a negative research result is preserved instead of tuned away.
 
 ## Non-goals (explicitly out of scope)
 - Live trading execution or brokerage integration.
 - Guaranteed alpha discovery or performance claims.
 
 ## Current state
-- What works: sample/public configs, WFV runs, reporting, docs + tests.
-- What’s missing: real-data runs require local WRDS exports and credentials.
-- What’s broken: see `project_state/KNOWN_ISSUES.md` for open issues.
-- Biggest risks: leakage/survivorship bias, missing WRDS data, misreported results.
+- What works: deterministic Audit Lab, sample/public configs, WFV runs, reporting, docs, CLI/API, and tests.
+- Optional: licensed-data workflows require authorized local exports and never ship raw rows.
+- Historical research: six frozen mechanisms failed promotion gates; 2023–2025 remains sealed.
+- Biggest risks: incorrect source availability metadata, survivorship bias, uncalibrated simulation costs, and claims stronger than receipts.
 
 ## Quickstart (how to run)
-- `python -m venv .venv && source .venv/bin/activate && pip install -e '.[dev]'`
-- `make sample && make report`
-- `make wfv && make report-wfv`
-- `pytest -q`
+- `python -m venv .venv && source .venv/bin/activate && pip install .`
+- `microalpha audit-demo`
+- `git diff --exit-code -- docs/assets/audit_lab`
+- Contributors: `pip install -e '.[dev]' && pytest -q`
 
 ## Architecture (high-level)
 - Modules: `src/microalpha/` (engine, data, strategies, reporting, CLI).
-- Data flow: DataHandler -> Engine -> Strategy -> Portfolio -> Broker -> Trades.
-- Key invariants: strict chronology, t+1 execution, point-in-time universe.
+- Data flow: DataHandler -> Engine clock -> Strategy -> Portfolio -> ExecutionPlan -> Broker/materialized FillEvent -> Evidence receipt.
+- Key invariants: availability at decision time, no early fill mutation, exact cost reconciliation, isolated test/holdout windows, synchronous null-centered selection correction.
 
 ## Constraints / preferences
 - Performance constraints: deterministic runs; prefer reproducible pipelines.

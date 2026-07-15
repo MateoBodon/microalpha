@@ -57,6 +57,7 @@ class OrderFlowDiagnostics:
 
     _entries: Dict[str, Dict[str, Any]] = field(default_factory=dict)
     _active_key: str | None = None
+    _order_keys: Dict[int, str] = field(default_factory=dict)
     _errors: List[str] = field(default_factory=list)
 
     def _entry_for_key(self, key: str) -> Dict[str, Any]:
@@ -75,6 +76,8 @@ class OrderFlowDiagnostics:
     ) -> str:
         if self._active_key is not None:
             return self._active_key
+        if order is not None and id(order) in self._order_keys:
+            return self._order_keys[id(order)]
         if signal is not None:
             return _signal_rebalance_key(signal, signal.timestamp)
         if order is not None:
@@ -148,6 +151,7 @@ class OrderFlowDiagnostics:
         self, order: OrderEvent, signal: SignalEvent | None = None
     ) -> None:
         key = self._resolve_key(signal=signal, order=order)
+        self._order_keys[id(order)] = key
         entry = self._entry_for_key(key)
         entry["orders_created_count"] = int(entry["orders_created_count"]) + 1
         if abs(int(getattr(order, "qty", 0) or 0)) > 0:
@@ -196,8 +200,10 @@ class OrderFlowDiagnostics:
         buckets = entry["orders_rejected_reason_counts"]
         buckets[reason_key] = int(buckets.get(reason_key, 0)) + 1
 
-    def record_fill(self, fill: FillEvent) -> None:
-        key = self._resolve_key(timestamp=fill.timestamp)
+    def record_fill(self, fill: FillEvent, order: OrderEvent | None = None) -> None:
+        # Deferred fills belong to the originating rebalance, not the later
+        # market timestamp at which their execution plan is materialized.
+        key = self._resolve_key(order=order, timestamp=fill.timestamp)
         entry = self._entry_for_key(key)
         entry["fills_count"] = int(entry["fills_count"]) + 1
         try:

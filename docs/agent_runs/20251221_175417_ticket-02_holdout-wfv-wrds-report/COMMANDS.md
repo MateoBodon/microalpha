@@ -6,9 +6,9 @@ mkdir -p docs/agent_runs/20251221_175417_ticket-02_holdout-wfv-wrds-report
 cat <<'PROMPT' > docs/agent_runs/20251221_175417_ticket-02_holdout-wfv-wrds-report/PROMPT.md
 User request:
 
-Run WRDS report: WRDS_DATA_ROOT=/Volumes/Storage/Data/wrds make report-wrds.
+Run WRDS report: WRDS_DATA_ROOT=<EXTERNAL_STORAGE>/Data/wrds make report-wrds.
 PROMPT
-WRDS_DATA_ROOT=/Volumes/Storage/Data/wrds make report-wrds
+WRDS_DATA_ROOT=<EXTERNAL_STORAGE>/Data/wrds make report-wrds
 rg -n "report-wrds" Makefile
 sed -n '55,95p' Makefile
 git rev-parse HEAD
@@ -27,7 +27,7 @@ EOF_RESULTS
 cat <<'EOF_TESTS' > docs/agent_runs/20251221_175417_ticket-02_holdout-wfv-wrds-report/TESTS.md
 # Tests
 
-- `WRDS_DATA_ROOT=/Volumes/Storage/Data/wrds make report-wrds` (failed: SPA comparator t-stats all zero)
+- `WRDS_DATA_ROOT=<EXTERNAL_STORAGE>/Data/wrds make report-wrds` (failed: SPA comparator t-stats all zero)
 EOF_TESTS
 python3 - <<'PY'
 import subprocess, hashlib, sys
@@ -61,7 +61,7 @@ cat <<'EOF_META' > docs/agent_runs/20251221_175417_ticket-02_holdout-wfv-wrds-re
   "data": {
     "mode": "wrds",
     "dataset_id": "wrds_full",
-    "wrds_data_root": "/Volumes/Storage/Data/wrds",
+    "wrds_data_root": "<EXTERNAL_STORAGE>/Data/wrds",
     "license_notes": "No raw WRDS data committed."
   },
   "config": {
@@ -86,7 +86,7 @@ cat <<'EOF_META' > docs/agent_runs/20251221_175417_ticket-02_holdout-wfv-wrds-re
 EOF_META
 git status -sb
 git add PROGRESS.md reports/summaries/wrds_flagship_factors.md docs/agent_runs/20251221_175417_ticket-02_holdout-wfv-wrds-report
-git commit -m "ticket-02: attempt WRDS report" -m "Tests: WRDS_DATA_ROOT=/Volumes/Storage/Data/wrds make report-wrds (failed: SPA comparator t-stats all zero)" -m "Artifacts: artifacts/wrds_flagship/2025-12-21T22-32-44Z-2b48ef7 (local only)" -m "Docs: PROGRESS.md, docs/agent_runs/20251221_175417_ticket-02_holdout-wfv-wrds-report/, reports/summaries/wrds_flagship_factors.md"
+git commit -m "ticket-02: attempt WRDS report" -m "Tests: WRDS_DATA_ROOT=<EXTERNAL_STORAGE>/Data/wrds make report-wrds (failed: SPA comparator t-stats all zero)" -m "Artifacts: artifacts/wrds_flagship/2025-12-21T22-32-44Z-2b48ef7 (local only)" -m "Docs: PROGRESS.md, docs/agent_runs/20251221_175417_ticket-02_holdout-wfv-wrds-report/, reports/summaries/wrds_flagship_factors.md"
 git rev-parse HEAD
 cat <<'EOF_META_UPDATE' > docs/agent_runs/20251221_175417_ticket-02_holdout-wfv-wrds-report/META.json
 {
@@ -105,7 +105,7 @@ cat <<'EOF_META_UPDATE' > docs/agent_runs/20251221_175417_ticket-02_holdout-wfv-
   "data": {
     "mode": "wrds",
     "dataset_id": "wrds_full",
-    "wrds_data_root": "/Volumes/Storage/Data/wrds",
+    "wrds_data_root": "<EXTERNAL_STORAGE>/Data/wrds",
     "license_notes": "No raw WRDS data committed."
   },
   "config": {
@@ -153,7 +153,7 @@ cat <<'EOF_META' > docs/agent_runs/20251221_175417_ticket-02_holdout-wfv-wrds-re
   "data": {
     "mode": "wrds",
     "dataset_id": "wrds_full",
-    "wrds_data_root": "/Volumes/Storage/Data/wrds",
+    "wrds_data_root": "<EXTERNAL_STORAGE>/Data/wrds",
     "license_notes": "No raw WRDS data committed."
   },
   "config": {

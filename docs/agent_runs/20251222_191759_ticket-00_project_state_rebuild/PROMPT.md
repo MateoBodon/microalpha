@@ -2,7 +2,7 @@
 
 ## User-provided repo instructions (verbatim)
 
-# AGENTS.md instructions for /Users/mateobodon/Documents/Programming/Projects/microalpha
+# AGENTS.md instructions for <HOME>/Documents/Programming/Projects/microalpha
 
 <INSTRUCTIONS>
 # AGENTS.md — microalpha (Repo Instructions)
@@ -119,7 +119,7 @@ See: `docs/DOCS_AND_LOGGING_SYSTEM.md`
 ## Environment context (verbatim)
 
 <environment_context>
-  <cwd>/Users/mateobodon/Documents/Programming/Projects/microalpha</cwd>
+  <cwd><HOME>/Documents/Programming/Projects/microalpha</cwd>
   <approval_policy>never</approval_policy>
   <sandbox_mode>danger-full-access</sandbox_mode>
   <network_access>enabled</network_access>

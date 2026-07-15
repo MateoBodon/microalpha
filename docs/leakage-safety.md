@@ -5,7 +5,12 @@ Microalpha enforces a strict "no-peek" discipline at every layer of the simulati
 ## Engine invariants
 
 - **Monotonic clocks** – the `Engine` raises `LookaheadError` if market events arrive out of order. See [`tests/test_time_ordering.py`](https://github.com/MateoBodon/microalpha/blob/main/tests/test_time_ordering.py).
-- **t+1 execution** – strategies submit intents at time *t* and executions occur no earlier than the next event. Verified in [`tests/test_tplus1_execution.py`](https://github.com/MateoBodon/microalpha/blob/main/tests/test_tplus1_execution.py).
+- **t+1 execution** – strategies submit intents at time *t*. Built-in executors
+  plan timestamps and quantities without reading future prices; the fill is
+  materialized only when the matching market event arrives. A clock-guarded
+  regression test fails on any early future-price read and proves cash and
+  positions remain unchanged before t+1. See
+  [`tests/test_tplus1_execution.py`](https://github.com/MateoBodon/microalpha/blob/main/tests/test_tplus1_execution.py).
 - **Fill ordering** – brokers acknowledge fills only after the active market event has been processed.
 
 ## Portfolio guards
@@ -19,7 +24,10 @@ The `LimitOrderBook` keeps per-level FIFO queues to ensure first-in-first-out fi
 
 ### LOB t+1 semantics
 
-By default, LOB execution enforces t+1 semantics by shifting the reported `FillEvent.timestamp` to the next available market timestamp while retaining measured latency fields. This preserves the global no-peek invariant. You can disable this behavior per config with:
+By default, LOB execution schedules its prepared fill for the next market
+timestamp while retaining measured latency fields. The engine holds that fill
+outside portfolio state until the event arrives. You can disable this behavior
+only through the explicitly unsafe same-bar configuration:
 
 ```yaml
 exec:
@@ -34,6 +42,9 @@ During walk-forward validation, the optimizer only uses in-sample data to select
 ## Statistical inference invariants
 
 - **Sharpe statistics** use the same deterministic return stream as performance metrics, with optional HAC adjustments (`METRICS_HAC_LAGS`) that never peek beyond the evaluated window. [`tests/test_risk_stats.py`](https://github.com/MateoBodon/microalpha/blob/main/tests/test_risk_stats.py) asserts IID vs HAC behaviour on synthetic AR(1) data and validates block bootstrap coverage.
-- **Reality check bootstraps** in walk-forward mode rely on stationary/circular block resampling, seeded from the configuration manifest so repeated runs reproduce identical `reality_check_pvalue` results.
+- **Selection-corrected max statistics** compare every candidate with an
+  explicit benchmark, recenter candidate differentials under the null, and use
+  the same stationary/circular bootstrap indices for every model to preserve
+  cross-model dependence. The seed and block length are persisted.
 
 Together, these invariants provide strong protection against accidentally leaking future information into historical tests.

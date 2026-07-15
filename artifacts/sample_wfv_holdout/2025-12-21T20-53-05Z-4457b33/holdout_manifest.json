@@ -11,7 +11,7 @@
     "skip_months": 1
   },
   "selected_params_full": {
-    "universe_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/data/sample/universe_sample.csv",
+    "universe_path": "<HOME>/Documents/Programming/Projects/microalpha/data/sample/universe_sample.csv",
     "lookback_months": 6,
     "skip_months": 1,
     "top_frac": 0.35,
@@ -31,9 +31,9 @@
     ]
   },
   "selection_metric": 0.0,
-  "selection_summary_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/selection_summary.json",
-  "holdout_metrics_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/holdout_metrics.json",
-  "holdout_equity_curve_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/holdout_equity_curve.csv",
-  "holdout_returns_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/holdout_returns.csv",
-  "holdout_trades_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/holdout_trades.jsonl"
+  "selection_summary_path": "<HOME>/Documents/Programming/Projects/microalpha/artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/selection_summary.json",
+  "holdout_metrics_path": "<HOME>/Documents/Programming/Projects/microalpha/artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/holdout_metrics.json",
+  "holdout_equity_curve_path": "<HOME>/Documents/Programming/Projects/microalpha/artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/holdout_equity_curve.csv",
+  "holdout_returns_path": "<HOME>/Documents/Programming/Projects/microalpha/artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/holdout_returns.csv",
+  "holdout_trades_path": "<HOME>/Documents/Programming/Projects/microalpha/artifacts/sample_wfv_holdout/2025-12-21T20-53-05Z-4457b33/holdout_trades.jsonl"
 }

@@ -26,7 +26,7 @@
 24. printenv WRDS_DATA_ROOT
 25. rg -n "WRDS_DATA_ROOT" -S .
 26. sed -n '1,200p' metadata/codex_sessions.md
-27. ls -la /Users/mateobodon/wrds_cache | head -n 20
+27. ls -la <HOME>/wrds_cache | head -n 20
 28. cat .git/info/exclude
 29. git ls-files -v docs | head -n 5
 30. mkdir -p docs/agent_runs/20251222_200000_ticket-01_fix-spa-robustness
@@ -41,9 +41,9 @@
 39. apply_patch (update tests/test_wrds_summary_render.py)
 40. mkdir -p docs/local; cat > docs/local/WRDS_DATA_ROOT.md <<'EOF' ...
 41. pytest -q
-42. WRDS_DATA_ROOT=/Users/mateobodon/wrds_cache make wfv-wrds-smoke
-43. WRDS_DATA_ROOT=/Users/mateobodon/wrds_cache make report-wrds-smoke
-44. WRDS_DATA_ROOT=/Users/mateobodon/wrds_cache make report-wrds
+42. WRDS_DATA_ROOT=<HOME>/wrds_cache make wfv-wrds-smoke
+43. WRDS_DATA_ROOT=<HOME>/wrds_cache make report-wrds-smoke
+44. WRDS_DATA_ROOT=<HOME>/wrds_cache make report-wrds
 45. python - <<'PY' ... (failed: python not found)
 46. python3 - <<'PY' ... (inspect spa.json smoke)
 47. python3 - <<'PY' ... (inspect spa.json wrds)

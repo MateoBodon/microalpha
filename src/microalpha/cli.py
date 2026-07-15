@@ -18,12 +18,16 @@ from microalpha.reporting.tearsheet import (
     render_tearsheet,
 )
 
+from .audit_lab import DEFAULT_SEED, run_audit_lab
 from .runner import run_from_config
 from .walkforward import run_walk_forward
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--version", action="version", version=f"%(prog)s {_resolve_version()}"
+    )
     subparsers = parser.add_subparsers(dest="cmd", required=True)
 
     run_parser = subparsers.add_parser("run")
@@ -106,10 +110,26 @@ def main() -> None:
 
     subparsers.add_parser("info")
 
+    audit_parser = subparsers.add_parser(
+        "audit-demo",
+        help="Generate the deterministic synthetic correctness showcase.",
+    )
+    audit_parser.add_argument(
+        "--out",
+        dest="outdir",
+        default="docs/assets/audit_lab",
+        help="Output directory (default: docs/assets/audit_lab).",
+    )
+    audit_parser.add_argument("--seed", type=int, default=DEFAULT_SEED)
+
     args = parser.parse_args()
 
     if args.cmd == "info":
         print(json.dumps(_build_info(), indent=2))
+        return
+
+    if args.cmd == "audit-demo":
+        print(json.dumps(run_audit_lab(args.outdir, seed=args.seed), indent=2))
         return
 
     t0 = time.time()

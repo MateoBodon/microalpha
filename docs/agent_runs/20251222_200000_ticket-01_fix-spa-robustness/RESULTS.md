@@ -28,6 +28,6 @@
 
 ## Notes
 
-- WRDS exports available at `/Users/mateobodon/wrds_cache` (documented locally per user request).
+- WRDS exports available at `<HOME>/wrds_cache` (documented locally per user request).
 - SPA outputs for both WRDS smoke and flagship runs are degenerate (“all strategies have zero variance”); reports now show the reason instead of crashing.
 - Report commands emitted FutureWarning (pandas fillna method) and a matplotlib tight_layout warning; no failures.

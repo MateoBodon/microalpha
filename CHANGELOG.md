@@ -3,7 +3,26 @@
 All notable changes to this project will be documented in this file. The format follows [Keep a Changelog](https://keepachangelog.com) and the project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
+
+## [0.2.0] - 2026-07-15
+
 ### Added
+- Deterministic synthetic Audit Lab covering point-in-time availability,
+  event-time execution, cost reconciliation, and selection correction.
+- Null-centered synchronous benchmark-differential max-statistic test.
+- Byte-stable JSON, CSV, and SVG evidence with a SHA-256 receipt.
+
+### Fixed
+- Future fills are planned and materialized only when the engine reaches their
+  market timestamp; positions, cash, P&L, turnover, and logs no longer mutate
+  early.
+- Public product, package metadata, documentation navigation, and claim
+  boundaries now agree.
+- Release automation no longer attempts to publish to an unrelated PyPI
+  namespace; wheels are clean-installed, smoke-tested, attested, and attached to
+  GitHub releases.
+
+### Earlier project history
 - A public-safe validation-frontier chart with its source CSV and an evidence note binding each published aggregate metric to the accepted 2026-07-11 research artifacts.
 - Repository guardrails: pytest marker config, WRDS detection helpers, log fan-out to `artifacts/logs/`.
 - Pre-commit automation (black, isort, ruff, detect-secrets) plus tightened `.gitignore`.

@@ -93,12 +93,14 @@ class CsvDataHandler(DataHandler):
         close_value = cast(float, self.data.iloc[idx]["close"])
         return close_value
 
-    def get_future_timestamps(self, start_timestamp: int, n: int) -> List[int]:
+    def get_future_timestamps(
+        self, start_timestamp: int, n: int, symbol: str | None = None
+    ) -> List[int]:
         """
         Gets the next `n` timestamps from the data starting after a given timestamp.
         Used by the TWAP execution handler to schedule child orders.
         """
-        if self.data is None:
+        if self.data is None or (symbol is not None and symbol != self.symbol):
             return []
 
         # Get the index of all future dates
@@ -249,9 +251,17 @@ class MultiCsvDataHandler(DataHandler):
         ts = CsvDataHandler._to_datetime(timestamp)
         return self._lookup_price(df, ts)
 
-    def get_future_timestamps(self, start_timestamp: int, n: int) -> List[int]:
-        # Use the union index to determine the next times globally
+    def get_future_timestamps(
+        self, start_timestamp: int, n: int, symbol: str | None = None
+    ) -> List[int]:
+        # Execution schedules must use events actually observed for the order symbol.
         ts = CsvDataHandler._to_datetime(start_timestamp)
+        if symbol is not None:
+            frame = self.frames.get(symbol)
+            if frame is None:
+                return []
+            future = frame.index[frame.index > ts]
+            return [CsvDataHandler._to_int_timestamp(t) for t in future[:n]]
         union = list(self._iter_union_index())
         idx = pd.Index(union).searchsorted(ts, side="right")
         return [CsvDataHandler._to_int_timestamp(t) for t in union[idx : idx + n]]

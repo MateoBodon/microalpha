@@ -14,7 +14,7 @@
   "data": {
     "mode": "wrds",
     "dataset_id": "wrds_full",
-    "wrds_data_root": "/Volumes/Storage/Data/wrds",
+    "wrds_data_root": "<EXTERNAL_STORAGE>/Data/wrds",
     "license_notes": "No raw WRDS data committed."
   },
   "config": {

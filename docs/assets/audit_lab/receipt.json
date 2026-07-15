@@ -1,0 +1,21 @@
+{
+  "artifacts": {
+    "audit_lab.svg": "a06f2e66d453dce90cdaf2569fdfd5e261cd6ef945f0a74c728f99f60ca34c47",
+    "audit_results.json": "eeeec15f5efe6329019cdbd1831d84e765591bcdc3c2a3309afdd8653c34de44",
+    "comparison.csv": "c735b39518860cb1d75f8057742b44426c97ae54791ea4df30df1799f7c304f9",
+    "data_lineage.svg": "c2a272feb1f2300043fc33f7887cdf0bbe095283bf841003f9a1a9ddc96af240"
+  },
+  "claim_boundary": "software correctness demonstration; not alpha or market evidence",
+  "fixture": "deterministic_synthetic_known_ground_truth",
+  "generator": {
+    "source_sha256": {
+      "audit_lab.py": "ab8706035eb8ac91aef1f9e35bb8f8b06538712daea74c10472d2d6aaf11f1f0",
+      "multiple_testing.py": "71ea17a709cffd3edc9bf01634b60ee8955efba3e939b1d64c8f88f2947faf89",
+      "point_in_time.py": "38ec0e23233e05373554b867a727fbe84e880d951c5510b0928de9a6df78870d"
+    },
+    "version": "0.2.0"
+  },
+  "input_sha256": "1630d460ef59574f624541d566369e600e5bfafc7d57abbe28b1ca55549ab366",
+  "schema_version": "microalpha.audit-lab.v1",
+  "seed": 20260715
+}

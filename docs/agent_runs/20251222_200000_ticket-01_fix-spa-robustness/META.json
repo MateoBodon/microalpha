@@ -5,7 +5,7 @@
   "git_sha_after": "12b63a22117a3a5acf1784eac2df4418c3037ba9",
   "branch": "main",
   "env_notes": {
-    "wrds_data_root": "/Users/mateobodon/wrds_cache",
+    "wrds_data_root": "<HOME>/wrds_cache",
     "python": "python3 (see artifacts/manifest.json for full runtime metadata)",
     "wrds_available": true
   },
@@ -64,5 +64,5 @@
     "reports/summaries/wrds_flagship_spa.md",
     "reports/summaries/wrds_flagship_metrics.json"
   ],
-  "host_env_notes": "wrds_data_root=/Users/mateobodon/wrds_cache / python=python3 (see artifacts/manifest.json for full runtime metadata) / wrds_available=True"
+  "host_env_notes": "wrds_data_root=<HOME>/wrds_cache / python=python3 (see artifacts/manifest.json for full runtime metadata) / wrds_available=True"
 }

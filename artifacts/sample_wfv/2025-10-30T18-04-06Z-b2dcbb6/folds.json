@@ -5,7 +5,7 @@
     "test_start": "2020-07-10",
     "test_end": "2020-09-11",
     "best_params": {
-      "universe_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/data/sample/universe_sample.csv",
+      "universe_path": "<HOME>/Documents/Programming/Projects/microalpha/data/sample/universe_sample.csv",
       "lookback_months": 6,
       "skip_months": 1,
       "top_frac": 0.35,
@@ -92,8 +92,8 @@
       "block_length": 20,
       "num_bootstrap": 800
     },
-    "exposures_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/exposures_fold_0.csv",
-    "factor_exposure_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/factor_exposure_fold_0.csv",
+    "exposures_path": "<HOME>/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/exposures_fold_0.csv",
+    "factor_exposure_path": "<HOME>/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/factor_exposure_fold_0.csv",
     "spa_pvalue": null
   },
   {
@@ -102,7 +102,7 @@
     "test_start": "2020-09-11",
     "test_end": "2020-11-13",
     "best_params": {
-      "universe_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/data/sample/universe_sample.csv",
+      "universe_path": "<HOME>/Documents/Programming/Projects/microalpha/data/sample/universe_sample.csv",
       "lookback_months": 6,
       "skip_months": 1,
       "top_frac": 0.35,
@@ -189,8 +189,8 @@
       "block_length": 20,
       "num_bootstrap": 800
     },
-    "exposures_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/exposures_fold_1.csv",
-    "factor_exposure_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/factor_exposure_fold_1.csv",
+    "exposures_path": "<HOME>/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/exposures_fold_1.csv",
+    "factor_exposure_path": "<HOME>/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/factor_exposure_fold_1.csv",
     "spa_pvalue": null
   },
   {
@@ -199,7 +199,7 @@
     "test_start": "2020-11-13",
     "test_end": "2021-01-15",
     "best_params": {
-      "universe_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/data/sample/universe_sample.csv",
+      "universe_path": "<HOME>/Documents/Programming/Projects/microalpha/data/sample/universe_sample.csv",
       "lookback_months": 6,
       "skip_months": 1,
       "top_frac": 0.35,
@@ -286,8 +286,8 @@
       "block_length": 20,
       "num_bootstrap": 800
     },
-    "exposures_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/exposures_fold_2.csv",
-    "factor_exposure_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/factor_exposure_fold_2.csv",
+    "exposures_path": "<HOME>/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/exposures_fold_2.csv",
+    "factor_exposure_path": "<HOME>/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/factor_exposure_fold_2.csv",
     "spa_pvalue": null
   },
   {
@@ -296,7 +296,7 @@
     "test_start": "2021-01-15",
     "test_end": "2021-03-19",
     "best_params": {
-      "universe_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/data/sample/universe_sample.csv",
+      "universe_path": "<HOME>/Documents/Programming/Projects/microalpha/data/sample/universe_sample.csv",
       "lookback_months": 6,
       "skip_months": 1,
       "top_frac": 0.35,
@@ -383,8 +383,8 @@
       "block_length": 20,
       "num_bootstrap": 800
     },
-    "exposures_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/exposures_fold_3.csv",
-    "factor_exposure_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/factor_exposure_fold_3.csv",
+    "exposures_path": "<HOME>/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/exposures_fold_3.csv",
+    "factor_exposure_path": "<HOME>/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/factor_exposure_fold_3.csv",
     "spa_pvalue": null
   },
   {
@@ -393,7 +393,7 @@
     "test_start": "2021-03-19",
     "test_end": "2021-05-21",
     "best_params": {
-      "universe_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/data/sample/universe_sample.csv",
+      "universe_path": "<HOME>/Documents/Programming/Projects/microalpha/data/sample/universe_sample.csv",
       "lookback_months": 6,
       "skip_months": 1,
       "top_frac": 0.35,
@@ -480,8 +480,8 @@
       "block_length": 20,
       "num_bootstrap": 800
     },
-    "exposures_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/exposures_fold_4.csv",
-    "factor_exposure_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/factor_exposure_fold_4.csv",
+    "exposures_path": "<HOME>/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/exposures_fold_4.csv",
+    "factor_exposure_path": "<HOME>/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/factor_exposure_fold_4.csv",
     "spa_pvalue": null
   },
   {
@@ -490,7 +490,7 @@
     "test_start": "2021-05-21",
     "test_end": "2021-07-23",
     "best_params": {
-      "universe_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/data/sample/universe_sample.csv",
+      "universe_path": "<HOME>/Documents/Programming/Projects/microalpha/data/sample/universe_sample.csv",
       "lookback_months": 6,
       "skip_months": 1,
       "top_frac": 0.35,
@@ -577,8 +577,8 @@
       "block_length": 20,
       "num_bootstrap": 800
     },
-    "exposures_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/exposures_fold_5.csv",
-    "factor_exposure_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/factor_exposure_fold_5.csv",
+    "exposures_path": "<HOME>/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/exposures_fold_5.csv",
+    "factor_exposure_path": "<HOME>/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/factor_exposure_fold_5.csv",
     "spa_pvalue": null
   },
   {
@@ -587,7 +587,7 @@
     "test_start": "2021-07-23",
     "test_end": "2021-09-24",
     "best_params": {
-      "universe_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/data/sample/universe_sample.csv",
+      "universe_path": "<HOME>/Documents/Programming/Projects/microalpha/data/sample/universe_sample.csv",
       "lookback_months": 6,
       "skip_months": 1,
       "top_frac": 0.35,
@@ -674,8 +674,8 @@
       "block_length": 20,
       "num_bootstrap": 800
     },
-    "exposures_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/exposures_fold_6.csv",
-    "factor_exposure_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/factor_exposure_fold_6.csv",
+    "exposures_path": "<HOME>/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/exposures_fold_6.csv",
+    "factor_exposure_path": "<HOME>/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/factor_exposure_fold_6.csv",
     "spa_pvalue": null
   },
   {
@@ -684,7 +684,7 @@
     "test_start": "2021-09-24",
     "test_end": "2021-11-26",
     "best_params": {
-      "universe_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/data/sample/universe_sample.csv",
+      "universe_path": "<HOME>/Documents/Programming/Projects/microalpha/data/sample/universe_sample.csv",
       "lookback_months": 6,
       "skip_months": 1,
       "top_frac": 0.35,
@@ -771,8 +771,8 @@
       "block_length": 20,
       "num_bootstrap": 800
     },
-    "exposures_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/exposures_fold_7.csv",
-    "factor_exposure_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/factor_exposure_fold_7.csv",
+    "exposures_path": "<HOME>/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/exposures_fold_7.csv",
+    "factor_exposure_path": "<HOME>/Documents/Programming/Projects/microalpha/artifacts/sample_wfv/2025-10-30T18-04-06Z-b2dcbb6/factor_exposure_fold_7.csv",
     "spa_pvalue": null
   }
 ]
