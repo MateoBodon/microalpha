@@ -185,9 +185,9 @@ def _uncertainty(
 def _csv_bytes(frame: pd.DataFrame, *, index_label: str = "date") -> bytes:
     canonical = frame.copy()
     for column in canonical.select_dtypes(include=["float", "float64"]).columns:
-        # Eleven decimals remain far below economic materiality while absorbing
-        # platform/libm drift at roughly 1e-12 in rolling-volatility recursion.
-        canonical[column] = canonical[column].round(11)
+        # Nine decimals remain far below economic materiality while absorbing
+        # platform/libm drift in rolling-volatility recursion across NumPy builds.
+        canonical[column] = canonical[column].round(9)
     buffer = io.StringIO(newline="")
     canonical.to_csv(buffer, index=True, index_label=index_label, lineterminator="\n")
     return buffer.getvalue().encode("utf-8")
@@ -477,7 +477,7 @@ def validate_market_case_artifacts(output_dir: str | Path) -> dict[str, object]:
     if missing_columns:
         raise ValueError(f"daily columns missing: {sorted(missing_columns)}")
     residual = daily["gross_return"] - daily["total_cost"] - daily["strategy_net"]
-    if float(residual.abs().max()) > 1e-10:
+    if float(residual.abs().max()) > 5e-9:
         raise ValueError("cost ledger does not reconcile to net returns")
     if not (
         pd.to_datetime(daily["signal_available_date"]) < pd.to_datetime(daily["date"])

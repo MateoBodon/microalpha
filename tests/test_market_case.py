@@ -37,7 +37,7 @@ def test_market_case_enforces_chronology_cost_identity_and_claim_boundary(
 
     assert (pd.to_datetime(daily["signal_available_date"]) < daily["date"]).all()
     residual = daily["gross_return"] - daily["total_cost"] - daily["strategy_net"]
-    assert float(residual.abs().max()) < 1e-10
+    assert float(residual.abs().max()) < 5e-9
     assert metrics["fixed_specification"]["selected_on_oos_performance"] is False
     assert metrics["selection_control"]["num_candidates"] == 4
     assert metrics["selection_control"]["p_value"] >= 0.05

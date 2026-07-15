@@ -43,8 +43,8 @@ gross(t) = RF(t) + executed_weight(t) × Mkt_RF(t)
 net(t)   = gross(t) - commission(t) - half_spread(t) - impact(t)
 ```
 
-No date-`t` return can alter date-`t` exposure. The cost identity must reconcile
-within `1e-10` on every clean reproduction.
+No date-`t` return can alter date-`t` exposure. The serialized cost identity
+must reconcile within `5e-9`—less than 0.00005 bp—on every clean reproduction.
 
 ## Portfolio and cost controls
 
@@ -104,7 +104,7 @@ git diff --exit-code -- docs/assets/market_case
 The command is offline and deterministic. It regenerates the report, daily
 ledger, fold table, source manifest, selection distribution, JSON schema, SVGs,
 and receipt. The current receipt SHA-256 is
-`3c3d15949fd10f3d21fa0887587b59cb50827fa92b7b41095f03ec450b290a87`.
+`ee8fd20013c3469809c0b4054d61fa85db5eafe62de0551548c5595427bca1d1`.
 
 ## Machine-readable artifacts
 
