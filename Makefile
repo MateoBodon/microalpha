@@ -7,7 +7,7 @@ WRDS_ARTIFACT_DIR ?= artifacts/wrds_flagship
 WRDS_SMOKE_CONFIG ?= configs/wfv_flagship_wrds_smoke.yaml
 WRDS_SMOKE_ARTIFACT_DIR ?= artifacts/wrds_flagship_smoke
 
-.PHONY: dev test test-fast test-wrds sample audit-demo wfv wfv-wrds wfv-wrds-smoke wrds wrds-flagship report report-wrds report-wrds-smoke docs clean export-wrds report-wfv gpt-bundle check-data-policy validate-runlogs runs-index
+.PHONY: dev test test-fast test-wrds sample audit-demo market-demo verify-showcase wfv wfv-wrds wfv-wrds-smoke wrds wrds-flagship report report-wrds report-wrds-smoke docs clean export-wrds report-wfv gpt-bundle check-data-policy validate-runlogs runs-index
 
 dev:
 	pip install -e '.[dev]'
@@ -27,6 +27,13 @@ sample:
 
 audit-demo:
 	microalpha audit-demo --out docs/assets/audit_lab
+
+market-demo:
+	microalpha market-demo --out docs/assets/market_case
+
+verify-showcase:
+	microalpha verify docs/assets/audit_lab
+	microalpha verify docs/assets/market_case
 
 wfv:
 	microalpha wfv --config $(SAMPLE_WFV_CONFIG) --out $(WFV_ARTIFACT_DIR)

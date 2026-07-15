@@ -2,6 +2,30 @@
 
 This page summarises the primary extension points for building strategies and tooling on top of Microalpha.
 
+## Market Risk Case (`microalpha.market_case`)
+
+```python
+from microalpha.market_case import run_market_case, validate_market_case_artifacts
+
+result = run_market_case("evidence")
+validate_market_case_artifacts("evidence")
+```
+
+The generator builds the deterministic public-factor report. Validation checks
+required files and columns, strict decision-before-execution chronology, the
+per-row cost identity, and the receipt hashes.
+
+## Artifact verification (`microalpha.artifact_verify`)
+
+```python
+from microalpha.artifact_verify import verify_artifacts
+
+verification = verify_artifacts("docs/assets/market_case")
+```
+
+The generic verifier dispatches to the Market Risk Case's semantic checks and
+also verifies hash-bound Audit Lab bundles.
+
 ## Audit Lab (`microalpha.audit_lab`)
 
 ```python
@@ -83,6 +107,9 @@ Portfolio(data_handler, initial_cash, *, max_exposure=None, max_drawdown_stop=No
 ```
 
 - Tracks cash, inventory, and equity while enforcing exposure/drawdown/turnover limits.
+- Treats `Signal.meta["target_weight"]` as a desired portfolio weight and emits
+  only the delta needed to resize, close, or flip the position. The older
+  `weight` field retains its legacy full-order-size semantics.
 - Emits fills to the `JsonlWriter` (`trade_logger`) so executions are captured in `trades.jsonl`.
 - Provides `on_market`, `on_signal`, and `on_fill` hooks consumed by the engine.
 - Adds realized PnL attribution per fill (average-cost) under `realized_pnl` and cumulative `cum_realized_pnl` in trades.
@@ -121,6 +148,8 @@ Refer to the module docstrings and tests for deeper examples of composing these 
 ## CLI (`microalpha.cli`)
 
 - `microalpha audit-demo [--out DIR] [--seed INT]`
+- `microalpha market-demo [--out DIR] [--seed INT]`
+- `microalpha verify <artifact-dir>`
 - `microalpha run -c <cfg> [--out DIR] [--profile]`
 - `microalpha wfv -c <cfg> [--out DIR] [--profile]`
 

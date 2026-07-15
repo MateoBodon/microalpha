@@ -2,6 +2,8 @@
 
 Microalpha is event-driven so timing assumptions remain explicit and testable.
 
+![Market Risk Case lineage](assets/market_case/data_lineage.svg)
+
 ![Audit lineage](assets/audit_lab/data_lineage.svg)
 
 ## Event lifecycle
@@ -33,6 +35,12 @@ TWAP and implementation-shortfall schedules are fixed ex ante. The safe VWAP
 path uses equal ex-ante slices until an explicit historical volume profile is
 provided; it never sizes from realized future volume.
 
+Signals may specify `target_weight`, which the portfolio translates into the
+delta between current and desired notional. Repeating the same target therefore
+does not create a second full-size order; resizing, closing, and flipping remain
+explicit. The legacy `weight` field retains its historical full-order sizing
+behavior for compatibility.
+
 ## Component boundaries
 
 | Component | Owns | Must not own |
@@ -50,8 +58,8 @@ provided; it never sizes from realized future volume.
 `centered_max_statistic_test` accepts an aligned candidate-return matrix and an
 explicit benchmark series. It computes candidate-minus-benchmark statistics,
 recenters all differentials under the null, and synchronously resamples rows.
-This is the selection correction used by Audit Lab and walk-forward grid
-evaluation.
+This is the selection correction used by Audit Lab, the public Market Risk
+Case, and walk-forward grid evaluation.
 
 The older relative "best versus other candidates" SPA interpretation is not a
 claim that any model beats a benchmark. Public claims use the explicit

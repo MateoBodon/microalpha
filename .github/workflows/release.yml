@@ -33,9 +33,11 @@ jobs:
         run: |
           python -m venv /tmp/microalpha-wheel-smoke
           /tmp/microalpha-wheel-smoke/bin/python -m pip install dist/*.whl
-          /tmp/microalpha-wheel-smoke/bin/microalpha audit-demo --out /tmp/audit-lab
-          test "$(sha256sum /tmp/audit-lab/receipt.json | cut -d' ' -f1)" = \
-            "6e36c2397696d7e9eecbd058cbfc1ba522c8ffba7e5798224de86b20457b6575"
+          /tmp/microalpha-wheel-smoke/bin/python -m microalpha audit-demo --out /tmp/audit-lab
+          /tmp/microalpha-wheel-smoke/bin/python -m microalpha verify /tmp/audit-lab
+          /tmp/microalpha-wheel-smoke/bin/python -m microalpha market-demo \
+            --input data/factors/ff5_mom_daily.csv --out /tmp/market-case
+          /tmp/microalpha-wheel-smoke/bin/python -m microalpha verify /tmp/market-case
 
       - name: Attest release artifacts
         uses: actions/attest@v4

@@ -1,0 +1,25 @@
+{
+  "availability_rule": "a date-t factor return is available only after date-t close and can affect exposure at t+1",
+  "columns": [
+    "date",
+    "Mkt_RF",
+    "SMB",
+    "HML",
+    "RMW",
+    "CMA",
+    "RF",
+    "MOM"
+  ],
+  "dataset": "Fama-French daily factors plus momentum",
+  "end": "2025-09-30",
+  "local_snapshot": "data/factors/ff5_mom_daily.csv",
+  "provenance_note": "the tracked snapshot was added from the public factor library through the project's prior WRDS research workflow; raw firm-level data is neither read nor distributed",
+  "publisher": "Kenneth R. French Data Library",
+  "return_units": "decimal daily research-portfolio returns",
+  "rows": 3960,
+  "schema_version": "microalpha.data-manifest.v1",
+  "snapshot_sha256": "61b7167569a7fbf86a5b1ac1e3b6a6d2843eccf72f88be33c99d2d9c0fe1fc71",
+  "source_url": "https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html",
+  "start": "2010-01-04",
+  "survivorship_boundary": "published factor series; no firm-level constituent selection or security-level survivorship claim"
+}

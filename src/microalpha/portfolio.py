@@ -212,7 +212,36 @@ class Portfolio:
         if self.current_time is not None and signal.timestamp < self.current_time:
             raise LookaheadError("Signal event timestamp is in the past.")
 
-        if signal.side == "EXIT":
+        target_weight_request = bool(
+            signal.meta and "target_weight" in signal.meta and "qty" not in signal.meta
+        )
+        price = self.data_handler.get_latest_price(signal.symbol, signal.timestamp)
+        if price is None:
+            if self.order_flow:
+                self.order_flow.record_order_drop("missing_price", signal=signal)
+            return []
+
+        if target_weight_request:
+            target_weight = float(signal.meta["target_weight"])  # type: ignore[index]
+            equity = self.last_equity if self.last_equity else self.initial_cash
+            desired_qty = int(target_weight * equity / price) if equity > 0 else 0
+            current_qty = self.positions.get(signal.symbol, PortfolioPosition()).qty
+            delta_qty = desired_qty - current_qty
+            if delta_qty == 0:
+                if self.order_flow:
+                    self.order_flow.record_order_drop(
+                        "target_weight_already_met", signal=signal
+                    )
+                return []
+            if self.drawdown_halted and abs(desired_qty) > abs(current_qty):
+                if self.order_flow:
+                    self.order_flow.record_order_drop(
+                        "drawdown_halted", signal=signal, clipped_by_caps=True
+                    )
+                return []
+            qty = abs(delta_qty)
+            side = cast(Literal["BUY", "SELL"], "BUY" if delta_qty > 0 else "SELL")
+        elif signal.side == "EXIT":
             position = self.positions.get(signal.symbol)
             if not position or position.qty == 0:
                 if self.order_flow:
@@ -223,23 +252,25 @@ class Portfolio:
             if self.order_flow:
                 self.order_flow.record_order_created(order, signal=signal)
             return [order]
+        else:
+            if self.drawdown_halted:
+                if self.order_flow:
+                    self.order_flow.record_order_drop(
+                        "drawdown_halted", signal=signal, clipped_by_caps=True
+                    )
+                return []
 
-        if self.drawdown_halted:
-            if self.order_flow:
-                self.order_flow.record_order_drop(
-                    "drawdown_halted", signal=signal, clipped_by_caps=True
-                )
-            return []
+            qty = self._sized_quantity(signal)
+            if qty == 0:
+                if self.order_flow:
+                    reason = self._last_sizing_reject_reason or "qty_rounded_to_zero"
+                    self.order_flow.record_order_drop(reason, signal=signal)
+                return []
+            side = cast(
+                Literal["BUY", "SELL"], "BUY" if signal.side == "LONG" else "SELL"
+            )
 
-        qty = self._sized_quantity(signal)
-        if qty == 0:
-            if self.order_flow:
-                reason = self._last_sizing_reject_reason or "qty_rounded_to_zero"
-                self.order_flow.record_order_drop(reason, signal=signal)
-            return []
-
-        price = self.data_handler.get_latest_price(signal.symbol, signal.timestamp)
-        if price is None:
+        if price is None:  # pragma: no cover - guarded above
             if self.order_flow:
                 self.order_flow.record_order_drop("missing_price", signal=signal)
             return []
@@ -253,10 +284,11 @@ class Portfolio:
                     )
                 return []
 
-        side = cast(Literal["BUY", "SELL"], "BUY" if signal.side == "LONG" else "SELL")
         projected_equity = self.last_equity if self.last_equity else self.initial_cash
         has_weight = bool(
-            signal.meta and "weight" in signal.meta and "qty" not in signal.meta
+            signal.meta
+            and ("weight" in signal.meta or "target_weight" in signal.meta)
+            and "qty" not in signal.meta
         )
         anticipated_market_value = (
             self.market_value + (qty if side == "BUY" else -qty) * price

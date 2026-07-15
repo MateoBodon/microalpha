@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file. The format 
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-15
+
+### Added
+- Receipt-bound real-data Market Risk Case with strict t+1 chronology,
+  risk-matched and market baselines, annual folds, uncertainty, corrected
+  selection inference, explicit commission/spread/impact costs, and SVG reports.
+- Source-level data manifest, versioned artifact requirements, and
+  `microalpha verify` / `python -m microalpha verify`.
+- Explicit target-weight delta rebalancing with resize, flip, and
+  drawdown-deleveraging regression tests.
+
+### Changed
+- README and Pages now lead with real empirical usefulness while retaining Audit
+  Lab as the deterministic engineering-correctness layer.
+- Supported Python range now includes Python 3.13 and portable module execution.
+
 ## [0.2.0] - 2026-07-15
 
 ### Added

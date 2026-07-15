@@ -44,4 +44,4 @@ def test_cli_version_is_available() -> None:
         text=True,
         env=_environment(),
     )
-    assert completed.stdout.startswith("cli.py ")
+    assert completed.stdout.startswith("microalpha ")

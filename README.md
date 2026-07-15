@@ -2,31 +2,59 @@
 
 [![CI](https://github.com/MateoBodon/microalpha/actions/workflows/ci.yml/badge.svg)](https://github.com/MateoBodon/microalpha/actions/workflows/ci.yml)
 [![Documentation](https://img.shields.io/badge/docs-live-2563eb)](https://mateobodon.github.io/microalpha/)
-[![Python 3.10–3.12](https://img.shields.io/badge/python-3.10–3.12-0ea5e9)](pyproject.toml)
+[![Python 3.10–3.13](https://img.shields.io/badge/python-3.10–3.13-0ea5e9)](pyproject.toml)
 [![MIT License](https://img.shields.io/badge/license-MIT-22c55e)](LICENSE)
 
-**A quant research audit lab that catches four ways a backtest lies: data
-leakage, impossible execution, omitted costs, and selection overfitting.**
+**A quantitative engineering lab that turns market data into chronology-safe,
+costed, walk-forward evidence—and makes invalid backtests visibly fail.**
 
 Microalpha is an event-driven Python system for turning a quantitative idea
-into timestamped, costed, walk-forward evidence. Its flagship is not a profitable
-strategy. It is a deterministic, known-ground-truth fixture that proves the
-research pipeline rejects attractive results when they are invalid.
+into a source-hashed research report. v0.3 pairs a real-data market-risk case
+with a known-ground-truth Audit Lab: one shows empirical usefulness, the other
+proves the pipeline rejects attractive results when they are invalid.
 
-![Four paired Audit Lab results: leaky versus point-in-time data, same-tick versus queued execution, gross versus costed returns, and naive versus corrected selection](docs/assets/audit_lab/audit_lab.svg)
+![Real-data market case: out-of-sample risk, return, drawdown, and corrected inference](docs/assets/market_case/market_case.svg)
 
-## The 30-second proof
+## The one-minute result
 
 ```bash
 git clone https://github.com/MateoBodon/microalpha.git
 cd microalpha
-python -m venv .venv && source .venv/bin/activate
 python -m pip install .
-microalpha audit-demo
+python -m microalpha market-demo
+python -m microalpha verify docs/assets/market_case
 ```
 
-The command uses no network, provider, licensed data, or hidden holdout. It
-recreates the tracked evidence under `docs/assets/audit_lab/`.
+The command is offline and recreates the real-data report, daily decision/fill
+ledger, annual folds, source manifest, uncertainty, selection distribution,
+schemas, SVGs, and receipt.
+
+| 2017–2025 OOS metric | Vol target, net | US market | Static risk-matched |
+| --- | ---: | ---: | ---: |
+| Annualized return | 11.77% | 15.14% | 10.67% |
+| Annualized volatility | 11.37% | 19.25% | 12.03% |
+| Sharpe | 1.04 | 0.83 | 0.90 |
+| Maximum drawdown | −15.31% | −34.22% | −22.38% |
+
+The fixed rule reduced risk and drawdown and raised descriptive Sharpe. It did
+**not** produce statistically significant differential return after correcting
+across every disclosed lookback (`p=0.467`), and its return remained below the
+unscaled market. The investment claim is therefore **none**. Read the
+[real-data method and report](docs/market-case.md).
+
+![Out-of-sample equity and drawdown against market and risk-matched baselines](docs/assets/market_case/equity_drawdown.svg)
+
+## Correctness layer: four ways a backtest lies
+
+![Four paired Audit Lab results: leaky versus point-in-time data, same-tick versus queued execution, gross versus costed returns, and naive versus corrected selection](docs/assets/audit_lab/audit_lab.svg)
+
+```bash
+python -m microalpha audit-demo
+python -m microalpha verify docs/assets/audit_lab
+```
+
+Audit Lab uses no network, provider, licensed data, or hidden holdout. It
+recreates the tracked correctness evidence under `docs/assets/audit_lab/`.
 
 | Failure injected into the synthetic fixture | Naive result | Audited result | What stopped it |
 | --- | ---: | ---: | --- |
@@ -57,7 +85,8 @@ performance promises.
 
 - **Point-in-time discipline** — `require_point_in_time` fails closed on
   `available_at > decision_at` and reports exact violating row IDs and counts;
-  production data manifests retain source lineage.
+  the Market Risk Case manifest retains publisher, source URL, content hash,
+  date range, units, and availability rules.
 - **Event-time execution** — orders become planned execution slices; future
   fills cannot change cash, positions, turnover, P&L, or logs before their
   market event is processed.
@@ -101,7 +130,9 @@ boundary. See the [architecture guide](docs/architecture.md) and
 
 | Command | Purpose |
 | --- | --- |
+| `microalpha market-demo` | Rebuild the real-data market-risk report and receipt |
 | `microalpha audit-demo` | Rebuild the deterministic correctness fixture and receipt |
+| `microalpha verify <artifact-dir>` | Check schema, chronology, cost identity, and hashes |
 | `microalpha --version` | Print the installed distribution version |
 | `microalpha run --config <yaml> --out <dir>` | Run one event-driven simulation |
 | `microalpha wfv --config <yaml> --out <dir>` | Run walk-forward selection and evaluation |
@@ -125,8 +156,12 @@ execution models, slippage, reporting, and statistical controls. See the
 
 ```bash
 # User-facing proof
-microalpha audit-demo
-git diff --exit-code -- docs/assets/audit_lab
+python -m microalpha market-demo
+python -m microalpha audit-demo
+python -m microalpha verify docs/assets/market_case
+python -m microalpha verify docs/assets/audit_lab
+python benchmarks/bench_v030.py --output docs/assets/engineering_benchmark_v030.json
+git diff --exit-code -- docs/assets/market_case docs/assets/audit_lab
 
 # Contributor gates
 python -m pip install -e '.[dev]'
@@ -141,17 +176,19 @@ pytest -m "not wrds" --cov=microalpha --cov-report=term-missing
 python scripts/check_data_policy.py
 git ls-files -z README.md PROJECT.md pyproject.toml LICENSE CHANGELOG.md \
   Makefile 'src/**' 'tests/**' 'scripts/**' '.github/**' \
-  docs/index.md docs/audit-lab.md docs/architecture.md docs/api.md \
+  docs/index.md docs/market-case.md docs/audit-lab.md docs/architecture.md docs/api.md \
   docs/examples.md docs/reproducibility.md docs/leakage-safety.md \
   docs/benchmarks.md docs/limitations.md docs/portfolio_evidence_2026-07-11.md \
   docs/wrds.md docs/flagship_momentum_wrds.md docs/results_wrds.md docs/factors.md \
-  'docs/assets/audit_lab/**' \
+  docs/assets/engineering_benchmark_v030.json \
+  'docs/assets/audit_lab/**' 'docs/assets/market_case/**' \
   | xargs -0 detect-secrets-hook --baseline .secrets.baseline
 mkdocs build --strict
 ```
 
 CI runs the supported Python matrix and enforces lint, format, types, secret
-scanning, tests, coverage, deterministic Audit Lab regeneration, and strict docs.
+scanning, tests, coverage, both deterministic regenerations, artifact
+verification, and strict docs.
 
 Two earlier synthetic example bundles remain available for schema and reporting
 inspection: [`artifacts/sample_flagship`](artifacts/sample_flagship) and
@@ -178,13 +215,14 @@ rows are not distributed.
 | --- | --- |
 | `src/microalpha/` | Engine, events, data, strategies, execution, portfolio, risk, inference, reporting |
 | `tests/` | Chronology, execution, holdout, statistics, artifact, CLI, and data-policy contracts |
+| `docs/assets/market_case/` | Real-data ledger, folds, report, schema, source manifest, and receipt |
 | `docs/assets/audit_lab/` | Generated public correctness evidence and SHA-256 receipt |
 | `configs/` | Reproducible sample, public, and local licensed-data workflows |
 | `docs/` | Product guides, methodology, API, limitations, and historical case study |
 | `artifacts/` | Run-scoped simulation outputs; most generated paths remain untracked |
 
 Historical project logs remain available for provenance, but a new user should
-start with **Audit Lab → Architecture → API → Reproducibility → Limitations**.
+start with **Market Risk Case → Audit Lab → Architecture → Reproducibility → Limitations**.
 
 ## Limits and claim boundary
 

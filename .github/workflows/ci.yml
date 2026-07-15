@@ -9,8 +9,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
       - name: Checkout
@@ -49,6 +50,8 @@ jobs:
           mypy
           --follow-imports=skip
           src/microalpha/audit_lab.py
+          src/microalpha/market_case.py
+          src/microalpha/artifact_verify.py
           src/microalpha/multiple_testing.py
           src/microalpha/engine.py
           src/microalpha/execution.py
@@ -58,11 +61,13 @@ jobs:
         run: |
           git ls-files -z README.md PROJECT.md pyproject.toml LICENSE CHANGELOG.md \
             Makefile 'src/**' 'tests/**' 'scripts/**' '.github/**' \
-            docs/index.md docs/audit-lab.md docs/architecture.md docs/api.md \
+            docs/index.md docs/market-case.md docs/audit-lab.md docs/architecture.md docs/api.md \
             docs/examples.md docs/reproducibility.md docs/leakage-safety.md \
             docs/benchmarks.md docs/limitations.md docs/portfolio_evidence_2026-07-11.md \
+            docs/PORTFOLIO_IMPACT_BRIEF.md \
             docs/wrds.md docs/flagship_momentum_wrds.md docs/results_wrds.md docs/factors.md \
-            'docs/assets/audit_lab/**' \
+            docs/assets/engineering_benchmark_v030.json \
+            'docs/assets/audit_lab/**' 'docs/assets/market_case/**' \
             | xargs -0 detect-secrets-hook --baseline .secrets.baseline
 
       - name: Licensed-data policy
@@ -85,8 +90,33 @@ jobs:
       - name: Reproduce Audit Lab receipt
         run: |
           microalpha audit-demo
+          microalpha verify docs/assets/audit_lab
           git diff --exit-code -- docs/assets/audit_lab
+
+      - name: Reproduce real-data Market Risk Case
+        run: |
+          microalpha market-demo
+          microalpha verify docs/assets/market_case
+          git diff --exit-code -- docs/assets/market_case
 
       - name: MkDocs build
         if: matrix.python-version == '3.12'
         run: mkdocs build --strict
+
+  portable-smoke:
+    name: empirical smoke (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install product
+        run: python -m pip install .
+      - name: Rebuild and verify real-data report
+        run: |
+          python -m microalpha market-demo --out "${{ runner.temp }}/market-case"
+          python -m microalpha verify "${{ runner.temp }}/market-case"
