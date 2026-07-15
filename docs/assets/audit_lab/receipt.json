@@ -9,13 +9,13 @@
   "fixture": "deterministic_synthetic_known_ground_truth",
   "generator": {
     "source_sha256": {
-      "audit_lab.py": "ab8706035eb8ac91aef1f9e35bb8f8b06538712daea74c10472d2d6aaf11f1f0",
+      "audit_lab.py": "4be05bf2de2926cd88a0ffbe8a65b6ebc134492c658272684fca98bd98a5bb18",
       "multiple_testing.py": "71ea17a709cffd3edc9bf01634b60ee8955efba3e939b1d64c8f88f2947faf89",
       "point_in_time.py": "38ec0e23233e05373554b867a727fbe84e880d951c5510b0928de9a6df78870d"
     },
     "version": "0.2.0"
   },
-  "input_sha256": "1630d460ef59574f624541d566369e600e5bfafc7d57abbe28b1ca55549ab366",
+  "input_sha256": "2b12a408b131bcb30bdf0169eed34e0ab050d0872ccf8b6c0229c7bf03924882",
   "schema_version": "microalpha.audit-lab.v1",
   "seed": 20260715
 }

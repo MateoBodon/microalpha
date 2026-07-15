@@ -78,7 +78,7 @@ planted positive control is detected (`p=0.001`).
 | [`receipt.json`](assets/audit_lab/receipt.json) | Input and artifact SHA-256 hashes |
 
 The receipt itself has SHA-256
-`feb7e57ade26575942d10d21c4bd9c1a86724b2ab4f959bf1741eb46106b7b4b`.
+`6e36c2397696d7e9eecbd058cbfc1ba522c8ffba7e5798224de86b20457b6575`.
 Paths, clocks, hostnames, and Git metadata are excluded from canonical bytes.
 
 ## Python API
@@ -88,7 +88,7 @@ from microalpha.audit_lab import run_audit_lab
 
 result = run_audit_lab("evidence")
 assert result["receipt_sha256"] == (
-    "feb7e57ade26575942d10d21c4bd9c1a86724b2ab4f959bf1741eb46106b7b4b"
+    "6e36c2397696d7e9eecbd058cbfc1ba522c8ffba7e5798224de86b20457b6575"
 )
 ```
 

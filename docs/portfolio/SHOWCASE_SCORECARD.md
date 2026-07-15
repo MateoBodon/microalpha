@@ -109,7 +109,7 @@ Pages URLs, remaining weaknesses, and the next highest-value improvement.
 ## Reviewed outcome before publication
 
 - Product commit: `1fe57117ebcf3fcabce9048002265c914ecd28aa`.
-- Final receipt: `feb7e57ade26575942d10d21c4bd9c1a86724b2ab4f959bf1741eb46106b7b4b`.
+- Final receipt: `6e36c2397696d7e9eecbd058cbfc1ba522c8ffba7e5798224de86b20457b6575`.
 - Full verification: 146 tests, 77.73% coverage, all quality/static/security/docs
   gates passing, clean wheel proof passing.
 - Independent final hiring, open-source, and scientific reviews report no

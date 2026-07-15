@@ -45,9 +45,16 @@ def _round(value: float) -> float:
 
 
 def _array_digest(arrays: Mapping[str, np.ndarray]) -> str:
+    """Hash a platform-stable representation of the synthetic fixture inputs."""
+
     digest = hashlib.sha256()
     for name in sorted(arrays):
         value = np.ascontiguousarray(arrays[name], dtype="<f8")
+        # libm/RNG implementations can differ below meaningful fixture precision
+        # across operating systems. Canonicalize those irrelevant tail bits so the
+        # receipt proves the same 12-decimal inputs on every supported platform.
+        value = np.ascontiguousarray(np.round(value, decimals=12), dtype="<f8")
+        value[value == 0.0] = 0.0  # normalize negative zero before hashing
         digest.update(name.encode("utf-8"))
         digest.update(str(value.shape).encode("ascii"))
         digest.update(value.tobytes())

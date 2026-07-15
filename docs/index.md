@@ -28,7 +28,7 @@ git diff --exit-code -- docs/assets/audit_lab
 ```
 
 Receipt SHA-256:
-`feb7e57ade26575942d10d21c4bd9c1a86724b2ab4f959bf1741eb46106b7b4b`.
+`6e36c2397696d7e9eecbd058cbfc1ba522c8ffba7e5798224de86b20457b6575`.
 
 Install from this repository: the namesake package on PyPI is an unrelated third-party project.
 
