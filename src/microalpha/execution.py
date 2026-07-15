@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 from collections import Counter
 from dataclasses import dataclass, field
-from typing import Any, Dict, Literal, Mapping, Optional, Protocol, Sequence
+from typing import Any, Dict, Literal, Mapping, Optional, Protocol, Sequence, cast
 
 import numpy as np
 
@@ -16,7 +16,9 @@ from .slippage import SlippageModel
 
 
 class DataHandlerProtocol(Protocol):
-    def get_future_timestamps(self, start_timestamp: int, n: int) -> Sequence[int]: ...
+    def get_future_timestamps(
+        self, start_timestamp: int, n: int, symbol: str | None = None
+    ) -> Sequence[int]: ...
 
     def get_latest_price(self, symbol: str, timestamp: int) -> float | None: ...
 
@@ -25,6 +27,22 @@ class DataHandlerProtocol(Protocol):
     def get_recent_prices(
         self, symbol: str, end_timestamp: int, lookback: int
     ) -> Sequence[float]: ...
+
+
+@dataclass(frozen=True)
+class ExecutionPlan:
+    """An order slice that may be materialized only at ``timestamp``.
+
+    ``prepared_fill`` is reserved for execution venues, such as the in-memory
+    limit-order book, whose price is known at submission time. Market-data based
+    executors leave it unset so future prices and volumes are not read while the
+    engine clock is still in the past.
+    """
+
+    timestamp: int
+    order: OrderEvent
+    qty: int
+    prepared_fill: FillEvent | None = None
 
 
 @dataclass
@@ -80,14 +98,48 @@ class Executor:
     def execute(self, order: OrderEvent, current_ts: int) -> Optional[FillEvent]:
         self._reset_reject_tracking()
         fill_ts = self._fill_timestamp(order, current_ts)
+        if fill_ts is None:
+            self._record_reject("no_future_market_event")
+            return None
         fill = self._build_fill(order, fill_ts, order.qty)
         if fill is None:
             self.last_reject_reason = self._summarize_reject_reasons()
         return fill
 
-    def _fill_timestamp(self, order: OrderEvent, current_ts: int) -> int:
-        future = self.data_handler.get_future_timestamps(current_ts, 1)
-        return future[0] if future else current_ts
+    def plan(self, order: OrderEvent, current_ts: int) -> list[ExecutionPlan]:
+        """Schedule execution without reading future market observations."""
+        self._reset_reject_tracking()
+        fill_ts = self._fill_timestamp(order, current_ts)
+        if fill_ts is None:
+            self._record_reject("no_future_market_event")
+            return []
+        return [ExecutionPlan(fill_ts, order, order.qty)]
+
+    def materialize(self, plan: ExecutionPlan) -> Optional[FillEvent]:
+        """Create a fill when the engine has reached the planned timestamp."""
+        self._reset_reject_tracking()
+        if plan.prepared_fill is not None:
+            return plan.prepared_fill
+        fill = self._build_fill(plan.order, plan.timestamp, plan.qty)
+        if fill is None:
+            self.last_reject_reason = self._summarize_reject_reasons()
+        return fill
+
+    def _future_timestamps(
+        self, symbol: str, start_timestamp: int, n: int
+    ) -> list[int]:
+        """Return symbol-specific future events, with legacy-handler compatibility."""
+        try:
+            values = self.data_handler.get_future_timestamps(
+                start_timestamp, n, symbol=symbol
+            )
+        except TypeError:
+            values = self.data_handler.get_future_timestamps(start_timestamp, n)
+        return list(values)
+
+    def _fill_timestamp(self, order: OrderEvent, current_ts: int) -> int | None:
+        future = self._future_timestamps(order.symbol, current_ts, 1)
+        return future[0] if future else None
 
     def _slippage(self, symbol: str, qty: int, price: float) -> float:
         if self.slippage_model is not None:
@@ -173,7 +225,7 @@ class Executor:
         mode_str = mode.upper()
         if mode_str not in {"IOC", "PO"}:
             raise ValueError(f"Unsupported limit execution mode '{mode}'")
-        return mode_str
+        return cast(Literal["IOC", "PO"], mode_str)
 
     def _limit_crossable(
         self,
@@ -247,7 +299,7 @@ class Executor:
     ) -> float:
         if meta.volatility_bps and meta.volatility_bps > 0:
             return float(meta.volatility_bps)
-        prices = []
+        prices: list[float] = []
         try:
             prices = list(
                 self.data_handler.get_recent_prices(
@@ -259,7 +311,7 @@ class Executor:
         if len(prices) < 2:
             spread = meta.spread_bps if meta.spread_bps else 0.0
             return max(spread, 1.0)
-        prices_arr = np.asarray(prices, dtype=float)
+        prices_arr: np.ndarray = np.asarray(prices, dtype=float)
         returns = np.diff(prices_arr) / prices_arr[:-1]
         if returns.size == 0:
             return max(meta.spread_bps or 0.0, 1.0)
@@ -309,9 +361,10 @@ class TWAP(Executor):
 
     def execute(self, order: OrderEvent, current_ts: int) -> Optional[FillEvent]:
         self._reset_reject_tracking()
-        future = self.data_handler.get_future_timestamps(current_ts, self.slices)
+        future = self._future_timestamps(order.symbol, current_ts, self.slices)
         if not future:
-            future = [current_ts]
+            self._record_reject("no_future_market_event")
+            return None
 
         base = order.qty // len(future)
         remainder = order.qty % len(future)
@@ -350,6 +403,20 @@ class TWAP(Executor):
             slippage=avg_slippage,
         )
 
+    def plan(self, order: OrderEvent, current_ts: int) -> list[ExecutionPlan]:
+        self._reset_reject_tracking()
+        future = self._future_timestamps(order.symbol, current_ts, self.slices)
+        if not future:
+            self._record_reject("no_future_market_event")
+            return []
+        base = order.qty // len(future)
+        remainder = order.qty % len(future)
+        return [
+            ExecutionPlan(ts, order, base + (1 if idx < remainder else 0))
+            for idx, ts in enumerate(future)
+            if base + (1 if idx < remainder else 0) > 0
+        ]
+
 
 class VWAP(Executor):
     """Volume-weighted execution across future timestamps.
@@ -380,9 +447,10 @@ class VWAP(Executor):
 
     def execute(self, order: OrderEvent, current_ts: int) -> Optional[FillEvent]:
         self._reset_reject_tracking()
-        future = list(self.data_handler.get_future_timestamps(current_ts, self.slices))
+        future = self._future_timestamps(order.symbol, current_ts, self.slices)
         if not future:
-            future = [current_ts]
+            self._record_reject("no_future_market_event")
+            return None
 
         vols = []
         for ts in future:
@@ -439,6 +507,27 @@ class VWAP(Executor):
             slippage=avg_slippage,
         )
 
+    def plan(self, order: OrderEvent, current_ts: int) -> list[ExecutionPlan]:
+        """Schedule ex-ante slices without peeking at realized future volume.
+
+        Realized future volume cannot be used to size an order while the engine
+        is still at ``current_ts``. Until a historical intraday volume profile is
+        supplied explicitly, the safe engine path uses equal planned slices and
+        lets each slice's slippage model observe only its current tick.
+        """
+        self._reset_reject_tracking()
+        future = self._future_timestamps(order.symbol, current_ts, self.slices)
+        if not future:
+            self._record_reject("no_future_market_event")
+            return []
+        base = order.qty // len(future)
+        remainder = order.qty % len(future)
+        return [
+            ExecutionPlan(ts, order, base + (1 if idx < remainder else 0))
+            for idx, ts in enumerate(future)
+            if base + (1 if idx < remainder else 0) > 0
+        ]
+
 
 class ImplementationShortfall(Executor):
     """Front-loaded schedule approximating IS minimisation.
@@ -472,9 +561,10 @@ class ImplementationShortfall(Executor):
 
     def execute(self, order: OrderEvent, current_ts: int) -> Optional[FillEvent]:
         self._reset_reject_tracking()
-        future = list(self.data_handler.get_future_timestamps(current_ts, self.slices))
+        future = self._future_timestamps(order.symbol, current_ts, self.slices)
         if not future:
-            future = [current_ts]
+            self._record_reject("no_future_market_event")
+            return None
         # Geometric weights, normalised
         weights = np.array([self.urgency**i for i in range(len(future))], dtype=float)
         s = float(weights.sum()) or 1.0
@@ -519,6 +609,28 @@ class ImplementationShortfall(Executor):
             slippage=avg_slippage,
         )
 
+    def plan(self, order: OrderEvent, current_ts: int) -> list[ExecutionPlan]:
+        self._reset_reject_tracking()
+        future = self._future_timestamps(order.symbol, current_ts, self.slices)
+        if not future:
+            self._record_reject("no_future_market_event")
+            return []
+        weights = np.array([self.urgency**i for i in range(len(future))], dtype=float)
+        weights /= float(weights.sum()) or 1.0
+        raw = [float(weight) * order.qty for weight in weights]
+        quantities = [int(value) for value in raw]
+        remainder = order.qty - sum(quantities)
+        fractions = sorted(
+            range(len(raw)), key=lambda idx: raw[idx] - quantities[idx], reverse=True
+        )
+        for idx in range(remainder):
+            quantities[fractions[idx % len(fractions)]] += 1
+        return [
+            ExecutionPlan(ts, order, qty)
+            for ts, qty in zip(future, quantities)
+            if qty > 0
+        ]
+
 
 class SquareRootImpact(Executor):
     def _slippage(self, symbol: str, qty: int, price: float) -> float:
@@ -559,6 +671,14 @@ class LOBExecution(Executor):
 
     def execute(self, order: OrderEvent, current_ts: int) -> Optional[FillEvent]:
         self._reset_reject_tracking()
+        next_timestamp: int | None = None
+        if self.lob_tplus1:
+            future = self._future_timestamps(order.symbol, current_ts, 1)
+            if not future:
+                self._record_reject("no_future_market_event")
+                self.last_reject_reason = self._summarize_reject_reasons()
+                return None
+            next_timestamp = future[0]
         fills = self.book.submit(order)
         if not fills:
             self._record_reject("lob_no_fills")
@@ -567,19 +687,17 @@ class LOBExecution(Executor):
         if len(fills) == 1:
             fill = fills[0]
             # Enforce t+1 semantics by moving fill timestamp to next tick if requested
-            if self.lob_tplus1:
-                next_ts = self.data_handler.get_future_timestamps(order.timestamp, 1)
-                if next_ts:
-                    fill = FillEvent(
-                        timestamp=next_ts[0],
-                        symbol=fill.symbol,
-                        qty=fill.qty,
-                        price=fill.price,
-                        commission=fill.commission,
-                        slippage=fill.slippage,
-                        latency_ack=fill.latency_ack,
-                        latency_fill=fill.latency_fill,
-                    )
+            if next_timestamp is not None:
+                fill = FillEvent(
+                    timestamp=next_timestamp,
+                    symbol=fill.symbol,
+                    qty=fill.qty,
+                    price=fill.price,
+                    commission=fill.commission,
+                    slippage=fill.slippage,
+                    latency_ack=fill.latency_ack,
+                    latency_fill=fill.latency_fill,
+                )
             return fill
 
         total_qty = sum(f.qty for f in fills)
@@ -591,10 +709,8 @@ class LOBExecution(Executor):
         latency_fill = max(f.latency_fill for f in fills)
 
         ts = fills[-1].timestamp
-        if self.lob_tplus1:
-            future = self.data_handler.get_future_timestamps(order.timestamp, 1)
-            if future:
-                ts = future[0]
+        if next_timestamp is not None:
+            ts = next_timestamp
         return FillEvent(
             timestamp=ts,
             symbol=fills[0].symbol,
@@ -605,3 +721,17 @@ class LOBExecution(Executor):
             latency_ack=latency_ack,
             latency_fill=latency_fill,
         )
+
+    def plan(self, order: OrderEvent, current_ts: int) -> list[ExecutionPlan]:
+        """Submit to the current book, deferring any t+1 state mutation."""
+        fill = self.execute(order, current_ts)
+        if fill is None:
+            return []
+        return [
+            ExecutionPlan(
+                timestamp=fill.timestamp,
+                order=order,
+                qty=abs(fill.qty),
+                prepared_fill=fill,
+            )
+        ]

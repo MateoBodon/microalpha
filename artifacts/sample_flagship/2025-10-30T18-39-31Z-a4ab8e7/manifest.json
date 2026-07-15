@@ -7,6 +7,6 @@
   "numpy_version": "2.2.6",
   "pandas_version": "2.2.3",
   "seed": 123,
-  "config_path": "/Users/mateobodon/Documents/Programming/Projects/microalpha/configs/flagship_sample.yaml",
+  "config_path": "<HOME>/Documents/Programming/Projects/microalpha/configs/flagship_sample.yaml",
   "config_sha256": "c2cf8578eb736c050dbe5d89eb6db276feca7ec3af9aaba373945fd52bcc8e33"
 }

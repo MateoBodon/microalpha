@@ -48,7 +48,7 @@ Inputs:
 
 <skill>
 <name>gpt-bundle</name>
-<path>/Users/mateobodon/.codex/skills/gpt-bundle/SKILL.md</path>
+<path><HOME>/.codex/skills/gpt-bundle/SKILL.md</path>
 ---
 name: gpt-bundle
 description: Create a gpt_bundle.zip for GPT review (status + diffs + key docs).

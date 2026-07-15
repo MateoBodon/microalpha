@@ -33,6 +33,21 @@ PATH_PATTERNS = [
     (re.compile(r"(^|/)[^/]*option_[^/]*", re.IGNORECASE), "path: option_*"),
 ]
 
+PRIVATE_PATH_PATTERNS = [
+    (
+        re.compile(r"/Users/(?!\.\.\.)[A-Za-z0-9._-]+/"),
+        "private path: macOS home",
+    ),
+    (
+        re.compile(r"/Volumes/(?!\.\.\.)[A-Za-z0-9._-]+/"),
+        "private path: mounted volume",
+    ),
+    (
+        re.compile(r"[A-Za-z]:\\\\Users\\\\(?!\.\.\.)[A-Za-z0-9._-]+\\\\"),
+        "private path: Windows home",
+    ),
+]
+
 
 def load_allowlist() -> list[str]:
     patterns: list[str] = []
@@ -87,13 +102,28 @@ def scan_file(rel_path: Path) -> list[str]:
     return matches
 
 
+def scan_private_paths(rel_path: Path) -> list[str]:
+    """Reject machine-specific absolute paths in any tracked text file."""
+    text = read_head_text(REPO_ROOT / rel_path)
+    return [label for pattern, label in PRIVATE_PATH_PATTERNS if pattern.search(text)]
+
+
 def main() -> int:
     allowlist = load_allowlist()
     scanned = 0
     skipped = 0
+    privacy_scanned = 0
     violations: list[tuple[Path, list[str]]] = []
 
     for rel_path in iter_tracked_files():
+        try:
+            private_matches = scan_private_paths(rel_path)
+        except RuntimeError as exc:
+            private_matches = [str(exc)]
+        privacy_scanned += 1
+        if private_matches:
+            violations.append((rel_path, private_matches))
+
         if rel_path.suffix.lower() not in DATA_EXTENSIONS:
             continue
         if is_allowlisted(rel_path, allowlist):
@@ -112,11 +142,18 @@ def main() -> int:
         for path, matches in violations:
             unique = ", ".join(sorted(set(matches)))
             print(f"- {path.as_posix()}: {unique}")
-        print(f"Scanned {scanned} files; allowlisted {skipped}.")
+        print(
+            f"Scanned {scanned} data files and {privacy_scanned} tracked files "
+            f"for private paths; allowlisted {skipped} data files."
+        )
         print(f"Allowlist path: {ALLOWLIST_PATH.as_posix()}")
         return 2
 
-    print(f"Data policy check passed. Scanned {scanned} files; allowlisted {skipped}.")
+    print(
+        f"Data policy check passed. Scanned {scanned} data files and "
+        f"{privacy_scanned} tracked files for private paths; "
+        f"allowlisted {skipped} data files."
+    )
     return 0
 
 

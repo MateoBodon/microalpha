@@ -1,7 +1,7 @@
 # Results
 
 Summary:
-- Located WRDS exports under `/Volumes/Storage/Data/wrds` with expected `crsp`, `meta`, and `universes` paths.
+- Located WRDS exports under `<EXTERNAL_STORAGE>/Data/wrds` with expected `crsp`, `meta`, and `universes` paths.
 - Ran WRDS holdout-capable smoke WFV; holdout artifacts were written alongside WFV outputs.
 - Rendered WRDS smoke report outputs and updated `docs/results_wrds_smoke.md` plus summary assets; regenerated project_state docs.
 

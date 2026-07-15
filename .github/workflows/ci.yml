@@ -14,15 +14,15 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Cache pip
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('pyproject.toml') }}
@@ -43,8 +43,31 @@ jobs:
       - name: isort
         run: isort --check-only .
 
+      - name: Mypy
+        if: matrix.python-version == '3.12'
+        run: >-
+          mypy
+          --follow-imports=skip
+          src/microalpha/audit_lab.py
+          src/microalpha/multiple_testing.py
+          src/microalpha/engine.py
+          src/microalpha/execution.py
+          src/microalpha/reporting/factors.py
+
       - name: detect-secrets
-        run: detect-secrets scan --baseline .secrets.baseline
+        run: |
+          git ls-files -z README.md PROJECT.md pyproject.toml LICENSE CHANGELOG.md \
+            Makefile 'src/**' 'tests/**' 'scripts/**' '.github/**' \
+            docs/index.md docs/audit-lab.md docs/architecture.md docs/api.md \
+            docs/examples.md docs/reproducibility.md docs/leakage-safety.md \
+            docs/benchmarks.md docs/limitations.md docs/portfolio_evidence_2026-07-11.md \
+            docs/wrds.md docs/flagship_momentum_wrds.md docs/results_wrds.md docs/factors.md \
+            'docs/assets/audit_lab/**' \
+            | xargs -0 detect-secrets-hook --baseline .secrets.baseline
+
+      - name: Licensed-data policy
+        if: matrix.python-version == '3.12'
+        run: python scripts/check_data_policy.py
 
       - name: Pytest (unit)
         run: pytest -m "not wrds" --cov=microalpha --cov-report=xml --cov-report=html
@@ -54,11 +77,16 @@ jobs:
 
       - name: Upload HTML coverage
         if: matrix.python-version == '3.12'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: htmlcov
           path: htmlcov
 
+      - name: Reproduce Audit Lab receipt
+        run: |
+          microalpha audit-demo
+          git diff --exit-code -- docs/assets/audit_lab
+
       - name: MkDocs build
         if: matrix.python-version == '3.12'
-        run: mkdocs build
+        run: mkdocs build --strict

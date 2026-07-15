@@ -40,9 +40,9 @@ from .manifest import (
 )
 from .market_metadata import load_symbol_meta
 from .metrics import compute_metrics
+from .multiple_testing import centered_max_statistic_test
 from .order_flow import OrderFlowDiagnostics, infer_non_degenerate_reason
 from .portfolio import Portfolio
-from .risk_stats import block_bootstrap
 from .runner import (
     persist_config,
     persist_exposures,
@@ -1661,7 +1661,6 @@ def bootstrap_reality_check(
     if not np.isfinite(best_sharpe):
         return None
 
-    rng = np.random.default_rng(seed)
     method_lower = method.lower()
     use_iid = method_lower == "iid"
     if use_iid:
@@ -1672,39 +1671,55 @@ def bootstrap_reality_check(
             stacklevel=2,
         )
 
-    exceed = 0
-    distribution: List[float] = []
-    for _ in range(max(1, n_bootstrap)):
-        max_sharpe = float("-inf")
-        for entry in valid:
-            returns = entry["returns"]
-            if use_iid:
-                sample = rng.choice(returns, size=returns.size, replace=True)
-            else:
-                sample = next(
-                    block_bootstrap(
-                        returns,
-                        B=1,
-                        method=method_lower,  # type: ignore[arg-type]
-                        block_len=block_len,
-                        rng=rng,
-                    )
-                )
-            sharpe = _annualised_sharpe(sample)
-            max_sharpe = max(max_sharpe, sharpe)
-        distribution.append(float(max_sharpe))
-        if max_sharpe >= best_sharpe:
-            exceed += 1
-
-    p_value = (exceed + 1) / (len(distribution) + 1)
+    lengths = {int(entry["returns"].size) for entry in valid}
+    if len(lengths) != 1:
+        raise ValueError(
+            "reality-check candidates must share one explicitly aligned return calendar"
+        )
+    aligned_length = lengths.pop()
+    if aligned_length < 5:
+        return None
+    calendars = []
+    for entry in valid:
+        equity_df = (entry.get("metrics") or {}).get("equity_df")
+        if isinstance(equity_df, pd.DataFrame) and "timestamp" in equity_df:
+            calendars.append(equity_df["timestamp"].astype(str).to_numpy())
+    if calendars and len(calendars) != len(valid):
+        raise ValueError("reality-check candidates have incomplete timestamp calendars")
+    if calendars and any(
+        not np.array_equal(calendars[0], calendar) for calendar in calendars[1:]
+    ):
+        raise ValueError("reality-check candidate timestamps are not aligned")
+    candidate_matrix = np.column_stack(
+        [np.asarray(entry["returns"], dtype=float) for entry in valid]
+    )
+    candidate_names = [
+        _format_param_label(entry.get("params") or {}) for entry in valid
+    ]
+    correction = centered_max_statistic_test(
+        candidate_matrix,
+        benchmark_returns=np.zeros(aligned_length, dtype=float),
+        candidate_names=candidate_names,
+        seed=seed,
+        num_bootstrap=max(1, n_bootstrap),
+        method=method_lower,  # type: ignore[arg-type]
+        block_length=block_len,
+    )
     return {
-        "p_value": float(p_value),
-        "distribution": distribution,
+        "p_value": correction["p_value"],
+        "distribution": correction["distribution"],
         "best_sharpe": float(best_sharpe),
+        "observed_max_statistic": correction["observed_statistic"],
+        "best_candidate": correction["best_candidate"],
+        "test": correction["test"],
+        "null": correction["null"],
+        "null_centered": True,
+        "synchronous_resampling": True,
+        "benchmark": "zero_return",
         "method": method_lower,
-        "block_length": block_len,
+        "block_length": correction["block_length"],
         "num_models": len(valid),
-        "num_bootstrap": len(distribution),
+        "num_bootstrap": correction["num_bootstrap"],
     }
 
 

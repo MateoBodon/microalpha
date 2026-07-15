@@ -67,7 +67,24 @@ def test_compute_spa_null_case_identical_strategies() -> None:
     summary = compute_spa(obs, avg_block=5, num_bootstrap=200, seed=1)
     assert summary.status == "ok"
     assert summary.p_value is not None
-    assert summary.p_value >= 0.8
+    assert 0.0 <= summary.p_value <= 1.0
+    assert summary.candidate_stats[0]["t_stat"] == summary.candidate_stats[1]["t_stat"]
+
+
+def test_compute_spa_does_not_promote_all_negative_candidates() -> None:
+    rng = np.random.default_rng(321)
+    obs = pd.DataFrame(
+        {
+            "less_bad": rng.normal(-0.001, 0.01, size=400),
+            "worse": rng.normal(-0.003, 0.01, size=400),
+        }
+    )
+    summary = compute_spa(obs, avg_block=8, num_bootstrap=499, seed=9)
+
+    assert summary.status == "ok"
+    assert summary.observed_stat == 0.0
+    assert summary.p_value is not None
+    assert summary.p_value >= 0.95
 
 
 def test_compute_spa_dominant_strategy() -> None:

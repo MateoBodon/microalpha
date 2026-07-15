@@ -1,4 +1,4 @@
-# AGENTS.md instructions for /Users/mateobodon/Documents/Programming/Projects/microalpha
+# AGENTS.md instructions for <HOME>/Documents/Programming/Projects/microalpha
 
 <INSTRUCTIONS>
 # AGENTS.md — microalpha
@@ -88,8 +88,8 @@ Living docs:
 
 ## Skills
 These skills are discovered at startup from multiple local sources. Each entry includes a name, description, and file path so you can open the source for full instructions.
-- skill-creator: Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Codex's capabilities with specialized knowledge, workflows, or tool integrations. (file: /Users/mateobodon/.codex/skills/.system/skill-creator/SKILL.md)
-- skill-installer: Install Codex skills into $CODEX_HOME/skills from a curated list or a GitHub repo path. Use when a user asks to list installable skills, install a curated skill, or install a skill from another repo (including private repos). (file: /Users/mateobodon/.codex/skills/.system/skill-installer/SKILL.md)
+- skill-creator: Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Codex's capabilities with specialized knowledge, workflows, or tool integrations. (file: <HOME>/.codex/skills/.system/skill-creator/SKILL.md)
+- skill-installer: Install Codex skills into $CODEX_HOME/skills from a curated list or a GitHub repo path. Use when a user asks to list installable skills, install a curated skill, or install a skill from another repo (including private repos). (file: <HOME>/.codex/skills/.system/skill-installer/SKILL.md)
 - Discovery: Available skills are listed in project docs and may also appear in a runtime "## Skills" section (name + description + file path). These are the sources of truth; skill bodies live on disk at the listed paths.
 - Trigger rules: If the user names a skill (with `$SkillName` or plain text) OR the task clearly matches a skill's description, you must use that skill for that turn. Multiple mentions mean use them all. Do not carry skills across turns unless re-mentioned.
 - Missing/blocked: If a named skill isn't in the list or the path can't be read, say so briefly and continue with the best fallback.
@@ -110,7 +110,7 @@ These skills are discovered at startup from multiple local sources. Each entry i
 </INSTRUCTIONS>
 
 <environment_context>
-  <cwd>/Users/mateobodon/Documents/Programming/Projects/microalpha</cwd>
+  <cwd><HOME>/Documents/Programming/Projects/microalpha</cwd>
   <approval_policy>never</approval_policy>
   <sandbox_mode>danger-full-access</sandbox_mode>
   <network_access>enabled</network_access>

@@ -10,6 +10,7 @@ from typing import Iterable
 import numpy as np
 
 from .events import FillEvent, LookaheadError, MarketEvent, OrderEvent, SignalEvent
+from .execution import ExecutionPlan
 
 
 class Engine:
@@ -23,6 +24,7 @@ class Engine:
         self.broker = broker
         self.rng = rng or np.random.default_rng()
         self._pending_equity_refresh_ts: int | None = None
+        self._pending_executions: list[ExecutionPlan] = []
 
     def run(self) -> None:
         profiler = None
@@ -58,6 +60,7 @@ class Engine:
 
         self.clock = market_event.timestamp
         self.portfolio.on_market(market_event)
+        self._materialize_due(market_event)
 
         signals_iter: Iterable[SignalEvent] = self.strategy.on_market(market_event)
         signals = list(signals_iter)
@@ -80,10 +83,8 @@ class Engine:
 
             orders: Iterable[OrderEvent] = self.portfolio.on_signal(signal)
             for order in orders:
-                fill: FillEvent | None = self.broker.execute(
-                    order, market_event.timestamp
-                )
-                if fill is None:
+                plans = self._plan_execution(order, market_event.timestamp)
+                if not plans:
                     if order_flow:
                         reason = getattr(
                             getattr(self.broker, "executor", None),
@@ -94,12 +95,18 @@ class Engine:
                     continue
                 if order_flow:
                     order_flow.record_broker_accept(order)
-                    order_flow.record_fill(fill)
-                if fill.timestamp < market_event.timestamp:
-                    raise LookaheadError("fill before current market event")
-                if fill.timestamp == market_event.timestamp:
-                    same_day_fill = True
-                self.portfolio.on_fill(fill)
+                for plan in plans:
+                    if plan.timestamp < market_event.timestamp:
+                        raise LookaheadError("planned fill before current market event")
+                    if plan.timestamp == market_event.timestamp:
+                        fill = self._materialize(plan)
+                        if fill is not None:
+                            if order_flow:
+                                order_flow.record_fill(fill, order=plan.order)
+                            self.portfolio.on_fill(fill)
+                            same_day_fill = True
+                    else:
+                        self._pending_executions.append(plan)
         if same_day_fill:
             self._pending_equity_refresh_ts = market_event.timestamp
         if order_flow and signals:
@@ -111,3 +118,64 @@ class Engine:
                 order_flow.record_error(
                     f"end_rebalance_error: {type(exc).__name__}: {exc}"
                 )
+
+    def _plan_execution(
+        self, order: OrderEvent, market_timestamp: int
+    ) -> list[ExecutionPlan]:
+        planner = getattr(self.broker, "plan", None)
+        if callable(planner):
+            return list(planner(order, market_timestamp))
+
+        # Compatibility for simple third-party test brokers. Built-in brokers
+        # use the safe planning API above and never read a future market price
+        # before the engine reaches it.
+        fill = self.broker.execute(order, market_timestamp)
+        if fill is None:
+            return []
+        return [ExecutionPlan(fill.timestamp, order, abs(fill.qty), fill)]
+
+    def _materialize(self, plan: ExecutionPlan) -> FillEvent | None:
+        materializer = getattr(self.broker, "materialize", None)
+        if callable(materializer):
+            return materializer(plan)
+        return plan.prepared_fill
+
+    def _materialize_due(self, market_event: MarketEvent) -> None:
+        overdue = [
+            plan
+            for plan in self._pending_executions
+            if plan.timestamp < market_event.timestamp
+            and plan.order.symbol == market_event.symbol
+        ]
+        if overdue:
+            raise LookaheadError("scheduled execution timestamp was not observed")
+
+        due = [
+            plan
+            for plan in self._pending_executions
+            if plan.timestamp == market_event.timestamp
+            and plan.order.symbol == market_event.symbol
+        ]
+        if not due:
+            return
+
+        due_ids = {id(plan) for plan in due}
+        self._pending_executions = [
+            plan for plan in self._pending_executions if id(plan) not in due_ids
+        ]
+        order_flow = getattr(self.portfolio, "order_flow", None)
+        applied = False
+        for plan in due:
+            fill = self._materialize(plan)
+            if fill is None:
+                continue
+            if fill.timestamp != market_event.timestamp:
+                raise LookaheadError(
+                    "materialized fill timestamp differs from schedule"
+                )
+            if order_flow:
+                order_flow.record_fill(fill, order=plan.order)
+            self.portfolio.on_fill(fill)
+            applied = True
+        if applied:
+            self.portfolio.refresh_equity_after_fills(market_event.timestamp)

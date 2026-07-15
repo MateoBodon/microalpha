@@ -6,7 +6,7 @@
   "git_sha_before": "559a99e401d416b942b77fbf4b0bba10095cae9a",
   "git_sha_after": "385e9c75c371933dbc074dd5a94430f513362862",
   "branch_name": "codex/ticket-04-leakage-tests-unsafe-manifest",
-  "host_env_notes": "macOS 26.0.1 / Python 3.12.2 (system) / WRDS_DATA_ROOT=/Volumes/Storage/Data/wrds / started_at_utc and finished_at_utc approximate",
+  "host_env_notes": "macOS 26.0.1 / Python 3.12.2 (system) / WRDS_DATA_ROOT=<EXTERNAL_STORAGE>/Data/wrds / started_at_utc and finished_at_utc approximate",
   "dataset_id": "wrds_crsp_local_exports_20251224",
   "config_paths": [
     "configs/wfv_flagship_wrds_smoke.yaml"

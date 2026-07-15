@@ -1,0 +1,26 @@
+{
+  "audit_demo": {
+    "median_seconds": 1.3745,
+    "minimum_seconds": 1.3363,
+    "runs_seconds": [1.434, 1.4238, 1.3363, 1.3554, 1.3745]
+  },
+  "engine": {
+    "events": 1000000,
+    "events_per_second": 1464231,
+    "seconds": 0.683
+  },
+  "environment": {
+    "platform": "macOS-26.5.1-arm64-arm-64bit",
+    "python": "3.12.2"
+  },
+  "measured_on": "2026-07-15",
+  "scope": "Host-dependent benchmark receipt; values are not deterministic correctness claims.",
+  "source_sha256": {
+    "benchmarks/bench_engine.py": "5e65cabeeda7b26e8e8e84573128d88c778dd682ba3f7a6234cd1ef88df6c13a",
+    "src/microalpha/audit_lab.py": "4be05bf2de2926cd88a0ffbe8a65b6ebc134492c658272684fca98bd98a5bb18",
+    "src/microalpha/engine.py": "7d10f35f55bb1ec1e72fd53202381049798d43db31e5dadfe8d3bfdc618fc816",
+    "src/microalpha/execution.py": "8e65b1cb1019dd9ebd7cd49cbc81493c11ab52cbe207450d2ba42d1519f11474",
+    "src/microalpha/multiple_testing.py": "71ea17a709cffd3edc9bf01634b60ee8955efba3e939b1d64c8f88f2947faf89",
+    "src/microalpha/point_in_time.py": "38ec0e23233e05373554b867a727fbe84e880d951c5510b0928de9a6df78870d"
+  }
+}

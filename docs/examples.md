@@ -5,8 +5,8 @@ Kick off experiments quickly using the bundled configuration files and the repro
 ## 1. Flagship momentum quickstart
 
 ```bash
-microalpha run --config configs/flagship_sample.yaml --out artifacts/sample_flagship
-microalpha report --artifact-dir artifacts/sample_flagship --summary-out reports/summaries/flagship_mom.md
+make sample
+make report
 ```
 
 The run command generates deterministic artifacts (metrics, bootstrap distribution, exposures, trades) using the new linear+sqrt slippage model, IOC queueing, and covariance-aware allocator. The report command renders a PNG tear sheet plus a Markdown case study.
@@ -14,9 +14,12 @@ The run command generates deterministic artifacts (metrics, bootstrap distributi
 ## 2. Walk-forward reality check on the sample universe
 
 ```bash
-microalpha wfv --config configs/wfv_flagship_sample.yaml --out artifacts/sample_wfv
-microalpha report --artifact-dir artifacts/sample_wfv --summary-out reports/summaries/flagship_mom_wfv.md --title "Flagship Walk-Forward"
+make wfv
+make report-wfv
 ```
+
+The run commands create a run-ID child directory. If you call the CLI directly,
+pass the `artifact_dir` printed by `run` or `wfv` to `microalpha report`.
 
 This executes a rolling walk-forward with Politis–White bootstrap and writes `folds.json`, `bootstrap.json`, `exposures.csv`, and aggregated metrics for the flagship strategy.
 

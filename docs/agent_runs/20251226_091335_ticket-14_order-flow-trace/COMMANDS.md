@@ -64,7 +64,7 @@
 62. `cp docs/prompts/20251226_091335_ticket-14_order-flow-trace.md docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/PROMPT.md`
 63. `cp docs/agent_runs/20251226_065226_ticket-13_fix-wrds-degeneracy/wfv_flagship_wrds_single_fold.yaml docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/wfv_flagship_wrds_single_fold.yaml`
 64. `apply_patch` (enable `order_flow_diagnostics` in debug config)
-65. `WRDS_DATA_ROOT=/Volumes/Storage/Data/wrds microalpha wfv --config docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/wfv_flagship_wrds_single_fold.yaml` (failed: non-degenerate rejected all candidates)
+65. `WRDS_DATA_ROOT=<EXTERNAL_STORAGE>/Data/wrds microalpha wfv --config docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/wfv_flagship_wrds_single_fold.yaml` (failed: non-degenerate rejected all candidates)
 66. `ls -td artifacts/wrds_flagship_debug/* 2>/dev/null | head -1`
 67. `python3 - <<'PY'` (summarize order-flow diagnostics + rejection reasons)
 68. `python3 - <<'PY'` (inspect one rebalance entry with weights)
@@ -78,7 +78,7 @@
 76. `apply_patch` (add `clipped_by_caps` to order-flow summary)
 77. `make test-fast`
 78. `pytest -q tests/test_order_flow_diagnostics.py`
-79. `WRDS_DATA_ROOT=/Volumes/Storage/Data/wrds microalpha wfv --config docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/wfv_flagship_wrds_single_fold.yaml`
+79. `WRDS_DATA_ROOT=<EXTERNAL_STORAGE>/Data/wrds microalpha wfv --config docs/agent_runs/20251226_091335_ticket-14_order-flow-trace/wfv_flagship_wrds_single_fold.yaml`
 80. `python3 - <<'PY'` (inspect order-flow clip/drop summary)
 81. `cat project_state/CURRENT_RESULTS.md`
 82. `cat project_state/KNOWN_ISSUES.md`

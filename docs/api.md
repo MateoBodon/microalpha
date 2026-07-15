@@ -2,6 +2,47 @@
 
 This page summarises the primary extension points for building strategies and tooling on top of Microalpha.
 
+## Audit Lab (`microalpha.audit_lab`)
+
+```python
+from microalpha.audit_lab import run_audit_lab
+
+result = run_audit_lab("evidence", seed=20260715)
+```
+
+`run_audit_lab` returns the output directory, receipt SHA-256, and exact result
+payload. Canonical files exclude clocks, hosts, and absolute paths.
+
+## Multiple-testing control (`microalpha.multiple_testing`)
+
+```python
+from microalpha.multiple_testing import centered_max_statistic_test
+
+result = centered_max_statistic_test(
+    candidate_returns,
+    benchmark_returns=benchmark_returns,
+    candidate_names=["model_a", "model_b"],
+    seed=7,
+    num_bootstrap=2000,
+)
+```
+
+The function tests whether the best candidate has a positive expected return
+differential to an explicit benchmark. It null-centers the differential matrix
+and synchronously resamples timestamps across all candidates.
+
+## Point-in-time gate (`microalpha.point_in_time`)
+
+```python
+from microalpha.point_in_time import require_point_in_time
+
+require_point_in_time(decision_at, available_at, row_ids=observation_ids)
+```
+
+The gate fails closed when any feature row becomes available after its decision
+timestamp. `PointInTimeViolation` exposes exact `count` and `row_ids` fields for
+auditable failure reports.
+
 ## Runner (`microalpha.runner`)
 
 - `run_from_config(path: str, override_artifacts_dir: str | None = None) -> dict`
@@ -49,10 +90,14 @@ Portfolio(data_handler, initial_cash, *, max_exposure=None, max_drawdown_stop=No
 
 ## Broker & Execution (`microalpha.broker`, `microalpha.execution`)
 
-- `SimulatedBroker(executor)` – wraps an `Executor` and enforces t+1 semantics before returning fills.
+- `SimulatedBroker(executor)` – plans execution slices and materializes each fill only when the engine reaches its scheduled market event.
+- `ExecutionPlan(timestamp, order, qty)` – immutable pending slice. Market-data executors do not read a future price when creating it.
 - `Executor` – base class implementing simple price-impact + commission fills against the `DataHandler`.
 - `TWAP` – splits orders evenly across future timestamps supplied by the data handler.
-- `VWAP` – splits by future-tick volumes; uses `DataHandler.get_volume_at` if available (requires `volume` column).
+- `VWAP` – the safe Engine planning path uses equal ex-ante slices because
+  realized future volume is not available at order time. Its direct `execute()`
+  compatibility method can reproduce an offline realized-volume benchmark, but
+  must not be used as a chronology-safe simulation path.
 - `ImplementationShortfall` – front-loaded geometric schedule controlled by `urgency`.
 - `SquareRootImpact` / `KyleLambda` – stylised impact models for execution cost studies.
 - `LOBExecution` – routes orders to the in-memory level-2 book (`microalpha.lob.LimitOrderBook`) with latency simulation.
@@ -75,6 +120,7 @@ Refer to the module docstrings and tests for deeper examples of composing these 
 
 ## CLI (`microalpha.cli`)
 
+- `microalpha audit-demo [--out DIR] [--seed INT]`
 - `microalpha run -c <cfg> [--out DIR] [--profile]`
 - `microalpha wfv -c <cfg> [--out DIR] [--profile]`
 

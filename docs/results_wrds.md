@@ -1,5 +1,12 @@
 # WRDS Walk-Forward Results (Flagship Momentum)
 
+> **Historical artifact interpretation.** This page predates the current
+> benchmark-differential max-statistic correction. Its field named "SPA" was a
+> relative best-versus-other-candidates comparison and must not be interpreted
+> as evidence that a strategy beat cash or another investable benchmark. The
+> current public correctness proof is [Audit Lab](audit-lab.md); the sealed
+> confirmation set was not opened.
+
 > Latest run: **2026-01-26T01-22-23Z-e76eb4d** (`configs/wfv_flagship_wrds.yaml`, 2013-01-02 -> 2017-11-02, 4 folds with 252-day forward tests (~12.0 months))
 
 ## Performance Snapshot
@@ -65,7 +72,10 @@ _Exposure time series is recorded in equity_curve.csv._
 
 ## SPA & Factor Highlights
 
-- Hansen SPA best model: **allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=1|top_frac=0.2000** with p-value **0.015** (2000 stationary bootstrap draws, block=63). See `reports/summaries/wrds_flagship_spa.md`.
+- Legacy relative-comparison best model:
+  **allocator_kwargs={'risk_model': 'equal'}|lookback_months=9|skip_months=1|top_frac=0.2000**
+  with historical p-value **0.015** (2000 stationary bootstrap draws, block=63).
+  This was not a benchmark-superiority test and is not a current claim.
 - FF5 + MOM regression (HAC lags=5):
 
 ```

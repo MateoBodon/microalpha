@@ -1,16 +1,22 @@
-"""Hansen SPA test utilities for Microalpha parameter grids."""
+"""Benchmark-differential selection tests for parameter grids.
+
+The historical ``spa`` module name remains for artifact compatibility. Current
+results use the null-centered synchronous max-statistic implementation from the
+public Audit Lab and compare candidates with an explicit zero-return benchmark.
+"""
 
 from __future__ import annotations
 
 import argparse
 import json
-import math
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Sequence
 
 import numpy as np
 import pandas as pd
+
+from microalpha.multiple_testing import centered_max_statistic_test
 
 
 @dataclass
@@ -132,38 +138,6 @@ def load_grid_returns(grid_path: Path) -> pd.DataFrame:
     return pivot
 
 
-def _stationary_bootstrap_indices(
-    n: int, avg_block: int, rng: np.random.Generator
-) -> np.ndarray:
-    p = 1.0 / max(1, avg_block)
-    indices = np.empty(n, dtype=int)
-    current = int(rng.integers(0, n))
-    for t in range(n):
-        indices[t] = current
-        if rng.random() < p:
-            current = int(rng.integers(0, n))
-        else:
-            current = (current + 1) % n
-    return indices
-
-
-def _spa_stat(diff_matrix: np.ndarray) -> tuple[float, list[float]]:
-    if diff_matrix.size == 0:
-        return 0.0, []
-    T, k = diff_matrix.shape
-    stats: list[float] = []
-    for j in range(k):
-        series = diff_matrix[:, j]
-        mean = float(np.mean(series))
-        std = float(np.std(series, ddof=1))
-        if std <= 0.0:
-            stats.append(0.0)
-            continue
-        t_val = np.sqrt(T) * max(0.0, mean) / std
-        stats.append(float(t_val))
-    return float(max(stats)) if stats else 0.0, stats
-
-
 def compute_spa(
     pivot: pd.DataFrame,
     *,
@@ -258,77 +232,36 @@ def compute_spa(
             diagnostics=diagnostics,
         )
 
-    model_names = list(cleaned.columns)
-    best_idx = int(np.argmax(means))
-    best_model = str(model_names[best_idx])
-    diff_matrix = matrix[:, [best_idx]] - matrix
-    diff_matrix = np.delete(diff_matrix, best_idx, axis=1)
-    comparator_names = [name for i, name in enumerate(model_names) if i != best_idx]
-    observed_stat, component_stats = _spa_stat(diff_matrix)
-
-    if not math.isfinite(observed_stat):
-        return _degenerate_summary(
-            "non-finite observed SPA statistic",
+    model_names = [str(name) for name in cleaned.columns]
+    correction = centered_max_statistic_test(
+        matrix,
+        benchmark_returns=np.zeros(n_obs, dtype=float),
+        candidate_names=model_names,
+        seed=seed,
+        num_bootstrap=num_bootstrap,
+        block_length=avg_block,
+    )
+    best_model = str(correction["best_candidate"])
+    observed_stat = float(correction["observed_statistic"])
+    p_value = float(correction["p_value"])
+    raw_statistics = correction["candidate_statistics"]
+    if not isinstance(raw_statistics, dict):
+        return _error_summary(
+            "candidate statistics missing from correction",
             n_obs=n_obs,
             n_strategies=n_strategies,
             avg_block=avg_block,
             num_bootstrap=num_bootstrap,
             diagnostics=diagnostics,
         )
-    if any(not math.isfinite(stat) for stat in component_stats):
-        return _degenerate_summary(
-            "non-finite comparator t-stats",
-            n_obs=n_obs,
-            n_strategies=n_strategies,
-            avg_block=avg_block,
-            num_bootstrap=num_bootstrap,
-            diagnostics=diagnostics,
-        )
-
-    rng = np.random.default_rng(seed)
-    boot_stats = np.zeros(num_bootstrap, dtype=float)
-    centered = diff_matrix - diff_matrix.mean(axis=0)
-    for b in range(num_bootstrap):
-        indices = _stationary_bootstrap_indices(len(matrix), avg_block, rng)
-        boot_slice = centered[indices, :]
-        boot_stats[b], _ = _spa_stat(boot_slice)
-    finite_boot = boot_stats[np.isfinite(boot_stats)]
-    if finite_boot.size == 0:
-        return _degenerate_summary(
-            "bootstrap statistics are all NaN/inf",
-            n_obs=n_obs,
-            n_strategies=n_strategies,
-            avg_block=avg_block,
-            num_bootstrap=num_bootstrap,
-            diagnostics=diagnostics,
-        )
-    if finite_boot.size != boot_stats.size:
-        diagnostics.append("dropped non-finite bootstrap statistics")
-    p_value = float(np.mean(finite_boot >= observed_stat))
-    if not math.isfinite(p_value):
-        return _degenerate_summary(
-            "non-finite SPA p-value",
-            n_obs=n_obs,
-            n_strategies=n_strategies,
-            avg_block=avg_block,
-            num_bootstrap=num_bootstrap,
-            diagnostics=diagnostics,
-        )
-    p_value = min(max(p_value, 0.0), 1.0)
-
-    candidate_stats: list[dict[str, float | str]] = []
-    for name, stat, series in zip(
-        comparator_names,
-        component_stats,
-        diff_matrix.T,
-    ):
-        candidate_stats.append(
-            {
-                "model": str(name),
-                "mean_diff": float(np.mean(series)),
-                "t_stat": float(stat),
-            }
-        )
+    candidate_stats: list[dict[str, float | str]] = [
+        {
+            "model": name,
+            "mean_diff": float(means[index]),
+            "t_stat": float(raw_statistics[name]),
+        }
+        for index, name in enumerate(model_names)
+    ]
     return SpaSummary(
         status="ok",
         reason=None,
@@ -364,7 +297,7 @@ def write_outputs(summary: SpaSummary, json_path: Path, markdown_path: Path) -> 
     }
     json_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
-    lines = ["# Hansen SPA Summary", ""]
+    lines = ["# Benchmark-differential max-statistic summary", ""]
     if summary.status != "ok":
         lines.append(f"- **Status:** {summary.status}")
         if summary.status == "error":

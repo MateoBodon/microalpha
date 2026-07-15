@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable, Sequence
+from typing import Iterable, Sequence, cast
 
 import numpy as np
 import pandas as pd
@@ -97,7 +97,8 @@ def _infer_index_frequency(index: pd.DatetimeIndex) -> tuple[str, str | None]:
     deltas = index.to_series().diff().dropna()
     if deltas.empty:
         return "unknown", None
-    return _label_from_timedelta(deltas.median()), None
+    median_delta = cast(pd.Timedelta, deltas.median())
+    return _label_from_timedelta(median_delta), None
 
 
 def _compound_returns(returns: pd.Series) -> float:
@@ -118,7 +119,7 @@ def _resample_returns_to_factor_index(
     if overlap.empty:
         raise ValueError("No overlapping dates between factors and returns")
     if rule:
-        resampled = returns.resample(rule).apply(_compound_returns)
+        resampled = cast(pd.Series, returns.resample(rule).apply(_compound_returns))
         resampled = resampled.reindex(overlap)
         if resampled.isna().any():
             missing = resampled[resampled.isna()].index
@@ -151,11 +152,13 @@ def align_factor_panel(
     allow_resample: bool = False,
     resample_rule: str | None = None,
 ) -> tuple[pd.Series, pd.DataFrame, FactorRegressionMeta]:
-    _validate_datetime_index(returns.index, "returns")
-    _validate_datetime_index(factors.index, "factors")
+    returns_datetime_index = cast(pd.DatetimeIndex, returns.index)
+    factors_datetime_index = cast(pd.DatetimeIndex, factors.index)
+    _validate_datetime_index(returns_datetime_index, "returns")
+    _validate_datetime_index(factors_datetime_index, "factors")
 
-    returns_freq, returns_freq_inferred = _infer_index_frequency(returns.index)
-    factors_freq, factors_freq_inferred = _infer_index_frequency(factors.index)
+    returns_freq, returns_freq_inferred = _infer_index_frequency(returns_datetime_index)
+    factors_freq, factors_freq_inferred = _infer_index_frequency(factors_datetime_index)
 
     resampled = False
     resample_used = resample_rule
@@ -172,7 +175,7 @@ def align_factor_panel(
         if resample_used is None:
             resample_used = factors_freq_inferred
         aligned_returns = _resample_returns_to_factor_index(
-            returns, factors.index, resample_used
+            returns, factors_datetime_index, resample_used
         )
         aligned_factors = factors.loc[aligned_returns.index]
         resampled = True
@@ -239,7 +242,7 @@ def _design_matrix(
         raise ValueError("No overlapping dates between factors and returns")
     y = aligned["excess"].to_numpy(dtype=float)
     X = aligned[list(factor_names)].to_numpy(dtype=float)
-    intercept = np.ones((X.shape[0], 1), dtype=float)
+    intercept: np.ndarray = np.ones((X.shape[0], 1), dtype=float)
     X_design = np.hstack((intercept, X))
     return X_design, y
 

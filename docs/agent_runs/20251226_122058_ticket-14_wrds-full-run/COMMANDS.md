@@ -19,7 +19,7 @@ go ahead and do this,   1. Run a full WRDS WFV (configs/wfv_flagship_wrds.yaml) 
 EOF
 ```
 8. `cat docs/DOCS_AND_LOGGING_SYSTEM.md`
-9. `WRDS_DATA_ROOT=/Volumes/Storage/Data/wrds make wrds-flagship`
+9. `WRDS_DATA_ROOT=<EXTERNAL_STORAGE>/Data/wrds make wrds-flagship`
 10. `ls -td artifacts/wrds_flagship/*/metrics.json | head -1`
 11. `sed -n '1,200p' project_state/CURRENT_RESULTS.md`
 12. `sed -n '1,200p' docs/results_wrds.md`

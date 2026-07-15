@@ -1,0 +1,5 @@
+audit,unsafe_or_naive,safe_or_corrected,unit,verdict
+point_in_time_data,20.5276,-0.1728,annualized_sharpe,unavailable_rows_blocked
+event_time_execution,21.886,0.1739,annualized_sharpe,future_fill_queued
+cost_reconciliation,0.5668,-0.6753,annualized_sharpe,all_cost_components_reconciled
+selection_control,1.3802,-1.2781,annualized_sharpe,noise_family_not_promoted

@@ -18,7 +18,7 @@ ls docs/agent_runs | head
 ls docs/agent_runs/20260110_110259_ticket-18_agentic-scaffold-bootstrap
 cat docs/agent_runs/20260110_110259_ticket-18_agentic-scaffold-bootstrap/META.json
 cat docs/agent_runs/20260110_110259_ticket-18_agentic-scaffold-bootstrap/COMMANDS.md
-cat /Users/mateobodon/.codex/skills/gpt-bundle/SKILL.md
+cat <HOME>/.codex/skills/gpt-bundle/SKILL.md
 sed -n '1,200p' tools/agentic/gpt_bundle.py
 sed -n '1,200p' tools/agentic/project_state_refresh.py
 sed -n '1,120p' CHANGELOG.md
