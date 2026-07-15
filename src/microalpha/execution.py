@@ -299,7 +299,7 @@ class Executor:
     ) -> float:
         if meta.volatility_bps and meta.volatility_bps > 0:
             return float(meta.volatility_bps)
-        prices = []
+        prices: list[float] = []
         try:
             prices = list(
                 self.data_handler.get_recent_prices(
@@ -311,7 +311,7 @@ class Executor:
         if len(prices) < 2:
             spread = meta.spread_bps if meta.spread_bps else 0.0
             return max(spread, 1.0)
-        prices_arr = np.asarray(prices, dtype=float)
+        prices_arr: np.ndarray = np.asarray(prices, dtype=float)
         returns = np.diff(prices_arr) / prices_arr[:-1]
         if returns.size == 0:
             return max(meta.spread_bps or 0.0, 1.0)

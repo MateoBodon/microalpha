@@ -19,7 +19,7 @@
     "benchmarks/bench_engine.py": "5e65cabeeda7b26e8e8e84573128d88c778dd682ba3f7a6234cd1ef88df6c13a",
     "src/microalpha/audit_lab.py": "ab8706035eb8ac91aef1f9e35bb8f8b06538712daea74c10472d2d6aaf11f1f0",
     "src/microalpha/engine.py": "7d10f35f55bb1ec1e72fd53202381049798d43db31e5dadfe8d3bfdc618fc816",
-    "src/microalpha/execution.py": "94074fd214cf76cada86ff2dc59a0659a985bd41764e9b5099365d9d6d6a405f",
+    "src/microalpha/execution.py": "8e65b1cb1019dd9ebd7cd49cbc81493c11ab52cbe207450d2ba42d1519f11474",
     "src/microalpha/multiple_testing.py": "71ea17a709cffd3edc9bf01634b60ee8955efba3e939b1d64c8f88f2947faf89",
     "src/microalpha/point_in_time.py": "38ec0e23233e05373554b867a727fbe84e880d951c5510b0928de9a6df78870d"
   }
