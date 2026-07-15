@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="430" viewBox="0 0 920 430" role="img" aria-labelledby="title desc">
+  <title id="title">Validation HAC Sharpe across six preregistered mechanisms</title>
+  <desc id="desc">Horizontal bars compare validation HAC Sharpe. The SEC cash-earnings candidate reaches 0.4736 but remains below the 0.50 promotion gate and fails the cost stress gate. Several candidates are negative.</desc>
+  <style>
+    .bg{fill:#0d1117}.axis{stroke:#6e7681;stroke-width:1}.grid{stroke:#30363d;stroke-width:1}.gate{stroke:#d29922;stroke-width:2;stroke-dasharray:7 5}.label{font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#f0f6fc}.small{font:12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#8b949e}.value{font:600 13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#f0f6fc}.positive{fill:#2ea88f}.baseline{fill:#2f81f7}.negative{fill:#d95757}
+  </style>
+  <rect class="bg" width="920" height="430" rx="12"/>
+  <text class="label" x="30" y="35" font-size="20" font-weight="700">Pre-holdout validation frontier</text>
+  <text class="small" x="30" y="57">Net HAC Sharpe · 2017–2022 validation · final 2023–2025 holdout sealed</text>
+  <line class="grid" x1="402" y1="80" x2="402" y2="365"/>
+  <line class="grid" x1="552" y1="80" x2="552" y2="365"/>
+  <line class="grid" x1="702" y1="80" x2="702" y2="365"/>
+  <line class="gate" x1="852" y1="72" x2="852" y2="365"/>
+  <text class="small" x="812" y="68">0.50 gate</text>
+  <line class="axis" x1="252" y1="365" x2="882" y2="365"/>
+  <text class="small" x="237" y="386">-0.5</text><text class="small" x="391" y="386">0.0</text><text class="small" x="541" y="386">0.25</text><text class="small" x="692" y="386">0.5</text>
+  <text class="label" x="30" y="105">Classic momentum baseline</text><rect class="baseline" x="402" y="88" width="144" height="22" rx="4"/><text class="value" x="553" y="104">0.2407</text>
+  <text class="label" x="30" y="153">Industry-residual momentum</text><rect class="positive" x="402" y="136" width="192" height="22" rx="4"/><text class="value" x="601" y="152">0.3198</text>
+  <text class="label" x="30" y="201">Point-in-time low volatility</text><rect class="negative" x="348" y="184" width="54" height="22" rx="4"/><text class="value" x="410" y="200">-0.0906</text>
+  <text class="label" x="30" y="249">One-month reversal</text><rect class="negative" x="129" y="232" width="273" height="22" rx="4"/><text class="value" x="410" y="248">-0.4542</text>
+  <text class="label" x="30" y="297">Annual QVPI composite</text><rect class="negative" x="388" y="280" width="14" height="22" rx="4"/><text class="value" x="410" y="296">-0.0234</text>
+  <text class="label" x="30" y="345">SEC cash-earnings acceleration</text><rect class="positive" x="402" y="328" width="284" height="22" rx="4"/><text class="value" x="693" y="344">0.4736</text>
+  <text class="small" x="30" y="414">All mechanisms remained unpromoted; the strongest candidate failed the absolute and harsh-cost gates.</text>
+</svg>

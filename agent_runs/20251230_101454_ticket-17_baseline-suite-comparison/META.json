@@ -1,0 +1,31 @@
+{
+  "run_name": "20251230_101454_ticket-17_baseline-suite-comparison",
+  "ticket_id": "ticket-17",
+  "started_at_utc": "2025-12-30T10:14:54Z",
+  "finished_at_utc": "2026-01-10T10:48:55Z",
+  "git_sha_before": "27326cf79c9ec8b936f0ce465b2067f8055aff30",
+  "git_sha_after": "37220dfd184db5ed529877427867573779e2dbb6",
+  "git_sha_after_ref": "HEAD",
+  "branch_name": "main",
+  "host_env_notes": "macOS 26.0.1 / python 3.12.2 (/Library/Frameworks/Python.framework/Versions/3.12/bin/python3)",
+  "dataset_id": "sample_flagship_artifact_2025-12-23T21-59-20Z-ba5b480 + sample_wfv_artifact_2025-12-23T18-39-59Z-82c14dc",
+  "config_paths": [
+    "configs/flagship_sample.yaml",
+    "configs/wfv_flagship_sample.yaml"
+  ],
+  "config_sha256": {
+    "configs/flagship_sample.yaml": "4aa74a687173e923ecafbf3795654bdffae88ac6c51404513b188b607ec82194",
+    "configs/wfv_flagship_sample.yaml": "137a5d67f45591af1d500af0d2e8576ee85b24dd03b9773ac7f50cb06ec1b2c1"
+  },
+  "artifact_paths": [
+    "artifacts/sample_flagship/2025-12-23T21-59-20Z-ba5b480/",
+    "artifacts/sample_wfv/2025-12-23T18-39-59Z-82c14dc/"
+  ],
+  "report_paths": [
+    "reports/summaries/flagship_mom.md",
+    "reports/summaries/flagship_mom_baselines.png",
+    "reports/summaries/flagship_mom_wfv.md",
+    "reports/summaries/flagship_mom_wfv_baselines.png"
+  ],
+  "web_sources": []
+}

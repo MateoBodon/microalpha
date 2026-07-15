@@ -1,0 +1,26 @@
+{
+  "artifacts": {
+    "artifact_schema.json": "09e3fd21741e83846c70ffcc698bf21842f1d705ae51bf05ab63e0fd2cfcbe7e",
+    "daily.csv": "b2edc34b030163f88d6748823c4b1b1c9816203c93fc8e83abac036cf6b3b4a9",
+    "data_lineage.svg": "8ee6e2753edbb45137b6597f4e5bb6080a6c1859e034cceb48fb1599e250555a",
+    "data_manifest.json": "9a0b865118deea24168ec1d839f6c1e544321a1a312560cb9af476b8b468ee5a",
+    "equity_drawdown.svg": "96ff891879ff1800062d803baf61236e07412b013c4abd04e46210ba88cda982",
+    "folds.csv": "4588947f5ecac3f3deab7da25a06e0a3e4865a581d87c6bab4d48aebeeffc5f4",
+    "market_case.svg": "81f14d45342f73795131e40430c09e75a06c5fb987ae9d89dfdaf85f9932278b",
+    "metrics.json": "4c82706ef3c5e83e65c3bfe3f3add22dab116d6149f83d9065eb14534019fc00",
+    "selection.json": "0b0a8f1222cea1702c04e83d0b41ff5889fffad778b6b8efcc3262710faa3fdd"
+  },
+  "claim_boundary": "retrospective public-factor risk-management evidence; no statistically confirmed alpha, security-level capacity, or live-trading claim",
+  "generator": {
+    "source_sha256": {
+      "market_case.py": "dcaa1861bc9d92708f5ab190383698fea77f4a68184c14876b1813e04d1628d5",
+      "multiple_testing.py": "71ea17a709cffd3edc9bf01634b60ee8955efba3e939b1d64c8f88f2947faf89"
+    },
+    "version": "0.3.0"
+  },
+  "input": {
+    "logical_path": "data/factors/ff5_mom_daily.csv",
+    "sha256": "61b7167569a7fbf86a5b1ac1e3b6a6d2843eccf72f88be33c99d2d9c0fe1fc71"
+  },
+  "schema_version": "microalpha.market-risk-case.v1"
+}

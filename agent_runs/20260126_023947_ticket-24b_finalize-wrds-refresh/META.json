@@ -1,0 +1,27 @@
+{
+  "run_name": "20260126_023947_ticket-24b_finalize-wrds-refresh",
+  "ticket_id": "ticket-24",
+  "started_at_utc": "2026-01-26T02:39:47Z",
+  "finished_at_utc": "2026-01-26T02:48:04Z",
+  "git_sha_before": "e76eb4d576ccbbe4c9af89e8eb9142ea6858a56d",
+  "git_sha_after": "e76eb4d576ccbbe4c9af89e8eb9142ea6858a56d",
+  "branch_name": "main",
+  "host_env_notes": "Linux 6.8.0-90-generic / Python 3.12.3 / venv .venv for tests",
+  "dataset_id": "docs_only",
+  "config_paths": [],
+  "config_sha256": {},
+  "artifact_paths": [
+    "docs/agent_runs/20260126_000243_ticket-00_project-state-refresh/",
+    "docs/agent_runs/20260126_011723_ticket-24_wrds-resume-metrics-refresh/",
+    "docs/img/wrds_flagship/2026-01-26T01-22-23Z-e76eb4d/",
+    "docs/_bundles/gpt_bundle_20260126_024758_TICKET-24b_finalize-wrds-refresh.zip"
+  ],
+  "report_paths": [
+    "docs/CODEX_SPRINT_TICKETS.md",
+    "docs/DECISIONS.md",
+    "docs/tickets/TICKET-24b_finalize-wrds-refresh.md",
+    "PROGRESS.md",
+    "docs/agent_runs/20260126_011723_ticket-24_wrds-resume-metrics-refresh/RESULTS.md"
+  ],
+  "web_sources": []
+}

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="330" viewBox="0 0 1200 330" role="img" aria-labelledby="title desc">
+<title id="title">Real-data case lineage</title>
+<desc id="desc">The public factor file passes through a lagged decision clock, next-session execution, explicit costs, inference, and a hash receipt.</desc>
+<rect width="1200" height="330" rx="24" fill="#07111f"/>
+<text x="55" y="58" fill="#f8fafc" font-family="Inter,Arial,sans-serif" font-size="30" font-weight="700">Every empirical claim has a source, clock, ledger, and hash</text>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#38bdf8"/></marker></defs>
+<rect x="45" y="116" width="166" height="92" rx="14" fill="#0f1d2f" stroke="#38bdf8"/>
+<text x="128" y="151" text-anchor="middle" fill="#f8fafc" font-family="Inter,Arial,sans-serif" font-size="15" font-weight="700">Public factor file</text>
+<text x="128" y="180" text-anchor="middle" fill="#94a3b8" font-family="Inter,Arial,sans-serif" font-size="11">source URL + SHA-256</text>
+<path d="M 216 162 H 232" stroke="#38bdf8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="237" y="116" width="166" height="92" rx="14" fill="#0f1d2f" stroke="#38bdf8"/>
+<text x="320" y="151" text-anchor="middle" fill="#f8fafc" font-family="Inter,Arial,sans-serif" font-size="15" font-weight="700">Decision at t</text>
+<text x="320" y="180" text-anchor="middle" fill="#94a3b8" font-family="Inter,Arial,sans-serif" font-size="11">trailing returns through close</text>
+<path d="M 408 162 H 424" stroke="#38bdf8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="429" y="116" width="166" height="92" rx="14" fill="#0f1d2f" stroke="#38bdf8"/>
+<text x="512" y="151" text-anchor="middle" fill="#f8fafc" font-family="Inter,Arial,sans-serif" font-size="15" font-weight="700">Execute at t+1</text>
+<text x="512" y="180" text-anchor="middle" fill="#94a3b8" font-family="Inter,Arial,sans-serif" font-size="11">weight changes next session</text>
+<path d="M 600 162 H 616" stroke="#38bdf8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="621" y="116" width="166" height="92" rx="14" fill="#0f1d2f" stroke="#38bdf8"/>
+<text x="704" y="151" text-anchor="middle" fill="#f8fafc" font-family="Inter,Arial,sans-serif" font-size="15" font-weight="700">Cost ledger</text>
+<text x="704" y="180" text-anchor="middle" fill="#94a3b8" font-family="Inter,Arial,sans-serif" font-size="11">commission + spread + impact</text>
+<path d="M 792 162 H 808" stroke="#38bdf8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="813" y="116" width="166" height="92" rx="14" fill="#0f1d2f" stroke="#38bdf8"/>
+<text x="896" y="151" text-anchor="middle" fill="#f8fafc" font-family="Inter,Arial,sans-serif" font-size="15" font-weight="700">Inference</text>
+<text x="896" y="180" text-anchor="middle" fill="#94a3b8" font-family="Inter,Arial,sans-serif" font-size="11">folds + max statistic</text>
+<path d="M 984 162 H 1000" stroke="#38bdf8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="1005" y="116" width="166" height="92" rx="14" fill="#0f1d2f" stroke="#38bdf8"/>
+<text x="1088" y="151" text-anchor="middle" fill="#f8fafc" font-family="Inter,Arial,sans-serif" font-size="15" font-weight="700">Receipt</text>
+<text x="1088" y="180" text-anchor="middle" fill="#94a3b8" font-family="Inter,Arial,sans-serif" font-size="11">schema + artifact hashes</text>
+<text x="55" y="274" fill="#c4b5fd" font-family="Inter,Arial,sans-serif" font-size="15" font-weight="700">No firm-level constituent selection; the study is conditional on a published research factor and makes no security-level survivorship claim.</text>
+<text x="55" y="301" fill="#64748b" font-family="Inter,Arial,sans-serif" font-size="13">The 2023–2025 sealed CRSP confirmation set is not accessed.</text>
+</svg>

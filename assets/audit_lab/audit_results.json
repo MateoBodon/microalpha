@@ -1,0 +1,39 @@
+{
+  "claim_boundary": "software correctness demonstration; not alpha or market evidence",
+  "costs": {
+    "borrow_total": 0.0069,
+    "commission_total": 0.0781,
+    "gross_sharpe": 0.5668,
+    "half_spread_total": 0.1562,
+    "impact_total": 0.1171,
+    "net_sharpe": -0.6753,
+    "reconciliation_error": 0.0
+  },
+  "execution": {
+    "inflation_removed": 21.7121,
+    "same_tick_sharpe": 21.886,
+    "state_rule": "no fill mutation before scheduled market event",
+    "t_plus_1_sharpe": 0.1739
+  },
+  "fixture": "deterministic_synthetic_known_ground_truth",
+  "leakage": {
+    "availability_rule": "available_at <= decision_at",
+    "inflation_removed": 20.7004,
+    "leaky_sharpe": 20.5276,
+    "pit_safe_sharpe": -0.1728,
+    "unavailable_rows_blocked": 756
+  },
+  "observations": 756,
+  "schema_version": "microalpha.audit-lab.v1",
+  "seed": 20260715,
+  "selection": {
+    "candidate_count": 128,
+    "naive_full_sample_winner": "noise_102",
+    "naive_in_sample_sharpe": 1.3802,
+    "noise_family_p_value": 0.601,
+    "planted_control_p_value": 0.001,
+    "test": "centered synchronous max statistic vs zero-return benchmark",
+    "walk_forward_oos_sharpe": -1.2781,
+    "walk_forward_selected": "noise_089"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "run_name": "20260126_000243_ticket-00_project-state-refresh",
+  "ticket_id": "ticket-00",
+  "started_at_utc": "2026-01-26T00:02:43Z",
+  "finished_at_utc": "2026-01-26T00:14:34Z",
+  "git_sha_before": "e76eb4d576ccbbe4c9af89e8eb9142ea6858a56d",
+  "git_sha_after": "e76eb4d576ccbbe4c9af89e8eb9142ea6858a56d",
+  "branch_name": "main",
+  "host_env_notes": "Linux 6.8.0-90-generic / Python 3.12.3 / no venv",
+  "dataset_id": "docs_only",
+  "config_paths": [],
+  "config_sha256": {},
+  "artifact_paths": [
+    "docs/_bundles/project_state_20260126_001303.zip"
+  ],
+  "report_paths": [],
+  "web_sources": []
+}

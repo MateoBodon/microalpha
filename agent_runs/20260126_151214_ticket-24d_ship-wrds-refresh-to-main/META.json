@@ -1,0 +1,26 @@
+{
+  "run_name": "20260126_151214_ticket-24d_ship-wrds-refresh-to-main",
+  "ticket_id": "ticket-24",
+  "started_at_utc": "2026-01-26T15:14:46Z",
+  "finished_at_utc": "2026-01-26T20:48:21Z",
+  "git_sha_before": "55076597e785c47193cd3e47450f22c46fa7d356",
+  "git_sha_after": "55076597e785c47193cd3e47450f22c46fa7d356",
+  "branch_name": "codex/ticket-24d-ship-wrds-refresh-to-main",
+  "host_env_notes": "Linux 6.8.0-90-generic / Python 3.12.3 / venv .venv",
+  "dataset_id": "docs_only",
+  "config_paths": [],
+  "config_sha256": {},
+  "artifact_paths": [
+    "docs/agent_runs/20260126_151214_ticket-24d_ship-wrds-refresh-to-main/",
+    "docs/img/wrds_flagship/2026-01-26T01-22-23Z-e76eb4d/",
+    "docs/_bundles/gpt_bundle_20260126_204751_TICKET-24d_ship-wrds-refresh-to-main.zip"
+  ],
+  "report_paths": [
+    "docs/CODEX_SPRINT_TICKETS.md",
+    "PROGRESS.md",
+    "docs/DECISIONS.md",
+    "docs/tickets/TICKET-24d_ship-wrds-refresh-to-main.md",
+    "docs/agent_runs/20260126_151214_ticket-24d_ship-wrds-refresh-to-main/"
+  ],
+  "web_sources": []
+}

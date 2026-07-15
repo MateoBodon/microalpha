@@ -1,0 +1,86 @@
+artifacts_dir: artifacts/wrds_flagship_debug
+template:
+  data_path: ${WRDS_DATA_ROOT}/crsp/daily_csv
+  meta_path: ${WRDS_DATA_ROOT}/meta/crsp_security_metadata.csv
+  symbol: FLAGSHIP_WRDS
+  cash: 15000000.0
+  seed: 20251010
+  order_flow_diagnostics: true
+  max_exposure: 1.25
+  max_gross_leverage: 1.5
+  max_single_name_weight: 0.02
+  max_drawdown_stop: 0.2
+  max_portfolio_heat: 1.5
+  max_positions_per_sector: 8
+  turnover_cap: 180000000.0
+  metrics_hac_lags: 10
+  borrow:
+    annual_fee_bps: null
+    floor_bps: 8.0
+    multiplier: 1.0
+  exec:
+    type: twap
+    commission: 0.0005
+    slices: 6
+    limit_mode: ioc
+    price_impact: 0.0
+    queue_coefficient: 0.25
+    queue_passive_multiplier: 0.6
+    queue_seed: 321
+    volatility_lookback: 30
+    slippage:
+      type: linear_sqrt
+      k_lin: 32.0
+      eta: 105.0
+      default_adv: 35000000.0
+      default_spread_bps: 8.0
+      spread_floor_multiplier: 0.75
+  strategy:
+    name: FlagshipMomentumStrategy
+    params:
+      allocator: budgeted_rp
+      allocator_kwargs:
+        risk_model: risk_parity
+        ridge: 1.0e-08
+      universe_path: ${WRDS_DATA_ROOT}/universes/flagship_sector_neutral.csv
+      lookback_months: 12
+      skip_months: 1
+      top_frac: 0.2
+      bottom_frac: 0.2
+      rebalance_frequency: M
+      cov_lookback_days: 63
+      max_positions_per_sector: 8
+      turnover_target_pct_adv: 0.03
+      min_adv: 50000000.0
+      min_price: 12.0
+      total_risk_budget: 1.0
+  capital_policy:
+    type: volatility_scaled
+    lookback: 21
+    target_dollar_vol: 225000.0
+    min_qty: 10
+walkforward:
+  start: '2016-01-04'
+  end: '2018-10-09'
+  training_days: 756
+  testing_days: 252
+grid:
+  lookback_months:
+  - 9
+  - 12
+  - 18
+  skip_months:
+  - 1
+  - 2
+  top_frac:
+  - 0.2
+  - 0.3
+  allocator_kwargs:
+  - risk_model: risk_parity
+  - risk_model: equal
+reality_check:
+  method: stationary
+  samples: 2000
+  block_length: 63
+non_degenerate:
+  min_trades: 1

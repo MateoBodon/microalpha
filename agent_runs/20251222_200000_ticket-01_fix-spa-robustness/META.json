@@ -1,0 +1,68 @@
+{
+  "run_name": "20251222_200000_ticket-01_fix-spa-robustness",
+  "ticket_id": "ticket-01",
+  "git_sha_before": "afe1765416e3cbfcfcab802c73d011b8c9b6d4af",
+  "git_sha_after": "12b63a22117a3a5acf1784eac2df4418c3037ba9",
+  "branch": "main",
+  "env_notes": {
+    "wrds_data_root": "<HOME>/wrds_cache",
+    "python": "python3 (see artifacts/manifest.json for full runtime metadata)",
+    "wrds_available": true
+  },
+  "dataset_id": "unknown",
+  "config_hashes": {
+    "configs/wfv_flagship_wrds_smoke.yaml": {
+      "file_sha256": "3544c267fb31387d4f24f0d4034b9d97a69cdde4e32a73c68e95cd4edee445b3",
+      "manifest_sha256": "ef57e3c65feffe3796e3cb4ca7462e1eb1b0e96f408a842f0abad8e4cf5b3e40"
+    },
+    "artifacts/wrds_flagship/2025-12-21T22-32-44Z-2b48ef7/manifest.json": {
+      "config_sha256": "2df6e3a29705cb9f1515ecb22400c5d1faa96e79be73e822ac65c8440f1861da"
+    }
+  },
+  "artifacts": {
+    "wrds_smoke_run": "artifacts/wrds_flagship_smoke/2025-12-23T06-05-28Z-afe1765",
+    "wrds_flagship_report_run": "artifacts/wrds_flagship/2025-12-21T22-32-44Z-2b48ef7"
+  },
+  "reports": {
+    "wrds_smoke_summary": "reports/summaries/wrds_flagship_smoke.md",
+    "wrds_smoke_spa_json": "reports/summaries/wrds_flagship_smoke_spa.json",
+    "wrds_smoke_spa_md": "reports/summaries/wrds_flagship_smoke_spa.md",
+    "wrds_smoke_metrics": "reports/summaries/wrds_flagship_smoke_metrics.json",
+    "wrds_flagship_summary": "reports/summaries/wrds_flagship.md",
+    "wrds_flagship_spa_json": "reports/summaries/wrds_flagship_spa.json",
+    "wrds_flagship_spa_md": "reports/summaries/wrds_flagship_spa.md",
+    "wrds_flagship_metrics": "reports/summaries/wrds_flagship_metrics.json"
+  },
+  "docs": {
+    "results_wrds": "docs/results_wrds.md",
+    "results_wrds_smoke": "docs/results_wrds_smoke.md",
+    "images_wrds": "docs/img/wrds_flagship/2025-12-21T22-32-44Z-2b48ef7",
+    "images_wrds_smoke": "docs/img/wrds_flagship_smoke/2025-12-23T06-05-28Z-afe1765",
+    "local_wrds_note": "docs/local/WRDS_DATA_ROOT.md"
+  },
+  "web_sources": [],
+  "branch_name": "main",
+  "started_at_utc": "unknown",
+  "finished_at_utc": "unknown",
+  "config_paths": [
+    "configs/wfv_flagship_wrds_smoke.yaml"
+  ],
+  "config_sha256": {
+    "configs/wfv_flagship_wrds_smoke.yaml": "3544c267fb31387d4f24f0d4034b9d97a69cdde4e32a73c68e95cd4edee445b3"
+  },
+  "artifact_paths": [
+    "artifacts/wrds_flagship_smoke/2025-12-23T06-05-28Z-afe1765",
+    "artifacts/wrds_flagship/2025-12-21T22-32-44Z-2b48ef7"
+  ],
+  "report_paths": [
+    "reports/summaries/wrds_flagship_smoke.md",
+    "reports/summaries/wrds_flagship_smoke_spa.json",
+    "reports/summaries/wrds_flagship_smoke_spa.md",
+    "reports/summaries/wrds_flagship_smoke_metrics.json",
+    "reports/summaries/wrds_flagship.md",
+    "reports/summaries/wrds_flagship_spa.json",
+    "reports/summaries/wrds_flagship_spa.md",
+    "reports/summaries/wrds_flagship_metrics.json"
+  ],
+  "host_env_notes": "wrds_data_root=<HOME>/wrds_cache / python=python3 (see artifacts/manifest.json for full runtime metadata) / wrds_available=True"
+}

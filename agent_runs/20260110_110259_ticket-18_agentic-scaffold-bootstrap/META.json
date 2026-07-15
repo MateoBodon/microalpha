@@ -1,0 +1,18 @@
+{
+  "run_name": "20260110_110259_ticket-18_agentic-scaffold-bootstrap",
+  "ticket_id": "ticket-18",
+  "started_at_utc": "2026-01-10T11:02:59Z",
+  "finished_at_utc": "2026-01-10T11:17:53Z",
+  "git_sha_before": "06820ff88bc4f196e6ef2537f72c65db4addeb03",
+  "git_sha_after": "06820ff88bc4f196e6ef2537f72c65db4addeb03",
+  "branch_name": "main",
+  "host_env_notes": "macOS 26.0.1 / python 3.12.2",
+  "dataset_id": "none",
+  "config_paths": [],
+  "config_sha256": {},
+  "artifact_paths": [
+    "docs/_bundles/project_state_20260110_110606.zip"
+  ],
+  "report_paths": [],
+  "web_sources": []
+}

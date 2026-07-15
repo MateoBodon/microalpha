@@ -1,0 +1,22 @@
+{
+  "run_name": "20260714_220933_ticket-99_portfolio-presentation",
+  "ticket_id": "ticket-99",
+  "started_at_utc": "2026-07-14T21:48:14Z",
+  "finished_at_utc": "2026-07-14T22:09:33Z",
+  "git_sha_before": "31fe55320b5bdf3fdea386de98e627ad15290d0c",
+  "git_sha_after": "31fe55320b5bdf3fdea386de98e627ad15290d0c",
+  "branch_name": "feat/ticket-99-portfolio-presentation",
+  "host_env_notes": "macOS 26.5.1 / Python 3.12.2 / docs-only presentation work",
+  "dataset_id": "public_safe_aggregate_evidence_2026-07-11",
+  "config_paths": [],
+  "config_sha256": {},
+  "artifact_paths": [
+    "docs/assets/portfolio/validation_frontier.csv",
+    "docs/assets/portfolio/validation_frontier.svg"
+  ],
+  "report_paths": [
+    "README.md",
+    "docs/portfolio_evidence_2026-07-11.md"
+  ],
+  "web_sources": []
+}

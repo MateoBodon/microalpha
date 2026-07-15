@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+<title id="title">Microalpha Audit Lab correctness results</title>
+<desc id="desc">Four comparisons show inflation from data leakage, same-tick execution, omitted costs, and naive model selection.</desc>
+<rect width="1200" height="760" rx="28" fill="#07111f"/>
+<text x="64" y="72" fill="#f8fafc" font-family="Inter,Arial,sans-serif" font-size="38" font-weight="700">Four ways a backtest lies</text>
+<text x="64" y="110" fill="#94a3b8" font-family="Inter,Arial,sans-serif" font-size="19">Known-ground-truth synthetic fixture · correctness test, not alpha</text>
+<rect x="64" y="150" width="516" height="238" rx="18" fill="#0f1d2f" stroke="#20324a"/>
+<text x="92" y="190" fill="#7dd3fc" font-family="Inter,Arial,sans-serif" font-size="15" font-weight="700" letter-spacing="1.2">1  POINT-IN-TIME DATA</text>
+<text x="92" y="228" fill="#cbd5e1" font-family="Inter,Arial,sans-serif" font-size="16">Leaky revised value</text>
+<text x="526" y="228" text-anchor="end" fill="#fb7185" font-family="ui-monospace,SFMono-Regular,monospace" font-size="20" font-weight="700">+20.53</text>
+<rect x="92.0" y="242.0" width="434.0" height="18" rx="9" fill="#e11d48"/>
+<text x="92" y="292" fill="#cbd5e1" font-family="Inter,Arial,sans-serif" font-size="16">PIT-safe value</text>
+<text x="526" y="292" text-anchor="end" fill="#4ade80" font-family="ui-monospace,SFMono-Regular,monospace" font-size="20" font-weight="700">-0.17</text>
+<rect x="92.0" y="306.0" width="3.7" height="18" rx="9" fill="#22c55e"/>
+<text x="92" y="358" fill="#94a3b8" font-family="Inter,Arial,sans-serif" font-size="14">756 unavailable rows blocked</text>
+<rect x="612" y="150" width="516" height="238" rx="18" fill="#0f1d2f" stroke="#20324a"/>
+<text x="640" y="190" fill="#7dd3fc" font-family="Inter,Arial,sans-serif" font-size="15" font-weight="700" letter-spacing="1.2">2  EVENT-TIME EXECUTION</text>
+<text x="640" y="228" fill="#cbd5e1" font-family="Inter,Arial,sans-serif" font-size="16">Same-tick oracle</text>
+<text x="1074" y="228" text-anchor="end" fill="#fb7185" font-family="ui-monospace,SFMono-Regular,monospace" font-size="20" font-weight="700">+21.89</text>
+<rect x="640.0" y="242.0" width="434.0" height="18" rx="9" fill="#e11d48"/>
+<text x="640" y="292" fill="#cbd5e1" font-family="Inter,Arial,sans-serif" font-size="16">Queued t+1</text>
+<text x="1074" y="292" text-anchor="end" fill="#4ade80" font-family="ui-monospace,SFMono-Regular,monospace" font-size="20" font-weight="700">+0.17</text>
+<rect x="640.0" y="306.0" width="3.8" height="18" rx="9" fill="#22c55e"/>
+<text x="640" y="358" fill="#94a3b8" font-family="Inter,Arial,sans-serif" font-size="14">State changes only when the fill event arrives</text>
+<rect x="64" y="426" width="516" height="238" rx="18" fill="#0f1d2f" stroke="#20324a"/>
+<text x="92" y="466" fill="#7dd3fc" font-family="Inter,Arial,sans-serif" font-size="15" font-weight="700" letter-spacing="1.2">3  COST RECONCILIATION</text>
+<text x="92" y="504" fill="#cbd5e1" font-family="Inter,Arial,sans-serif" font-size="16">Gross planted control</text>
+<text x="526" y="504" text-anchor="end" fill="#fb7185" font-family="ui-monospace,SFMono-Regular,monospace" font-size="20" font-weight="700">+0.57</text>
+<rect x="92.0" y="518.0" width="12.3" height="18" rx="9" fill="#e11d48"/>
+<text x="92" y="568" fill="#cbd5e1" font-family="Inter,Arial,sans-serif" font-size="16">Commission + spread + impact + borrow</text>
+<text x="526" y="568" text-anchor="end" fill="#4ade80" font-family="ui-monospace,SFMono-Regular,monospace" font-size="20" font-weight="700">-0.68</text>
+<rect x="92.0" y="582.0" width="14.7" height="18" rx="9" fill="#22c55e"/>
+<text x="92" y="634" fill="#94a3b8" font-family="Inter,Arial,sans-serif" font-size="14">Exact P&amp;L residual 0.0e+00</text>
+<rect x="612" y="426" width="516" height="238" rx="18" fill="#0f1d2f" stroke="#20324a"/>
+<text x="640" y="466" fill="#7dd3fc" font-family="Inter,Arial,sans-serif" font-size="15" font-weight="700" letter-spacing="1.2">4  SELECTION CONTROL</text>
+<text x="640" y="504" fill="#cbd5e1" font-family="Inter,Arial,sans-serif" font-size="16">Best of 128 noise models</text>
+<text x="1074" y="504" text-anchor="end" fill="#fb7185" font-family="ui-monospace,SFMono-Regular,monospace" font-size="20" font-weight="700">+1.38</text>
+<rect x="640.0" y="518.0" width="30.0" height="18" rx="9" fill="#e11d48"/>
+<text x="640" y="568" fill="#cbd5e1" font-family="Inter,Arial,sans-serif" font-size="16">Walk-forward OOS</text>
+<text x="1074" y="568" text-anchor="end" fill="#4ade80" font-family="ui-monospace,SFMono-Regular,monospace" font-size="20" font-weight="700">-1.28</text>
+<rect x="640.0" y="582.0" width="27.7" height="18" rx="9" fill="#22c55e"/>
+<text x="640" y="634" fill="#94a3b8" font-family="Inter,Arial,sans-serif" font-size="14">Max-stat p=0.601; planted control p=0.001</text>
+<text x="64" y="728" fill="#64748b" font-family="Inter,Arial,sans-serif" font-size="14">Generated by microalpha audit-demo · all values are receipt-bound</text>
+</svg>
