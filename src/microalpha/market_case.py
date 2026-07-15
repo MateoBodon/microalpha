@@ -185,7 +185,9 @@ def _uncertainty(
 def _csv_bytes(frame: pd.DataFrame, *, index_label: str = "date") -> bytes:
     canonical = frame.copy()
     for column in canonical.select_dtypes(include=["float", "float64"]).columns:
-        canonical[column] = canonical[column].round(12)
+        # Eleven decimals remain far below economic materiality while absorbing
+        # platform/libm drift at roughly 1e-12 in rolling-volatility recursion.
+        canonical[column] = canonical[column].round(11)
     buffer = io.StringIO(newline="")
     canonical.to_csv(buffer, index=True, index_label=index_label, lineterminator="\n")
     return buffer.getvalue().encode("utf-8")
@@ -549,6 +551,15 @@ def run_market_case(
         method="stationary",
         block_length=15,
     )
+    selection["observed_statistic"] = _rounded(
+        float(cast(float, selection["observed_statistic"])), 12
+    )
+    selection["candidate_statistics"] = {
+        name: _rounded(float(value), 12)
+        for name, value in cast(
+            Mapping[str, float], selection["candidate_statistics"]
+        ).items()
+    }
     selection["distribution"] = [
         _rounded(float(value))
         for value in cast(Sequence[float], selection["distribution"])

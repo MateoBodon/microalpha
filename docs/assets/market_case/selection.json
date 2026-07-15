@@ -3,10 +3,10 @@
   "best_candidate": "lookback_21",
   "block_length": 15,
   "candidate_statistics": {
-    "lookback_126": -0.8441173328439778,
-    "lookback_21": 0.4052059369458614,
-    "lookback_42": 0.23479909516863337,
-    "lookback_63": -0.2657903196490296
+    "lookback_126": -0.844117332844,
+    "lookback_21": 0.405205936946,
+    "lookback_42": 0.234799095169,
+    "lookback_63": -0.265790319649
   },
   "distribution": [
     0.0,
@@ -2015,7 +2015,7 @@
   "num_bootstrap": 1999,
   "num_candidates": 4,
   "num_observations": 2198,
-  "observed_statistic": 0.4052059369458614,
+  "observed_statistic": 0.405205936946,
   "p_value": 0.4665,
   "synchronous_resampling": true,
   "test": "centered_synchronous_max_statistic"
