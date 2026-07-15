@@ -1,0 +1,34 @@
+{
+  "$id": "microalpha.market-risk-case.v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "daily_required_columns": [
+    "date",
+    "signal_available_date",
+    "executed_weight",
+    "turnover",
+    "commission",
+    "half_spread",
+    "impact",
+    "total_cost",
+    "strategy_net",
+    "market",
+    "static_risk_matched"
+  ],
+  "metrics_required": [
+    "strategy_net",
+    "market",
+    "static_risk_matched",
+    "selection_control",
+    "claim_boundary"
+  ],
+  "required_artifacts": [
+    "metrics.json",
+    "daily.csv",
+    "folds.csv",
+    "selection.json",
+    "data_manifest.json",
+    "market_case.svg",
+    "equity_drawdown.svg",
+    "data_lineage.svg"
+  ]
+}

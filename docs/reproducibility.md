@@ -1,6 +1,23 @@
 # Reproducibility
 
-Microalpha emits a manifest for every run so you can replay results and audit configuration drift.
+Microalpha emits a manifest for every run so you can replay results and audit
+configuration drift. Its two public showcase reports go further: they rebuild
+offline and bind their inputs, sources, schemas, and outputs with SHA-256.
+
+## Byte-stable Market Risk Case
+
+```bash
+python -m microalpha market-demo
+python -m microalpha verify docs/assets/market_case
+git diff --exit-code -- docs/assets/market_case
+```
+
+The report uses the tracked public Fama–French snapshot. Its data manifest pins
+publisher, canonical URL, logical path, source hash, rows, date range, units,
+availability rule, and survivorship boundary. The daily ledger makes the
+decision date, execution date, target and executed weights, each cost component,
+and net-return identity inspectable. `microalpha verify` checks chronology,
+schema, cost reconciliation, and every receipt hash.
 
 ## Byte-stable Audit Lab evidence
 
@@ -16,7 +33,7 @@ Git worktree location. `receipt.json` hashes the generator source, generated
 input arrays, and every canonical artifact. The receipt file for schema
 `microalpha.audit-lab.v1` hashes to
 `6e36c2397696d7e9eecbd058cbfc1ba522c8ffba7e5798224de86b20457b6575`.
-CI reproduces the same bytes on every supported Python version (3.10–3.12), so
+CI reproduces the same bytes on every supported Python version (3.10–3.13), so
 dependency drift fails before merge rather than silently changing the evidence.
 
 General research runs retain timestamps and environment metadata because those

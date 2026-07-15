@@ -3,3 +3,5 @@
 docs/agent_runs/**
 project_state/_generated/**
 reports/summaries/runs_index.csv
+# Generated public-factor lineage record; contains hashes and boundary prose only.
+docs/assets/market_case/data_manifest.json

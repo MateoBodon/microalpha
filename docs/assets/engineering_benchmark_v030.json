@@ -1,0 +1,41 @@
+{
+  "active_engine": {
+    "events": 100000,
+    "events_per_second": 12513,
+    "orders_filled": 4770,
+    "peak_tracemalloc_mb": 5.919,
+    "seconds": 7.9914,
+    "workload": "10 symbols; target-weight resize every 21 sessions; t+1 materialized fills; commission ledger"
+  },
+  "claim_boundary": "host-dependent engineering evidence; correctness comes from tests and receipts",
+  "environment": {
+    "platform": "macOS-26.5.1-arm64-arm-64bit",
+    "python": "3.12.2"
+  },
+  "market_case": {
+    "deterministic_receipt": true,
+    "median_seconds": 45.7031,
+    "minimum_seconds": 38.6026,
+    "peak_tracemalloc_mb": 6.776,
+    "receipt_sha256": "1c0e93a2c0e7cd5cabcbdf3310fae532ec5139f1adce3333ab7e78866e4295ac",
+    "runs_seconds": [
+      38.6026,
+      57.1719,
+      45.7031
+    ]
+  },
+  "measured_on": "2026-07-15",
+  "schema_version": "microalpha.engineering-benchmark.v1",
+  "source_sha256": {
+    "benchmarks/bench_v030.py": "bfc186eee877c8ca59f4e77a71769622b44a07af84f3643610164c5f7bccee12",
+    "src/microalpha/engine.py": "7d10f35f55bb1ec1e72fd53202381049798d43db31e5dadfe8d3bfdc618fc816",
+    "src/microalpha/execution.py": "8e65b1cb1019dd9ebd7cd49cbc81493c11ab52cbe207450d2ba42d1519f11474",
+    "src/microalpha/market_case.py": "65c77d94956db6a819701d8035f130074ea2fdc864a77450d10fc9840adde0d3",
+    "src/microalpha/portfolio.py": "7ce21c5bbab6d18dbc2fa007b95ce75a4ba1660e5b6758851ac904cd923d5b35"
+  },
+  "v0_2_reference": {
+    "audit_demo_median_seconds": 1.3745,
+    "no_op_events_per_second": 1464231,
+    "scope": "previous public host receipt; not directly comparable to the active order/fill workload"
+  }
+}

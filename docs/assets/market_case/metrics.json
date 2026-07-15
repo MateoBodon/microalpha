@@ -1,0 +1,126 @@
+{
+  "claim_boundary": "retrospective public-factor risk-management evidence; no statistically confirmed alpha, security-level capacity, or live-trading claim",
+  "costs": {
+    "annualized_cost": 0.000622,
+    "annualized_turnover": 7.130922,
+    "claim_boundary": "transparent liquidity sensitivity; not venue calibration or capacity evidence",
+    "commission_total": 0.002177,
+    "half_spread_total": 0.00311,
+    "impact_total": 0.000135,
+    "maximum_participation": 3.5837e-05,
+    "scenario": {
+      "adv_notional_usd": 20000000000,
+      "aum_usd": 1000000,
+      "commission_bps": 0.35,
+      "half_spread_bps": 0.5,
+      "impact_eta_bps": 10.0
+    },
+    "total_cost": 0.005422
+  },
+  "empirical_observation": "the fixed rule reduced realized risk and drawdown and raised descriptive Sharpe versus the market and a static risk-matched baseline",
+  "engineering_correctness": "source hash, strict t+1 chronology, cost identity, schema validation, and artifact hashes are executable gates",
+  "fixed_specification": {
+    "execution_clock": "next_session_t_plus_1",
+    "lookback_sessions": 21,
+    "maximum_exposure": 1.5,
+    "selected_on_oos_performance": false,
+    "signal_clock": "close_t",
+    "target_volatility": 0.1
+  },
+  "investment_claim": "none",
+  "market": {
+    "annualized_return": 0.151388,
+    "annualized_volatility": 0.192519,
+    "calmar": 0.442443,
+    "max_drawdown": -0.342163,
+    "observations": 2198,
+    "sharpe": 0.829031,
+    "total_return": 2.419698,
+    "worst_day": -0.12
+  },
+  "sample": {
+    "calibration_end": "2016-12-30",
+    "calibration_start": "2010-01-04",
+    "oos_end": "2025-09-30",
+    "oos_observations": 2198,
+    "oos_start": "2017-01-03",
+    "walk_forward_folds": 9
+  },
+  "schema_version": "microalpha.market-risk-case.v1",
+  "selection_control": {
+    "benchmark": "explicit_return_series",
+    "best_candidate": "lookback_21",
+    "block_length": 15,
+    "candidate_statistics": {
+      "lookback_126": -0.8441173328439778,
+      "lookback_21": 0.4052059369458614,
+      "lookback_42": 0.23479909516863337,
+      "lookback_63": -0.2657903196490296
+    },
+    "method": "stationary",
+    "null": "no_candidate_outperforms_benchmark",
+    "null_centered": true,
+    "num_bootstrap": 1999,
+    "num_candidates": 4,
+    "num_observations": 2198,
+    "observed_statistic": 0.4052059369458614,
+    "p_value": 0.4665,
+    "synchronous_resampling": true,
+    "test": "centered_synchronous_max_statistic"
+  },
+  "static_risk_matched": {
+    "annualized_return": 0.106693,
+    "annualized_volatility": 0.120324,
+    "calmar": 0.476814,
+    "max_drawdown": -0.223763,
+    "observations": 2198,
+    "sharpe": 0.902965,
+    "total_return": 1.421117,
+    "weight": 0.625002,
+    "worst_day": -0.074963
+  },
+  "strategy_gross": {
+    "annualized_return": 0.118424,
+    "annualized_volatility": 0.113689,
+    "calmar": 0.774158,
+    "max_drawdown": -0.152972,
+    "observations": 2198,
+    "sharpe": 1.041701,
+    "total_return": 1.654346,
+    "worst_day": -0.04985
+  },
+  "strategy_net": {
+    "annualized_return": 0.117729,
+    "annualized_volatility": 0.11369,
+    "calmar": 0.768976,
+    "max_drawdown": -0.153099,
+    "observations": 2198,
+    "sharpe": 1.036225,
+    "total_return": 1.639997,
+    "worst_day": -0.04985
+  },
+  "stressed_5x_cost": {
+    "annualized_return": 0.114954,
+    "annualized_volatility": 0.113694,
+    "calmar": 0.748363,
+    "max_drawdown": -0.153608,
+    "observations": 2198,
+    "sharpe": 1.014318,
+    "total_return": 1.583369,
+    "worst_day": -0.04985
+  },
+  "study": "fixed_market_volatility_targeting",
+  "uncertainty": {
+    "annualized_return_95_ci": [
+      0.036292,
+      0.203096
+    ],
+    "block_length": 15,
+    "draws": 999,
+    "method": "stationary_block_bootstrap",
+    "sharpe_95_ci": [
+      0.36007,
+      1.735614
+    ]
+  }
+}

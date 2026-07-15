@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from microalpha.events import MarketEvent, SignalEvent
-from microalpha.portfolio import Portfolio
+from microalpha.portfolio import Portfolio, PortfolioPosition
 
 
 class _StubData:
@@ -31,3 +31,42 @@ def test_portfolio_uses_signal_weight_for_sizing():
     short_orders = list(portfolio.on_signal(short_signal))
     assert short_orders and short_orders[0].qty == 2
     assert short_orders[0].side == "SELL"
+
+
+def test_target_weight_rebalances_by_position_delta_and_can_flip():
+    portfolio = Portfolio(data_handler=_StubData(), initial_cash=1000.0)
+    portfolio.on_market(MarketEvent(1, "AAA", 50.0, 1_000))
+    portfolio.positions["AAA"] = PortfolioPosition(qty=20)
+
+    reduce = SignalEvent(1, "AAA", "LONG", meta={"target_weight": 0.4})
+    reduce_orders = list(portfolio.on_signal(reduce))
+    assert [(order.side, order.qty) for order in reduce_orders] == [("SELL", 12)]
+
+    portfolio.positions["AAA"] = PortfolioPosition(qty=8)
+    increase = SignalEvent(1, "AAA", "LONG", meta={"target_weight": 0.6})
+    increase_orders = list(portfolio.on_signal(increase))
+    assert [(order.side, order.qty) for order in increase_orders] == [("BUY", 4)]
+
+    portfolio.positions["AAA"] = PortfolioPosition(qty=12)
+    flip = SignalEvent(1, "AAA", "SHORT", meta={"target_weight": -0.2})
+    flip_orders = list(portfolio.on_signal(flip))
+    assert [(order.side, order.qty) for order in flip_orders] == [("SELL", 16)]
+
+    portfolio.positions["AAA"] = PortfolioPosition(qty=-4)
+    assert list(portfolio.on_signal(flip)) == []
+
+
+def test_drawdown_halt_allows_target_weight_deleveraging_only():
+    portfolio = Portfolio(data_handler=_StubData(), initial_cash=1000.0)
+    portfolio.on_market(MarketEvent(1, "AAA", 50.0, 1_000))
+    portfolio.positions["AAA"] = PortfolioPosition(qty=20)
+    portfolio.drawdown_halted = True
+
+    reduce = SignalEvent(1, "AAA", "LONG", meta={"target_weight": 0.4})
+    assert [(order.side, order.qty) for order in portfolio.on_signal(reduce)] == [
+        ("SELL", 12)
+    ]
+
+    portfolio.positions["AAA"] = PortfolioPosition(qty=8)
+    increase = SignalEvent(1, "AAA", "LONG", meta={"target_weight": 0.6})
+    assert list(portfolio.on_signal(increase)) == []

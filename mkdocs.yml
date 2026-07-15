@@ -7,6 +7,7 @@ theme:
     - navigation.sections
 nav:
   - Home: index.md
+  - Market Risk Case: market-case.md
   - Audit Lab: audit-lab.md
   - Architecture: architecture.md
   - API & CLI: api.md
@@ -16,6 +17,7 @@ nav:
   - Benchmarks: benchmarks.md
   - Limitations: limitations.md
   - Research case study: portfolio_evidence_2026-07-11.md
+  - Portfolio impact brief: PORTFOLIO_IMPACT_BRIEF.md
   - Licensed-data research:
       - Data policy: wrds.md
       - Strategy specification: flagship_momentum_wrds.md

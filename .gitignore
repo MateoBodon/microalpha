@@ -1,9 +1,12 @@
 .hypothesis/
 .pytest_cache/
+.coverage
+htmlcov/
 .ruff_cache/
 .mypy_cache/
 dist/
 build/
+site/
 *.egg-info/
 __pycache__/
 src/**/__pycache__/

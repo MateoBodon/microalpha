@@ -18,13 +18,15 @@ from microalpha.reporting.tearsheet import (
     render_tearsheet,
 )
 
+from .artifact_verify import verify_artifact_dir
 from .audit_lab import DEFAULT_SEED, run_audit_lab
+from .market_case import DEFAULT_INPUT as DEFAULT_MARKET_INPUT, run_market_case
 from .runner import run_from_config
 from .walkforward import run_walk_forward
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(prog="microalpha")
     parser.add_argument(
         "--version", action="version", version=f"%(prog)s {_resolve_version()}"
     )
@@ -122,6 +124,29 @@ def main() -> None:
     )
     audit_parser.add_argument("--seed", type=int, default=DEFAULT_SEED)
 
+    market_parser = subparsers.add_parser(
+        "market-demo",
+        help="Generate the deterministic real-data market-risk case study.",
+    )
+    market_parser.add_argument(
+        "--out",
+        dest="outdir",
+        default="docs/assets/market_case",
+        help="Output directory (default: docs/assets/market_case).",
+    )
+    market_parser.add_argument(
+        "--input",
+        dest="input_path",
+        default=str(DEFAULT_MARKET_INPUT),
+        help="Tracked factor snapshot used by the case study.",
+    )
+    market_parser.add_argument("--seed", type=int, default=DEFAULT_SEED)
+
+    verify_parser = subparsers.add_parser(
+        "verify", help="Verify schemas, chronology, cost identity, and receipt hashes."
+    )
+    verify_parser.add_argument("artifact_dir")
+
     args = parser.parse_args()
 
     if args.cmd == "info":
@@ -130,6 +155,21 @@ def main() -> None:
 
     if args.cmd == "audit-demo":
         print(json.dumps(run_audit_lab(args.outdir, seed=args.seed), indent=2))
+        return
+
+    if args.cmd == "market-demo":
+        print(
+            json.dumps(
+                run_market_case(
+                    args.outdir, input_path=args.input_path, seed=args.seed
+                ),
+                indent=2,
+            )
+        )
+        return
+
+    if args.cmd == "verify":
+        print(json.dumps(verify_artifact_dir(args.artifact_dir), indent=2))
         return
 
     t0 = time.time()

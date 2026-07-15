@@ -1,10 +1,34 @@
 # Benchmarks
 
-This page documents how to run the bundled micro-benchmark and interpret the results.
+This page documents the active v0.3 engineering benchmark and the retained v0.2
+raw-loop reference. Runtime evidence is host-dependent; deterministic receipts
+and tests remain the correctness claims.
 
-## Current receipt
+## v0.3 active-workload receipt
 
-The 2026-07-15 host-dependent receipt is tracked as
+The tracked [`engineering_benchmark_v030.json`](assets/engineering_benchmark_v030.json)
+measures both product reproduction and a materialized order/fill workload on
+Python 3.12.2, Apple arm64:
+
+| Benchmark | Result | What is exercised |
+| --- | ---: | --- |
+| Market Risk Case, median of 3 clean directories | `45.7031 s` | 2,198-session report, bootstrap inference, SVGs, schemas, hashes |
+| Active engine, 100,000 market events | `12,513 events/s` | 10 symbols, target-weight resize, t+1 fills, commission ledger |
+| Active engine peak traced memory | `5.919 MB` | Same 100,000-event workload |
+
+The three report runs produced the same receipt. This receipt is a conservative
+single-host reference, not a performance promise. The benchmark hashes its own
+source and the engine, execution, portfolio, and report sources so comparisons
+cannot silently change the workload.
+
+```bash
+PYTHONPATH=src python benchmarks/bench_v030.py \
+  --output docs/assets/engineering_benchmark_v030.json
+```
+
+## Retained v0.2 raw-loop reference
+
+The earlier host-dependent receipt is tracked as
 [`benchmark.json`](assets/audit_lab/benchmark.json):
 
 | Benchmark | Result | Environment |
@@ -12,14 +36,14 @@ The 2026-07-15 host-dependent receipt is tracked as
 | Audit Lab, median of 5 clean output directories | `1.3745 s` | Python 3.12.2, Apple arm64 |
 | Event loop, 1,000,000 no-op events | `1,464,231 events/s` | Python 3.12.2, Apple arm64 |
 
-The receipt hashes every benchmark source file. Runtime varies by hardware,
-Python, power state, and background load; it is an engineering baseline, not a
-deterministic correctness artifact.
+This no-op loop isolates dispatch overhead, but it does not exercise order
+sizing, future fill scheduling, or a cost ledger. It is retained as a narrow
+regression baseline rather than presented as application throughput.
 
 - Script: `benchmarks/bench_engine.py`
 - Purpose: Measures raw event throughput of the engine and Portfolio wiring under a no-op strategy and zero-cost execution model.
 
-## Running locally
+## Running the raw loop locally
 
 ```bash
 python benchmarks/bench_engine.py
